@@ -2,7 +2,7 @@ TEMPLATE = app
 TARGET = 
 DEPENDPATH += .
 INCLUDEPATH += .
-LIBS += -L/usr/lib -lboost_random -lboost_filesystem
+LIBS += -L/usr/lib -lboost_system -lboost_random -lboost_filesystem
 
 # Input
 HEADERS += character.h player_character.h

@@ -2,6 +2,7 @@
 #define __PLAYER_CHARACTER
 
 #include <string>
+#include <vector>
 #include "character.h"
 
 #include <boost/random/random_device.hpp>
@@ -15,11 +16,12 @@ public:
 
 private:
 	void generateName();
-	void readNames();
 	boost::filesystem::path *findDataPath();
+	std::vector<std::string> readNamesFromFile(boost::filesystem::path *data_path, std::string name);
+	void readNames();
 
-	std::list<std::string> first_names;
-	std::list<std::string> last_names;
+	std::vector<std::string> first_names;
+	std::vector<std::string> last_names;
 
 	boost::random::random_device *gen;
 };
