@@ -10,7 +10,12 @@ Character::Character()
 
 boost::any Character::getValue(std::string key)
 {
-	return values[key];
+	std::map<std::string, boost::any>::iterator value_iter = values.find(key);
+	if (value_iter == values.end()) {
+		std::cout << "Error, key not found: " + key + "\n";
+		throw "Error, key not found: " + key;
+	}
+	return value_iter->second;
 }
 
 void Character::setValue(std::string key, boost::any value)
