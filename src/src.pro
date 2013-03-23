@@ -5,5 +5,5 @@ INCLUDEPATH += .
 LIBS += -L/usr/lib -lboost_system -lboost_random -lboost_filesystem
 
 # Input
-HEADERS += character.h player_character.h
-SOURCES += character.cpp main.cpp player_character.cpp
+HEADERS += character.h player_character.h data.h
+SOURCES += character.cpp main.cpp player_character.cpp data.cpp

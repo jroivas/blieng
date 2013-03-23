@@ -1,4 +1,5 @@
 #include "character.h"
+#include <iostream>
 
 Character::Character()
 {
@@ -17,14 +18,20 @@ void Character::setValue(std::string key, boost::any value)
 std::string Character::getStringValue(std::string key)
 {
 	boost::any val = getValue(key);
-	if (val.empty()) return "";
+	if (val.empty()) {
+		std::cout << "Error, key not found: " + key + "\n";
+		throw "Error, key not found: " + key;
+	}
 	return boost::any_cast<std::string>(val);
 }
 
-int Character::getIntegerValue(std::string key)
+int Character::getIntValue(std::string key)
 {
 	boost::any val = getValue(key);
-	if (val.empty()) return 0;
+	if (val.empty()) {
+		std::cout << "Error, key not found: " + key + "\n";
+		throw "Error, key not found: " + key;
+	}
 	return boost::any_cast<int>(val);
 }
 

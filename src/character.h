@@ -17,7 +17,7 @@ public:
 
 	boost::any getValue(std::string key);
 	std::string getStringValue(std::string key);
-	int getIntegerValue(std::string key);
+	int getIntValue(std::string key);
 	double getDoubleValue(std::string key);
 
 private:

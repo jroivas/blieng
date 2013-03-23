@@ -4,9 +4,9 @@
 #include <string>
 #include <vector>
 #include "character.h"
+#include "data.h"
 
 #include <boost/random/random_device.hpp>
-#include <boost/filesystem.hpp>
 
 class PlayerCharacter : public Character
 {
@@ -15,10 +15,12 @@ public:
 	void roll();
 
 private:
+	// Generators
 	void generateName();
-	boost::filesystem::path *findDataPath();
-	std::vector<std::string> readNamesFromFile(boost::filesystem::path *data_path, std::string name);
+	void generateHealth();
+
 	void readNames();
+	int getRandomInt(int limit_low, int limit_max);
 
 	std::vector<std::string> first_names;
 	std::vector<std::string> last_names;
