@@ -8,6 +8,13 @@ Character::Character()
 {
 }
 
+bool Character::isValue(std::string key)
+{
+	std::map<std::string, boost::any>::iterator value_iter = values.find(key);
+	if (value_iter == values.end()) return false;
+	return true;
+}
+
 boost::any Character::getValue(std::string key)
 {
 	std::map<std::string, boost::any>::iterator value_iter = values.find(key);

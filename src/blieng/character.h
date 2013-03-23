@@ -17,6 +17,7 @@ public:
 	Character();
 
 	void setValue(std::string key, boost::any value);
+	bool isValue(std::string key);
 
 	boost::any getValue(std::string key);
 	std::string getStringValue(std::string key);
