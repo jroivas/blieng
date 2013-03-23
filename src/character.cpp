@@ -1,5 +1,6 @@
 #include "character.h"
 #include <iostream>
+#include <boost/format.hpp>
 
 Character::Character()
 {
@@ -42,3 +43,29 @@ double Character::getDoubleValue(std::string key)
 	return boost::any_cast<double>(val);
 }
 
+std::string Character::toString()
+{
+	std::string res = "";
+	std::map<std::string, boost::any>::iterator vi = values.begin();
+	while (vi != values.end()) {
+		std::string key = vi->first;
+		boost::any val = vi->second;
+
+		res += (boost::format("%20s: ") % key).str();
+
+		if (val.type() == typeid(int)) {
+			res += (boost::format("%d") % boost::any_cast<int>(val)).str();
+		}
+		else if (val.type() == typeid(std::string)) {
+			res += boost::any_cast<std::string>(val);
+		}
+		else {
+			res += "<unknown type>";
+		}
+		res += "\n";
+
+		vi++;
+	}
+
+	return res;
+}

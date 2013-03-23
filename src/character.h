@@ -19,8 +19,9 @@ public:
 	std::string getStringValue(std::string key);
 	int getIntValue(std::string key);
 	double getDoubleValue(std::string key);
+	std::string toString();
 
-protected:
+private:
 	std::map<std::string, boost::any> values;
 };
 

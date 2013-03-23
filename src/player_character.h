@@ -13,7 +13,6 @@ class PlayerCharacter : public Character
 public:
 	PlayerCharacter();
 	void roll();
-	std::string toString();
 
 private:
 	// Generators
