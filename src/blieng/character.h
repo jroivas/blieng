@@ -6,6 +6,7 @@
 
 #include <string>
 #include <map>
+#include <list>
 #include <boost/any.hpp>
 
 namespace blieng {
@@ -22,6 +23,8 @@ public:
 	int getIntValue(std::string key);
 	double getDoubleValue(std::string key);
 	std::string toString();
+
+	std::list<std::string> getKeys();
 
 private:
 	std::map<std::string, boost::any> values;

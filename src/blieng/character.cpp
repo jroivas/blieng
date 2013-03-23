@@ -25,7 +25,11 @@ std::string Character::getStringValue(std::string key)
 		std::cout << "Error, key not found: " + key + "\n";
 		throw "Error, key not found: " + key;
 	}
-	return boost::any_cast<std::string>(val);
+	try {
+		return boost::any_cast<std::string>(val);
+	} catch (boost::bad_any_cast c) {
+		throw "Error, not a string value at: " + key;
+	}
 }
 
 int Character::getIntValue(std::string key)
@@ -35,14 +39,22 @@ int Character::getIntValue(std::string key)
 		std::cout << "Error, key not found: " + key + "\n";
 		throw "Error, key not found: " + key;
 	}
-	return boost::any_cast<int>(val);
+	try {
+		return boost::any_cast<int>(val);
+	} catch (boost::bad_any_cast c) {
+		throw "Error, not a int value at: " + key;
+	}
 }
 
 double Character::getDoubleValue(std::string key)
 {
 	boost::any val = getValue(key);
 	if (val.empty()) return 0.0;
-	return boost::any_cast<double>(val);
+	try {
+		return boost::any_cast<double>(val);
+	} catch (boost::bad_any_cast c) {
+		throw "Error, not a double value at: " + key;
+	}
 }
 
 std::string Character::toString()
@@ -69,5 +81,16 @@ std::string Character::toString()
 		vi++;
 	}
 
+	return res;
+}
+
+std::list<std::string> Character::getKeys()
+{
+	std::map<std::string, boost::any>::iterator vi = values.begin();
+	std::list<std::string> res;
+	while (vi != values.end()) {
+		res.push_back(vi->first);
+		vi++;
+	}
 	return res;
 }
