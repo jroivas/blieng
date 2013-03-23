@@ -16,10 +16,22 @@ void Character::setValue(std::string key, boost::any value)
 
 std::string Character::getStringValue(std::string key)
 {
-	return boost::any_cast<std::string>(getValue(key));
+	boost::any val = getValue(key);
+	if (val.empty()) return "";
+	return boost::any_cast<std::string>(val);
 }
 
 int Character::getIntegerValue(std::string key)
 {
-	return boost::any_cast<int>(getValue(key));
+	boost::any val = getValue(key);
+	if (val.empty()) return 0;
+	return boost::any_cast<int>(val);
 }
+
+double Character::getDoubleValue(std::string key)
+{
+	boost::any val = getValue(key);
+	if (val.empty()) return 0.0;
+	return boost::any_cast<double>(val);
+}
+

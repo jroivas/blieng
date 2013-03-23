@@ -18,6 +18,7 @@ public:
 	boost::any getValue(std::string key);
 	std::string getStringValue(std::string key);
 	int getIntegerValue(std::string key);
+	double getDoubleValue(std::string key);
 
 private:
 	std::map<std::string, boost::any> values;
