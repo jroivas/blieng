@@ -8,6 +8,8 @@
 
 #include <boost/random/random_device.hpp>
 
+namespace blieng {
+
 class PlayerCharacter : public Character
 {
 public:
@@ -27,5 +29,7 @@ private:
 
 	boost::random::random_device *gen;
 };
+
+}
 
 #endif

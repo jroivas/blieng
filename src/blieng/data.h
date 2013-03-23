@@ -4,6 +4,8 @@
 #include <boost/filesystem.hpp>
 #include <vector>
 
+namespace blieng {
+
 class Data
 {
 public:
@@ -17,5 +19,6 @@ private:
 	static Data *__data_instance;
 };
 
+}
 
 #endif

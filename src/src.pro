@@ -1,9 +1,12 @@
 TEMPLATE = app
 TARGET = 
-DEPENDPATH += .
-INCLUDEPATH += .
+DEPENDPATH += . blieng
+INCLUDEPATH += . blieng
 LIBS += -L/usr/lib -lboost_system -lboost_random -lboost_filesystem
 
 # Input
-HEADERS += character.h player_character.h data.h
-SOURCES += character.cpp main.cpp player_character.cpp data.cpp
+HEADERS += blieng/character.h blieng/data.h blieng/player_character.h
+SOURCES += main.cpp \
+           blieng/character.cpp \
+           blieng/data.cpp \
+           blieng/player_character.cpp

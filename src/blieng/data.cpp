@@ -2,6 +2,8 @@
 #include <boost/filesystem/fstream.hpp>
 #include <boost/algorithm/string.hpp>
 
+using blieng::Data;
+
 Data *Data::__data_instance = NULL;
 
 Data *Data::getInstance()

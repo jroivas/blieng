@@ -8,6 +8,8 @@
 #include <map>
 #include <boost/any.hpp>
 
+namespace blieng {
+
 class Character
 {
 public:
@@ -24,5 +26,7 @@ public:
 private:
 	std::map<std::string, boost::any> values;
 };
+
+}
 
 #endif

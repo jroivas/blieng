@@ -2,6 +2,8 @@
 #include <string>
 #include <boost/random/uniform_int_distribution.hpp>
 
+using blieng::PlayerCharacter;
+
 PlayerCharacter::PlayerCharacter()
 {
 	gen = new boost::random::random_device();

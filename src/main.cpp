@@ -1,10 +1,10 @@
 #include <QtCore>
 #include <QtGui>
 
-#include "player_character.h"
+#include "blieng/player_character.h"
 #include <iostream>
 
-void printCharacter(PlayerCharacter *c)
+void printCharacter(blieng::PlayerCharacter *c)
 {
 	std::cout << "name   " << c->getStringValue("name") << "\n";
 	std::cout << "health " << c->getIntValue("health") << "\n";
@@ -17,10 +17,10 @@ int main(int argc, char **argv)
 	QApplication app(argc, argv);
 
 
-	PlayerCharacter c;
+	blieng::PlayerCharacter c;
 	printCharacter(&c);
 
-	// Re roll the character
+	// Re-roll the character
 	c.roll();
 	printCharacter(&c);
 	
