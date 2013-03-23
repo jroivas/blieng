@@ -1,6 +1,7 @@
 #include "player_character.h"
 #include <string>
 #include <boost/random/uniform_int_distribution.hpp>
+#include <boost/format.hpp>
 
 PlayerCharacter::PlayerCharacter()
 {
@@ -32,8 +33,17 @@ void PlayerCharacter::roll()
 
 	// Zombie prob
 	setValue("zombie-prob", getRandomInt(0, 100));
-}
 
+	// Stats
+	setValue("might", getRandomInt(0, 50));
+	setValue("strength", getRandomInt(0, 50));
+	setValue("intelligence", getRandomInt(0, 50));
+
+	// Skills
+	setValue("rifle", getRandomInt(0, 50));
+	setValue("pistol", getRandomInt(0, 50));
+	setValue("computer", getRandomInt(0, 50));
+}
 
 void PlayerCharacter::generateHealth()
 {
@@ -45,8 +55,8 @@ void PlayerCharacter::generateHealth()
 
 void PlayerCharacter::readNames()
 {
-	first_names = Data::getInstance()->readLinesFromFile("first_names");
-	last_names = Data::getInstance()->readLinesFromFile("last_names");
+	if (first_names.size() == 0) first_names = Data::getInstance()->readLinesFromFile("first_names");
+	if (last_names.size() == 0) last_names = Data::getInstance()->readLinesFromFile("last_names");
 }
 
 int PlayerCharacter::getRandomInt(int limit_low, int limit_max)
@@ -64,4 +74,35 @@ void PlayerCharacter::generateName()
 	name += " " + last_names.at(getRandomInt(0, last_names.size()));
 
 	setValue("name", name);
+}
+
+std::string PlayerCharacter::toString()
+{
+	std::string res = "";
+	std::map<std::string, boost::any>::iterator vi = values.begin();
+	while (vi != values.end()) {
+		std::string key = vi->first;
+		boost::any val = vi->second;
+
+		res += (boost::format("%20s: ") % key).str();
+
+		/*int padlen = 20 - key.length();
+		while (padlen > 0) res += " ";
+		res += ": ";
+		*/
+		if (val.type() == typeid(int)) {
+			res += (boost::format("%d") % boost::any_cast<int>(val)).str();
+		}
+		else if (val.type() == typeid(std::string)) {
+			res += boost::any_cast<std::string>(val);
+		}
+		else {
+			res += "<unknown type>";
+		}
+		res += "\n";
+
+		vi++;
+	}
+
+	return res;
 }

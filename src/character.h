@@ -20,7 +20,7 @@ public:
 	int getIntValue(std::string key);
 	double getDoubleValue(std::string key);
 
-private:
+protected:
 	std::map<std::string, boost::any> values;
 };
 
