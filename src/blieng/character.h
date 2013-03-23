@@ -19,6 +19,9 @@ public:
 	void setValue(std::string key, boost::any value);
 	bool isValue(std::string key);
 
+	bool increase(std::string key);
+	bool decrease(std::string key);
+
 	boost::any getValue(std::string key);
 	std::string getStringValue(std::string key);
 	int getIntValue(std::string key);
@@ -28,6 +31,7 @@ public:
 	std::list<std::string> getKeys();
 
 private:
+	bool changeIntValue(std::string key, int diff);
 	std::map<std::string, boost::any> values;
 };
 

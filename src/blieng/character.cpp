@@ -106,3 +106,37 @@ std::list<std::string> Character::getKeys()
 	}
 	return res;
 }
+
+bool Character::changeIntValue(std::string key, int diff)
+{
+	int maxval = -1;
+	if (isValue(key + "-max")) {
+		boost::any max_item = getValue(key + "-max");
+		if (max_item.type() == typeid(int)) {
+			maxval = boost::any_cast<int>(max_item);
+		}
+	}
+
+	int val = -1;
+	try {
+		val = getIntValue(key);
+	}
+	catch (std::string e) {
+		return false;
+	}
+	if ((val + diff >= 0) && (maxval == -1 || (val + diff) < maxval)) {
+		setValue(key, val + diff);
+		return true;
+	}
+	return false;
+}
+
+bool Character::increase(std::string key)
+{
+	return changeIntValue(key, 1);
+}
+
+bool Character::decrease(std::string key)
+{
+	return changeIntValue(key, -1);
+}

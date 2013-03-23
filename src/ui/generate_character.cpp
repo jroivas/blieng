@@ -56,19 +56,8 @@ void GenerateCharacter::improve()
 {
 	if (improve_points > 0) {
 		std::string key = improve_map[(QPushButton*)sender()];
-		int maxval = -1;
-		if (character->isValue(key + "-max")) {
-			try {
-				maxval = character->getIntValue(key + "-max");
-			}
-			catch (std::string e) {
-				maxval = -1;
-			}
-		}
-		int val = character->getIntValue(key);
-		if (maxval == -1 || val < maxval) {
+		if (character->increase(key)) {
 			--improve_points;
-			character->setValue(key, val + 1);
 			update();
 		}
 	}
