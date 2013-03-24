@@ -1,5 +1,4 @@
 {
-	 /* Basic time, generated automatically */
 	"time":  { "type": "resource" },
 	"worker":{ "type": "resource", "consume": {"time": 1} },
 	"wood":  { "type": "raw", "amount": 5, "consume": {"worker": 1, "time": 1} },
