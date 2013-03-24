@@ -1,6 +1,7 @@
 #include "data.h"
 #include <boost/filesystem/fstream.hpp>
 #include <boost/algorithm/string.hpp>
+#include <boost/foreach.hpp>
 
 using blieng::Data;
 
@@ -25,15 +26,14 @@ boost::filesystem::path *Data::findDataPath()
 	locations.push_back("");
 	locations.push_back("/usr/share/zombiebli");
 	locations.push_back("../");
-	std::list<std::string>::iterator li = locations.begin();
 
 	boost::filesystem::path *data_path = new boost::filesystem::path;
-	while (li != locations.end()) {
-		*data_path = (*li + "data");
+	BOOST_FOREACH(std::string item, locations) {
+		*data_path = (item + "data");
 		if (boost::filesystem::exists(*data_path) && boost::filesystem::is_directory(*data_path)) {
 			return data_path;
 		}
-		li++;
+		
 	}
 	delete data_path;
 	return NULL;

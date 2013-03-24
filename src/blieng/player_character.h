@@ -24,8 +24,8 @@ private:
 	void readNames();
 	int getRandomInt(int limit_low, int limit_max);
 
-	std::vector<std::string> first_names;
-	std::vector<std::string> last_names;
+	static std::vector<std::string> first_names;
+	static std::vector<std::string> last_names;
 
 	boost::random::random_device *gen;
 };

@@ -18,11 +18,11 @@ public:
 	boost::flyweight<std::string> base;
 	boost::flyweight<std::string> type;
 	boost::flyweight<double> rarity;
-	//boost::flyweight<double> amount;
 	double amount;
 	bool usable;
 
 	boost::flyweight<std::map<std::string, double> > consumes;
+
 	bool doesConsume(std::string);
 	double consumeCount(std::string name);
 

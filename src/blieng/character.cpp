@@ -6,6 +6,7 @@
 using blieng::Character;
 
 typedef std::pair<std::string, boost::any> values_t;
+typedef std::map<std::string, boost::any>::iterator values_iter_t;
 
 Character::Character()
 {
@@ -13,14 +14,14 @@ Character::Character()
 
 bool Character::isValue(std::string key)
 {
-	std::map<std::string, boost::any>::iterator value_iter = values.find(key);
+	values_iter_t value_iter = values.find(key);
 	if (value_iter == values.end()) return false;
 	return true;
 }
 
 boost::any Character::getValue(std::string key)
 {
-	std::map<std::string, boost::any>::iterator value_iter = values.find(key);
+	values_iter_t value_iter = values.find(key);
 	if (value_iter == values.end()) {
 		std::cout << "Error, key not found: " + key + "\n";
 		throw "Error, key not found: " + key;

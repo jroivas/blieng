@@ -4,6 +4,9 @@
 
 using blieng::PlayerCharacter;
 
+std::vector<std::string> PlayerCharacter::first_names;
+std::vector<std::string> PlayerCharacter::last_names;
+
 PlayerCharacter::PlayerCharacter()
 {
 	gen = new boost::random::random_device();

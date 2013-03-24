@@ -1,5 +1,5 @@
 TEMPLATE = app
-TARGET = 
+TARGET = zombiebli
 DEPENDPATH += . blieng ui
 INCLUDEPATH += . blieng ui
 LIBS += -L/usr/lib -lboost_system -lboost_random -lboost_filesystem
@@ -9,7 +9,6 @@ unix {
 	PKGCONFIG += jsoncpp
 }
 
-# Input
 HEADERS += blieng/character.h blieng/data.h blieng/player_character.h blieng/item.h ui/generate_character.h
 SOURCES += main.cpp \
            blieng/character.cpp \
