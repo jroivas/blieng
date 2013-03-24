@@ -1,5 +1,6 @@
 #include "item.h"
 #include <boost/random/uniform_int_distribution.hpp>
+#include <boost/foreach.hpp>
 #include "data.h"
 #include <string>
 
@@ -9,24 +10,27 @@ using blieng::ItemBase;
 bool Item::ok = false;
 std::map<std::string, blieng::ItemBase *> Item::item_bases;
 
+typedef std::pair<std::string, ItemBase *> item_bases_t;
+typedef std::pair<std::string, double> consume_t;
+
 Item::Item()
 {
 	init();
 	int num = getRandomInt(0, item_bases.size());
 	if (item_bases.size() > 0) {
-		std::map<std::string, ItemBase *>::iterator ib = item_bases.begin();
 		int index = 0;
 		ItemBase *orig = NULL;
-		while (ib != item_bases.end()) {
+		BOOST_FOREACH(item_bases_t val, item_bases) {
+			orig = val.second;
 			if (num == index) {
-				orig = ib->second;
+				break;
 			}
-			ib++;
 			index++;
 		}
-		if (orig == NULL) orig = item_bases.begin()->second;
-		assign(orig);
-		usable = true;
+		if (orig != NULL) {
+			assign(orig);
+			usable = true;
+		}
 	}
 }
 
@@ -42,16 +46,15 @@ Item::Item(std::string name)
 	init();
 	usable = false;
 	if (item_bases.size() > 0) {
-		std::map<std::string, ItemBase *>::iterator ib = item_bases.begin();
 		ItemBase *orig = NULL;
-		while (ib != item_bases.end()) {
-			if (ib->first == name) {
-				orig = ib->second;
+		BOOST_FOREACH(item_bases_t val, item_bases) {
+			if (val.first == name) {
+				orig = val.second;
 			}
-			ib++;
 		}
-		if (orig == NULL) orig = item_bases.begin()->second;
-		assign(orig);
+		if (orig != NULL) {
+			assign(orig);
+		}
 	}
 }
 
@@ -63,14 +66,11 @@ void Item::getItemBases()
 	if (!root_val.isObject()) return;
 
 	/* Go thorough items */
-	Json::Value::Members mem = root_val.getMemberNames();
-	Json::Value::Members::iterator mi = mem.begin();
-
-	while (mi != mem.end()) {
-		Json::Value item_val = Data::getInstance()->getJsonValue(root_val, *mi);
+	BOOST_FOREACH(std::string mi, root_val.getMemberNames()) {
+		Json::Value item_val = Data::getInstance()->getJsonValue(root_val, mi);
 		ItemBase *item = new ItemBase();
 		if (item_val.isObject()) {
-			item->base = *mi;
+			item->base = mi;
 			if (Data::getInstance()->isJsonKey(item_val, "type")) {
 				Json::Value val = Data::getInstance()->getJsonValue(item_val, "type");
 				if (val.isString()) item->type = val.asString();
@@ -91,21 +91,17 @@ void Item::getItemBases()
 				Json::Value val = Data::getInstance()->getJsonValue(item_val, "consume");
 				std::map<std::string, double> consumes;
 				if (val.isObject()) {
-					Json::Value::Members consume_mem = val.getMemberNames();
-					Json::Value::Members::iterator cmi = consume_mem.begin();
-					while (cmi != consume_mem.end()) {
-						Json::Value cnt_val = Data::getInstance()->getJsonValue(val, *cmi);
+					BOOST_FOREACH(std::string cmi, val.getMemberNames()) {
+						Json::Value cnt_val = Data::getInstance()->getJsonValue(val, cmi);
 						if (cnt_val.isNumeric()) {
-							consumes[*cmi] = cnt_val.asDouble();
+							consumes[cmi] = cnt_val.asDouble();
 						}
-						cmi++;
 					}
 				}
 				item->consumes = consumes;
 			}
-			item_bases[*mi] = item;
+			item_bases[mi] = item;
 		}
-		mi++;
 	}
 	ok = true;
 }
@@ -136,12 +132,10 @@ bool Item::consume(Item *another)
 Item *Item::produce()
 {
 	bool can_consume = true;
-	std::map<std::string, double>::const_iterator ci = consumes.get().begin();
-	while (ci != consumes.get().end()) {
-		if (stocks[ci->first] < ci->second) {
+	BOOST_FOREACH(consume_t val, consumes.get()) {
+		if (stocks[val.first] < val.second) {
 			can_consume = false;
 		}
-		ci++;
 	}
 	if (!can_consume) return NULL;
 
@@ -150,10 +144,8 @@ Item *Item::produce()
 	produced->usable = true;
 	produced->amount = 1.0;
 
-	ci = consumes.get().begin();
-	while (ci != consumes.get().end()) {
-		stocks[ci->first] -= ci->second;
-		ci++;
+	BOOST_FOREACH(consume_t val, consumes.get()) {
+		stocks[val.first] -= val.second;
 	}
 	return produced;
 }
@@ -176,31 +168,25 @@ bool ItemBase::equals(ItemBase *another)
 
 bool ItemBase::doesConsume(std::string name)
 {
-	std::map<std::string, double>::const_iterator ci = consumes.get().begin();
-	while (ci != consumes.get().end()) {
-		if (ci->first == name) return true;
-		ci++;
+	BOOST_FOREACH(consume_t val, consumes.get()) {
+		if (val.first == name) return true;
 	}
 	return false;
 }
 
 double ItemBase::consumeCount(std::string name)
 {
-	std::map<std::string, double>::const_iterator ci = consumes.get().begin();
-	while (ci != consumes.get().end()) {
-		if (ci->first == name) return ci->second;
-		ci++;
+	BOOST_FOREACH(consume_t val, consumes.get()) {
+		if (val.first == name) return val.second;
 	}
 	return 0;
 }
 
 void ItemBase::setupStock()
 {
-	std::map<std::string, double>::const_iterator ci = consumes.get().begin();
 	stocks.clear();
-	while (ci != consumes.get().end()) {
-		stocks[ci->first] = 0;
-		ci++;
+	BOOST_FOREACH(consume_t val, consumes.get()) {
+		stocks[val.first] = 0;
 	}
 }
 
@@ -214,24 +200,21 @@ std::string ItemBase::toString() {
 	tmp += "rarity  : " + (boost::format("%f") % rarity.get()).str() + "\n";
 
 	tmp += "consumes: ";
-	std::map<std::string, double>::const_iterator ci = consumes.get().begin();
+	
 	bool first = true;
-	while (ci != consumes.get().end()) {
+	BOOST_FOREACH(consume_t val, consumes.get()) {
 		if (!first) tmp += ", ";
-		tmp += (boost::format("%s (%f units)") % ci->first % ci->second).str();
 		first = false;
-		ci++;
+		tmp += (boost::format("%s (%f units)") % val.first % val.second).str();
 	}
 	tmp += "\n";
 
 	tmp += "stock   : ";
-	std::map<std::string, double>::iterator sci = stocks.begin();
 	first = true;
-	while (sci != stocks.end()) {
+	BOOST_FOREACH(consume_t val, stocks) {
 		if (!first) tmp += ", ";
-		tmp += (boost::format("%s (%f units)") % sci->first % sci->second).str();
 		first = false;
-		sci++;
+		tmp += (boost::format("%s (%f units)") % val.first % val.second).str();
 	}
 	tmp += "\n";
 
