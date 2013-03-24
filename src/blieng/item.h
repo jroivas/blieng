@@ -13,33 +13,46 @@ namespace blieng {
 class ItemBase
 {
 public:
-	ItemBase():base(""), type(""), rarity(1.0) { }
+	ItemBase():base(""), type(""), rarity(1.0), amount(0.0), usable(false) { }
 
 	boost::flyweight<std::string> base;
 	boost::flyweight<std::string> type;
 	boost::flyweight<double> rarity;
+	//boost::flyweight<double> amount;
+	double amount;
+	bool usable;
 
-	boost::flyweight<std::vector<std::string> > consumes;
+	boost::flyweight<std::map<std::string, double> > consumes;
+	bool doesConsume(std::string);
+	double consumeCount(std::string name);
 
 	std::string toString();
 	void assign(ItemBase *parent);
 	bool equals(ItemBase *another);
+	std::map<std::string, double> stocks;
+	void setupStock();
+
 };
 
 class Item : public ItemBase
 {
 public:
 	Item();
+	Item(std::string name);
 
 	bool consume(Item *);
 	Item *produce();
+	bool isUsable() { return usable; }
+	void setUsable() { usable = true; }
 
 private:
+	void init();
 	int getRandomInt(int limit_low, int limit_max);
 	void getItemBases();
 
 	static bool ok;
 	static std::map<std::string, ItemBase *> item_bases;
+
 
 	boost::random::random_device *gen;
 };

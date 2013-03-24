@@ -1,10 +1,10 @@
 {
 	"wood":  { "type": "raw" },
-	"stone": { "type": "raw" },
-	"iron":  { "type": "raw" },
+	"stone": { "type": "raw", "amount": 2 },
+	"iron":  { "type": "raw", "amount": 10 },
 	"gold":  { "type": "raw", "rarity": 0.01 },
-	"nail":  { "type": "part", "consume": ["iron"] },
-	"box":   { "type": "good", "consume": ["wood", "nail"] },
+	"nail":  { "type": "part", "consume": {"iron": 0.42 } },
+	"box":   { "type": "good", "consume": {"wood": 2, "nail": 10} },
 
 	"end":""
 }
