@@ -1,10 +1,14 @@
 {
-	"wood":  { "type": "raw" },
+	 /* Basic time, generated automatically */
+	"time":  { "type": "resource" },
+	"worker":{ "type": "resource", "consume": {"time": 1} },
+	"wood":  { "type": "raw", "amount": 5, "consume": {"worker": 1, "time": 1} },
 	"stone": { "type": "raw", "amount": 2 },
-	"iron":  { "type": "raw", "amount": 10 },
+	"ironmine":  { "type": "raw", "amount": 10, "consume": {"worker": 1, "time": 1} },
+	"iron":  { "type": "raw", "amount": 10, "consume": {"ironmine": 1} },
 	"gold":  { "type": "raw", "rarity": 0.01 },
 	"nail":  { "type": "part", "consume": {"iron": 0.42 } },
 	"box":   { "type": "good", "consume": {"wood": 2, "nail": 10} },
 
-	"end":""
+	"end": ""
 }

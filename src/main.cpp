@@ -5,6 +5,7 @@
 #include "ui/generate_character.h"
 #include "blieng/item.h"
 #include "blieng/zombie_character.h"
+#include "blieng/wallclock.h"
 
 int main(int argc, char **argv)
 {
@@ -36,6 +37,17 @@ int main(int argc, char **argv)
 		blieng::ZombieCharacter *z = new blieng::ZombieCharacter();
 		std::cout << z->toString() << "\n";
 	}
+
+
+	blieng::Wallclock *timer = new blieng::Wallclock(new blieng::Item("time"));
+	timer->addProducer(new blieng::Item("ironmine"));
+	timer->addProducer(new blieng::Item("worker"));
+	timer->addProducer(new blieng::Item("worker"));
+	timer->addProducer(new blieng::Item("iron"));
+	timer->addProducer(new blieng::Item("nail"));
+	timer->addProducer(new blieng::Item("wood"));
+	timer->addProducer(new blieng::Item("box"));
+	timer->forward();
 
 	#if 0
 	GenerateCharacter *cg = new GenerateCharacter();

@@ -118,18 +118,17 @@ bool Item::consume(Item *another)
 	if (!another->isUsable()) return false;
 
 	double cnt = consumeCount(another->base);
-	//for (consumes.get()[another->base]);
+	//std::cout << base << " consumes " << cnt << "  " << another->base << "\n";
 
 	if (cnt > another->amount) return false;
 	stocks[another->base] += cnt;
 	another->amount -= cnt;
-	//stocks[another->base] += another->amount;
-	//another->amount = 0;
+	//std::cout << another->amount << "  " << another->base << "\n";
 
 	return true;
 }
 
-Item *Item::produce()
+Item *Item::produce(double produce_amount)
 {
 	bool can_consume = true;
 	BOOST_FOREACH(consume_t val, consumes.get()) {
@@ -142,7 +141,11 @@ Item *Item::produce()
 	Item *produced = new Item();
 	produced->assign(this);
 	produced->usable = true;
-	produced->amount = 1.0;
+	if (amount > 0) {
+		produced->amount = produce_amount * amount;
+	} else {
+		produced->amount = produce_amount;
+	}
 
 	BOOST_FOREACH(consume_t val, consumes.get()) {
 		stocks[val.first] -= val.second;
@@ -170,6 +173,14 @@ bool ItemBase::doesConsume(std::string name)
 {
 	BOOST_FOREACH(consume_t val, consumes.get()) {
 		if (val.first == name) return true;
+	}
+	return false;
+}
+
+bool ItemBase::hasStock()
+{
+	BOOST_FOREACH(consume_t val, stocks) {
+		if (val.second > 0) return true;
 	}
 	return false;
 }

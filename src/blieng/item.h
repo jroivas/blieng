@@ -32,6 +32,8 @@ public:
 	std::map<std::string, double> stocks;
 	void setupStock();
 
+	bool hasStock();
+
 };
 
 class Item : public ItemBase
@@ -41,7 +43,7 @@ public:
 	Item(std::string name);
 
 	bool consume(Item *);
-	Item *produce();
+	Item *produce(double amount=1);
 	bool isUsable() { return usable; }
 	void setUsable() { usable = true; }
 
