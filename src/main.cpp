@@ -31,7 +31,7 @@ int main(int argc, char **argv)
 		
 	}
 
-	#if 0
+	#if 1
 	GenerateCharacter *cg = new GenerateCharacter();
 	cg->show();
 	QObject::connect(&app, SIGNAL(lastWindowClosed()), &app, SLOT(quit()));

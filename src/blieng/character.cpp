@@ -1,8 +1,11 @@
 #include "character.h"
 #include <iostream>
 #include <boost/format.hpp>
+#include <boost/foreach.hpp>
 
 using blieng::Character;
+
+typedef std::pair<std::string, boost::any> values_t;
 
 Character::Character()
 {
@@ -72,10 +75,9 @@ double Character::getDoubleValue(std::string key)
 std::string Character::toString()
 {
 	std::string res = "";
-	std::map<std::string, boost::any>::iterator vi = values.begin();
-	while (vi != values.end()) {
-		std::string key = vi->first;
-		boost::any val = vi->second;
+	BOOST_FOREACH(values_t item, values) {
+		std::string key = item.first;
+		boost::any val = item.second;
 
 		res += (boost::format("%20s: ") % key).str();
 
@@ -89,8 +91,6 @@ std::string Character::toString()
 			res += "<unknown type>";
 		}
 		res += "\n";
-
-		vi++;
 	}
 
 	return res;
@@ -98,11 +98,9 @@ std::string Character::toString()
 
 std::list<std::string> Character::getKeys()
 {
-	std::map<std::string, boost::any>::iterator vi = values.begin();
 	std::list<std::string> res;
-	while (vi != values.end()) {
-		res.push_back(vi->first);
-		vi++;
+	BOOST_FOREACH(values_t val, values) {
+		res.push_back(val.first);
 	}
 	return res;
 }
