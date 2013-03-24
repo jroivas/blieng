@@ -4,10 +4,16 @@ DEPENDPATH += . blieng ui
 INCLUDEPATH += . blieng ui
 LIBS += -L/usr/lib -lboost_system -lboost_random -lboost_filesystem
 
+unix {
+	CONFIG += link_pkgconfig
+	PKGCONFIG += jsoncpp
+}
+
 # Input
-HEADERS += blieng/character.h blieng/data.h blieng/player_character.h ui/generate_character.h
+HEADERS += blieng/character.h blieng/data.h blieng/player_character.h blieng/item.h ui/generate_character.h
 SOURCES += main.cpp \
            blieng/character.cpp \
            blieng/data.cpp \
            blieng/player_character.cpp \
+           blieng/item.cpp \
            ui/generate_character.cpp

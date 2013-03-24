@@ -61,3 +61,64 @@ std::vector<std::string> Data::readLinesFromFile(std::string name)
 
 	return tmp;
 }
+
+std::string Data::readString(std::string name)
+{
+	std::string res = "";
+	if (data_path == NULL) return res;
+	
+	boost::filesystem::path first_path = *data_path;
+	first_path += "/" + name;
+	if (boost::filesystem::exists(first_path)) {
+		boost::filesystem::ifstream fd(first_path, std::ifstream::binary);
+		while (!fd.eof()) {
+			char tmp[256];
+			fd.read(tmp, 255);
+			tmp[255] = 0;
+			res += tmp;
+		}
+		fd.close();
+	}
+
+	return res;
+	
+}
+
+Json::Value Data::readJson(std::string name)
+{
+	std::string datas = Data::getInstance()->readString(name);
+
+	Json::Reader reader;
+	Json::Value val;
+	bool parse_ok;
+	parse_ok = reader.parse(datas, val);
+	if (!parse_ok) {
+		std::cout << "Parse error: " << reader.getFormattedErrorMessages() << "!\n";
+		throw "JSON parse error";	
+	}
+	return val;
+}
+
+std::vector<std::string> Data::getJsonKeys(Json::Value val)
+{
+	return val.getMemberNames();
+}
+
+bool Data::isJsonKey(Json::Value val, std::string key)
+{
+	if (val.isObject()) {
+		return val.isMember(key);
+	}
+	return false;
+}
+
+Json::Value Data::getJsonValue(Json::Value val, std::string key)
+{
+	if (val.isObject()) {
+		if (val.isMember(key)) {
+			Json::Value res;
+			return val.get(key, res);
+		}
+	}
+	return val;
+}
