@@ -4,6 +4,7 @@
 #include <string>
 
 using blieng::Item;
+using blieng::ItemBase;
 
 bool Item::ok = false;
 std::map<std::string, blieng::ItemBase *> Item::item_bases;
@@ -58,15 +59,17 @@ void Item::getItemBases()
 			}
 			if (Data::getInstance()->isJsonKey(item_val, "consume")) {
 				Json::Value val = Data::getInstance()->getJsonValue(item_val, "consume");
+				std::vector<std::string> consumes;
 				if (val.isArray()) {
 					Json::Value::ArrayIndex len = val.size();
 					for (Json::Value::ArrayIndex index = 0; index < len; index++) {
 						Json::Value arr_val = val.get(index, Json::Value());
 						if (arr_val.isString()) {
-							item->consumes.push_back(arr_val.asString());
+							consumes.push_back(arr_val.asString());
 						}
 					}
 				}
+				item->consumes = consumes;
 			}
 			item_bases[*mi] = item;
 		}
@@ -89,4 +92,38 @@ bool Item::consume(Item *)
 Item *Item::produce()
 {
 	return this;
+}
+
+void ItemBase::assign(ItemBase *parent) {
+	if (parent == NULL) return;
+
+	base = parent->base;
+	type = parent->type;
+	rarity = parent->rarity;
+	consumes = parent->consumes;
+}
+
+bool ItemBase::equals(ItemBase *another)
+{
+	return (base == another->base && type == another->type && rarity == another->rarity);
+}
+
+std::string ItemBase::toString() {
+	std::string tmp = "";
+	tmp += "base    : " + base.get() + "\n";
+	tmp += "type    : " + type.get() + "\n";
+	tmp += "rarity  : " + (boost::format("%f") % rarity.get()).str() + "\n";
+	tmp += "consumes: ";
+	
+	std::vector<std::string>::const_iterator ci = consumes.get().begin();
+	bool first = true;
+	while (ci != consumes.get().end()) {
+		if (!first) tmp += ", ";
+		tmp += *ci;
+		first = false;
+		ci++;
+	}
+	tmp += "\n";
+
+	return tmp;
 }
