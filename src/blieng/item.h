@@ -13,12 +13,13 @@ namespace blieng {
 class ItemBase
 {
 public:
-	ItemBase():base(""), type(""), rarity(1.0), amount(0.0), usable(false) { }
+	ItemBase():base(""), type(""), rarity(1.0), amount(0.0), life(-1), usable(false) { }
 
 	boost::flyweight<std::string> base;
 	boost::flyweight<std::string> type;
 	boost::flyweight<double> rarity;
 	double amount;
+	long int life;
 	bool usable;
 
 	boost::flyweight<std::map<std::string, double> > consumes;
@@ -33,6 +34,11 @@ public:
 	void setupStock();
 
 	bool hasStock();
+	double hasStock(std::string name);
+
+	bool update(ItemBase *another);
+	bool age(long int amount);
+	bool exhausted();
 
 };
 
@@ -54,9 +60,6 @@ private:
 
 	static bool ok;
 	static std::map<std::string, ItemBase *> item_bases;
-
-
-	boost::random::random_device *gen;
 };
 
 }

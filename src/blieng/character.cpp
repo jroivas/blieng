@@ -1,4 +1,5 @@
 #include "character.h"
+#include "data.h"
 #include <iostream>
 #include <boost/format.hpp>
 #include <boost/foreach.hpp>
@@ -12,7 +13,6 @@ typedef std::map<std::string, boost::any>::iterator values_iter_t;
 
 Character::Character()
 {
-	gen = new boost::random::random_device();
 }
 
 bool Character::isValue(std::string key)
@@ -25,13 +25,13 @@ bool Character::isValue(std::string key)
 int Character::getRandomInt(int limit_low, int limit_max)
 {
 	boost::random::uniform_int_distribution<> dist(limit_low, limit_max);
-	return dist(*gen);
+	return dist(*Data::getInstance()->getGen());
 }
 
 double Character::getRandomDouble(double limit_low, double limit_max)
 {
 	boost::random::uniform_real_distribution<> dist(limit_low, limit_max);
-	return dist(*gen);
+	return dist(*Data::getInstance()->getGen());
 }
 
 boost::any Character::getValue(std::string key)

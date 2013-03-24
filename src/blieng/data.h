@@ -4,6 +4,7 @@
 #include <boost/filesystem.hpp>
 #include <vector>
 #include <json/reader.h>
+#include <boost/random/random_device.hpp>
 
 namespace blieng {
 
@@ -19,11 +20,14 @@ public:
 	bool isJsonKey(Json::Value val, std::string key);
 	Json::Value getJsonValue(Json::Value val, std::string key);
 
+	boost::random::random_device *getGen() { return gen; }
+
 private:
 	Data();
 	boost::filesystem::path *findDataPath();
 	boost::filesystem::path *data_path;
 	static Data *__data_instance;
+	boost::random::random_device *gen;
 };
 
 }

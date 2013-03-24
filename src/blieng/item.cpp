@@ -13,7 +13,7 @@ std::map<std::string, blieng::ItemBase *> Item::item_bases;
 typedef std::pair<std::string, ItemBase *> item_bases_t;
 typedef std::pair<std::string, double> consume_t;
 
-Item::Item()
+Item::Item() : ItemBase()
 {
 	init();
 	int num = getRandomInt(0, item_bases.size());
@@ -36,12 +36,12 @@ Item::Item()
 
 void Item::init()
 {
+	life = (long int)(-1);
 	usable = false;
-	gen = new boost::random::random_device();
 	getItemBases();
 }
 
-Item::Item(std::string name)
+Item::Item(std::string name) : ItemBase()
 {
 	init();
 	usable = false;
@@ -81,6 +81,13 @@ void Item::getItemBases()
 					item->rarity = val.asDouble();
 				}
 			}
+			if (Data::getInstance()->isJsonKey(item_val, "life")) {
+				Json::Value val = Data::getInstance()->getJsonValue(item_val, "life");
+				if (val.isNumeric()) {
+					item->life = val.asInt();
+					std::cout << "life " << item->life << "\n";
+				}
+			}
 			if (Data::getInstance()->isJsonKey(item_val, "amount")) {
 				Json::Value val = Data::getInstance()->getJsonValue(item_val, "amount");
 				if (val.isNumeric()) {
@@ -109,7 +116,7 @@ void Item::getItemBases()
 int Item::getRandomInt(int limit_low, int limit_max)
 {
 	boost::random::uniform_int_distribution<> dist(limit_low, limit_max);
-	return dist(*gen);
+	return dist(*Data::getInstance()->getGen());
 }
 
 bool Item::consume(Item *another)
@@ -118,9 +125,10 @@ bool Item::consume(Item *another)
 	if (!another->isUsable()) return false;
 
 	double cnt = consumeCount(another->base);
-	//std::cout << base << " consumes " << cnt << "  " << another->base << "\n";
 
 	if (cnt > another->amount) return false;
+
+	//std::cout << base << " consumes " << cnt << "  " << another->base << "\n";
 	stocks[another->base] += cnt;
 	another->amount -= cnt;
 	//std::cout << another->amount << "  " << another->base << "\n";
@@ -161,6 +169,7 @@ void ItemBase::assign(ItemBase *parent) {
 	rarity = parent->rarity;
 	amount = parent->amount;
 	consumes = parent->consumes;
+	life = parent->life;
 	setupStock();
 }
 
@@ -177,6 +186,29 @@ bool ItemBase::doesConsume(std::string name)
 	return false;
 }
 
+bool ItemBase::exhausted()
+{
+	if (life == (long int)-1) return false;
+
+	if (life == 0) return true;
+	return false;
+}
+
+bool ItemBase::age(long int amount)
+{
+	if (amount <= 0) return false;
+	if (life == (long int)-1) return true;
+
+	if (life > amount) {
+		life -= amount;
+		return true;
+	}
+
+	life = 0;
+	usable = false;
+	return false;
+}
+
 bool ItemBase::hasStock()
 {
 	BOOST_FOREACH(consume_t val, stocks) {
@@ -185,12 +217,38 @@ bool ItemBase::hasStock()
 	return false;
 }
 
+double ItemBase::hasStock(std::string name)
+{
+	BOOST_FOREACH(consume_t val, stocks) {
+		if (val.first == name) return val.second;
+	}
+	return 0;
+}
+
 double ItemBase::consumeCount(std::string name)
 {
 	BOOST_FOREACH(consume_t val, consumes.get()) {
 		if (val.first == name) return val.second;
 	}
 	return 0;
+}
+
+bool ItemBase::update(ItemBase *another)
+{
+	if (another == NULL) return false;
+	if (another->base != base) return false;
+	if (another->life != life) return false;
+
+	amount += another->amount;
+	another->amount = 0;
+	life = another->life;
+
+	BOOST_FOREACH(consume_t val, another->stocks) {
+		stocks[val.first] += val.second;
+		val.second = 0;
+	}
+
+	return true;
 }
 
 void ItemBase::setupStock()
@@ -206,7 +264,11 @@ std::string ItemBase::toString() {
 	tmp += "base    : " + base.get() + "\n";
 	tmp += "type    : " + type.get() + "\n";
 	tmp += "usable  : " + std::string((usable?"yes":"no")) + "\n";
-	//tmp += "amount  : " + (boost::format("%f") % amount.get()).str() + "\n";
+	if (life == (long int)-1) {
+		tmp += "life    : inf\n";
+	} else {
+		tmp += "life    : " + (boost::format("%d") % life).str() + "\n";
+	}
 	tmp += "amount  : " + (boost::format("%f") % amount).str() + "\n";
 	tmp += "rarity  : " + (boost::format("%f") % rarity.get()).str() + "\n";
 

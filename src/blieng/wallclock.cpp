@@ -35,6 +35,7 @@ void Wallclock::produceTime(unsigned long int amount)
 				item->consume(time);
 			}
 		}
+		item->age(amount);
 	}
 }
 
@@ -83,30 +84,86 @@ std::vector<blieng::Item *> Wallclock::produceTier2(std::vector<Item *> items)
 bool Wallclock::consume(std::vector<Item *> items)
 {
 	bool changed = false;
+/*
 	BOOST_FOREACH(Item *item, producers) {
 		BOOST_FOREACH(Item *item2, items) {
 			if (item == item2) continue;
-			if (item->doesConsume(item2->base)) {
-				while (item->consume(item2)) changed = true;
+			if (item2->doesConsume(item->base)) {
+				if (item2->consume(item)) changed = true;
 			}
+		}
+	}
+*/
+	BOOST_FOREACH(Item *item, items) {
+		while (item->amount>0) {
+			bool last_ok = false;
+			Item *in_need = NULL;
+			BOOST_FOREACH(Item *item2, producers) {
+				if (item == item2) continue;
+				if (item2->doesConsume(item->base)) {
+					if (in_need == NULL) in_need = item2;
+					else if (in_need->hasStock(item->base) > item2->hasStock(item->base)) {
+						in_need = item2;
+					}
+				}
+			}
+			if (in_need != NULL && in_need->consume(item)) {
+				changed = true;
+				last_ok = true;
+			}
+			if (!last_ok) break;
 		}
 	}
 	BOOST_FOREACH(Item *item, items) {
-		BOOST_FOREACH(Item *item2, items) {
-			if (item == item2) continue;
-			if (item->doesConsume(item2->base)) {
-				while (item->consume(item2)) changed = true;
+		while (item->amount>0) {
+			bool last_ok = false;
+			Item *in_need = NULL;
+			BOOST_FOREACH(Item *item2, producers) {
+				if (item == item2) continue;
+				if (item2->doesConsume(item->base)) {
+					if (in_need == NULL) in_need = item2;
+					else if (in_need->hasStock(item->base) > item2->hasStock(item->base)) {
+						in_need = item2;
+					}
+				}
 			}
+			if (in_need != NULL && in_need->consume(item)) {
+				changed = true;
+				last_ok = true;
+			}
+			if (!last_ok) break;
 		}
 	}
 	return changed;
+}
+
+std::vector<blieng::Item *> Wallclock::combineItems(std::vector<Item *> items)
+{
+	std::vector<blieng::Item *> new_items;
+	BOOST_FOREACH(Item *item, items) {
+		bool found = false;
+		BOOST_FOREACH(Item *item2, new_items) {
+			if (item->base == item2->base) {
+				item2->update(item);
+				found = true;
+			}
+		}
+		if (!found) {
+			new_items.push_back(item);
+		}
+	}
+	return new_items;
 }
 
 std::vector<blieng::Item *> Wallclock::cleanItems(std::vector<Item *> items)
 {
 	std::vector<blieng::Item *> new_items;
 	BOOST_FOREACH(Item *item, items) {
-		if (item->amount > 0) new_items.push_back(item);
+		if (item->exhausted()) {
+			std::cout << item->base << " exhausted\n";
+			// delete it
+		}
+		else if (item->amount > 0) new_items.push_back(item);
 		else if (item->hasStock()) new_items.push_back(item);
 	}
 	return new_items;
@@ -134,12 +191,13 @@ std::vector<blieng::Item *> Wallclock::produce(unsigned long int amount)
 	}
 	*/
 	
+	items = Wallclock::combineItems(items);
 	items = Wallclock::cleanItems(items);
 	std::cout << "Produced: \n";
-	/*
 	BOOST_FOREACH(Item *item, producers) {
 		std::cout << item->toString() << "\n";
 	}
+	/*
 	*/
 	BOOST_FOREACH(Item *item, items) {
 		std::cout << item->toString() << "\n";

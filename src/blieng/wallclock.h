@@ -19,6 +19,7 @@ private:
 	std::vector<blieng::Item *> produceTier1();
 	std::vector<blieng::Item *> produceTier2(std::vector<Item *> items);
 	std::vector<blieng::Item *> cleanItems(std::vector<Item *> items);
+	std::vector<blieng::Item *> combineItems(std::vector<Item *> items);
 	std::vector<Item *> produce(unsigned long int amount);
 	bool consume(std::vector<Item *> items);
 

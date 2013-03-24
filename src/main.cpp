@@ -43,10 +43,17 @@ int main(int argc, char **argv)
 	timer->addProducer(new blieng::Item("ironmine"));
 	timer->addProducer(new blieng::Item("worker"));
 	timer->addProducer(new blieng::Item("worker"));
+	timer->addProducer(new blieng::Item("worker"));
+	timer->addProducer(new blieng::Item("worker"));
 	timer->addProducer(new blieng::Item("iron"));
 	timer->addProducer(new blieng::Item("nail"));
 	timer->addProducer(new blieng::Item("wood"));
+	timer->addProducer(new blieng::Item("wood"));
 	timer->addProducer(new blieng::Item("box"));
+	timer->forward();
+	timer->forward();
+	timer->forward();
+	timer->forward();
 	timer->forward();
 
 	#if 0

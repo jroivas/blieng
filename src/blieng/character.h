@@ -8,7 +8,6 @@
 #include <map>
 #include <list>
 #include <boost/any.hpp>
-#include <boost/random/random_device.hpp>
 
 
 namespace blieng {
@@ -35,7 +34,6 @@ public:
 protected:
 	int getRandomInt(int limit_low, int limit_max);
 	double getRandomDouble(double limit_low, double limit_max);
-	boost::random::random_device *gen;
 
 private:
 	bool changeIntValue(std::string key, int diff);

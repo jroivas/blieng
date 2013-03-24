@@ -18,6 +18,7 @@ Data *Data::getInstance()
 Data::Data()
 {
 	data_path = findDataPath();
+	gen = new boost::random::random_device();
 }
 
 boost::filesystem::path *Data::findDataPath()
