@@ -7,9 +7,8 @@ using blieng::PlayerCharacter;
 std::vector<std::string> PlayerCharacter::first_names;
 std::vector<std::string> PlayerCharacter::last_names;
 
-PlayerCharacter::PlayerCharacter()
+PlayerCharacter::PlayerCharacter() : Character()
 {
-	gen = new boost::random::random_device();
 	roll();
 }
 
@@ -61,12 +60,6 @@ void PlayerCharacter::readNames()
 {
 	if (first_names.size() == 0) first_names = Data::getInstance()->readLinesFromFile("first_names");
 	if (last_names.size() == 0) last_names = Data::getInstance()->readLinesFromFile("last_names");
-}
-
-int PlayerCharacter::getRandomInt(int limit_low, int limit_max)
-{
-	boost::random::uniform_int_distribution<> dist(limit_low, limit_max);
-	return dist(*gen);
 }
 
 void PlayerCharacter::generateName()

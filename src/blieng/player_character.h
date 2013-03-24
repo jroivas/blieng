@@ -6,8 +6,6 @@
 #include "character.h"
 #include "data.h"
 
-#include <boost/random/random_device.hpp>
-
 namespace blieng {
 
 class PlayerCharacter : public Character
@@ -22,12 +20,9 @@ private:
 	void generateHealth();
 
 	void readNames();
-	int getRandomInt(int limit_low, int limit_max);
 
 	static std::vector<std::string> first_names;
 	static std::vector<std::string> last_names;
-
-	boost::random::random_device *gen;
 };
 
 }

@@ -2,6 +2,8 @@
 #include <iostream>
 #include <boost/format.hpp>
 #include <boost/foreach.hpp>
+#include <boost/random/uniform_int_distribution.hpp>
+#include <boost/random/uniform_real_distribution.hpp>
 
 using blieng::Character;
 
@@ -10,6 +12,7 @@ typedef std::map<std::string, boost::any>::iterator values_iter_t;
 
 Character::Character()
 {
+	gen = new boost::random::random_device();
 }
 
 bool Character::isValue(std::string key)
@@ -17,6 +20,18 @@ bool Character::isValue(std::string key)
 	values_iter_t value_iter = values.find(key);
 	if (value_iter == values.end()) return false;
 	return true;
+}
+
+int Character::getRandomInt(int limit_low, int limit_max)
+{
+	boost::random::uniform_int_distribution<> dist(limit_low, limit_max);
+	return dist(*gen);
+}
+
+double Character::getRandomDouble(double limit_low, double limit_max)
+{
+	boost::random::uniform_real_distribution<> dist(limit_low, limit_max);
+	return dist(*gen);
 }
 
 boost::any Character::getValue(std::string key)
@@ -84,6 +99,9 @@ std::string Character::toString()
 
 		if (val.type() == typeid(int)) {
 			res += (boost::format("%d") % boost::any_cast<int>(val)).str();
+		}
+		else if (val.type() == typeid(double)) {
+			res += (boost::format("%f") % boost::any_cast<double>(val)).str();
 		}
 		else if (val.type() == typeid(std::string)) {
 			res += boost::any_cast<std::string>(val);

@@ -4,16 +4,17 @@
 #include <iostream>
 #include "ui/generate_character.h"
 #include "blieng/item.h"
+#include "blieng/zombie_character.h"
 
 int main(int argc, char **argv)
 {
 	QApplication app(argc, argv);
 
+	/*
 	for (int j=0; j<5; j++) {
 		blieng::Item *i = new blieng::Item();
 		std::cout << i->toString() << "\n";
 	}
-	/*
 	*/
 	blieng::Item *nail = new blieng::Item("nail");
 	blieng::Item *iron = new blieng::Item("iron");
@@ -31,7 +32,12 @@ int main(int argc, char **argv)
 		
 	}
 
-	#if 1
+	for (int j=0; j<10; j++) {
+		blieng::ZombieCharacter *z = new blieng::ZombieCharacter();
+		std::cout << z->toString() << "\n";
+	}
+
+	#if 0
 	GenerateCharacter *cg = new GenerateCharacter();
 	cg->show();
 	QObject::connect(&app, SIGNAL(lastWindowClosed()), &app, SLOT(quit()));

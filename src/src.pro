@@ -9,10 +9,11 @@ unix {
 	PKGCONFIG += jsoncpp
 }
 
-HEADERS += blieng/character.h blieng/data.h blieng/player_character.h blieng/item.h ui/generate_character.h
+HEADERS += blieng/character.h blieng/data.h blieng/player_character.h blieng/zombie_character.h blieng/item.h ui/generate_character.h
 SOURCES += main.cpp \
            blieng/character.cpp \
            blieng/data.cpp \
            blieng/player_character.cpp \
+           blieng/zombie_character.cpp \
            blieng/item.cpp \
            ui/generate_character.cpp
