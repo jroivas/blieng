@@ -1,0 +1,10 @@
+{
+	"wood":  { "type": "raw" },
+	"stone": { "type": "raw" },
+	"iron":  { "type": "raw" },
+	"gold":  { "type": "raw", "rarity": 0.01 },
+	"nail":  { "type": "part", "consume": ["iron"] },
+	"box":   { "type": "good", "consume": ["wood", "nail"] },
+
+	"end":""
+}
