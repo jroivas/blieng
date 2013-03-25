@@ -40,6 +40,19 @@ boost::filesystem::path *Data::findDataPath()
 	return NULL;
 }
 
+std::string Data::findFile(std::string name)
+{
+	if (data_path == NULL) return "";
+	
+	boost::filesystem::path first_path = *data_path;
+	first_path += "/" + name;
+	if (boost::filesystem::exists(first_path)) {
+		return first_path.string();
+	}
+
+	return "";
+}
+
 std::vector<std::string> Data::readLinesFromFile(std::string name)
 {
 	std::vector<std::string> tmp;

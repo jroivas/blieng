@@ -1,7 +1,7 @@
 {
 	"time":  { "type": "resource" },
 	"worker":{ "type": "resource", "consume": {"time": 1} },
-	"wood":  { "type": "raw", "amount": 5, "consume": {"worker": 1, "time": 1} },
+	"wood":  { "type": "raw", "amount": 5, "consume": {"worker": 1, "time": 1}, "image": "tree1.png" },
 	"stone": { "type": "raw", "amount": 2 },
 	"ironmine": { "type": "raw", "amount": 10, "life": 5, "consume": {"worker": 1, "time": 1} },
 	"iron":  { "type": "raw", "amount": 10, "consume": {"ironmine": 1} },

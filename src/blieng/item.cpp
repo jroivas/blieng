@@ -58,6 +58,16 @@ Item::Item(std::string name) : ItemBase()
 	}
 }
 
+std::vector<std::string> Item::listItems()
+{
+	std::vector<std::string> tmp;
+	BOOST_FOREACH(item_bases_t val, item_bases) {
+		tmp.push_back(val.first);
+	}
+	return tmp;
+}
+
+
 void Item::getItemBases()
 {
 	if (ok) return;
@@ -75,6 +85,10 @@ void Item::getItemBases()
 				Json::Value val = Data::getInstance()->getJsonValue(item_val, "type");
 				if (val.isString()) item->type = val.asString();
 			}
+			if (Data::getInstance()->isJsonKey(item_val, "image")) {
+				Json::Value val = Data::getInstance()->getJsonValue(item_val, "image");
+				if (val.isString()) item->image = val.asString();
+			}
 			if (Data::getInstance()->isJsonKey(item_val, "rarity")) {
 				Json::Value val = Data::getInstance()->getJsonValue(item_val, "rarity");
 				if (val.isNumeric()) {
@@ -85,7 +99,6 @@ void Item::getItemBases()
 				Json::Value val = Data::getInstance()->getJsonValue(item_val, "life");
 				if (val.isNumeric()) {
 					item->life = val.asInt();
-					std::cout << "life " << item->life << "\n";
 				}
 			}
 			if (Data::getInstance()->isJsonKey(item_val, "amount")) {
@@ -170,6 +183,7 @@ void ItemBase::assign(ItemBase *parent) {
 	amount = parent->amount;
 	consumes = parent->consumes;
 	life = parent->life;
+	image = parent->image;
 	setupStock();
 }
 
@@ -270,7 +284,7 @@ std::string ItemBase::toString() {
 		tmp += "life    : " + (boost::format("%d") % life).str() + "\n";
 	}
 	tmp += "amount  : " + (boost::format("%f") % amount).str() + "\n";
-	tmp += "rarity  : " + (boost::format("%f") % rarity.get()).str() + "\n";
+	tmp += "rarity  : " + (boost::format("%f") % rarity).str() + "\n";
 
 	tmp += "consumes: ";
 	

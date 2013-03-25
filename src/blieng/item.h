@@ -13,11 +13,12 @@ namespace blieng {
 class ItemBase
 {
 public:
-	ItemBase():base(""), type(""), rarity(1.0), amount(0.0), life(-1), usable(false) { }
+	ItemBase():base(""), type(""), image(""), rarity(1.0), amount(0.0), life(-1), usable(false) { }
 
 	boost::flyweight<std::string> base;
 	boost::flyweight<std::string> type;
-	boost::flyweight<double> rarity;
+	boost::flyweight<std::string> image;
+	double rarity;
 	double amount;
 	long int life;
 	bool usable;
@@ -52,6 +53,7 @@ public:
 	Item *produce(double amount=1);
 	bool isUsable() { return usable; }
 	void setUsable() { usable = true; }
+	std::vector<std::string> listItems();
 
 private:
 	void init();

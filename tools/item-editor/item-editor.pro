@@ -1,13 +1,14 @@
 TEMPLATE = app
 TARGET = 
-DEPENDPATH += .
-INCLUDEPATH += .
+DEPENDPATH += . ../../src/blieng
+INCLUDEPATH += . ../../src/blieng
+LIBS += -L/usr/lib -lboost_system -lboost_filesystem -lboost_random
 
 QT += declarative
 unix {
         CONFIG += link_pkgconfig
-	PKGCONFIG += QJson
+	PKGCONFIG += jsoncpp
 }
 
-HEADERS += datas.h
-SOURCES += main.cpp datas.cpp
+HEADERS += items.h ../../src/blieng/item.h ../../src/blieng/data.h
+SOURCES += main.cpp items.cpp ../../src/blieng/item.cpp ../../src/blieng/data.cpp

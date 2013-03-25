@@ -22,6 +22,8 @@ public:
 
 	boost::random::random_device *getGen() { return gen; }
 
+	std::string findFile(std::string name);
+
 private:
 	Data();
 	boost::filesystem::path *findDataPath();
