@@ -1,5 +1,5 @@
 {
-	"time":  { "type": "resource" },
+	"time":  { "type": "resource", "image": "clock1.png" },
 	"worker":{ "type": "resource", "consume": {"time": 1} },
 	"wood":  { "type": "raw", "amount": 5, "consume": {"worker": 1, "time": 1}, "image": "tree1.png" },
 	"stone": { "type": "raw", "amount": 2 },

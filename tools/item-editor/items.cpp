@@ -50,10 +50,12 @@ void ViewItem::loadImage()
 
 void ViewItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
-	//std::cout << "paint\n";
-	//painter->fillRect(geometry(), QColor(255,0,0));
 	loadImage();
 	if (!img.isNull()) {
-		painter->drawImage(0, 0, img);
+		static int posx = -100;
+		static int posy = -100;
+		painter->drawImage(posx, posy, img);
+		posy += 50;
+		posx += 50;
 	}
 }
