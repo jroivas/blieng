@@ -19,6 +19,7 @@ public:
 	ViewItem(blieng::Item *item, QGraphicsItem *parent=0);
 	~ViewItem() {}
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
+	QRectF boundingRect() const;
 
 private:
 	void loadImage();
@@ -32,8 +33,10 @@ class Items
 public:
 	Items();
 	void addToScene(QGraphicsScene *scene);
+	void alignItems();
 
 private:
+	void rowAlign();
 	void generateViewItems();
 	blieng::Item *base;
 	std::vector<std::string> item_names;

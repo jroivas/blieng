@@ -1,5 +1,7 @@
 #include "items.h"
 #include "data.h"
+#include <math.h>
+#include <QDebug>
 
 Items::Items()
 {
@@ -20,22 +22,40 @@ void Items::generateViewItems()
 
 void Items::addToScene(QGraphicsScene *scene)
 {
-	//QGraphicsLinearLayout *layout = new QGraphicsLinearLayout;
 	BOOST_FOREACH(ViewItem *s, view_items) {
-		//layout->addItem(s);
 		scene->addItem(s);
-		//layout->addItem(scene->addWidget(s));
 		s->show();
 	}
-	/*QGraphicsWidget *form = new QGraphicsWidget;
-	form->setLayout(layout);
-	scene->addItem(form);
-	*/
+	alignItems();
+}
+
+void Items::rowAlign()
+{
+	size_t itemcnt = view_items.size();
+	size_t xpos = 0;
+	size_t ypos = 0;
+	size_t colcount = ceil(sqrt(itemcnt)) + 1;
+	size_t col = 0;
+	BOOST_FOREACH(ViewItem *s, view_items) {
+		xpos += s->size().width()*2;
+		col++;
+		if (col >= colcount) {
+			col = 0;
+			xpos = 0;
+			ypos += s->size().height()*2;
+		}
+		s->setPos(xpos, ypos);
+	}
+}
+
+void Items::alignItems()
+{
+	rowAlign();
 }
 
 ViewItem::ViewItem(blieng::Item *item, QGraphicsItem *parent) : QGraphicsWidget(parent), item(item)
 {
-	setMinimumSize(25, 25);
+	setMinimumSize(60, 60);
 }
 
 void ViewItem::loadImage()
@@ -48,14 +68,17 @@ void ViewItem::loadImage()
 	}
 }
 
+QRectF ViewItem::boundingRect() const
+{
+	return QRectF(-40, -40, 40, 40);
+}
+
 void ViewItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
 	loadImage();
 	if (!img.isNull()) {
-		static int posx = -100;
-		static int posy = -100;
-		painter->drawImage(posx, posy, img);
-		posy += 50;
-		posx += 50;
+		painter->drawImage(-1*img.width()/2, -1*img.height()/2, img);
+	} else {
+		painter->drawText(0, 0, QString(item->base.get().c_str()));
 	}
 }
