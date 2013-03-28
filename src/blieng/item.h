@@ -27,6 +27,7 @@ public:
 
 	bool doesConsume(std::string);
 	double consumeCount(std::string name);
+	std::vector<std::string> getConsumes();
 
 	std::string toString();
 	void assign(ItemBase *parent);

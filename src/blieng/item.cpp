@@ -200,6 +200,15 @@ bool ItemBase::doesConsume(std::string name)
 	return false;
 }
 
+std::vector<std::string> ItemBase::getConsumes()
+{
+	std::vector<std::string> res;
+	BOOST_FOREACH(consume_t val, consumes.get()) {
+		res.push_back(val.first);
+	}
+	return res;
+}
+
 bool ItemBase::exhausted()
 {
 	if (life == (long int)-1) return false;

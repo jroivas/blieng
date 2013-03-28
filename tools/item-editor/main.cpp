@@ -3,6 +3,7 @@
 #include <iostream>
 
 #include "items.h"
+#include "myscene.h"
 
 int main(int argc, char**argv)
 {
@@ -14,10 +15,11 @@ int main(int argc, char**argv)
 	*/
 	QApplication app(argc, argv);
 
-	Items *i = new Items();
+	Items *i = Items::getInstance();
 	//Datas *d = new Datas(argv[1]);
 	
-	QGraphicsScene scene;
+	//QGraphicsScene scene;
+	MyScene scene;
 	//scene.addText("Aaa");
 
 	QGraphicsView view(&scene);
