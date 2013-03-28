@@ -56,6 +56,7 @@ public:
 	LineData(ViewItem *from, ViewItem *to, QGraphicsItem *parent=0);
 	void updatePos();
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
+	double amount;
 
 private:
 	ViewItem *from_item;

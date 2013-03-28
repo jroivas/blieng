@@ -219,6 +219,7 @@ void Items::addLines(QGraphicsScene *scene)
 			ViewItem *target = findItem(cons);
 			if (target != NULL) {
 				LineData *tmp = new LineData(src, target);
+				tmp->amount = src->getItem()->consumeCount(cons);
 				line_items.push_back(tmp);
 				scene->addItem(tmp);
 			}
@@ -238,60 +239,37 @@ LineData::LineData(ViewItem *from, ViewItem *to, QGraphicsItem *parent) : QGraph
 	updatePos();
 }
 
+qreal Pi = 3.14159;
 
 void LineData::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
 	QGraphicsLineItem::paint(painter, option, widget);
+	QLineF halfline = line();
+	halfline.setLength(halfline.length()/2);
+	painter->drawText(halfline.p2(), QString::number(amount));
 
-	/*
-	qreal arrowSize = 20;
-	QBrush br = QBrush(Qt::SolidPattern);
-	br.setColor(Qt::blue);
-	painter->setBrush(br);
-	*/
+	double slopy = atan2((line().p2().y() - line().p1().y()), (line().p2().x() - line().p1().x()));
+	double cosy = cos(slopy);
+	double siny = sin(slopy);
 
-	//painter->drawEllipse(line().p2(), 2, 2);
-	/*
-	double angle = ::acos(line().dx() / line().length());
-	if (line().dy() > 0) {
-		angle = (Pi * 2) - angle;
-		QPointF arrowP1 = line().p2() + QPointF(sin(angle + Pi / 3) * arrowSize, cos(angle + Pi / 3) * arrowSize);
-		QPointF arrowP2 = line().p2() + QPointF(sin(angle + Pi - Pi / 3) * arrowSize, cos(angle + Pi - Pi / 3) * arrowSize);
+	double length = 10;
 
-		arrowHead.clear();
-		arrowHead << line().p2() << arrowP1 << arrowP2;
-		painter->drawLine(line());
-		painter->drawPolygon(arrowHead);
-	} else {
-		QPointF arrowP1 = line().p2() + QPointF(sin(angle + Pi / 3) * arrowSize, cos(angle + Pi / 3) * arrowSize);
-		QPointF arrowP2 = line().p2() + QPointF(sin(angle + Pi - Pi / 3) * arrowSize, cos(angle + Pi - Pi / 3) * arrowSize);
+	QPointF aline1 = QPointF(line().p2().x() + (- length * cosy - (length / 2.0 * siny)),
+                                 line().p2().y() + (- length * siny + (length / 2.0 * cosy)));
+	QPointF aline2 = QPointF(line().p2().x() + (- length * cosy + (length / 2.0 * siny)),
+                                 line().p2().y() - (length / 2.0 * cosy + length * siny ));
 
-		arrowHead.clear();
-		arrowHead << line().p2() << arrowP1 << arrowP2;
-		painter->drawLine(line());
-		painter->drawPolygon(arrowHead);
-	}
-	*/
-	/*
-	double angle = ::acos(line().dx() / line().length());
-	if (line().dy() > 0) {
-		angle = (Pi * 2) - angle;
-		QPointF arrowP1 = line().p1() + QPointF(sin(angle + Pi / 3) * arrowSize, cos(angle + Pi / 3) * arrowSize);
-		QPointF arrowP2 = line().p1() + QPointF(sin(angle + Pi - Pi / 3) * arrowSize, cos(angle + Pi - Pi / 3) * arrowSize);
 
-		arrowHead.clear();
-		arrowHead << line().p1() << arrowP1 << arrowP2;
-		painter->drawLine(line());
-		painter->drawPolygon(arrowHead);
-	}
-	*/
+	painter->drawLine(QLineF(line().p2(), aline1));
+	painter->drawLine(QLineF(line().p2(), aline2));
+	painter->drawLine(QLineF(aline1, aline2));
+	painter->drawEllipse(line().p1(), 2, 2);
 }
 
 void LineData::updatePos()
 {
 	QPointF pos1 = from_item->pos() + from_item->boundingRect().center();
 	QPointF pos2 = to_item->pos() + to_item->boundingRect().center();
-	//QLineF line = QLineF(, to_item->boundingRect().center())
 	QLineF line = QLineF(pos1, pos2);
 	setLine(line);
 }
@@ -322,7 +300,7 @@ void ViewItem::loadImage()
 
 QRectF ViewItem::boundingRect() const
 {
-	return QRectF(-40, -40, 40, 40);
+	return QRectF(-60, -40, 60, 40);
 }
 
 void ViewItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
