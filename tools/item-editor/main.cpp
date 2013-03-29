@@ -4,6 +4,7 @@
 
 #include "items.h"
 #include "myscene.h"
+#include "editortable.h"
 
 int main(int argc, char**argv)
 {
@@ -27,6 +28,7 @@ int main(int argc, char**argv)
 	view.setBackgroundBrush(QBrush(Qt::red, Qt::SolidPattern));
 
 	i->addToScene(&scene);
+	//scene.addItem(new EditorTable());
 
 	view.show();
 

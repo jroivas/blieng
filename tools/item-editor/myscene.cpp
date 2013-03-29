@@ -7,18 +7,17 @@ MyScene::MyScene(QObject *parent) : QGraphicsScene(parent)
 {
 	moving = false;
 	move_item = NULL;
+	edit_item = NULL;
+	editor = new EditorTable();
+	addItem(editor);
+	editor->setVisible(false);
 }
 
 void MyScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
-	//qDebug() << "move";
-	//qDebug() << "move" << event->pos() << event->buttonDownPos(Qt::LeftButton);
-	//QGraphicsItem *item = itemAt(event->scenePos());
-	//ViewItem *tmp = dynamic_cast<ViewItem *>(item);
 	if (move_item != NULL) {
-		//qDebug() << "move" << tmp;
-		//tmp->setBg(QColor(0,255,0, 255));
 		move_item->setPos(event->scenePos());
+		move_item->setBg(QColor(0,0,255, 255));
 		Items::getInstance()->update();
 		update();
 	}
@@ -31,15 +30,32 @@ void MyScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 	if (item != NULL) {
 		ViewItem *tmp = dynamic_cast<ViewItem *>(item);
 		if (tmp != NULL) {
-			move_item = tmp;
-			event->accept();
+			if (event->buttons() & Qt::LeftButton) {
+				move_item = tmp;
+				event->accept();
+			}
 		}
 	}
 }
 
 void MyScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
-	move_item = NULL;
-	//qDebug() << "release";
+	if (move_item != NULL) {
+		move_item->setBg(QColor(0,0,0,0));
+		move_item = NULL;
+		update();
+	}
+	else if (event->button() & Qt::RightButton) {
+		QGraphicsItem *item = itemAt(event->scenePos());
+		qDebug() << item;
+		if (item != NULL) {
+			ViewItem *tmp = dynamic_cast<ViewItem *>(item);
+			edit_item = tmp;
+			qDebug() << "Edit " << edit_item;
+			editor->setVisible(true);
+			editor->setZValue(100);
+			event->accept();
+		}
+	}
 }
 

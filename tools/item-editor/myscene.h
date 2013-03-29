@@ -4,6 +4,7 @@
 #include <QGraphicsScene>
 #include <QGraphicsSceneMouseEvent>
 #include "items.h"
+#include "editortable.h"
 
 class MyScene : public QGraphicsScene
 {
@@ -19,6 +20,8 @@ protected:
 private:
 	bool moving;
 	ViewItem *move_item;
+	ViewItem *edit_item;
+	EditorTable *editor;
 };
 
 #endif

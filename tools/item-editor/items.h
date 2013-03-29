@@ -31,16 +31,6 @@ protected:
 	int wid;
 	int hei;
 	QColor bg;
-/*
-	void mousePressEvent(QGraphicsSceneMouseEvent *event);
-	void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
-	void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
-	void hoverMoveEvent (QGraphicsSceneHoverEvent *event);
-	bool sceneEvent ( QEvent * event );
-     void dragEnterEvent(QGraphicsSceneDragDropEvent *event);
-     void dragLeaveEvent(QGraphicsSceneDragDropEvent *event);
-     void dropEvent(QGraphicsSceneDragDropEvent *event);
-*/
 
 private:
 	void loadImage();
