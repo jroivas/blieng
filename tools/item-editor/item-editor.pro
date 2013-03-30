@@ -10,5 +10,5 @@ unix {
 	PKGCONFIG += jsoncpp
 }
 
-HEADERS += items.h editortable.h myscene.h ../../src/blieng/item.h ../../src/blieng/data.h
-SOURCES += main.cpp items.cpp editortable.cpp myscene.cpp ../../src/blieng/item.cpp ../../src/blieng/data.cpp
+HEADERS += items.h editortable.h simplebutton.h myscene.h ../../src/blieng/item.h ../../src/blieng/data.h
+SOURCES += main.cpp items.cpp editortable.cpp simplebutton.cpp myscene.cpp ../../src/blieng/item.cpp ../../src/blieng/data.cpp

@@ -13,6 +13,26 @@ EditorTable::EditorTable(QGraphicsItem *parent) : QGraphicsWidget(parent)
 	proxy->setWidget(table);
 	layout.addItem(proxy);
 
+	addbutton = new SimpleButton("Add");
+	okbutton = new SimpleButton("OK");
+	layout.addItem(addbutton);
+	layout.addItem(okbutton);
+	connect(addbutton, SIGNAL(released()), this, SLOT(addLine()));
+	connect(okbutton, SIGNAL(released()), this, SLOT(doHide()));
+
+	setFlag(ItemIsMovable);
+	setFlag(ItemSendsGeometryChanges);
 
 	setLayout(&layout);
+}
+
+void EditorTable::addLine()
+{
+	model->appendRow(new QStandardItem(""));
+	update();
+}
+
+void EditorTable::doHide()
+{
+	setVisible(false);
 }
