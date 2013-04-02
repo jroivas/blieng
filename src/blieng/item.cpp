@@ -200,6 +200,35 @@ bool ItemBase::doesConsume(std::string name)
 	return false;
 }
 
+void ItemBase::updateConsume(std::string name, double count)
+{
+	std::map<std::string, double> new_consumes = consumes.get();
+	new_consumes[name] = count;
+	consumes = new_consumes;
+}
+
+void ItemBase::removeConsume(std::string name)
+{
+	std::map<std::string, double> new_consumes;
+	BOOST_FOREACH(consume_t val, consumes.get()) {
+		if (val.first != name) {
+			new_consumes[name] = val.second;
+		}
+	}
+	consumes = new_consumes;
+}
+
+void ItemBase::clearConsume()
+{
+	std::map<std::string, double> new_consumes;
+	consumes = new_consumes;
+}
+
+void ItemBase::setConsume(std::map<std::string, double> new_consumes)
+{
+	consumes = new_consumes;
+}
+
 std::vector<std::string> ItemBase::getConsumes()
 {
 	std::vector<std::string> res;

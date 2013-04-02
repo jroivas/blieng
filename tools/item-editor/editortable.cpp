@@ -49,6 +49,7 @@ void EditorTable::addLine()
 
 void EditorTable::doHide()
 {
+	updateItem();
 	setVisible(false);
 }
 
@@ -64,9 +65,32 @@ void EditorTable::appendItem(QString key, QString value, bool dep)
 	}
 }
 
+void EditorTable::updateItem()
+{
+	current_item->getItem()->clearConsume();
+	std::map<std::string, double> datas;
+
+	while (depmodel->rowCount()>0) {
+		QList<QStandardItem *> rows = depmodel->takeRow(0);
+		bool found = false;
+		if (rows.size() == 2) {
+			std::string nowitem = rows[0]->text().toStdString();
+			bool ok = false;
+			double nowval = rows[1]->text().toDouble(&ok);
+			if (nowitem != "" && ok) {
+				datas[nowitem] = nowval;
+			}
+		} else qDebug() << "Invalid row" << rows << "len" << rows.size();
+
+	}
+	current_item->getItem()->setConsume(datas);
+}
+
 void EditorTable::loadItem(ViewItem *item)
 {
 	if (item==NULL) return;
+	current_item = item;
+
 	model->clear();
 	depmodel->clear();
 

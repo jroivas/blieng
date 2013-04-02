@@ -18,6 +18,7 @@ public:
 	EditorTable(QGraphicsItem *parent=0);
 	void loadItem(ViewItem *item);
 	void appendItem(QString key, QString value, bool dep=false);
+	void updateItem();
 
 public slots:
 	void addLine();
@@ -34,6 +35,8 @@ private:
 	QGraphicsLinearLayout but_layout;
 	SimpleButton *addbutton;
 	SimpleButton *okbutton;
+
+	ViewItem *current_item;
 };
 
 #endif

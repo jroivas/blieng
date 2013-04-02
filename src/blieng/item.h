@@ -28,6 +28,10 @@ public:
 	bool doesConsume(std::string);
 	double consumeCount(std::string name);
 	std::vector<std::string> getConsumes();
+	void updateConsume(std::string name, double count);
+	void removeConsume(std::string name);
+	void setConsume(std::map<std::string, double> new_consumes);
+	void clearConsume();
 
 	std::string toString();
 	void assign(ItemBase *parent);
