@@ -9,12 +9,15 @@
 #include <QGraphicsProxyWidget>
 
 #include "simplebutton.h"
+#include "items.h"
 
 class EditorTable : public QGraphicsWidget
 {
 	Q_OBJECT
 public:
 	EditorTable(QGraphicsItem *parent=0);
+	void loadItem(ViewItem *item);
+	void appendItem(QString key, QString value, bool dep=false);
 
 public slots:
 	void addLine();
@@ -23,7 +26,12 @@ public slots:
 private:
 	QStandardItemModel *model;
 	QTableView *table;
+
+	QStandardItemModel *depmodel;
+	QTableView *deptable;
+
 	QGraphicsLinearLayout layout;
+	QGraphicsLinearLayout but_layout;
 	SimpleButton *addbutton;
 	SimpleButton *okbutton;
 };

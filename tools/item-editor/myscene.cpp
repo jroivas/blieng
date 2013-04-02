@@ -68,6 +68,7 @@ void MyScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 			ViewItem *tmp = dynamic_cast<ViewItem *>(item);
 			edit_item = tmp;
 			qDebug() << "Edit " << edit_item;
+			editor->loadItem(edit_item);
 			editor->setVisible(true);
 			editor->setZValue(100);
 			event->accept();
