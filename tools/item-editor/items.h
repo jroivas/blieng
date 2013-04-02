@@ -61,6 +61,7 @@ public:
 	void addToScene(QGraphicsScene *scene);
 	void alignItems();
 	void update();
+	void updateLines(QGraphicsScene *scene);
 
 private:
 	Items();

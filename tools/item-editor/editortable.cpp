@@ -51,6 +51,7 @@ void EditorTable::doHide()
 {
 	updateItem();
 	setVisible(false);
+	emit updated();
 }
 
 void EditorTable::appendItem(QString key, QString value, bool dep)

@@ -17,6 +17,9 @@ protected:
 	void mousePressEvent(QGraphicsSceneMouseEvent *);
 	void mouseReleaseEvent(QGraphicsSceneMouseEvent *);
 
+public slots:
+	void updated();
+
 private:
 	bool moving;
 	ViewItem *move_item;

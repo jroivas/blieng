@@ -23,6 +23,9 @@ public:
 public slots:
 	void addLine();
 	void doHide();
+
+signals:
+	void updated();
 	
 private:
 	QStandardItemModel *model;

@@ -211,6 +211,16 @@ ViewItem *Items::findItem(std::string name)
 	return res;
 }
 
+void Items::updateLines(QGraphicsScene *scene)
+{
+	BOOST_FOREACH(LineData *src, line_items) {
+		scene->removeItem(src);
+		delete src;
+	}
+	line_items.clear();
+	addLines(scene);
+}
+
 void Items::addLines(QGraphicsScene *scene)
 {
 	BOOST_FOREACH(ViewItem *src, view_items) {

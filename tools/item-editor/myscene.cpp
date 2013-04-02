@@ -13,6 +13,16 @@ MyScene::MyScene(QObject *parent) : QGraphicsScene(parent)
 	addItem(editor);
 	editor->setVisible(false);
 	addItem(new SimpleButton("aaa"));
+
+	connect(editor, SIGNAL(updated()), this, SLOT(updated()));
+}
+
+void MyScene::updated()
+{
+	Items *i = Items::getInstance();
+	if (i!=NULL) {
+		i->updateLines(this);
+	}
 }
 
 void MyScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
