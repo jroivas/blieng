@@ -26,14 +26,14 @@ EditorTable::EditorTable(QGraphicsItem *parent) : QGraphicsWidget(parent)
 
 
 	but_layout.setOrientation(Qt::Vertical);
-	addbutton = new SimpleButton("Add dep");
-	okbutton = new SimpleButton("OK");
-	but_layout.addItem(addbutton);
-	but_layout.addItem(okbutton);
+	add_dep_button = new SimpleButton("Add dep");
+	ok_button = new SimpleButton("OK");
+	but_layout.addItem(add_dep_button);
+	but_layout.addItem(ok_button);
 	layout.addItem(&but_layout);
 
-	connect(addbutton, SIGNAL(released()), this, SLOT(addLine()));
-	connect(okbutton, SIGNAL(released()), this, SLOT(doHide()));
+	connect(add_dep_button, SIGNAL(released()), this, SLOT(addLine()));
+	connect(ok_button, SIGNAL(released()), this, SLOT(doHide()));
 
 	setFlag(ItemIsMovable);
 	setFlag(ItemSendsGeometryChanges);
@@ -81,10 +81,24 @@ void EditorTable::updateItem()
 			if (nowitem != "" && ok) {
 				datas[nowitem] = nowval;
 			}
-		} else qDebug() << "Invalid row" << rows << "len" << rows.size();
+		} else qDebug() << "Dependency: Invalid row" << rows << "len" << rows.size();
 
 	}
 	current_item->getItem()->setConsume(datas);
+
+	while (model->rowCount()>0) {
+		QList<QStandardItem *> rows = model->takeRow(0);
+		if (rows.size() == 2) {
+			std::string nowitem = rows[0]->text().toStdString();
+			QString nowval = rows[1]->text();
+			if (nowitem == "base" && nowval.toStdString() != current_item->getItem()->base) {
+				current_item->getItem()->base = nowval.toStdString();
+			}
+		} else qDebug() << "Editor: Invalid row" << rows << "len" << rows.size();
+	}
+	//if (current_item->getItem()->base != model->
+	//current_item->getItem()->base = 
+	
 }
 
 void EditorTable::loadItem(ViewItem *item)

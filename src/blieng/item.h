@@ -13,7 +13,11 @@ namespace blieng {
 class ItemBase
 {
 public:
-	ItemBase():base(""), type(""), image(""), rarity(1.0), amount(0.0), life(-1), usable(false) { }
+	ItemBase():base(""), type(""), image(""), rarity(1.0), amount(0.0), life(-1), usable(false) {
+		/*std::map<std::string, double> empty;
+		consumes = empty;
+		*/
+	}
 
 	boost::flyweight<std::string> base;
 	boost::flyweight<std::string> type;
@@ -51,7 +55,7 @@ public:
 class Item : public ItemBase
 {
 public:
-	Item();
+	Item(bool randomze=false);
 	Item(std::string name);
 
 	bool consume(Item *);

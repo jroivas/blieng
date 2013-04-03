@@ -36,8 +36,8 @@ private:
 
 	QGraphicsLinearLayout layout;
 	QGraphicsLinearLayout but_layout;
-	SimpleButton *addbutton;
-	SimpleButton *okbutton;
+	SimpleButton *add_dep_button;
+	SimpleButton *ok_button;
 
 	ViewItem *current_item;
 };

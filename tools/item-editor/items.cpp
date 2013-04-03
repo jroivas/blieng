@@ -30,6 +30,15 @@ void Items::generateViewItems()
 	}
 }
 
+void Items::appendItem(QGraphicsScene *scene, ViewItem *item)
+{
+	view_items.push_back(item);
+	scene->addItem(item);
+	item->setVisible(true);
+	updateLines(scene);
+}
+
+
 void Items::addToScene(QGraphicsScene *scene)
 {
 	BOOST_FOREACH(ViewItem *item, view_items) {
@@ -323,59 +332,3 @@ void ViewItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
 		painter->drawText(boundingRect(), QString(item->base.get().c_str()));
 	}
 }
-
-
-#if 0
-void ViewItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
-{
-	if ((event->buttons() & Qt::LeftButton) && (event->modifiers() & Qt::ShiftModifier)) {
-		qDebug() << "Moving";
-		moving = true;
-	}
-	qDebug() << "Moving";
-	moving = true;
-}
-
-void ViewItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
-{
-	/*
-	if (event->buttons() & 0x1) {
-	}
-	*/
-	qDebug() << "NOT Moving";
-	moving = false;
-}
-
-void ViewItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
-{
-	if (moving) {
-		qDebug() << "do Move";
-		setPos(event->pos());
-	}
-	qDebug() << "do Move";
-}
-
-void ViewItem::hoverMoveEvent (QGraphicsSceneHoverEvent *event)
-{
-	qDebug() << "hovering";
-}
-bool ViewItem::sceneEvent ( QEvent * event )
-{
-	qDebug() << "eventing";
-	return QGraphicsWidget::sceneEvent(event);
-}
-
-     void ViewItem::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
-{
-	qDebug() << "drag1";
-	event->setAccepted(true);
-}
-     void ViewItem::dragLeaveEvent(QGraphicsSceneDragDropEvent *event)
-{
-	qDebug() << "drag2";
-}
-     void ViewItem::dropEvent(QGraphicsSceneDragDropEvent *event)
-{
-	qDebug() << "drag3";
-}
-#endif

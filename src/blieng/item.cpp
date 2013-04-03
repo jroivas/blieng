@@ -13,9 +13,10 @@ std::map<std::string, blieng::ItemBase *> Item::item_bases;
 typedef std::pair<std::string, ItemBase *> item_bases_t;
 typedef std::pair<std::string, double> consume_t;
 
-Item::Item() : ItemBase()
+Item::Item(bool randomize) : ItemBase()
 {
 	init();
+	if (!randomize) return;
 	int num = getRandomInt(0, item_bases.size());
 	if (item_bases.size() > 0) {
 		int index = 0;
@@ -54,6 +55,8 @@ Item::Item(std::string name) : ItemBase()
 		}
 		if (orig != NULL) {
 			assign(orig);
+		} else {
+			base = name;
 		}
 	}
 }

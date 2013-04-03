@@ -1,5 +1,7 @@
 #include "myscene.h"
 #include "simplebutton.h"
+#include "items.h"
+#include "item.h"
 #include <QDebug>
 #include <boost/foreach.hpp>
 #include <QGraphicsLineItem>
@@ -12,16 +14,44 @@ MyScene::MyScene(QObject *parent) : QGraphicsScene(parent)
 	editor = new EditorTable();
 	addItem(editor);
 	editor->setVisible(false);
-	addItem(new SimpleButton("aaa"));
+
+	but_layout.setOrientation(Qt::Vertical);
+
+	add_item_button = new SimpleButton("Add item");
+	connect(add_item_button, SIGNAL(released()), this, SLOT(newItem()));
+	//addItem(add_item_button);
+	add_item_button->setGeometry(QRectF(-20, 0, 100, 100));
+	add_item_button->setZValue(100);
+	//add_item_button->setVisible(false);
+
+	but_layout.addItem(add_item_button);
+
+	actions = new QGraphicsWidget();
+	actions->setLayout(&but_layout);
+	actions->setVisible(false);
+	addItem(actions);
 
 	connect(editor, SIGNAL(updated()), this, SLOT(updated()));
 }
 
+void MyScene::newItem()
+{
+	Items *items = Items::getInstance();
+	if (items!=NULL) {
+		blieng::Item *item = new blieng::Item();
+		item->base = "new item";
+		ViewItem *view_item = new ViewItem(item);
+		items->appendItem(this, view_item);
+		update();
+	}
+}
+
+
 void MyScene::updated()
 {
-	Items *i = Items::getInstance();
-	if (i!=NULL) {
-		i->updateLines(this);
+	Items *items = Items::getInstance();
+	if (items!=NULL) {
+		items->updateLines(this);
 	}
 }
 
@@ -54,7 +84,6 @@ void MyScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 				ok = true;
 			}
 		}
-		//else item->grabMouse();
 	}
 
 	if (!ok) {
@@ -75,12 +104,18 @@ void MyScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 		QGraphicsItem *item = itemAt(event->scenePos());
 		qDebug() << item;
 		if (item != NULL) {
+			actions->setVisible(false);
 			ViewItem *tmp = dynamic_cast<ViewItem *>(item);
 			edit_item = tmp;
 			qDebug() << "Edit " << edit_item;
 			editor->loadItem(edit_item);
 			editor->setVisible(true);
 			editor->setZValue(100);
+			event->accept();
+			ok = true;
+		} else {
+			actions->setVisible(true);
+			actions->setPos(event->scenePos());
 			event->accept();
 			ok = true;
 		}
