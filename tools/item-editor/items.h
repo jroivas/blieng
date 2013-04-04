@@ -18,7 +18,12 @@ class ViewItem : public QGraphicsItem
 {
 public:
 	ViewItem(blieng::Item *item, QGraphicsItem *parent=0);
-	~ViewItem() {}
+	~ViewItem() {
+		if (item != NULL) {
+			delete item;
+			item = NULL;
+		}
+	}
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
 	QRectF boundingRect() const;
 	blieng::Item *getItem() { return item; }
@@ -62,7 +67,8 @@ public:
 	void alignItems();
 	void update();
 	void updateLines(QGraphicsScene *scene);
-	void appendItem(QGraphicsScene *scene, ViewItem *item);
+	bool appendItem(QGraphicsScene *scene, ViewItem *item);
+	void deleteItem(QGraphicsScene *scene, ViewItem *item);
 
 private:
 	Items();

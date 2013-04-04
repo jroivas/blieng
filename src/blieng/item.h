@@ -50,6 +50,8 @@ public:
 	bool age(long int amount);
 	bool exhausted();
 
+	std::string generateItemJson(std::string indent="");
+
 };
 
 class Item : public ItemBase
@@ -57,12 +59,18 @@ class Item : public ItemBase
 public:
 	Item(bool randomze=false);
 	Item(std::string name);
+	~Item() {
+		base = "";
+	}
 
 	bool consume(Item *);
 	Item *produce(double amount=1);
 	bool isUsable() { return usable; }
 	void setUsable() { usable = true; }
 	std::vector<std::string> listItems();
+	bool removeItem(Item *);
+	bool registerItem(Item *);
+	std::string generateJson();
 
 private:
 	void init();

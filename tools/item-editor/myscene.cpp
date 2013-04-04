@@ -32,6 +32,7 @@ MyScene::MyScene(QObject *parent) : QGraphicsScene(parent)
 	addItem(actions);
 
 	connect(editor, SIGNAL(updated()), this, SLOT(updated()));
+	connect(editor, SIGNAL(deletedItem(ViewItem*)), this, SLOT(deletedItem(ViewItem*)));
 }
 
 void MyScene::newItem()
@@ -41,11 +42,24 @@ void MyScene::newItem()
 		blieng::Item *item = new blieng::Item();
 		item->base = "new item";
 		ViewItem *view_item = new ViewItem(item);
-		items->appendItem(this, view_item);
-		update();
+		if (!items->appendItem(this, view_item)) {
+			delete view_item;
+			delete item;
+		} else {
+			update();
+		}
 	}
 }
 
+void MyScene::deletedItem(ViewItem *item)
+{
+	//qDebug() << "Deleting "<<item;
+	Items *items = Items::getInstance();
+	if (items!=NULL) {
+		items->deleteItem(this, item);
+		update();
+	}
+}
 
 void MyScene::updated()
 {
@@ -95,7 +109,7 @@ void MyScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
 	bool ok = false;
 	if (move_item != NULL) {
-		move_item->setBg(QColor(0,0,0,0));
+		move_item->setBg(QColor(0,0,0,100));
 		move_item = NULL;
 		update();
 		ok = true;

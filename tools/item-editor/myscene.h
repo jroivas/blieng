@@ -21,6 +21,7 @@ protected:
 public slots:
 	void updated();
 	void newItem();
+	void deletedItem(ViewItem *);
 
 private:
 	QGraphicsWidget *actions;

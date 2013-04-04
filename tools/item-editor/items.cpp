@@ -30,12 +30,40 @@ void Items::generateViewItems()
 	}
 }
 
-void Items::appendItem(QGraphicsScene *scene, ViewItem *item)
+bool Items::appendItem(QGraphicsScene *scene, ViewItem *item)
 {
+	if (item == NULL) return false;
+	BOOST_FOREACH(std::string s, item_names) {
+		if (s == item->getItem()->base) return false;
+	}
+	item->getItem()->registerItem(item->getItem());
+
 	view_items.push_back(item);
 	scene->addItem(item);
 	item->setVisible(true);
 	updateLines(scene);
+
+	return true;
+}
+
+void Items::deleteItem(QGraphicsScene *scene, ViewItem *item)
+{
+	scene->removeItem(item);
+	std::vector<ViewItem *> tmp;
+	BOOST_FOREACH(ViewItem *cur_item, view_items) {
+		if (cur_item != item) {
+			tmp.push_back(cur_item);
+		}
+	}
+	view_items = tmp;
+
+	updateLines(scene);
+	if (base->removeItem(item->getItem())) {
+		qDebug() << "Successfully removed item";
+		delete item;
+	} else {
+		qDebug() << "Can't removed item";
+	}
 }
 
 
@@ -304,7 +332,7 @@ ViewItem::ViewItem(blieng::Item *item, QGraphicsItem *parent) : QGraphicsItem(pa
 	maps[1] = NULL;
 	maps[2] = NULL;
 	maps[3] = NULL;
-	bg = QColor(0,0,0,0);
+	bg = QColor(0,0,0,100);
 }
 
 void ViewItem::loadImage()

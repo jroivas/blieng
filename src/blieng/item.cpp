@@ -70,6 +70,32 @@ std::vector<std::string> Item::listItems()
 	return tmp;
 }
 
+bool Item::removeItem(Item *item)
+{
+	if (item == NULL) return false;
+	bool res = false;
+	BOOST_FOREACH(item_bases_t val, item_bases) {
+		if (item->base == val.first) {
+			item_bases.erase(val.first);
+			res = true;
+		}
+	}
+
+	return res;
+}
+
+bool Item::registerItem(Item *item)
+{
+	if (item == NULL) return false;
+	BOOST_FOREACH(item_bases_t val, item_bases) {
+		if (item->base == val.first) {
+			return false;
+		}
+	}
+	item_bases[item->base] = item;
+	return true;
+}
+
 
 void Item::getItemBases()
 {
@@ -347,4 +373,48 @@ std::string ItemBase::toString() {
 	tmp += "\n";
 
 	return tmp;
+}
+
+std::string ItemBase::generateItemJson(std::string indent)
+{
+	std::list<std::string> res;
+	if (type != "") res.push_back("\"type\": \"" + type.get() + "\"");
+	if (image != "") res.push_back("\"image\": \"" + image.get() + "\"");
+	if (amount != 0) res.push_back((boost::format("\"amount\": %f") % amount).str());
+	if (rarity != 0) res.push_back((boost::format("\"rarity\": %f") % rarity).str());
+	if (life != -1) res.push_back((boost::format("\"life\": %f") % life).str());
+
+	std::string tmp = "{";
+	bool first = true;
+	bool got = false;
+	BOOST_FOREACH(consume_t val, consumes.get()) {
+		if (!first) tmp += ", ";
+		first = false;
+		tmp += (boost::format("\"%s\": %f") % val.first % val.second).str();
+		got = true;
+	}
+	tmp += "}";
+	if (got) res.push_back(tmp);
+
+	std::string res_str = indent + "\"" + base.get() + "\": {";
+	first = true;
+	BOOST_FOREACH(std::string val, res) {
+		if (!first) res_str += ", ";
+		first = false;
+		res_str += val;
+	}
+	res_str += "}";
+	return res_str;
+}
+
+std::string Item::generateJson()
+{
+	std::string res = "";
+	bool first = true;
+	BOOST_FOREACH(item_bases_t val, item_bases) {
+		if (!first) res += ",\n";
+		first = false;
+		res += val.second->generateItemJson("  ");
+	}
+	return "{\n" + res + "\n}\n";
 }

@@ -23,9 +23,11 @@ public:
 public slots:
 	void addLine();
 	void doHide();
+	void deleteItem();
 
 signals:
 	void updated();
+	void deletedItem(ViewItem *item);
 	
 private:
 	QStandardItemModel *model;
@@ -37,6 +39,7 @@ private:
 	QGraphicsLinearLayout layout;
 	QGraphicsLinearLayout but_layout;
 	SimpleButton *add_dep_button;
+	SimpleButton *delete_button;
 	SimpleButton *ok_button;
 
 	ViewItem *current_item;

@@ -27,12 +27,15 @@ EditorTable::EditorTable(QGraphicsItem *parent) : QGraphicsWidget(parent)
 
 	but_layout.setOrientation(Qt::Vertical);
 	add_dep_button = new SimpleButton("Add dep");
+	delete_button = new SimpleButton("Delete item");
 	ok_button = new SimpleButton("OK");
 	but_layout.addItem(add_dep_button);
+	but_layout.addItem(delete_button);
 	but_layout.addItem(ok_button);
 	layout.addItem(&but_layout);
 
 	connect(add_dep_button, SIGNAL(released()), this, SLOT(addLine()));
+	connect(delete_button, SIGNAL(released()), this, SLOT(deleteItem()));
 	connect(ok_button, SIGNAL(released()), this, SLOT(doHide()));
 
 	setFlag(ItemIsMovable);
@@ -52,6 +55,12 @@ void EditorTable::doHide()
 	updateItem();
 	setVisible(false);
 	emit updated();
+}
+
+void EditorTable::deleteItem()
+{
+	setVisible(false);
+	emit deletedItem(current_item);
 }
 
 void EditorTable::appendItem(QString key, QString value, bool dep)
@@ -96,6 +105,7 @@ void EditorTable::updateItem()
 			}
 		} else qDebug() << "Editor: Invalid row" << rows << "len" << rows.size();
 	}
+	std::cout << current_item->getItem()->generateJson();
 	//if (current_item->getItem()->base != model->
 	//current_item->getItem()->base = 
 	
