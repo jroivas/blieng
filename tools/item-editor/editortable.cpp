@@ -105,7 +105,7 @@ void EditorTable::updateItem()
 			}
 		} else qDebug() << "Editor: Invalid row" << rows << "len" << rows.size();
 	}
-	std::cout << current_item->getItem()->generateJson();
+	//std::cout << current_item->getItem()->generateJson();
 	//if (current_item->getItem()->base != model->
 	//current_item->getItem()->base = 
 	

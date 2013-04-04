@@ -69,6 +69,7 @@ public:
 	void updateLines(QGraphicsScene *scene);
 	bool appendItem(QGraphicsScene *scene, ViewItem *item);
 	void deleteItem(QGraphicsScene *scene, ViewItem *item);
+	std::string genJSON();
 
 private:
 	Items();

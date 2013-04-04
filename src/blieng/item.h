@@ -50,7 +50,7 @@ public:
 	bool age(long int amount);
 	bool exhausted();
 
-	std::string generateItemJson(std::string indent="");
+	std::string generateJson(std::string indent="");
 
 };
 
@@ -70,7 +70,7 @@ public:
 	std::vector<std::string> listItems();
 	bool removeItem(Item *);
 	bool registerItem(Item *);
-	std::string generateJson();
+	std::string generateBaseJson();
 
 private:
 	void init();

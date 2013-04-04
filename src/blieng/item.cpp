@@ -375,7 +375,7 @@ std::string ItemBase::toString() {
 	return tmp;
 }
 
-std::string ItemBase::generateItemJson(std::string indent)
+std::string ItemBase::generateJson(std::string indent)
 {
 	std::list<std::string> res;
 	if (type != "") res.push_back("\"type\": \"" + type.get() + "\"");
@@ -384,7 +384,7 @@ std::string ItemBase::generateItemJson(std::string indent)
 	if (rarity != 0) res.push_back((boost::format("\"rarity\": %f") % rarity).str());
 	if (life != -1) res.push_back((boost::format("\"life\": %f") % life).str());
 
-	std::string tmp = "{";
+	std::string tmp = "\"consume\": {";
 	bool first = true;
 	bool got = false;
 	BOOST_FOREACH(consume_t val, consumes.get()) {
@@ -407,14 +407,14 @@ std::string ItemBase::generateItemJson(std::string indent)
 	return res_str;
 }
 
-std::string Item::generateJson()
+std::string Item::generateBaseJson()
 {
 	std::string res = "";
 	bool first = true;
 	BOOST_FOREACH(item_bases_t val, item_bases) {
 		if (!first) res += ",\n";
 		first = false;
-		res += val.second->generateItemJson("  ");
+		res += val.second->generateJson("  ");
 	}
 	return "{\n" + res + "\n}\n";
 }

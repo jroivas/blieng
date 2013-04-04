@@ -64,6 +64,7 @@ void MyScene::deletedItem(ViewItem *item)
 void MyScene::updated()
 {
 	Items *items = Items::getInstance();
+	std::cout << items->genJSON();
 	if (items!=NULL) {
 		items->updateLines(this);
 	}

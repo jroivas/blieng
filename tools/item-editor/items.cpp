@@ -248,6 +248,18 @@ ViewItem *Items::findItem(std::string name)
 	return res;
 }
 
+std::string Items::genJSON()
+{
+	std::string res = "";
+	bool first = true;
+	BOOST_FOREACH(ViewItem *s, view_items) {
+		if (!first) res += ",\n";
+		first = false;
+		res += s->getItem()->generateJson("  ");
+	}
+	return "{\n" + res + "\n}\n";
+}
+
 void Items::updateLines(QGraphicsScene *scene)
 {
 	BOOST_FOREACH(LineData *src, line_items) {
