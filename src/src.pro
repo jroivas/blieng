@@ -14,6 +14,7 @@ HEADERS += blieng/bliobject.h \
 	   blieng/data.h \
            blieng/wallclock.h \
 	   blieng/item.h \
+	   blieng/eventlog.h \
 	   zomb/player_character.h \
            zomb/zombie_character.h \
 	   ui/generate_character.h
@@ -23,6 +24,7 @@ SOURCES += main.cpp \
            blieng/data.cpp \
            blieng/wallclock.cpp \
            blieng/item.cpp \
+	   blieng/eventlog.cpp \
            zomb/player_character.cpp \
            zomb/zombie_character.cpp \
            ui/generate_character.cpp
