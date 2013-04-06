@@ -4,6 +4,7 @@
 #include <iostream>
 #include "ui/generate_character.h"
 #include "ui/startscreen.h"
+#include "ui/loadingscreen.h"
 #include "blieng/item.h"
 #include "blieng/wallclock.h"
 #include "zomb/zombie_character.h"
@@ -59,11 +60,21 @@ int main(int argc, char **argv)
 	timer->forward();
 	#endif
 
+	#if 1
+	ui::LoadingScreen *ss = new ui::LoadingScreen();
+	ss->setMinimumSize(800, 600);
+	ss->show();
+	QObject::connect(&app, SIGNAL(lastWindowClosed()), &app, SLOT(quit()));
+	return app.exec();
+	#endif
+
+	#if 0
 	ui::StartScreen *ss = new ui::StartScreen();
 	ss->setMinimumSize(800, 600);
 	ss->show();
 	QObject::connect(&app, SIGNAL(lastWindowClosed()), &app, SLOT(quit()));
 	return app.exec();
+	#endif
 
 	#if 0
 	GenerateCharacter *cg = new GenerateCharacter();
