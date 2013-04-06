@@ -5,6 +5,9 @@
 #include <map>
 #include "zomb/player_character.h"
 
+namespace ui
+{
+
 class GenerateCharacter : public QWidget
 {
 	Q_OBJECT
@@ -25,5 +28,7 @@ private:
 	int improve_points;
 	std::map<QPushButton*, std::string> improve_map;
 };
+
+}
 
 #endif

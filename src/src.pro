@@ -18,7 +18,8 @@ HEADERS += blieng/bliobject.h \
 	   blieng/town.h \
 	   zomb/player_character.h \
            zomb/zombie_character.h \
-	   ui/generate_character.h
+	   ui/generate_character.h \
+	   ui/startscreen.h
 SOURCES += main.cpp \
 	   blieng/bliobject.cpp \
            blieng/character.cpp \
@@ -29,4 +30,5 @@ SOURCES += main.cpp \
 	   blieng/town.cpp \
            zomb/player_character.cpp \
            zomb/zombie_character.cpp \
-           ui/generate_character.cpp
+           ui/generate_character.cpp \
+	   ui/startscreen.cpp

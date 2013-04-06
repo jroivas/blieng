@@ -1,6 +1,8 @@
 #include "generate_character.h"
 #include <list>
 
+using ui::GenerateCharacter;
+
 GenerateCharacter::GenerateCharacter()
 {
 	character = new zomb::PlayerCharacter();
