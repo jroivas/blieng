@@ -32,6 +32,16 @@ void ObjectLog::addEvent(boost::any event)
 	events.push_back(data);
 }
 
+static EventLog *__static_event_log = NULL;
+
+EventLog *EventLog::getInstance()
+{
+	if (__static_event_log == NULL) {
+		__static_event_log = new EventLog();
+	}
+	return __static_event_log;
+}
+
 EventLog::EventLog()
 {
 }
@@ -60,3 +70,9 @@ ObjectLog *EventLog::get(void *object)
 
 	return NULL;
 }
+
+std::vector<ObjectLog *> EventLog::getAll()
+{
+	return events;
+}
+

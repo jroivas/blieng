@@ -29,11 +29,14 @@ private:
 class EventLog
 {
 public:
-	EventLog();
+	EventLog *getInstance();
 	void log(void *object, boost::any event);
 	ObjectLog *get(void *object);
+	std::vector<ObjectLog *> getAll();
+	
 
 private:
+	EventLog();
 	std::vector<ObjectLog *> events;
 };
 
