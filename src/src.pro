@@ -10,15 +10,19 @@ unix {
 }
 
 HEADERS += blieng/bliobject.h \
-	   blieng/character.h blieng/data.h blieng/player_character.h \
+	   blieng/character.h \
+	   blieng/data.h \
            blieng/wallclock.h \
-           blieng/zombie_character.h blieng/item.h ui/generate_character.h
+	   blieng/item.h \
+	   zomb/player_character.h \
+           zomb/zombie_character.h \
+	   ui/generate_character.h
 SOURCES += main.cpp \
 	   blieng/bliobject.cpp \
            blieng/character.cpp \
            blieng/data.cpp \
-           blieng/player_character.cpp \
-           blieng/zombie_character.cpp \
            blieng/wallclock.cpp \
            blieng/item.cpp \
+           zomb/player_character.cpp \
+           zomb/zombie_character.cpp \
            ui/generate_character.cpp

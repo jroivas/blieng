@@ -3,7 +3,7 @@
 
 #include <QtGui>
 #include <map>
-#include "blieng/player_character.h"
+#include "zomb/player_character.h"
 
 class GenerateCharacter : public QWidget
 {
@@ -20,7 +20,7 @@ private:
 	void clear();
 	void update();
 
-	blieng::PlayerCharacter *character;
+	zomb::PlayerCharacter *character;
 	QVBoxLayout layout;
 	int improve_points;
 	std::map<QPushButton*, std::string> improve_map;

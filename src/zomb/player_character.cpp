@@ -2,7 +2,7 @@
 #include <string>
 #include <boost/random/uniform_int_distribution.hpp>
 
-using blieng::PlayerCharacter;
+using zomb::PlayerCharacter;
 
 std::vector<std::string> PlayerCharacter::first_names;
 std::vector<std::string> PlayerCharacter::last_names;
@@ -58,8 +58,8 @@ void PlayerCharacter::generateHealth()
 
 void PlayerCharacter::readNames()
 {
-	if (first_names.size() == 0) first_names = Data::getInstance()->readLinesFromFile("first_names");
-	if (last_names.size() == 0) last_names = Data::getInstance()->readLinesFromFile("last_names");
+	if (first_names.size() == 0) first_names = blieng::Data::getInstance()->readLinesFromFile("first_names");
+	if (last_names.size() == 0) last_names = blieng::Data::getInstance()->readLinesFromFile("last_names");
 }
 
 void PlayerCharacter::generateName()

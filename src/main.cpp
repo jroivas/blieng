@@ -4,8 +4,8 @@
 #include <iostream>
 #include "ui/generate_character.h"
 #include "blieng/item.h"
-#include "blieng/zombie_character.h"
 #include "blieng/wallclock.h"
+#include "zomb/zombie_character.h"
 
 int main(int argc, char **argv)
 {
@@ -34,7 +34,7 @@ int main(int argc, char **argv)
 	}
 
 	for (int j=0; j<10; j++) {
-		blieng::ZombieCharacter *z = new blieng::ZombieCharacter();
+		zomb::ZombieCharacter *z = new zomb::ZombieCharacter();
 		std::cout << z->toString() << "\n";
 	}
 

@@ -3,12 +3,12 @@
 
 #include <string>
 #include <vector>
-#include "character.h"
-#include "data.h"
+#include "blieng/character.h"
+#include "blieng/data.h"
 
-namespace blieng {
+namespace zomb {
 
-class PlayerCharacter : public Character
+class PlayerCharacter : public blieng::Character
 {
 public:
 	PlayerCharacter();

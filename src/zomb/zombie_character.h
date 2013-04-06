@@ -3,7 +3,7 @@
 
 #include "player_character.h"
 
-namespace blieng {
+namespace zomb {
 
 class ZombieCharacter : public PlayerCharacter
 {

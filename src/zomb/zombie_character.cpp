@@ -1,6 +1,6 @@
 #include "zombie_character.h"
 
-using blieng::ZombieCharacter;
+using zomb::ZombieCharacter;
 
 ZombieCharacter::ZombieCharacter() : PlayerCharacter()
 {

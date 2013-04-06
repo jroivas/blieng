@@ -3,7 +3,7 @@
 
 GenerateCharacter::GenerateCharacter()
 {
-	character = new blieng::PlayerCharacter();
+	character = new zomb::PlayerCharacter();
 	setLayout(&layout);
 	improve_points = 5;
 	update();
