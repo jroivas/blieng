@@ -2,7 +2,7 @@
 
 using blieng::ZombieCharacter;
 
-ZombieCharacter::ZombieCharacter() : Character()
+ZombieCharacter::ZombieCharacter() : PlayerCharacter()
 {
 	int health = getRandomInt(30, 65);
 	setValue("health", health);

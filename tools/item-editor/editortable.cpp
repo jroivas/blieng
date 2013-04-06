@@ -100,11 +100,26 @@ void EditorTable::updateItem()
 		if (rows.size() == 2) {
 			std::string nowitem = rows[0]->text().toStdString();
 			QString nowval = rows[1]->text();
+			bool ok = false;
+			double dbl_val = nowval.toDouble(&ok);
 			if (nowitem == "base" && nowval.toStdString() != current_item->getItem()->base) {
 				current_item->getItem()->base = nowval.toStdString();
 			}
+			else if (nowitem == "type" && nowval.toStdString() != current_item->getItem()->type) {
+				current_item->getItem()->type = nowval.toStdString();
+			}
+			else if (nowitem == "amount" && ok) {
+				current_item->getItem()->amount = dbl_val;
+			}
+			else if (nowitem == "life" && ok) {
+				current_item->getItem()->life = dbl_val;
+			}
+			else if (nowitem == "rarity" && ok) {
+				current_item->getItem()->rarity = dbl_val;
+			}
 		} else qDebug() << "Editor: Invalid row" << rows << "len" << rows.size();
 	}
+
 	//std::cout << current_item->getItem()->generateJson();
 	//if (current_item->getItem()->base != model->
 	//current_item->getItem()->base = 

@@ -7,9 +7,12 @@
 #include <boost/random/random_device.hpp>
 #include <boost/format.hpp>
 #include <boost/flyweight.hpp>
+#include "bliobject.h"
 
 namespace blieng {
 
+/* Item base, which contais mandatory parts of the item.
+ */
 class ItemBase
 {
 public:
@@ -37,7 +40,7 @@ public:
 	void setConsume(std::map<std::string, double> new_consumes);
 	void clearConsume();
 
-	std::string toString();
+	std::string itemToString();
 	void assign(ItemBase *parent);
 	bool equals(ItemBase *another);
 	std::map<std::string, double> stocks;
@@ -54,7 +57,9 @@ public:
 
 };
 
-class Item : public ItemBase
+/* Item object itself, may contain item specific stuff
+ */
+class Item : public BliObject, public ItemBase
 {
 public:
 	Item(bool randomze=false);

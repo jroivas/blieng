@@ -39,6 +39,7 @@ int main(int argc, char **argv)
 	}
 
 
+	#if 0
 	blieng::Wallclock *timer = new blieng::Wallclock(new blieng::Item("time"));
 	timer->addProducer(new blieng::Item("ironmine"));
 	timer->addProducer(new blieng::Item("worker"));
@@ -55,8 +56,9 @@ int main(int argc, char **argv)
 	timer->forward();
 	timer->forward();
 	timer->forward();
+	#endif
 
-	#if 0
+	#if 1
 	GenerateCharacter *cg = new GenerateCharacter();
 	cg->show();
 	QObject::connect(&app, SIGNAL(lastWindowClosed()), &app, SLOT(quit()));

@@ -13,7 +13,7 @@ std::map<std::string, blieng::ItemBase *> Item::item_bases;
 typedef std::pair<std::string, ItemBase *> item_bases_t;
 typedef std::pair<std::string, double> consume_t;
 
-Item::Item(bool randomize) : ItemBase()
+Item::Item(bool randomize) : BliObject(), ItemBase()
 {
 	init();
 	if (!randomize) return;
@@ -42,7 +42,7 @@ void Item::init()
 	getItemBases();
 }
 
-Item::Item(std::string name) : ItemBase()
+Item::Item(std::string name) : BliObject(), ItemBase()
 {
 	init();
 	usable = false;
@@ -340,7 +340,7 @@ void ItemBase::setupStock()
 	}
 }
 
-std::string ItemBase::toString() {
+std::string ItemBase::itemToString() {
 	std::string tmp = "";
 	tmp += "base    : " + base.get() + "\n";
 	tmp += "type    : " + type.get() + "\n";
