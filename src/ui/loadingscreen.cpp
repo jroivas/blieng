@@ -43,8 +43,9 @@ void LoadingScreen::paintEvent(QPaintEvent *event)
 	paint.drawImage(0, 0, bg_img.scaled(size(), Qt::KeepAspectRatioByExpanding));
 
 	int i=0;
+	double rdiff = sin(angle*pi/180) * 5;
 	for (i=0; i<10; i++) {
-		drawCircle(&paint, angle - 20 * i, 10 - i);
+		drawCircle(&paint, angle - (20 + rdiff) * i, 10 - i);
 		//drawCircle(&paint, angle - 20 * i, i);
 	}
 	int xpos = size().width() / 2;
