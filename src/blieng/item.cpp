@@ -13,9 +13,11 @@ std::map<std::string, blieng::ItemBase *> Item::item_bases;
 typedef std::pair<std::string, ItemBase *> item_bases_t;
 typedef std::pair<std::string, double> consume_t;
 
-Item::Item(bool randomize) : BliObject(), ItemBase()
+Item::Item() : BliObject(), ItemBase()
 {
 	init();
+	return;
+	#if 0
 	if (!randomize) return;
 	int num = getRandomInt(0, item_bases.size());
 	if (item_bases.size() > 0) {
@@ -29,10 +31,12 @@ Item::Item(bool randomize) : BliObject(), ItemBase()
 			index++;
 		}
 		if (orig != NULL) {
-			assign(orig);
+			assignItem(orig);
 			usable = true;
 		}
 	}
+	std::cout << "Got: " << base << "\n";
+	#endif
 }
 
 void Item::init()
@@ -46,6 +50,7 @@ Item::Item(std::string name) : BliObject(), ItemBase()
 {
 	init();
 	usable = false;
+	std::cout << "Creating: " << name << "\n";
 	if (item_bases.size() > 0) {
 		ItemBase *orig = NULL;
 		BOOST_FOREACH(item_bases_t val, item_bases) {
@@ -54,11 +59,12 @@ Item::Item(std::string name) : BliObject(), ItemBase()
 			}
 		}
 		if (orig != NULL) {
-			assign(orig);
+			assignItem(orig);
 		} else {
 			base = name;
 		}
 	}
+	std::cout << "Got: " << base << "\n";
 }
 
 std::vector<std::string> Item::listItems()
@@ -186,10 +192,16 @@ Item *Item::produce(double produce_amount)
 			can_consume = false;
 		}
 	}
+	std::cout << base << "  " << can_consume << " rai" << produce_amount <<"\n";
 	if (!can_consume) return NULL;
 
-	Item *produced = new Item();
-	produced->assign(this);
+	Item *produced = new Item(base);
+	if (produced == NULL) {
+		std::cout << "Can't create item!\n";
+		exit(1);
+	}
+	//produced->assignObject(this);
+	produced->assignItem(this);
 	produced->usable = true;
 	if (amount > 0) {
 		produced->amount = produce_amount * amount;
@@ -203,7 +215,7 @@ Item *Item::produce(double produce_amount)
 	return produced;
 }
 
-void ItemBase::assign(ItemBase *parent) {
+void ItemBase::assignItem(ItemBase *parent) {
 	if (parent == NULL) return;
 
 	base = parent->base;
@@ -373,6 +385,11 @@ std::string ItemBase::itemToString() {
 	tmp += "\n";
 
 	return tmp;
+}
+
+std::string Item::toString()
+{
+	return blieng::BliObject::toString() + itemToString();
 }
 
 std::string ItemBase::generateJson(std::string indent)

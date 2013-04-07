@@ -12,19 +12,21 @@ class BliObject
 {
 public:
 	BliObject();
-	void setValue(std::string key, boost::any value);
-	bool isValue(std::string key);
+	virtual void setValue(std::string key, boost::any value);
+	virtual bool isValue(std::string key);
 
-	bool increase(std::string key);
-	bool decrease(std::string key);
+	virtual bool increase(std::string key);
+	virtual bool decrease(std::string key);
 
-	boost::any getValue(std::string key);
-	std::string getStringValue(std::string key);
-	int getIntValue(std::string key);
-	double getDoubleValue(std::string key);
+	virtual boost::any getValue(std::string key);
+	virtual std::string getStringValue(std::string key);
+	virtual int getIntValue(std::string key);
+	virtual double getDoubleValue(std::string key);
 	virtual std::string toString();
 
-	std::list<std::string> getKeys();
+	virtual std::list<std::string> getKeys();
+
+	virtual void assignObject(BliObject *another);
 
 protected:
 	int getRandomInt(int limit_low, int limit_max);

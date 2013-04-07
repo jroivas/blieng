@@ -7,7 +7,7 @@ using zomb::PlayerCharacter;
 std::vector<std::string> PlayerCharacter::first_names;
 std::vector<std::string> PlayerCharacter::last_names;
 
-PlayerCharacter::PlayerCharacter() : Character()
+PlayerCharacter::PlayerCharacter() : blieng::Character()
 {
 	roll();
 }
@@ -46,6 +46,8 @@ void PlayerCharacter::roll()
 	setValue("rifle", getRandomInt(0, 50));
 	setValue("pistol", getRandomInt(0, 50));
 	setValue("computer", getRandomInt(0, 50));
+
+	setValue("dead", false);
 }
 
 void PlayerCharacter::generateHealth()
@@ -72,4 +74,3 @@ void PlayerCharacter::generateName()
 
 	setValue("name", name);
 }
-

@@ -5,13 +5,26 @@
  */
 
 #include "bliobject.h"
+#include "item.h"
 
 namespace blieng {
 
-class Character : public BliObject
+class Character : public blieng::BliObject
 {
 public:
 	Character();
+
+	bool kill();
+
+	void addItem(blieng::Item *);
+	blieng::Item *removeItem(blieng::Item *);
+	std::vector<blieng::Item *> getItems();
+
+	virtual void assignObject(blieng::BliObject *another);
+	virtual void assignObject(Character *another);
+
+protected:
+	std::vector<blieng::Item *> items;
 };
 
 }

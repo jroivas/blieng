@@ -5,10 +5,13 @@
 
 namespace zomb {
 
-class ZombieCharacter : public PlayerCharacter
+class ZombieCharacter : public zomb::PlayerCharacter
 {
 public:
 	ZombieCharacter();
+	void fromPlayerCharacter(PlayerCharacter *chr);
+	void filterItems();
+
 private:
 };
 

@@ -15,6 +15,14 @@ BliObject::BliObject()
 {
 }
 
+void BliObject::assignObject(BliObject *another)
+{
+	if (another == NULL) return;
+	BOOST_FOREACH(values_t val, another->values) {
+		values[val.first] = val.second;
+	}
+}
+
 bool BliObject::isValue(std::string key)
 {
 	values_iter_t value_iter = values.find(key);

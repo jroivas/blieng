@@ -13,12 +13,6 @@ int main(int argc, char **argv)
 {
 	QApplication app(argc, argv);
 
-	/*
-	for (int j=0; j<5; j++) {
-		blieng::Item *i = new blieng::Item();
-		std::cout << i->toString() << "\n";
-	}
-	*/
 	blieng::Item *nail = new blieng::Item("nail");
 	blieng::Item *iron = new blieng::Item("iron");
 	iron->setUsable();
@@ -32,16 +26,30 @@ int main(int argc, char **argv)
 		std::cout << new_nail->toString() << "\n";
 	} else {
 		std::cout << "Can't produce nail\n";
-		
 	}
 
+	new_nail = nail->produce();
+	if (new_nail != NULL) {
+		std::cout << new_nail->toString() << "\n";
+	} else {
+		std::cout << "Can't produce nail\n";
+	}
+
+	#if 0
 	for (int j=0; j<10; j++) {
 		zomb::ZombieCharacter *z = new zomb::ZombieCharacter();
 		std::cout << z->toString() << "\n";
 	}
+	#endif
+	zomb::ZombieCharacter *z1 = new zomb::ZombieCharacter();
+	zomb::ZombieCharacter *z2 = new zomb::ZombieCharacter();
+	std::cout << "a1\n";
+	z1->assignObject(z2);
+	std::cout << "a2\n";
+	z1->assignObject(nail);
 
 
-	#if 0
+	#if 1
 	blieng::Wallclock *timer = new blieng::Wallclock(new blieng::Item("time"));
 	timer->addProducer(new blieng::Item("ironmine"));
 	timer->addProducer(new blieng::Item("worker"));
@@ -54,13 +62,15 @@ int main(int argc, char **argv)
 	timer->addProducer(new blieng::Item("wood"));
 	timer->addProducer(new blieng::Item("box"));
 	timer->forward();
+	/*
 	timer->forward();
 	timer->forward();
 	timer->forward();
 	timer->forward();
+	*/
 	#endif
 
-	#if 1
+	#if 0
 	ui::LoadingScreen *ss = new ui::LoadingScreen();
 	ss->setMinimumSize(800, 600);
 	ss->show();

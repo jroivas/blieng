@@ -31,6 +31,10 @@ void Wallclock::produceTime(unsigned long int amount)
 		Item *time = NULL;
 		if (time_producer != NULL) {
 			time = time_producer->produce(amount);
+			if (time == NULL) {
+				std::cout << "Can't create time\n";
+				exit(1);
+			}
 			if (item->doesConsume(time->base)) {
 				item->consume(time);
 			}
@@ -46,12 +50,13 @@ std::vector<blieng::Item *> Wallclock::produceTier1()
 	// Generate first items
 	BOOST_FOREACH(Item *item, producers) {
 		Item *new_item = NULL;
+		int count = 0x1000;
 		do  {
 			new_item = item->produce();
 			if (new_item != NULL) {
 				items.push_back(new_item);
 			}
-		} while (new_item != NULL);
+		} while (new_item != NULL && (--count)>0);
 	}
 	return items;
 }
@@ -61,22 +66,24 @@ std::vector<blieng::Item *> Wallclock::produceTier2(std::vector<Item *> items)
 	// Go thorough the items
 	BOOST_FOREACH(Item *item, items) {
 		Item *new_item = NULL;
+		int count = 0x1000;
 		do  {
 			new_item = item->produce();
 			if (new_item != NULL) {
 				items.push_back(new_item);
 			}
-		} while (new_item != NULL);
+		} while (new_item != NULL && (--count)>0);
 	}
 	// Go thorough the producers
 	BOOST_FOREACH(Item *item, producers) {
 		Item *new_item = NULL;
+		int count = 0x1000;
 		do  {
 			new_item = item->produce();
 			if (new_item != NULL) {
 				items.push_back(new_item);
 			}
-		} while (new_item != NULL);
+		} while (new_item != NULL && (--count)>0);
 	}
 	return items;
 }
@@ -180,9 +187,11 @@ std::vector<blieng::Item *> Wallclock::produce(unsigned long int amount)
 	items = produceTier2(items);
 
 	// Produce rest of the products, consume
-	while (true) {
+	int counter = 0x1000;
+	while (true && (--counter > 0)) {
 		if (!consume(items)) break;
 		items = produceTier2(items);
+		
 	}
 	/*
 	for (int index=0; index <5 ; index++) {

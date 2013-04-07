@@ -31,6 +31,7 @@ public:
 	bool usable;
 
 	boost::flyweight<std::map<std::string, double> > consumes;
+	std::map<std::string, double> stocks;
 
 	bool doesConsume(std::string);
 	double consumeCount(std::string name);
@@ -41,9 +42,8 @@ public:
 	void clearConsume();
 
 	std::string itemToString();
-	void assign(ItemBase *parent);
+	void assignItem(ItemBase *parent);
 	bool equals(ItemBase *another);
-	std::map<std::string, double> stocks;
 	void setupStock();
 
 	bool hasStock();
@@ -62,10 +62,9 @@ public:
 class Item : public BliObject, public ItemBase
 {
 public:
-	Item(bool randomze=false);
+	Item();
 	Item(std::string name);
 	~Item() {
-		base = "";
 	}
 
 	bool consume(Item *);
@@ -76,6 +75,7 @@ public:
 	bool removeItem(Item *);
 	bool registerItem(Item *);
 	std::string generateBaseJson();
+	virtual std::string toString();
 
 private:
 	void init();
