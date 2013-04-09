@@ -14,8 +14,8 @@ public:
 	static Data *getInstance();
 	std::string readString(std::string name);
 	std::vector<std::string> readLinesFromFile(std::string name);
+
 	Json::Value readJson(std::string name);
-	
 	std::vector<std::string> getJsonKeys(Json::Value val);
 	bool isJsonKey(Json::Value val, std::string key);
 	Json::Value getJsonValue(Json::Value val, std::string key);
@@ -26,6 +26,9 @@ public:
 
 private:
 	Data();
+
+	std::string findFileRecursive(const boost::filesystem::path &dir_path, std::string name);
+
 	boost::filesystem::path *findDataPath();
 	boost::filesystem::path *data_path;
 	static Data *__data_instance;

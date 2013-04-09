@@ -6,6 +6,22 @@ Town::Town() : BliObject()
 {
 }
 
+void Town::setName(std::string town_name)
+{
+	name = town_name;
+}
+
+void Town::setSize(unsigned int town_size)
+{
+	size = town_size;
+}
+
+void Town::setPosition(double x, double y)
+{
+	xpos = x;
+	ypos = y;
+}
+
 void Town::addItem(Item *item)
 {
 	items.push_back(item);

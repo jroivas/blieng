@@ -6,6 +6,7 @@
 #include "ui/startscreen.h"
 #include "ui/loadingscreen.h"
 #include "blieng/item.h"
+#include "blieng/maps.h"
 #include "blieng/wallclock.h"
 #include "zomb/zombie_character.h"
 
@@ -49,7 +50,7 @@ int main(int argc, char **argv)
 	z1->assignObject(nail);
 
 
-	#if 1
+	#if 0
 	blieng::Wallclock *timer = new blieng::Wallclock(new blieng::Item("time"));
 	timer->addProducer(new blieng::Item("ironmine"));
 	timer->addProducer(new blieng::Item("worker"));
@@ -62,11 +63,11 @@ int main(int argc, char **argv)
 	timer->addProducer(new blieng::Item("wood"));
 	timer->addProducer(new blieng::Item("box"));
 	timer->forward();
+	timer->forward();
+	timer->forward();
+	timer->forward();
+	timer->forward();
 	/*
-	timer->forward();
-	timer->forward();
-	timer->forward();
-	timer->forward();
 	*/
 	#endif
 
@@ -86,8 +87,10 @@ int main(int argc, char **argv)
 	return app.exec();
 	#endif
 
-	#if 0
-	GenerateCharacter *cg = new GenerateCharacter();
+	blieng::Maps *map1 = new blieng::Maps("world1");
+
+	#if 1
+	ui::GenerateCharacter *cg = new ui::GenerateCharacter();
 	cg->show();
 	QObject::connect(&app, SIGNAL(lastWindowClosed()), &app, SLOT(quit()));
 	

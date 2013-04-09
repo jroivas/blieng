@@ -29,13 +29,11 @@ std::vector<blieng::Item *> Character::getItems()
 void Character::assignObject(BliObject *another)
 {
 	blieng::BliObject::assignObject(another);
-	std::cout << "OBJ\n";
 }
 
 void Character::assignObject(Character *another)
 {
 	if (another == NULL) return;
-	std::cout << "CHR\n";
 	blieng::BliObject::assignObject((BliObject*)another);
 	items = another->items;
 }

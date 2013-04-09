@@ -16,6 +16,7 @@ HEADERS += blieng/bliobject.h \
 	   blieng/item.h \
 	   blieng/eventlog.h \
 	   blieng/town.h \
+	   blieng/maps.h \
 	   zomb/player_character.h \
            zomb/zombie_character.h \
 	   ui/generate_character.h \
@@ -29,6 +30,7 @@ SOURCES += main.cpp \
            blieng/item.cpp \
 	   blieng/eventlog.cpp \
 	   blieng/town.cpp \
+	   blieng/maps.cpp \
            zomb/player_character.cpp \
            zomb/zombie_character.cpp \
            ui/generate_character.cpp \

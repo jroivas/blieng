@@ -40,18 +40,47 @@ boost::filesystem::path *Data::findDataPath()
 	return NULL;
 }
 
+std::string Data::findFileRecursive(const boost::filesystem::path &dir_path, std::string name)
+{
+	if (!boost::filesystem::exists(dir_path)) return "";
+
+	boost::filesystem::directory_iterator end_iter;
+	boost::filesystem::directory_iterator dir_iter(dir_path);
+	
+	for (;dir_iter != end_iter; dir_iter++) {
+		//std::cout << "Checking " << dir_iter->path().string() << "\n";
+
+		if (boost::filesystem::is_directory(dir_iter->status())) {
+			std::string res = findFileRecursive(dir_iter->path(), name);
+			if (res != "") return res;
+		}
+		else if (dir_iter->path().filename() == name) {
+			return dir_iter->path().string();
+		}
+	}
+	return "";
+}
+
+std::string Data::findFile(std::string name)
+{
+	if (data_path == NULL) return "";
+	return findFileRecursive(*data_path, name);
+}
+
+#if 0
 std::string Data::findFile(std::string name)
 {
 	if (data_path == NULL) return "";
 	
 	boost::filesystem::path first_path = *data_path;
-	first_path += "/" + name;
+	first_path /= name;
 	if (boost::filesystem::exists(first_path)) {
 		return first_path.string();
 	}
 
 	return "";
 }
+#endif
 
 std::vector<std::string> Data::readLinesFromFile(std::string name)
 {
@@ -59,7 +88,7 @@ std::vector<std::string> Data::readLinesFromFile(std::string name)
 	if (data_path == NULL) return tmp;
 	
 	boost::filesystem::path first_path = *data_path;
-	first_path += "/" + name;
+	first_path /= name;
 	if (boost::filesystem::exists(first_path)) {
 		boost::filesystem::ifstream fd(first_path);
 		while (!fd.eof()) {
@@ -82,7 +111,7 @@ std::string Data::readString(std::string name)
 	if (data_path == NULL) return res;
 	
 	boost::filesystem::path first_path = *data_path;
-	first_path += "/" + name;
+	first_path /= name;
 	if (boost::filesystem::exists(first_path)) {
 		boost::filesystem::ifstream fd(first_path, std::ifstream::binary);
 		while (!fd.eof()) {
