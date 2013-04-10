@@ -89,7 +89,7 @@ int main(int argc, char **argv)
 
 	blieng::Maps *map1 = new blieng::Maps("world1");
 
-	#if 1
+	#if 0
 	ui::GenerateCharacter *cg = new ui::GenerateCharacter();
 	cg->show();
 	QObject::connect(&app, SIGNAL(lastWindowClosed()), &app, SLOT(quit()));

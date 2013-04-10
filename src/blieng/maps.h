@@ -4,6 +4,8 @@
 #include "bliobject.h"
 #include "item.h"
 #include "character.h"
+#include "town.h"
+#include <json/reader.h>
 
 namespace blieng
 {
@@ -15,9 +17,14 @@ public:
 
 private:
 	void loadMap(std::string name);
+	void parseMap();
 
-	std::string mapname;
-	std::string mapfile;
+	std::string map_name;
+	std::string map_file;
+	Json::Value map_json;
+
+	std::string map_image_file;
+	std::vector<Town *> towns;
 };
 
 }

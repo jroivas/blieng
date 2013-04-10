@@ -2,7 +2,7 @@
 
 using blieng::Town;
 
-Town::Town() : BliObject()
+Town::Town() : BliObject(), name(""), size(0), xpos(0), ypos(0)
 {
 }
 
@@ -19,6 +19,16 @@ void Town::setSize(unsigned int town_size)
 void Town::setPosition(double x, double y)
 {
 	xpos = x;
+	ypos = y;
+}
+
+void Town::setPositionX(double x)
+{
+	xpos = x;
+}
+
+void Town::setPositionY(double y)
+{
 	ypos = y;
 }
 
@@ -66,4 +76,15 @@ bool Town::removeCharacter(Character *chr)
 std::vector<blieng::Character *> Town::getCharacters()
 {
 	return characters;
+}
+
+std::string Town::toString()
+{
+	std::string res = blieng::BliObject::toString();
+
+	res += "name: " + name + "\n";
+	res += (boost::format("size: %u\n") % size).str();
+	res += (boost::format("pos : %f, %f\n") % xpos % ypos).str();
+
+	return res;
 }

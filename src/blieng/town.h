@@ -17,8 +17,11 @@ public:
 	Town();
 	
 	void setName(std::string town_name);
+	const std::string getName() { return name; }
 	void setSize(unsigned int town_size);
 	void setPosition(double x, double y);
+	void setPositionX(double x);
+	void setPositionY(double y);
 
 	void addItem(Item *item);
 	bool removeItem(Item *item);
@@ -27,6 +30,8 @@ public:
 	void addCharacter(Character *chr);
 	bool removeCharacter(Character *chr);
 	std::vector<Character *> getCharacters();
+
+	virtual std::string toString();
 
 private:
 	std::vector<Item *> items;
