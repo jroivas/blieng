@@ -15,6 +15,10 @@ class Maps : public BliObject
 public:
 	Maps(std::string mapname);
 
+	std::string getMapImageFile() { return map_image_file; }
+	std::string getSolvedMapImageFile();
+	std::vector<blieng::Town *> getTowns() { return towns; }
+
 private:
 	void loadMap(std::string name);
 	void parseMap();
@@ -24,7 +28,8 @@ private:
 	Json::Value map_json;
 
 	std::string map_image_file;
-	std::vector<Town *> towns;
+	std::string solved_map_image_file;
+	std::vector<blieng::Town *> towns;
 };
 
 }

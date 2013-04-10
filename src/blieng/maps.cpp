@@ -20,6 +20,16 @@ void Maps::loadMap(std::string name)
 	}
 }
 
+std::string Maps::getSolvedMapImageFile()
+{
+	if (map_image_file == "") return "";
+	if (solved_map_image_file == "") {
+		solved_map_image_file = blieng::Data::getInstance()->findFile(map_image_file);
+	}
+
+	return solved_map_image_file;
+}
+
 void Maps::parseMap()
 {
 	if (!map_json.isObject()) return;
@@ -33,7 +43,6 @@ void Maps::parseMap()
 			std::cout << " = " <<  map_image_file << "\n";
 		}
 		else if (mi == "towns" and item_val.isArray()) {
-			//item_val.asArray();
 			Json::Value::iterator it = item_val.begin();
 			while (it != item_val.end()) {
 				if ((*it).isObject()) {
