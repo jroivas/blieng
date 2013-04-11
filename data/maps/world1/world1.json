@@ -1,8 +1,12 @@
 {
 	"image": "hiano_kartta.png",
 	"towns": [
-		{ "name": "Hometown", "size": 10, "posx": 20, "posy": 100 },
-		{ "name": "Pihtipudas", "size": 50, "posx": 200, "posy": 500 },
-		{ "name": "Outo  kuNpu", "size": 2, "posx": 500, "posy": 10 }
+		{ "name": "Hometown", "size": 10, "posx": 100, "posy": 100 },
+		{ "name": "Pihtipudas", "size": 50, "posx": 200, "posy": 1500 },
+		{ "name": "Outo  kuNpu", "size": 5, "posx": 1500, "posy": 1020 }
+	], 
+	"paths": [
+		[[100, 100], [150, 150], [100, 500], [200, 1500]],
+		[[100, 100], [250, 150], [200, 300], [400, 600], [750, 650], [950, 750], [1000, 900], [1260, 920], [1400, 1020], [1500, 1020]]
 	]
 }

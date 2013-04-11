@@ -1,5 +1,6 @@
 #include "gamescreen.h"
 #include "blieng/data.h"
+#include <boost/foreach.hpp>
 
 using ui::GameScreen;
 
@@ -33,6 +34,35 @@ void GameScreen::paintEvent(QPaintEvent *event)
 	QPainter paint(this);
 	validateImage();
 	paint.drawImage(image_pos, bgimage);
+
+	QPen blackpen(QColor(0,0,0,255));
+	blackpen.setWidth(3);
+	paint.setPen(blackpen);
+	BOOST_FOREACH(blieng::Path *path, maps->getPaths()) {
+		blieng::Point *prev = NULL;
+		BOOST_FOREACH(blieng::Point *point, path->points) {
+			if (prev != NULL) {
+				QPoint a = QPoint(prev->x, prev->y) + image_pos;
+				QPoint b = QPoint(point->x, point->y) + image_pos;
+				paint.drawLine(a, b);
+			}
+			prev = point;
+		}
+	}
+	paint.setBrush(QColor(0,0,0,255));
+	BOOST_FOREACH(blieng::Town *town, maps->getTowns()) {
+		paint.setPen(QColor(0,0,0,255));
+		QPoint town_pos(town->getPositionX(), town->getPositionY());
+		paint.drawEllipse(image_pos + town_pos, town->getSize(), town->getSize());
+
+		QRect namebox = paint.boundingRect(0, 0, 300, 100, Qt::AlignLeft, town->getName().c_str());
+		QPoint textpos = image_pos + town_pos;
+		paint.setPen(QColor(255,0,0,255));
+		textpos.setX(textpos.x() - namebox.width()/2);
+
+		paint.drawText(textpos, town->getName().c_str());
+	}
+
 }
 
 void GameScreen::mousePressEvent(QMouseEvent *event)

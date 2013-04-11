@@ -15,13 +15,18 @@ class Town : public BliObject
 {
 public:
 	Town();
+	virtual ~Town() {}
 	
 	void setName(std::string town_name);
 	const std::string getName() { return name; }
 	void setSize(unsigned int town_size);
+	unsigned int getSize() { return size; }
+
 	void setPosition(double x, double y);
 	void setPositionX(double x);
 	void setPositionY(double y);
+	inline double getPositionX() { return xpos; }
+	inline double getPositionY() { return ypos; }
 
 	void addItem(Item *item);
 	bool removeItem(Item *item);

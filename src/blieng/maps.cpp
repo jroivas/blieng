@@ -9,6 +9,17 @@ Maps::Maps(std::string mapname)
 	loadMap(mapname);
 }
 
+std::string blieng::Path::toString() {
+	std::string res = "";
+	bool first = true;
+	BOOST_FOREACH(blieng::Point *pt, points) {
+		if (!first) res += ";";
+		first = false;
+		res += pt->toString();
+	}
+	return res;
+}
+
 void Maps::loadMap(std::string name)
 {
 	map_name = name;
@@ -71,6 +82,37 @@ void Maps::parseMap()
 						towns.push_back(town);
 					} else {
 						delete town;
+					}
+				}
+				it++;
+			}
+		}
+		else if (mi == "paths" and item_val.isArray()) {
+			Json::Value::iterator it = item_val.begin();
+			while (it != item_val.end()) {
+				if ((*it).isArray()) {
+					blieng::Path *path = new blieng::Path();
+					bool ok = false;
+
+					Json::Value::iterator point_it = (*it).begin();
+					while (point_it != (*it).end()) {
+						if ((*point_it).isArray()) {
+							if ((*point_it).size() >= 2) {
+								Json::Value pt1 =(*point_it)[0];
+								Json::Value pt2 =(*point_it)[1];
+								if (pt1.isNumeric() && pt2.isNumeric()) {
+									blieng::Point *pt = new blieng::Point(pt1.asDouble(), pt2.asDouble());
+									path->addPoint(pt);
+									ok = true;
+								}
+							}
+						}
+						point_it++;
+					}
+					if (ok) {
+						paths.push_back(path);
+					} else {
+						delete path;
 					}
 				}
 				it++;
