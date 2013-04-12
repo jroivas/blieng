@@ -68,6 +68,9 @@ void Maps::parseMap()
 						else if (town_item == "start" and town_val.isNumeric()) {
 							if (town_val.asInt()>0) town->setValue("start", true);
 						}
+						else if (town_item == "population-index" and town_val.isNumeric()) {
+							town->setValue("population-index", town_val.asDouble());
+						}
 					}
 					std::cout << town->toString();
 					if (town->getName() != "") {
