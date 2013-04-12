@@ -3,6 +3,7 @@
 
 #include <QtGui>
 #include "blieng/maps.h"
+#include "zomb/createworld.h"
 
 namespace ui
 {
@@ -11,7 +12,7 @@ class MapScreen : public QWidget
 {
 	Q_OBJECT
 public:
-	MapScreen(QWidget *parent=0);
+	MapScreen(QString mapname, QWidget *parent=0);
 	void paintEvent(QPaintEvent *event);
 
 protected:
@@ -29,6 +30,8 @@ private:
 
 	bool canmove;
 	QPoint last_pos;
+
+	zomb::CreateWorld *create_world;
 };
 
 }

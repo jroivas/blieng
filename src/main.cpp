@@ -90,7 +90,7 @@ int main(int argc, char **argv)
 
 	//blieng::Maps *map1 = new blieng::Maps("world1");
 	#if 1
-	ui::MapScreen *game = new ui::MapScreen();
+	ui::MapScreen *game = new ui::MapScreen("world1");
 	game->show();
 	QObject::connect(&app, SIGNAL(lastWindowClosed()), &app, SLOT(quit()));
 	

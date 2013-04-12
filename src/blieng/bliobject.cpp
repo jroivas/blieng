@@ -68,6 +68,7 @@ Y BliObject::get ## X ## Value(std::string key)\
 	try {\
 		return boost::any_cast<Y>(val);\
 	} catch (boost::bad_any_cast c) {\
+		std::cout << "Error, not a " #X " value at: " + key + "\n";\
 		throw "Error, not a " #X " value at: " + key;\
 	}\
 }
@@ -76,12 +77,15 @@ getConvertValue(String, std::string)
 getConvertValue(Int, int)
 getConvertValue(UInt, unsigned int)
 getConvertValue(Double, double)
+getConvertValue(Bool, bool)
 
+/*
 bool BliObject::getBoolValue(std::string key)
 {
 	if (getIntValue(key)==0) return false;
 	return true;
 }
+*/
 
 #if 0
 std::string BliObject::getStringValue(std::string key)

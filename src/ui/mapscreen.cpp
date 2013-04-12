@@ -7,9 +7,10 @@ using ui::MapScreen;
 /* FIXME: Should this be implemented with QGraphicsItem, QGraphicsScene, etc.
  */
 
-MapScreen::MapScreen(QWidget *parent) : QWidget(parent)
+MapScreen::MapScreen(QString mapname, QWidget *parent) : QWidget(parent)
 {
-	maps = new blieng::Maps("world1");
+	maps = new blieng::Maps(mapname.toStdString());
+	create_world = new zomb::CreateWorld(maps);
 	loadImage();
 }
 

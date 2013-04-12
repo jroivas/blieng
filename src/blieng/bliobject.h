@@ -17,6 +17,7 @@ public:
 
 	virtual bool increase(std::string key);
 	virtual bool decrease(std::string key);
+	bool changeIntValue(std::string key, int diff);
 
 	virtual boost::any getValue(std::string key);
 	virtual std::string getStringValue(std::string key);
@@ -30,11 +31,10 @@ public:
 
 	virtual void assignObject(BliObject *another);
 
-protected:
 	int getRandomInt(int limit_low, int limit_max);
 	double getRandomDouble(double limit_low, double limit_max);
 
-	bool changeIntValue(std::string key, int diff);
+protected:
 	std::map<std::string, boost::any> values;
 
 private:
