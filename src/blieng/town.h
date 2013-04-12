@@ -38,6 +38,9 @@ public:
 
 	virtual std::string toString();
 
+	void updatePopulation();
+	unsigned int getPopulation();
+
 private:
 	std::vector<Item *> items;
 	std::vector<Character *> characters;

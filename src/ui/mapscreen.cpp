@@ -1,19 +1,19 @@
-#include "gamescreen.h"
+#include "mapscreen.h"
 #include "blieng/data.h"
 #include <boost/foreach.hpp>
 
-using ui::GameScreen;
+using ui::MapScreen;
 
 /* FIXME: Should this be implemented with QGraphicsItem, QGraphicsScene, etc.
  */
 
-GameScreen::GameScreen(QWidget *parent) : QWidget(parent)
+MapScreen::MapScreen(QWidget *parent) : QWidget(parent)
 {
 	maps = new blieng::Maps("world1");
 	loadImage();
 }
 
-void GameScreen::loadImage()
+void MapScreen::loadImage()
 {
 	bgimage = QImage(maps->getSolvedMapImageFile().c_str());
 	image_pos = QPoint(0, 0);
@@ -21,7 +21,7 @@ void GameScreen::loadImage()
 
 /* Validate that map fits on the screen
 */
-void GameScreen::validateImage()
+void MapScreen::validateImage()
 {
 	if (image_pos.x() > 0) image_pos.setX(0);
 	if (image_pos.y() > 0) image_pos.setY(0);
@@ -29,7 +29,7 @@ void GameScreen::validateImage()
 	if (image_pos.y() < -(bgimage.height() - height())) image_pos.setY(-(bgimage.height() - height()));
 }
 
-void GameScreen::paintEvent(QPaintEvent *event)
+void MapScreen::paintEvent(QPaintEvent *event)
 {
 	QPainter paint(this);
 	validateImage();
@@ -65,7 +65,7 @@ void GameScreen::paintEvent(QPaintEvent *event)
 
 }
 
-void GameScreen::mousePressEvent(QMouseEvent *event)
+void MapScreen::mousePressEvent(QMouseEvent *event)
 {
 	if (event->buttons() & Qt::LeftButton) {
 		canmove = true;
@@ -73,7 +73,7 @@ void GameScreen::mousePressEvent(QMouseEvent *event)
 	}
 }
 
-void GameScreen::mouseReleaseEvent(QMouseEvent *event)
+void MapScreen::mouseReleaseEvent(QMouseEvent *event)
 {
 	if (canmove) {
 		QPoint now_pos = event->pos();
@@ -87,6 +87,6 @@ void GameScreen::mouseReleaseEvent(QMouseEvent *event)
 	canmove = false;
 }
 
-void GameScreen::mouseMoveEvent(QMouseEvent *event)
+void MapScreen::mouseMoveEvent(QMouseEvent *event)
 {
 }

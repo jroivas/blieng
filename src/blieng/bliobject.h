@@ -20,7 +20,9 @@ public:
 
 	virtual boost::any getValue(std::string key);
 	virtual std::string getStringValue(std::string key);
+	virtual bool getBoolValue(std::string key);
 	virtual int getIntValue(std::string key);
+	virtual unsigned int getUIntValue(std::string key);
 	virtual double getDoubleValue(std::string key);
 	virtual std::string toString();
 

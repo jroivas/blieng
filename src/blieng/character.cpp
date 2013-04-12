@@ -4,6 +4,7 @@ using blieng::Character;
 
 Character::Character() : blieng::BliObject()
 {
+	setValue("dead", false);
 }
 
 bool Character::kill()

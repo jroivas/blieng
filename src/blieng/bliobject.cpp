@@ -57,6 +57,33 @@ void BliObject::setValue(std::string key, boost::any value)
 	values[key] = value;
 }
 
+#define getConvertValue(X, Y) \
+Y BliObject::get ## X ## Value(std::string key)\
+{\
+	boost::any val = getValue(key);\
+	if (val.empty()) {\
+		std::cout << "Error, key not found: " + key + "\n";\
+		throw "Error, key not found: " + key;\
+	}\
+	try {\
+		return boost::any_cast<Y>(val);\
+	} catch (boost::bad_any_cast c) {\
+		throw "Error, not a " #X " value at: " + key;\
+	}\
+}
+
+getConvertValue(String, std::string)
+getConvertValue(Int, int)
+getConvertValue(UInt, unsigned int)
+getConvertValue(Double, double)
+
+bool BliObject::getBoolValue(std::string key)
+{
+	if (getIntValue(key)==0) return false;
+	return true;
+}
+
+#if 0
 std::string BliObject::getStringValue(std::string key)
 {
 	boost::any val = getValue(key);
@@ -68,6 +95,20 @@ std::string BliObject::getStringValue(std::string key)
 		return boost::any_cast<std::string>(val);
 	} catch (boost::bad_any_cast c) {
 		throw "Error, not a string value at: " + key;
+	}
+}
+
+int BliObject::getBoolValue(std::string key)
+{
+	boost::any val = getValue(key);
+	if (val.empty()) {
+		std::cout << "Error, key not found: " + key + "\n";
+		throw "Error, key not found: " + key;
+	}
+	try {
+		return boost::any_cast<bool>(val);
+	} catch (boost::bad_any_cast c) {
+		throw "Error, not a int value at: " + key;
 	}
 }
 
@@ -85,6 +126,21 @@ int BliObject::getIntValue(std::string key)
 	}
 }
 
+unsigned int BliObject::getUIntValue(std::string key)
+{
+	boost::any val = getValue(key);
+	if (val.empty()) {
+		std::cout << "Error, key not found: " + key + "\n";
+		throw "Error, key not found: " + key;
+	}
+	try {
+		return boost::any_cast<unsigned int>(val);
+	} catch (boost::bad_any_cast c) {
+		throw "Error, not a unsigned int value at: " + key;
+	}
+}
+
+
 double BliObject::getDoubleValue(std::string key)
 {
 	boost::any val = getValue(key);
@@ -95,6 +151,7 @@ double BliObject::getDoubleValue(std::string key)
 		throw "Error, not a double value at: " + key;
 	}
 }
+#endif
 
 std::string BliObject::toString()
 {
@@ -107,6 +164,12 @@ std::string BliObject::toString()
 
 		if (val.type() == typeid(int)) {
 			res += (boost::format("%d") % boost::any_cast<int>(val)).str();
+		}
+		else if (val.type() == typeid(unsigned int)) {
+			res += (boost::format("%u") % boost::any_cast<unsigned int>(val)).str();
+		}
+		else if (val.type() == typeid(bool)) {
+			res += boost::any_cast<bool>(val) ? "true" : "false";
 		}
 		else if (val.type() == typeid(double)) {
 			res += (boost::format("%f") % boost::any_cast<double>(val)).str();

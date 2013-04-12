@@ -1,9 +1,25 @@
 #include "town.h"
+#include <boost/foreach.hpp>
 
 using blieng::Town;
 
 Town::Town() : BliObject(), name(""), size(0), xpos(0), ypos(0)
 {
+	setValue("population", (unsigned int)0);
+}
+
+void Town::updatePopulation()
+{
+	unsigned int pop = 0;
+	BOOST_FOREACH(Character *ch, characters) {
+		if (!ch->getBoolValue("dead")) ++pop;
+	}
+	setValue("population", pop);
+}
+
+unsigned int Town::getPopulation()
+{
+	return getUIntValue("population");
 }
 
 void Town::setName(std::string town_name)

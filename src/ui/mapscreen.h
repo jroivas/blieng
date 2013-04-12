@@ -7,11 +7,11 @@
 namespace ui
 {
 
-class GameScreen : public QWidget
+class MapScreen : public QWidget
 {
 	Q_OBJECT
 public:
-	GameScreen(QWidget *parent=0);
+	MapScreen(QWidget *parent=0);
 	void paintEvent(QPaintEvent *event);
 
 protected:

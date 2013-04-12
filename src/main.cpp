@@ -5,7 +5,7 @@
 #include "ui/generate_character.h"
 #include "ui/startscreen.h"
 #include "ui/loadingscreen.h"
-#include "ui/gamescreen.h"
+#include "ui/mapscreen.h"
 #include "blieng/item.h"
 #include "blieng/maps.h"
 #include "blieng/wallclock.h"
@@ -90,7 +90,7 @@ int main(int argc, char **argv)
 
 	//blieng::Maps *map1 = new blieng::Maps("world1");
 	#if 1
-	ui::GameScreen *game = new ui::GameScreen();
+	ui::MapScreen *game = new ui::MapScreen();
 	game->show();
 	QObject::connect(&app, SIGNAL(lastWindowClosed()), &app, SLOT(quit()));
 	

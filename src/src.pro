@@ -17,11 +17,12 @@ HEADERS += blieng/bliobject.h \
 	   blieng/eventlog.h \
 	   blieng/town.h \
 	   blieng/maps.h \
+	   blieng/path.h \
 	   zomb/player_character.h \
            zomb/zombie_character.h \
 	   ui/generate_character.h \
 	   ui/loadingscreen.h \
-	   ui/gamescreen.h \
+	   ui/mapscreen.h \
 	   ui/startscreen.h
 SOURCES += main.cpp \
 	   blieng/bliobject.cpp \
@@ -32,9 +33,10 @@ SOURCES += main.cpp \
 	   blieng/eventlog.cpp \
 	   blieng/town.cpp \
 	   blieng/maps.cpp \
+	   blieng/path.cpp \
            zomb/player_character.cpp \
            zomb/zombie_character.cpp \
            ui/generate_character.cpp \
 	   ui/loadingscreen.cpp \
-	   ui/gamescreen.cpp \
+	   ui/mapscreen.cpp \
 	   ui/startscreen.cpp

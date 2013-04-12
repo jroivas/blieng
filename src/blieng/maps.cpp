@@ -9,17 +9,6 @@ Maps::Maps(std::string mapname)
 	loadMap(mapname);
 }
 
-std::string blieng::Path::toString() {
-	std::string res = "";
-	bool first = true;
-	BOOST_FOREACH(blieng::Point *pt, points) {
-		if (!first) res += ";";
-		first = false;
-		res += pt->toString();
-	}
-	return res;
-}
-
 void Maps::loadMap(std::string name)
 {
 	map_name = name;
@@ -75,6 +64,9 @@ void Maps::parseMap()
 						else if (town_item == "posy" and town_val.isNumeric()) {
 							//std::cout << "posy: " << town_val.asDouble() << "\n";
 							town->setPositionY(town_val.asDouble());
+						}
+						else if (town_item == "start" and town_val.isNumeric()) {
+							if (town_val.asInt()>0) town->setValue("start", true);
 						}
 					}
 					std::cout << town->toString();
