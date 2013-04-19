@@ -36,6 +36,7 @@ void PlayerCharacter::roll()
 
 	// Zombie prob
 	setValue("zombie-prob", getRandomInt(0, 100));
+	setValue("zombie-wound", (double)0);
 
 	// Stats
 	setValue("might", getRandomInt(0, 50));

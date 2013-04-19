@@ -3,7 +3,7 @@
 
 using ui::GenerateCharacter;
 
-GenerateCharacter::GenerateCharacter()
+GenerateCharacter::GenerateCharacter(QWidget *parent) : QWidget(parent)
 {
 	character = new zomb::PlayerCharacter();
 	setLayout(&layout);
@@ -65,12 +65,24 @@ void GenerateCharacter::improve()
 	}
 }
 
+void GenerateCharacter::done()
+{
+	emit generated(character);
+	character = new zomb::PlayerCharacter();
+	reroll();
+}
+
 void GenerateCharacter::update()
 {
 	clear();
 
 	QPushButton *reroll_button = new QPushButton("Re-roll");
 	connect(reroll_button, SIGNAL(clicked()), this, SLOT(reroll()));
+
+	QPushButton *done_button = new QPushButton("Done");
+	connect(done_button, SIGNAL(clicked()), this, SLOT(done()));
+
+	layout.addWidget(done_button);
 	layout.addWidget(reroll_button);
 
 	QLabel *improve = new QLabel("Improve points left: " + QString::number(improve_points));
@@ -95,6 +107,28 @@ void GenerateCharacter::update()
 		}
 		catch (std::string e) {
 			ok = false;
+		}
+		if (!ok) {
+			try {
+				double val = character->getDoubleValue(*key_iter);
+				l2 = new QLabel(QString::number(val));
+				ok = true;
+				can_improve = false;
+			}
+			catch (std::string e) {
+				ok = false;
+			}
+		}
+		if (!ok) {
+			try {
+				bool val = character->getBoolValue(*key_iter);
+				l2 = new QLabel(val?"Yes":"No");
+				ok = true;
+				can_improve = false;
+			}
+			catch (std::string e) {
+				ok = false;
+			}
 		}
 		if (!ok) {
 			try {

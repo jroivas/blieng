@@ -48,11 +48,11 @@ void CreateWorld::initialize()
 		}
 		town->setValue("population", population);
 		//town->setValue("population", population);
-		qDebug() << town->getName().c_str() << " population: " << population << " zombies: " << zombies;
+		//qDebug() << town->getName().c_str() << " population: " << population << " zombies: " << zombies;
 	}
 
-	qDebug() << "total population: " << total_population;
 	#if 0
+	qDebug() << "total population: " << total_population;
 	unsigned int max_zombies = total_population/100;
 	if (max_zombies < 5) max_zombies = 5;
 	unsigned int zombies = maps->getRandomInt(2, max_zombies);

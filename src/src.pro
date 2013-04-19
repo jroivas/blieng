@@ -24,6 +24,7 @@ HEADERS += blieng/bliobject.h \
 	   ui/generate_character.h \
 	   ui/loadingscreen.h \
 	   ui/mapscreen.h \
+	   ui/gamescreen.h \
 	   ui/startscreen.h
 SOURCES += main.cpp \
 	   blieng/bliobject.cpp \
@@ -41,4 +42,5 @@ SOURCES += main.cpp \
            ui/generate_character.cpp \
 	   ui/loadingscreen.cpp \
 	   ui/mapscreen.cpp \
+	   ui/gamescreen.cpp \
 	   ui/startscreen.cpp

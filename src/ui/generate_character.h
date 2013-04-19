@@ -12,11 +12,15 @@ class GenerateCharacter : public QWidget
 {
 	Q_OBJECT
 public:
-	GenerateCharacter();
+	GenerateCharacter(QWidget *parent=0);
 
 public Q_SLOTS:
 	void reroll();
 	void improve();
+	void done();
+
+signals:
+	void generated(zomb::PlayerCharacter *);
 
 private:
 	void clearLayout(QLayout *del_layout);
