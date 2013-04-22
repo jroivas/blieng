@@ -14,8 +14,8 @@ class GameLayout : public QLayout
 {
 public:
 	enum Position { Top, Right, Bottom, Left, Center };
-	GameLayout(QWidget *parent, int margin = 0, int spacing = -1);
-	GameLayout(int spacing = -1);
+	GameLayout(QWidget *parent, int margin = 0, int spacing = 0);
+	GameLayout(int spacing = 0);
 	~GameLayout();
 
 	void addItem(QLayoutItem *item);

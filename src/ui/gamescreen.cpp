@@ -23,10 +23,10 @@ GameScreen::GameScreen(QWidget *parent) : QWidget(parent)
 	layout.addWidget(character_view, GameLayout::Bottom);
 #endif
 
-	mapscreen->setMaximumWidth(1000);
-	mapscreen->setMinimumWidth(600);
+	//mapscreen->setMaximumWidth(1000);
+	mapscreen->setMinimumWidth(400);
 	mapscreen->setMinimumHeight(300);
-	mapscreen->setMaximumHeight(700);
+	//mapscreen->setMaximumHeight(700);
 	character_view->setMinimumHeight(64);
 
 	character_count = 3;
@@ -54,6 +54,7 @@ GameLayout::GameLayout(QWidget *parent, int margin, int spacing) : QLayout(paren
 
 GameLayout::GameLayout(int spacing)
 {
+	setMargin(0);
 	setSpacing(spacing);
 }
 
@@ -146,10 +147,12 @@ void GameLayout::setGeometry(const QRect &rect)
 	BOOST_FOREACH(Item* item, items) {
 		if (item->pos == Top) {
 			item->item->setGeometry( QRect(rect.x(), top_size, rect.width(), item->item->sizeHint().height()) );
+
 			top_size += item->item->geometry().height() + spacing();
 		}
 		else if (item->pos == Bottom) {
 			item->item->setGeometry( QRect(item->item->geometry().x(), item->item->geometry().y(), rect.width(), item->item->sizeHint().height()) );
+
 			bottom_size += item->item->geometry().height() + spacing();
 
 			item->item->setGeometry( QRect(rect.x(), rect.y() + rect.height() - bottom_size + spacing(), item->item->geometry().width(), item->item->sizeHint().height()) );
@@ -164,6 +167,7 @@ void GameLayout::setGeometry(const QRect &rect)
 	BOOST_FOREACH(Item* item, items) {
 		if (item->pos == Left) {
 			item->item->setGeometry( QRect(rect.x() + left_size, top_size, item->item->sizeHint().width(), center_size) );
+
 			left_size += item->item->geometry().width() + spacing();
 		}
 		else if (item->pos == Right) {
@@ -171,7 +175,7 @@ void GameLayout::setGeometry(const QRect &rect)
 
 			right_size += item->item->geometry().width() + spacing();
 
-			item->item->setGeometry( QRect(rect.x() + rect.width() + right_size + spacing(), top_size, item->item->geometry().width(), item->item->sizeHint().height()) );
+			item->item->setGeometry( QRect(rect.x() + rect.width() - right_size + spacing(), top_size, item->item->geometry().width(), item->item->sizeHint().height()) );
 		}
 	}
 
