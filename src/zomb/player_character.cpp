@@ -49,6 +49,9 @@ void PlayerCharacter::roll()
 	setValue("computer", getRandomInt(0, 50));
 
 	setValue("dead", false);
+
+	static const int MAX_IMAGES = 5;
+	setValue("image", getRandomInt(0, MAX_IMAGES));
 }
 
 void PlayerCharacter::generateHealth()

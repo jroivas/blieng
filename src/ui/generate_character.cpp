@@ -77,9 +77,11 @@ void GenerateCharacter::update()
 	clear();
 
 	QPushButton *reroll_button = new QPushButton("Re-roll");
+	reroll_button->setMinimumHeight(20);
 	connect(reroll_button, SIGNAL(clicked()), this, SLOT(reroll()));
 
 	QPushButton *done_button = new QPushButton("Done");
+	done_button->setMinimumHeight(20);
 	connect(done_button, SIGNAL(clicked()), this, SLOT(done()));
 
 	layout.addWidget(done_button);
