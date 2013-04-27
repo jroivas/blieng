@@ -33,6 +33,11 @@ private:
 	class Item {
 	public:
 		Item(QLayoutItem *i, Position p) : item(i), pos(p) { }
+		bool isVisible() {
+			QWidget *wid = item->widget();
+			if (wid != NULL) return wid->isVisible();
+			return false;
+		}
 
 		QLayoutItem *item;
 		Position pos;
