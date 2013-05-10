@@ -14,20 +14,31 @@ CharacterView::CharacterView(QWidget *parent) : QWidget(parent)
 void CharacterView::setCharacters(std::vector<zomb::PlayerCharacter* > _characters)
 {
 	characters = _characters;
-	update();
+	updateView();
 }
 
-void CharacterView::clear()
+void CharacterView::clearData()
 {
 	BOOST_FOREACH(CharacterData* chr, chrdata) {
 		layout.removeItem(chr->box);
+		chr->box->removeWidget(chr->widget);
+		chr->box->removeWidget(chr->name_widget);
+		delete chr->box;
+		delete chr->widget;
+		delete chr->name_widget;
+		delete chr;
 	}
 	chrdata.clear();
 }
 
-void CharacterView::update()
+std::vector<ui::CharacterData *> CharacterView::getCharacters()
 {
-	clear();
+	return chrdata;
+}
+
+void CharacterView::updateView()
+{
+	clearData();
 	BOOST_FOREACH(zomb::PlayerCharacter* chr, characters) {
 		if (chr->isValue("image")) {
 			int image = chr->getIntValue("image") + 1;
@@ -39,7 +50,7 @@ void CharacterView::update()
 
 			data->widget = new QLabel();
 			data->widget->setPixmap(QPixmap::fromImage(data->image.scaled(64, 64)));
-			data->widget->setMinimumSize(64,64);
+			data->widget->setMinimumSize(64, 64);
 
 			data->name_widget = new QLabel();
 			data->name_widget->setText(chr->getStringValue("name").c_str());
@@ -50,4 +61,5 @@ void CharacterView::update()
 			layout.addLayout(data->box);
 		}
 	}
+	update();
 }

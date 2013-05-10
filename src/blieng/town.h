@@ -4,6 +4,7 @@
 #include "bliobject.h"
 #include "item.h"
 #include "character.h"
+#include "path.h"
 
 /* Represents a Town or Node where resources can gather
  */
@@ -25,8 +26,16 @@ public:
 	void setPosition(double x, double y);
 	void setPositionX(double x);
 	void setPositionY(double y);
+	#if 0
 	inline double getPositionX() { return xpos; }
 	inline double getPositionY() { return ypos; }
+	#endif
+	inline double getPositionX() { return pos->x; }
+	inline double getPositionY() { return pos->y; }
+
+	blieng::Point *getPosition() {
+		return pos;
+	}
 
 	void addItem(Item *item);
 	bool removeItem(Item *item);
@@ -46,8 +55,10 @@ private:
 	std::vector<Character *> characters;
 	std::string name;
 	unsigned int size;
-	double xpos;
+	/*double xpos;
 	double ypos;
+	*/
+	blieng::Point *pos;
 };
 
 }

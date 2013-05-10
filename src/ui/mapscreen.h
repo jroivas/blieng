@@ -3,7 +3,9 @@
 
 #include <QtGui>
 #include "blieng/maps.h"
+#include "blieng/town.h"
 #include "zomb/createworld.h"
+#include "ui/characterview.h"
 
 namespace ui
 {
@@ -14,6 +16,14 @@ class MapScreen : public QWidget
 public:
 	MapScreen(QString mapname, QWidget *parent=0);
 	void paintEvent(QPaintEvent *event);
+	blieng::Maps *getMaps() { return maps;}
+
+public slots:
+	void fellowship(QPointF pos);
+	void changedFellowship(std::vector<ui::CharacterData *> fellows);
+
+signals:
+	void townSelected(blieng::Town *);
 
 protected:
 	void mousePressEvent(QMouseEvent *event);
@@ -32,6 +42,8 @@ private:
 	QPoint last_pos;
 
 	zomb::CreateWorld *create_world;
+	std::vector<ui::CharacterData *> the_fellowship;
+	QPointF fellowship_pos;
 };
 
 }

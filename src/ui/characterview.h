@@ -25,10 +25,11 @@ class CharacterView : public QWidget
 public:
 	CharacterView(QWidget *parent=0);
 	void setCharacters(std::vector<zomb::PlayerCharacter *> characters);
+	std::vector<ui::CharacterData *> getCharacters();
 
 private:
-	void clear();
-	void update();
+	void clearData();
+	void updateView();
 
 	std::vector<zomb::PlayerCharacter *> characters;
 	std::vector<CharacterData *> chrdata;

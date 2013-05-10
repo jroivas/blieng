@@ -18,6 +18,7 @@ HEADERS += blieng/bliobject.h \
 	   blieng/town.h \
 	   blieng/maps.h \
 	   blieng/path.h \
+	   blieng/point.h \
 	   zomb/player_character.h \
            zomb/zombie_character.h \
            zomb/createworld.h \
@@ -37,6 +38,7 @@ SOURCES += main.cpp \
 	   blieng/town.cpp \
 	   blieng/maps.cpp \
 	   blieng/path.cpp \
+	   blieng/point.cpp \
            zomb/player_character.cpp \
            zomb/zombie_character.cpp \
            zomb/createworld.cpp \

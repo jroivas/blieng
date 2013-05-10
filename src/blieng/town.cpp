@@ -3,8 +3,9 @@
 
 using blieng::Town;
 
-Town::Town() : BliObject(), name(""), size(0), xpos(0), ypos(0)
+Town::Town() : BliObject(), name(""), size(0)
 {
+	pos = new blieng::Point(0, 0);
 	setValue("population", (unsigned int)0);
 }
 
@@ -34,18 +35,21 @@ void Town::setSize(unsigned int town_size)
 
 void Town::setPosition(double x, double y)
 {
-	xpos = x;
+	pos->x = x;
+	pos->y = y;
+	/*xpos = x;
 	ypos = y;
+	*/
 }
 
 void Town::setPositionX(double x)
 {
-	xpos = x;
+	pos->x = x;
 }
 
 void Town::setPositionY(double y)
 {
-	ypos = y;
+	pos->y = y;
 }
 
 void Town::addItem(Item *item)
@@ -100,7 +104,8 @@ std::string Town::toString()
 
 	res += "name: " + name + "\n";
 	res += (boost::format("size: %u\n") % size).str();
-	res += (boost::format("pos : %f, %f\n") % xpos % ypos).str();
+	res += pos->toString() + "\n";
+	//res += (boost::format("pos : %f, %f\n") % pos->y % pos->y).str();
 
 	return res;
 }

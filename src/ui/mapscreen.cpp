@@ -4,6 +4,9 @@
 
 using ui::MapScreen;
 
+static const double fella_size = 40;
+
+
 /* FIXME: Should this be implemented with QGraphicsItem, QGraphicsScene, etc.
  */
 
@@ -30,6 +33,18 @@ void MapScreen::validateImage()
 	if (image_pos.y() < -(bgimage.height() - height())) image_pos.setY(-(bgimage.height() - height()));
 }
 
+void MapScreen::fellowship(QPointF pos)
+{
+	fellowship_pos = pos;
+	update();
+}
+
+void MapScreen::changedFellowship(std::vector<ui::CharacterData *> fellows)
+{
+	the_fellowship = fellows;
+	update();
+}
+
 void MapScreen::paintEvent(QPaintEvent *event)
 {
 	QPainter paint(this);
@@ -50,6 +65,7 @@ void MapScreen::paintEvent(QPaintEvent *event)
 			prev = point;
 		}
 	}
+
 	paint.setBrush(QColor(0,0,0,255));
 	BOOST_FOREACH(blieng::Town *town, maps->getTowns()) {
 		paint.setPen(QColor(0,0,0,255));
@@ -64,6 +80,30 @@ void MapScreen::paintEvent(QPaintEvent *event)
 		paint.drawText(textpos, town->getName().c_str());
 	}
 
+	unsigned int fella = 0;
+	BOOST_FOREACH(ui::CharacterData *fellow, the_fellowship) {
+		QPointF fpos;
+		switch(fella) {
+			case 0:
+				fpos = QPointF(-1*fella_size/2, -1*fella_size/2);
+				break;
+			case 1:
+				fpos = QPointF(fella_size/2, -1*fella_size/2);
+				break;
+			case 2:
+				fpos = QPointF(-1*fella_size/2, fella_size/2);
+				break;
+			case 3:
+				fpos = QPointF(fella_size/2, fella_size/2);
+				break;
+			default:
+				fpos = QPointF(0, 0);
+				break;
+		}
+		fpos -= QPointF(fella_size/2, fella_size/2);
+		paint.drawImage(image_pos + fellowship_pos + fpos, fellow->image.scaled(fella_size, fella_size));
+		++fella;
+	}
 }
 
 void MapScreen::mousePressEvent(QMouseEvent *event)
@@ -83,6 +123,16 @@ void MapScreen::mouseReleaseEvent(QMouseEvent *event)
 			//qDebug() << "Diffed " << now_pos << pos_diff << pos_diff.manhattanLength();
 			image_pos += pos_diff;
 			update();
+		} else {
+			BOOST_FOREACH(blieng::Town *town, maps->getTowns()) {
+				QPoint town_pos(town->getPositionX(), town->getPositionY());
+				town_pos += image_pos;
+				QPoint town_diff = town_pos - now_pos;
+				if (town_diff.manhattanLength() <= town->getSize()) {
+					qDebug() << "Clicked town " << town->getName().c_str();
+					emit townSelected(town);
+				}
+			}
 		}
 	}
 	canmove = false;

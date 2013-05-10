@@ -11,3 +11,54 @@ std::string blieng::Path::toString() {
 	}
 	return res;
 }
+
+void blieng::Path::append(blieng::Path *another)
+{
+	if (another != NULL) {
+		BOOST_FOREACH(blieng::Point *pt, another->points) {
+			addPoint(pt);
+		}
+	}
+}
+
+blieng::Path *blieng::Path::combine(blieng::Path *another)
+{
+	blieng::Path *newpath = new blieng::Path();
+	BOOST_FOREACH(blieng::Point *pt, points) {
+		newpath->addPoint(pt);
+	}
+
+	if (another != NULL) {
+		BOOST_FOREACH(blieng::Point *pt, another->points) {
+			newpath->addPoint(pt);
+		}
+	}
+
+	return newpath;
+}
+
+
+blieng::Point *blieng::Path::takeFirst()
+{
+	if (!points.empty()) {
+		blieng::Point *res = points.front();
+		points.erase(points.begin());
+		return res;
+	}
+	return NULL;
+}
+blieng::Point *blieng::Path::getStart()
+{
+	if (!points.empty()) {
+		return points.front();
+	}
+	return NULL;
+}
+
+blieng::Point *blieng::Path::getEnd()
+{
+	if (!points.empty()) {
+		return points.back();
+	}
+	return NULL;
+}

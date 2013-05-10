@@ -4,6 +4,7 @@
 #include <QtGui>
 #include "generate_character.h"
 #include "zomb/player_character.h"
+#include "blieng/town.h"
 #include "mapscreen.h"
 #include "characterview.h"
 
@@ -55,16 +56,34 @@ public:
 
 public slots:
 	void newCharacter(zomb::PlayerCharacter *);
+	void targetTown(blieng::Town *);
+	void doWalk();
+
+signals:
+	void fellowship(QPointF);
+	void changeFellowship(std::vector<ui::CharacterData *>);
 
 private:
+	void moveToHomeTown();
+	void solveTargetPath();
+
 	GenerateCharacter *chrgen;
 	MapScreen *mapscreen;
 	CharacterView *character_view;
 
-	//QGridLayout layout;
+	blieng::Town *current_location;
+	blieng::Town *target_location;
+	blieng::Path *target_path;
+	blieng::Point *waypoint;
+	double walk_progress;
+	double walk_length;
+	double walk_speed;
+
 	ui::GameLayout layout;
 	std::vector<zomb::PlayerCharacter *> characters;
 	unsigned int character_count;
+
+	QTimer *walker;
 };
 
 }
