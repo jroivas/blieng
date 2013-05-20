@@ -17,6 +17,10 @@ public:
 	Path *combine(Path *another);
 	void append(Path *another);
 
+	void reverse();
+	Path *reversed();
+	Path *copy();
+
 	Point *takeFirst();
 	Point *getStart();
 	Point *getEnd();

@@ -21,6 +21,7 @@ public:
 	std::string getSolvedMapImageFile();
 	std::vector<blieng::Town *> getTowns() { return towns; }
 	std::vector<blieng::Path *> getPaths() { return paths; }
+	std::vector<blieng::Path *> getRevPaths() { return rev_paths; }
 
 private:
 	void loadMap(std::string name);
@@ -34,6 +35,7 @@ private:
 	std::string solved_map_image_file;
 	std::vector<blieng::Town *> towns;
 	std::vector<blieng::Path *> paths;
+	std::vector<blieng::Path *> rev_paths;
 };
 
 }

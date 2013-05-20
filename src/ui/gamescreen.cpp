@@ -45,8 +45,6 @@ GameScreen::GameScreen(QWidget *parent) : QWidget(parent)
 	connect(this, SIGNAL(fellowship(QPointF)), mapscreen, SLOT(fellowship(QPointF)));
 	connect(this, SIGNAL(changeFellowship(std::vector<ui::CharacterData *>)), mapscreen, SLOT(changedFellowship(std::vector<ui::CharacterData *>)));
 
-	//std::vector<zomb::PlayerCharacter *> getCharacters();
-
 	setLayout(&layout);
 
 	moveToHomeTown();
@@ -77,42 +75,49 @@ void GameScreen::newCharacter(zomb::PlayerCharacter *chr)
 
 void GameScreen::solveTargetPath()
 {
+	target_path = NULL;
 	if (target_location == NULL) return;
 
-	//target_path = new blieng::Path();
 	blieng::Point *from = current_location->getPosition();
 	blieng::Point *to = target_location->getPosition();
-#if 0 
-	double X1 = current_location->getPositionX();
-	double Y1 = current_location->getPositionY();
-	double X2 = target_location->getPositionX();
-	double Y2 = target_location->getPositionY();
-#endif
 
 	std::vector<blieng::Path *> test_paths;
 
 	BOOST_FOREACH(blieng::Path *path, mapscreen->getMaps()->getPaths()) {
 		blieng::Point *start = path->getStart();
-		blieng::Point *end = path->getEnd();
-		//if (start->x == X1 && start->y == Y1) {
 		if (*start == *from) {
 			blieng::Path *tmp = new blieng::Path();
 			tmp->append(path);
 			test_paths.push_back(tmp);
 		}
-
-		BOOST_FOREACH(blieng::Path *continue_path, test_paths) {
-			if (*(continue_path->getEnd()) == *start) {
+	}
+	BOOST_FOREACH(blieng::Path *path, mapscreen->getMaps()->getRevPaths()) {
+		blieng::Point *start = path->getStart();
+		if (*start == *from) {
+			blieng::Path *tmp = new blieng::Path();
+			tmp->append(path);
+			test_paths.push_back(tmp);
+		}
+	}
+	BOOST_FOREACH(blieng::Path *continue_path, test_paths) {
+		BOOST_FOREACH(blieng::Path *path, mapscreen->getMaps()->getPaths()) {
+			if (*(continue_path->getEnd()) == *path->getStart()) {
+				test_paths.push_back(continue_path->combine(path));
+			}
+		}
+		BOOST_FOREACH(blieng::Path *path, mapscreen->getMaps()->getRevPaths()) {
+			if (*(continue_path->getEnd()) == *path->getStart()) {
 				test_paths.push_back(continue_path->combine(path));
 			}
 		}
 	}
 	qDebug() << "PATHS";
 	BOOST_FOREACH(blieng::Path *candi, test_paths) {
-		if (*candi->getEnd() == *to) {
+		if (*candi->getEnd() == *to && *candi->getStart() == *from && !(*candi->getEnd() == *candi->getStart())) {
 			qDebug() << "from: " << candi->getStart()->toString().c_str() << " to: " << candi->getEnd()->toString().c_str();
 			target_path = candi;
 			waypoint = NULL;
+			break;
 		} else {
 			delete candi;
 		}
@@ -121,7 +126,8 @@ void GameScreen::solveTargetPath()
 	test_paths.clear();
 	
 	walk_progress = 0;
-	walk_speed = 5; //TODO Solve from fellowship by slowest character
+	//walk_speed = 10; //TODO Solve from fellowship speed by slowest character
+	walk_speed = 20; //TODO Solve from fellowship speed by slowest character
 	walker->start();
 }
 
@@ -134,14 +140,20 @@ void GameScreen::doWalk()
 		waypoint = target_path->takeFirst();
 	}
 	if (waypoint == NULL) {
+		current_location = target_location;
 		walker->stop();
 		return;
 	}
 	blieng::Point *to_point = target_path->getStart();
-	if (to_point == NULL) return;
+	if (to_point == NULL) {
+		current_location = target_location;
+		walker->stop();
+		return;
+	}
 
 	if (*to_point == *waypoint) {
 		waypoint = target_path->takeFirst();
+		walk_progress = walk_speed;
 	}
 	walk_length = waypoint->length(to_point);
 	
@@ -149,11 +161,11 @@ void GameScreen::doWalk()
 	blieng::Point *pos = waypoint->traverse(to_point, walk_progress, walk_length);
 	if (pos == NULL) {
 		//Finished
+		current_location = target_location;
 		walker->stop();
 	} else if (pos == to_point) {
-		//waypoint = target_path->takeFirst();
 		waypoint = to_point;
-		walk_progress = 0;
+		walk_progress = walk_speed;
 	} else {
 		//qDebug() << "Walking to " << pos->x << ", " << pos->y;
 		emit fellowship(QPointF(pos->x, pos->y));

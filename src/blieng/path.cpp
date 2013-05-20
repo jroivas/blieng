@@ -1,5 +1,7 @@
 #include "path.h"
 #include <boost/foreach.hpp>
+#include <algorithm>
+#include <iostream>
 
 std::string blieng::Path::toString() {
 	std::string res = "";
@@ -61,4 +63,26 @@ blieng::Point *blieng::Path::getEnd()
 		return points.back();
 	}
 	return NULL;
+}
+
+void blieng::Path::reverse()
+{
+	std::reverse(points.begin(), points.end());
+}
+
+blieng::Path *blieng::Path::copy()
+{
+	blieng::Path *newpath = new blieng::Path();
+	BOOST_FOREACH(blieng::Point *pt, points) {
+		newpath->addPoint(pt);
+	}
+
+	return newpath;
+}
+
+blieng::Path *blieng::Path::reversed()
+{
+	blieng::Path *pt = this->copy();
+	pt->reverse();
+	return pt;
 }

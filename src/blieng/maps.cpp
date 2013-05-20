@@ -106,6 +106,7 @@ void Maps::parseMap()
 					}
 					if (ok) {
 						paths.push_back(path);
+						rev_paths.push_back(path->reversed());
 					} else {
 						delete path;
 					}

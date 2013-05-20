@@ -16,6 +16,9 @@ public:
 
 	std::string toString();
 	bool operator==(const Point &other) const;
+	bool operator!=(const Point &other) const {
+		return !(*this == other);
+	}
 
 	Point *traverse(Point *target, double now, double time);
 	double length(Point *another);
