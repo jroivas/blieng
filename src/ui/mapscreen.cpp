@@ -56,7 +56,7 @@ void MapScreen::paintEvent(QPaintEvent *event)
 	paint.setPen(blackpen);
 	BOOST_FOREACH(blieng::Path *path, maps->getPaths()) {
 		blieng::Point *prev = NULL;
-		BOOST_FOREACH(blieng::Point *point, path->points) {
+		BOOST_FOREACH(blieng::Point *point, path->getPoints()) {
 			if (prev != NULL) {
 				QPoint a = QPoint(prev->x, prev->y) + image_pos;
 				QPoint b = QPoint(point->x, point->y) + image_pos;

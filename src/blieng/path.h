@@ -27,9 +27,14 @@ public:
 	Point *getEnd();
 
 	void addPoint(Point *pt);
-	std::vector<Point *> points;
 
 	std::string toString();
+
+	double length();
+	std::vector<Point *> getPoints() { return points; }
+
+private:
+	std::vector<Point *> points;
 };
 
 }
