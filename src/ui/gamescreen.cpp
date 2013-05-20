@@ -96,38 +96,54 @@ void GameScreen::solveTargetPath()
 		}
 	}
 	
-	std::vector<blieng::Path *> append_test_paths;
-	BOOST_FOREACH(blieng::Path *continue_path, test_paths) {
-		if (continue_path == NULL) continue;
-		blieng::Point *end = continue_path->getEnd();
-		if (end != NULL) {
-			BOOST_FOREACH(blieng::Path *path, mapscreen->getMaps()->getPaths()) {
-				blieng::Point *str = path->getStart();
-				if (str!=NULL && *end == *str) {
-					append_test_paths.push_back(continue_path->combine(path));
+	bool ok = false;
+	unsigned int tries = 0;
+	do {
+		std::vector<blieng::Path *> append_test_paths;
+		BOOST_FOREACH(blieng::Path *continue_path, test_paths) {
+			if (continue_path == NULL) continue;
+			blieng::Point *end = continue_path->getEnd();
+			if (end != NULL) {
+				BOOST_FOREACH(blieng::Path *path, mapscreen->getMaps()->getPaths()) {
+					blieng::Point *str = path->getStart();
+					if (str!=NULL && *end == *str) {
+						append_test_paths.push_back(continue_path->combine(path));
+					}
 				}
-			}
-			BOOST_FOREACH(blieng::Path *path, mapscreen->getMaps()->getRevPaths()) {
-				blieng::Point *str = path->getStart();
-				if (str!=NULL && *end == *str) {
-					append_test_paths.push_back(continue_path->combine(path));
+				BOOST_FOREACH(blieng::Path *path, mapscreen->getMaps()->getRevPaths()) {
+					blieng::Point *str = path->getStart();
+					if (str!=NULL && *end == *str) {
+						append_test_paths.push_back(continue_path->combine(path));
+					}
 				}
 			}
 		}
-	}
-	BOOST_FOREACH(blieng::Path *continue_path, append_test_paths) {
-		test_paths.push_back(continue_path);
-	}
-	qDebug() << "PATHS";
+		BOOST_FOREACH(blieng::Path *continue_path, append_test_paths) {
+			test_paths.push_back(continue_path);
+		}
+		BOOST_FOREACH(blieng::Path *candi, test_paths) {
+			if (*candi->getEnd() == *to && *candi->getStart() == *from && !(*candi->getEnd() == *candi->getStart())) {
+				ok = true;
+				break;
+			}
+		}
+		tries++;
+	} while (!ok && tries < 42); //FIXME Maximum supported combined path lenght is 42, ie. maximum 42 combined paths
+
+	double min_len = 9999999999; // FIXME
 	BOOST_FOREACH(blieng::Path *candi, test_paths) {
-		if (*candi->getEnd() == *to && *candi->getStart() == *from && !(*candi->getEnd() == *candi->getStart())) {
-			qDebug() << "from: " << candi->getStart()->toString().c_str() << " to: " << candi->getEnd()->toString().c_str();
-			target_path = candi;
-			waypoint = NULL;
-			break;
-		} else {
-			delete candi;
+		double len = candi->length();
+		if (len < min_len) {
+			if (*candi->getEnd() == *to && *candi->getStart() == *from && !(*candi->getEnd() == *candi->getStart())) {
+				target_path = candi;
+				waypoint = NULL;
+				min_len = len;
+			}
 		}
+	}
+	//qDebug() << "THE PATH" << min_len << target_path->toString().c_str();
+	BOOST_FOREACH(blieng::Path *candi, test_paths) {
+		if (candi != target_path) delete candi;
 	}
 
 	test_paths.clear();

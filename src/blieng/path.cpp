@@ -104,3 +104,16 @@ blieng::Path *blieng::Path::reversed()
 	pt->reverse();
 	return pt;
 }
+
+double Path::length()
+{
+	double len = 0.0;
+	blieng::Point *f = NULL;
+	BOOST_FOREACH(blieng::Point *pt, points) {
+		if (f != NULL && pt != f) {
+			len += f->length(pt);
+		}
+		f = pt;
+	}
+	return len;
+}
