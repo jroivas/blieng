@@ -29,6 +29,7 @@ protected:
 	void mousePressEvent(QMouseEvent *event);
 	void mouseReleaseEvent(QMouseEvent *event);
 	void mouseMoveEvent(QMouseEvent *event);
+	void wheelEvent(QWheelEvent *event);
 
 private:
 	void loadImage();
@@ -44,6 +45,8 @@ private:
 	zomb::CreateWorld *create_world;
 	std::vector<ui::CharacterData *> the_fellowship;
 	QPointF fellowship_pos;
+
+	unsigned int zoomlevel;
 };
 
 }
