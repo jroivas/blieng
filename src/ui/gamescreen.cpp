@@ -144,18 +144,22 @@ void GameScreen::doWalk()
 		walker->stop();
 		return;
 	}
-	blieng::Point *to_point = target_path->getStart();
-	if (to_point == NULL) {
-		current_location = target_location;
-		walker->stop();
-		return;
-	}
+	blieng::Point *to_point = NULL;
+	do {
+		to_point = target_path->getStart();
+		if (to_point == NULL) {
+			current_location = target_location;
+			walker->stop();
+			return;
+		}
 
-	if (*to_point == *waypoint) {
-		waypoint = target_path->takeFirst();
-		walk_progress = walk_speed;
-	}
-	walk_length = waypoint->length(to_point);
+		if (*to_point == *waypoint) {
+			waypoint = target_path->takeFirst();
+			walk_progress = walk_speed;
+		}
+		walk_length = waypoint->length(to_point);
+		if (walk_length == 0) waypoint = to_point;
+	} while (walk_length == 0 || waypoint == to_point);
 	
 	walk_progress += walk_speed;
 	blieng::Point *pos = waypoint->traverse(to_point, walk_progress, walk_length);
@@ -163,9 +167,10 @@ void GameScreen::doWalk()
 		//Finished
 		current_location = target_location;
 		walker->stop();
-	} else if (pos == to_point) {
+	} else if (*pos == *to_point) {
 		waypoint = to_point;
-		walk_progress = walk_speed;
+		walk_progress = 0;
+		emit fellowship(QPointF(pos->x, pos->y));
 	} else {
 		//qDebug() << "Walking to " << pos->x << ", " << pos->y;
 		emit fellowship(QPointF(pos->x, pos->y));
