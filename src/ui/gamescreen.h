@@ -38,8 +38,8 @@ private:
 
 	blieng::Town *current_location;
 	blieng::Town *target_location;
-	blieng::Path *target_path;
-	blieng::Point *waypoint;
+	blieng::Path target_path;
+	blieng::Point waypoint;
 	double walk_progress;
 	double walk_length;
 	double walk_speed;

@@ -30,10 +30,10 @@ public:
 	inline double getPositionX() { return xpos; }
 	inline double getPositionY() { return ypos; }
 	#endif
-	inline double getPositionX() { return pos->x; }
-	inline double getPositionY() { return pos->y; }
+	inline double getPositionX() { return pos.x; }
+	inline double getPositionY() { return pos.y; }
 
-	blieng::Point *getPosition() {
+	blieng::Point getPosition() {
 		return pos;
 	}
 
@@ -58,7 +58,7 @@ private:
 	/*double xpos;
 	double ypos;
 	*/
-	blieng::Point *pos;
+	blieng::Point pos;
 };
 
 }

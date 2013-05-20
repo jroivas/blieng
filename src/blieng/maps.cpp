@@ -86,7 +86,7 @@ void Maps::parseMap()
 			Json::Value::iterator it = item_val.begin();
 			while (it != item_val.end()) {
 				if ((*it).isArray()) {
-					blieng::Path *path = new blieng::Path();
+					blieng::Path path;
 					bool ok = false;
 
 					Json::Value::iterator point_it = (*it).begin();
@@ -96,8 +96,8 @@ void Maps::parseMap()
 								Json::Value pt1 =(*point_it)[0];
 								Json::Value pt2 =(*point_it)[1];
 								if (pt1.isNumeric() && pt2.isNumeric()) {
-									blieng::Point *pt = new blieng::Point(pt1.asDouble(), pt2.asDouble());
-									path->addPoint(pt);
+									blieng::Point pt(pt1.asDouble(), pt2.asDouble());
+									path.addPoint(pt);
 									ok = true;
 								}
 							}
@@ -106,9 +106,7 @@ void Maps::parseMap()
 					}
 					if (ok) {
 						paths.push_back(path);
-						rev_paths.push_back(path->reversed());
-					} else {
-						delete path;
+						rev_paths.push_back(path.reversed());
 					}
 				}
 				it++;

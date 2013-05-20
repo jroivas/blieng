@@ -54,12 +54,12 @@ void MapScreen::paintEvent(QPaintEvent *event)
 	QPen blackpen(QColor(0,0,0,255));
 	blackpen.setWidth(3);
 	paint.setPen(blackpen);
-	BOOST_FOREACH(blieng::Path *path, maps->getPaths()) {
-		blieng::Point *prev = NULL;
-		BOOST_FOREACH(blieng::Point *point, path->getPoints()) {
-			if (prev != NULL) {
-				QPoint a = QPoint(prev->x, prev->y) + image_pos;
-				QPoint b = QPoint(point->x, point->y) + image_pos;
+	BOOST_FOREACH(blieng::Path path, maps->getPaths()) {
+		blieng::Point prev(false);
+		BOOST_FOREACH(blieng::Point point, path.getPoints()) {
+			if (prev.isValid()) {
+				QPoint a = QPoint(prev.x, prev.y) + image_pos;
+				QPoint b = QPoint(point.x, point.y) + image_pos;
 				paint.drawLine(a, b);
 			}
 			prev = point;

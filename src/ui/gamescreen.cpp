@@ -12,7 +12,6 @@ GameScreen::GameScreen(QWidget *parent) : QWidget(parent)
 
 	current_location = NULL;
 	target_location = NULL;
-	target_path = NULL;
 	walker = new QTimer();
 	walker->setInterval(100);
 
@@ -55,8 +54,8 @@ void GameScreen::moveToHomeTown()
 	BOOST_FOREACH(blieng::Town *town, mapscreen->getMaps()->getTowns()) {
 		if (town->isValue("start") && town->getBoolValue("start")) {
 			current_location = town;
-			blieng::Point *pos = town->getPosition();
-			emit fellowship(QPointF(pos->x, pos->y));
+			blieng::Point pos = town->getPosition();
+			emit fellowship(QPointF(pos.x, pos.y));
 			return;
 		}
 	}
@@ -75,54 +74,54 @@ void GameScreen::newCharacter(zomb::PlayerCharacter *chr)
 
 void GameScreen::solveTargetPath()
 {
-	target_path = NULL;
+	target_path = blieng::Path();
 	if (target_location == NULL) return;
 
-	blieng::Point *from = current_location->getPosition();
-	blieng::Point *to = target_location->getPosition();
+	blieng::Point from = current_location->getPosition();
+	blieng::Point to = target_location->getPosition();
 
-	std::vector<blieng::Path *> test_paths;
+	std::vector<blieng::Path> test_paths;
 
-	BOOST_FOREACH(blieng::Path *path, mapscreen->getMaps()->getPaths()) {
-		blieng::Point *start = path->getStart();
-		if (*start == *from) {
-			test_paths.push_back(path->copy());
+	BOOST_FOREACH(blieng::Path path, mapscreen->getMaps()->getPaths()) {
+		blieng::Point start = path.getStart();
+		if (start == from) {
+			test_paths.push_back(path.copy());
 		}
 	}
-	BOOST_FOREACH(blieng::Path *path, mapscreen->getMaps()->getRevPaths()) {
-		blieng::Point *start = path->getStart();
-		if (*start == *from) {
-			test_paths.push_back(path->copy());
+	BOOST_FOREACH(blieng::Path path, mapscreen->getMaps()->getRevPaths()) {
+		blieng::Point start = path.getStart();
+		if (start == from) {
+			test_paths.push_back(path.copy());
 		}
 	}
 	
 	bool ok = false;
 	unsigned int tries = 0;
 	do {
-		std::vector<blieng::Path *> append_test_paths;
-		BOOST_FOREACH(blieng::Path *continue_path, test_paths) {
-			if (continue_path == NULL) continue;
-			blieng::Point *end = continue_path->getEnd();
-			if (end != NULL) {
-				BOOST_FOREACH(blieng::Path *path, mapscreen->getMaps()->getPaths()) {
-					blieng::Point *str = path->getStart();
-					if (str!=NULL && *end == *str) {
-						append_test_paths.push_back(continue_path->combine(path));
+		std::vector<blieng::Path> append_test_paths;
+		BOOST_FOREACH(blieng::Path continue_path, test_paths) {
+			if (!continue_path.isValid()) continue;
+			blieng::Point end = continue_path.getEnd();
+			if (end.isValid()) {
+				BOOST_FOREACH(blieng::Path path, mapscreen->getMaps()->getPaths()) {
+					blieng::Point str = path.getStart();
+					if (str.isValid() && end == str) {
+						append_test_paths.push_back(continue_path.combine(path));
 					}
 				}
-				BOOST_FOREACH(blieng::Path *path, mapscreen->getMaps()->getRevPaths()) {
-					blieng::Point *str = path->getStart();
-					if (str!=NULL && *end == *str) {
-						append_test_paths.push_back(continue_path->combine(path));
+				BOOST_FOREACH(blieng::Path path, mapscreen->getMaps()->getRevPaths()) {
+					blieng::Point str = path.getStart();
+					if (str.isValid() && end == str) {
+						append_test_paths.push_back(continue_path.combine(path));
 					}
 				}
 			}
 		}
-		BOOST_FOREACH(blieng::Path *continue_path, append_test_paths) {
+		BOOST_FOREACH(blieng::Path continue_path, append_test_paths) {
 			test_paths.push_back(continue_path);
 		}
-		BOOST_FOREACH(blieng::Path *candi, test_paths) {
-			if (*candi->getEnd() == *to && *candi->getStart() == *from && !(*candi->getEnd() == *candi->getStart())) {
+		BOOST_FOREACH(blieng::Path candi, test_paths) {
+			if (candi.getEnd() == to && candi.getStart() == from && (candi.getEnd() != candi.getStart())) {
 				ok = true;
 				break;
 			}
@@ -131,10 +130,10 @@ void GameScreen::solveTargetPath()
 	} while (!ok && tries < 42); //FIXME Maximum supported combined path lenght is 42, ie. maximum 42 combined paths
 
 	double min_len = 9999999999; // FIXME
-	BOOST_FOREACH(blieng::Path *candi, test_paths) {
-		double len = candi->length();
+	BOOST_FOREACH(blieng::Path candi, test_paths) {
+		double len = candi.length();
 		if (len < min_len) {
-			if (*candi->getEnd() == *to && *candi->getStart() == *from && !(*candi->getEnd() == *candi->getStart())) {
+			if (candi.getEnd() == to && candi.getStart() == from && (candi.getEnd() != candi.getStart())) {
 				target_path = candi;
 				waypoint = NULL;
 				min_len = len;
@@ -142,9 +141,11 @@ void GameScreen::solveTargetPath()
 		}
 	}
 	//qDebug() << "THE PATH" << min_len << target_path->toString().c_str();
-	BOOST_FOREACH(blieng::Path *candi, test_paths) {
+/*
+	BOOST_FOREACH(blieng::Path candi, test_paths) {
 		if (candi != target_path) delete candi;
 	}
+	*/
 
 	test_paths.clear();
 	
@@ -157,49 +158,49 @@ void GameScreen::solveTargetPath()
 void GameScreen::doWalk()
 {
 	if (target_location == NULL) return;
-	if (target_path == NULL) return;
+	if (!target_path.isValid()) return;
 
-	if (waypoint == NULL) {
-		waypoint = target_path->takeFirst();
+	if (!waypoint.isValid()) {
+		waypoint = target_path.takeFirst();
 	}
-	if (waypoint == NULL) {
+	if (!waypoint.isValid()) {
 		current_location = target_location;
 		walker->stop();
 		emit enterLocation(current_location);
 		return;
 	}
-	blieng::Point *to_point = NULL;
+	blieng::Point to_point;
 	do {
-		to_point = target_path->getStart();
-		if (to_point == NULL) {
+		to_point = target_path.getStart();
+		if (!to_point.isValid()) {
 			current_location = target_location;
 			walker->stop();
 			emit enterLocation(current_location);
 			return;
 		}
 
-		if (*to_point == *waypoint) {
-			waypoint = target_path->takeFirst();
+		if (to_point == waypoint) {
+			waypoint = target_path.takeFirst();
 			walk_progress = walk_speed;
 		}
-		walk_length = waypoint->length(to_point);
+		walk_length = waypoint.length(to_point);
 		if (walk_length == 0) waypoint = to_point;
 	} while (walk_length == 0 || waypoint == to_point);
 	
 	walk_progress += walk_speed;
-	blieng::Point *pos = waypoint->traverse(to_point, walk_progress, walk_length);
-	if (pos == NULL) {
+	blieng::Point pos = waypoint.traverse(to_point, walk_progress, walk_length);
+	if (!pos.isValid()) {
 		//Finished
 		current_location = target_location;
 		walker->stop();
 		emit enterLocation(current_location);
-	} else if (*pos == *to_point) {
+	} else if (pos == to_point) {
 		waypoint = to_point;
 		walk_progress = 0;
-		emit fellowship(QPointF(pos->x, pos->y));
+		emit fellowship(QPointF(pos.x, pos.y));
 	} else {
 		//qDebug() << "Walking to " << pos->x << ", " << pos->y;
-		emit fellowship(QPointF(pos->x, pos->y));
+		emit fellowship(QPointF(pos.x, pos.y));
 	}
 
 }
