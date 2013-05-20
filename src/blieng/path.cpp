@@ -13,107 +13,145 @@ Path::~Path()
 {
 }
 
-std::string blieng::Path::toString() {
+std::string Path::toString() {
 	std::string res = "";
 	bool first = true;
-	BOOST_FOREACH(blieng::Point *pt, points) {
+	BOOST_FOREACH(blieng::Point pt, points) {
 		if (!first) res += ";";
 		first = false;
-		res += pt->toString();
+		res += pt.toString();
 	}
 	return res;
 }
 
-void Path::addPoint(Point *pt)
+void Path::addPoint(Point pt)
 {
-	if (pt != NULL) {
-		points.push_back(pt);
+	points.push_back(pt);
+}
+
+void Path::append(Path another)
+{
+	BOOST_FOREACH(blieng::Point pt, another.points) {
+		addPoint(pt);
 	}
 }
 
-void blieng::Path::append(blieng::Path *another)
+Path Path::combine(Path another)
 {
-	if (another != NULL) {
-		BOOST_FOREACH(blieng::Point *pt, another->points) {
-			addPoint(pt);
-		}
-	}
-}
-
-blieng::Path *blieng::Path::combine(blieng::Path *another)
-{
-	blieng::Path *newpath = new blieng::Path();
-	BOOST_FOREACH(blieng::Point *pt, points) {
-		newpath->addPoint(pt);
+	Path newpath;
+	BOOST_FOREACH(blieng::Point pt, points) {
+		newpath.addPoint(pt);
 	}
 
-	if (another != NULL) {
-		BOOST_FOREACH(blieng::Point *pt, another->points) {
-			newpath->addPoint(pt);
-		}
+	BOOST_FOREACH(blieng::Point pt, another.points) {
+		newpath.addPoint(pt);
 	}
 
 	return newpath;
 }
 
 
-blieng::Point *blieng::Path::takeFirst()
+blieng::Point Path::takeFirst()
 {
 	if (!points.empty()) {
-		blieng::Point *res = points.front();
+		blieng::Point res = points.front();
 		points.erase(points.begin());
 		return res;
 	}
-	return NULL;
+	return blieng::Point(false);
 }
-blieng::Point *blieng::Path::getStart()
+
+blieng::Point Path::takeLast()
+{
+	if (!points.empty()) {
+		blieng::Point res = points.back();
+		points.erase(points.end());
+		return res;
+	}
+	return blieng::Point(false);
+}
+
+blieng::Point Path::getStart()
 {
 	if (!points.empty()) {
 		return points.front();
 	}
-	return NULL;
+	return blieng::Point(false);
 }
 
-blieng::Point *blieng::Path::getEnd()
+bool Path::isValid()
+{
+	return !points.empty();
+}
+
+blieng::Point Path::getEnd()
 {
 	if (!points.empty()) {
 		return points.back();
 	}
-	return NULL;
+	return blieng::Point(false);
 }
 
-void blieng::Path::reverse()
+void Path::reverse()
 {
 	std::reverse(points.begin(), points.end());
 }
 
-blieng::Path *blieng::Path::copy()
+Path Path::copy()
 {
-	blieng::Path *newpath = new blieng::Path();
-	if (newpath == NULL) return NULL;
-	BOOST_FOREACH(blieng::Point *pt, points) {
-		newpath->addPoint(pt);
+	Path newpath;
+	BOOST_FOREACH(blieng::Point pt, points) {
+		newpath.addPoint(pt);
 	}
 
 	return newpath;
 }
 
-blieng::Path *blieng::Path::reversed()
+Path Path::reversed()
 {
-	blieng::Path *pt = this->copy();
-	pt->reverse();
-	return pt;
+	Path rev_path = this->copy();
+	rev_path.reverse();
+	return rev_path;
 }
 
 double Path::length()
 {
 	double len = 0.0;
-	blieng::Point *f = NULL;
-	BOOST_FOREACH(blieng::Point *pt, points) {
-		if (f != NULL && pt != f) {
-			len += f->length(pt);
+
+	blieng::Point f(false);
+	BOOST_FOREACH(blieng::Point pt, points) {
+		if (f.isValid() && pt != f) {
+			len += f.length(pt);
 		}
 		f = pt;
 	}
+
 	return len;
+}
+
+bool Path::operator==(const Path &other) const
+{
+	size_t psize = points.size();
+	if (other.points.size() != psize) return false;
+
+
+	std::vector<blieng::Point>::const_iterator a = points.begin();
+	std::vector<blieng::Point>::const_iterator b = other.points.begin();
+	while (a != points.end()) {
+		if (*a != *b) return false;
+		++a;
+		++b;
+	}
+
+	return true;
+}
+
+bool Path::operator!=(const Path &other) const
+{
+	return !(*this == other);
+}
+
+unsigned int Path::size()
+{
+	return points.size();
 }

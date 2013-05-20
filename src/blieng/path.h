@@ -15,26 +15,33 @@ public:
 	Path();
 	~Path();
 
-	Path *combine(Path *another);
-	void append(Path *another);
+	Path combine(Path another);
+	void append(Path another);
 
+	bool isValid();
 	void reverse();
-	Path *reversed();
-	Path *copy();
+	Path reversed();
+	Path copy();
 
-	Point *takeFirst();
-	Point *getStart();
-	Point *getEnd();
+	Point takeFirst();
+	Point takeLast();
+	Point getStart();
+	Point getEnd();
 
-	void addPoint(Point *pt);
+	void addPoint(Point pt);
+
+	unsigned int size();
 
 	std::string toString();
 
 	double length();
-	std::vector<Point *> getPoints() { return points; }
+	std::vector<Point> getPoints() const { return points; }
+
+	bool operator==(const Path &other) const;
+	bool operator!=(const Path &other) const;
 
 private:
-	std::vector<Point *> points;
+	std::vector<Point> points;
 };
 
 }

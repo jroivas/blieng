@@ -89,3 +89,41 @@ void PointTest::traverse()
 
 	TEST_ASSERT (c.traverse(b, 5, 10) == c.traverse(b, 500, 1000))
 }
+
+void PointTest::assign()
+{
+	blieng::Point a(5,42);
+	blieng::Point b(100,200);
+
+	TEST_ASSERT( a.x == 5 );
+	TEST_ASSERT( a.y == 42 );
+
+	TEST_ASSERT( a != b );
+
+	a = b;
+
+	TEST_ASSERT( a == b );
+	TEST_ASSERT( a.x == b.x );
+	TEST_ASSERT( a.y == b.y );
+	TEST_ASSERT( a.x == 100 );
+	TEST_ASSERT( a.y == 200 );
+
+	b.x = 99;
+	TEST_ASSERT( a != b );
+}
+
+void PointTest::valid()
+{
+	blieng::Point a(5,42);
+	blieng::Point b(100,200);
+	blieng::Point c(false);
+
+	TEST_ASSERT(a.isValid() == true);
+	TEST_ASSERT(b.isValid() == true);
+	TEST_ASSERT(c.isValid() != true);
+
+	a.valid = false;
+	c.valid = true;
+	TEST_ASSERT(a.isValid() != true);
+	TEST_ASSERT(c.isValid() == true);
+}
