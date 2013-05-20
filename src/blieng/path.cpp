@@ -3,6 +3,16 @@
 #include <algorithm>
 #include <iostream>
 
+using blieng::Path;
+
+Path::Path()
+{
+}
+
+Path::~Path()
+{
+}
+
 std::string blieng::Path::toString() {
 	std::string res = "";
 	bool first = true;
@@ -12,6 +22,13 @@ std::string blieng::Path::toString() {
 		res += pt->toString();
 	}
 	return res;
+}
+
+void Path::addPoint(Point *pt)
+{
+	if (pt != NULL) {
+		points.push_back(pt);
+	}
 }
 
 void blieng::Path::append(blieng::Path *another)
@@ -73,6 +90,7 @@ void blieng::Path::reverse()
 blieng::Path *blieng::Path::copy()
 {
 	blieng::Path *newpath = new blieng::Path();
+	if (newpath == NULL) return NULL;
 	BOOST_FOREACH(blieng::Point *pt, points) {
 		newpath->addPoint(pt);
 	}

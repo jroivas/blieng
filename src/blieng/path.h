@@ -12,7 +12,8 @@ namespace blieng
 class Path
 {
 public:
-	Path() {}
+	Path();
+	~Path();
 
 	Path *combine(Path *another);
 	void append(Path *another);
@@ -25,7 +26,7 @@ public:
 	Point *getStart();
 	Point *getEnd();
 
-	void addPoint(Point *pt) { points.push_back(pt); }
+	void addPoint(Point *pt);
 	std::vector<Point *> points;
 
 	std::string toString();

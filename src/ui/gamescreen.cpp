@@ -86,30 +86,37 @@ void GameScreen::solveTargetPath()
 	BOOST_FOREACH(blieng::Path *path, mapscreen->getMaps()->getPaths()) {
 		blieng::Point *start = path->getStart();
 		if (*start == *from) {
-			blieng::Path *tmp = new blieng::Path();
-			tmp->append(path);
-			test_paths.push_back(tmp);
+			test_paths.push_back(path->copy());
 		}
 	}
 	BOOST_FOREACH(blieng::Path *path, mapscreen->getMaps()->getRevPaths()) {
 		blieng::Point *start = path->getStart();
 		if (*start == *from) {
-			blieng::Path *tmp = new blieng::Path();
-			tmp->append(path);
-			test_paths.push_back(tmp);
+			test_paths.push_back(path->copy());
 		}
 	}
+	
+	std::vector<blieng::Path *> append_test_paths;
 	BOOST_FOREACH(blieng::Path *continue_path, test_paths) {
-		BOOST_FOREACH(blieng::Path *path, mapscreen->getMaps()->getPaths()) {
-			if (*(continue_path->getEnd()) == *path->getStart()) {
-				test_paths.push_back(continue_path->combine(path));
+		if (continue_path == NULL) continue;
+		blieng::Point *end = continue_path->getEnd();
+		if (end != NULL) {
+			BOOST_FOREACH(blieng::Path *path, mapscreen->getMaps()->getPaths()) {
+				blieng::Point *str = path->getStart();
+				if (str!=NULL && *end == *str) {
+					append_test_paths.push_back(continue_path->combine(path));
+				}
+			}
+			BOOST_FOREACH(blieng::Path *path, mapscreen->getMaps()->getRevPaths()) {
+				blieng::Point *str = path->getStart();
+				if (str!=NULL && *end == *str) {
+					append_test_paths.push_back(continue_path->combine(path));
+				}
 			}
 		}
-		BOOST_FOREACH(blieng::Path *path, mapscreen->getMaps()->getRevPaths()) {
-			if (*(continue_path->getEnd()) == *path->getStart()) {
-				test_paths.push_back(continue_path->combine(path));
-			}
-		}
+	}
+	BOOST_FOREACH(blieng::Path *continue_path, append_test_paths) {
+		test_paths.push_back(continue_path);
 	}
 	qDebug() << "PATHS";
 	BOOST_FOREACH(blieng::Path *candi, test_paths) {
