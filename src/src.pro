@@ -26,6 +26,7 @@ HEADERS += blieng/bliobject.h \
 	   ui/loadingscreen.h \
 	   ui/mapscreen.h \
 	   ui/gamescreen.h \
+	   ui/fightscreen.h \
 	   ui/gamelayout.h \
 	   ui/characterview.h \
 	   ui/startscreen.h
@@ -48,5 +49,6 @@ SOURCES += main.cpp \
 	   ui/mapscreen.cpp \
 	   ui/gamescreen.cpp \
 	   ui/gamelayout.cpp \
+	   ui/fightscreen.cpp \
 	   ui/characterview.cpp \
 	   ui/startscreen.cpp

@@ -49,6 +49,8 @@ public:
 
 	void updatePopulation();
 	unsigned int getPopulation();
+	unsigned int getZombiesCnt();
+	std::vector<blieng::Character *> getZombies();
 
 private:
 	std::vector<Item *> items;

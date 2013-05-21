@@ -9,6 +9,8 @@ GameScreen::GameScreen(QWidget *parent) : QWidget(parent)
 	chrgen = new GenerateCharacter(this);
 	mapscreen = new MapScreen("world1", this);
 	character_view = new CharacterView(this);
+	fightscreen = new FightScreen(this);
+	fightscreen->setCharacterView(character_view);
 
 	current_location = NULL;
 	target_location = NULL;
@@ -25,16 +27,21 @@ GameScreen::GameScreen(QWidget *parent) : QWidget(parent)
 #else
 	layout.addWidget(chrgen, GameLayout::Left);
 	layout.addWidget(mapscreen, GameLayout::Center);
+	layout.addWidget(fightscreen, GameLayout::Center);
 	layout.addWidget(character_view, GameLayout::Bottom);
 #endif
 
 	//mapscreen->setMaximumWidth(1000);
 	mapscreen->setMinimumWidth(400);
 	mapscreen->setMinimumHeight(300);
+	fightscreen->setMinimumWidth(400);
+	fightscreen->setMinimumHeight(300);
 	//mapscreen->setMaximumHeight(700);
 	character_view->setMinimumHeight(64);
 	character_view->setMinimumWidth(400);
 	//character_view->setMaximumHeight(64);
+
+	fightscreen->setVisible(false);
 
 	character_count = 3;
 
@@ -43,6 +50,10 @@ GameScreen::GameScreen(QWidget *parent) : QWidget(parent)
 	connect(walker, SIGNAL(timeout()), this, SLOT(doWalk()));
 	connect(this, SIGNAL(fellowship(QPointF)), mapscreen, SLOT(fellowship(QPointF)));
 	connect(this, SIGNAL(changeFellowship(std::vector<ui::CharacterData *>)), mapscreen, SLOT(changedFellowship(std::vector<ui::CharacterData *>)));
+	connect(this, SIGNAL(changeFellowship(std::vector<ui::CharacterData *>)), fightscreen, SLOT(setFellowship(std::vector<ui::CharacterData *>)));
+
+	connect(this, SIGNAL(enterLocation(blieng::Town *)), SLOT(zombieCheck(blieng::Town *)));
+	connect(character_view, SIGNAL(done()), fightscreen, SLOT(act()));
 
 	setLayout(&layout);
 
@@ -209,5 +220,17 @@ void GameScreen::targetTown(blieng::Town *town)
 {
 	target_location = town;
 	solveTargetPath();
+}
+
+void GameScreen::zombieCheck(blieng::Town *town)
+{
+	unsigned int zombs = town->getZombiesCnt();
+	qDebug() << "Zombies here: " << zombs;
+	if (zombs>0) {
+		mapscreen->setVisible(false);
+		character_view->fightMode();
+		fightscreen->setTown(town);
+		fightscreen->setVisible(true);
+	}
 }
 

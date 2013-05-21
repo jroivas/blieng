@@ -21,7 +21,7 @@ MapScreen::MapScreen(QString mapname, QWidget *parent) : QWidget(parent)
 void MapScreen::loadImage()
 {
 	bgimage = QImage(maps->getSolvedMapImageFile().c_str());
-	image_pos = QPoint(0, 0);
+	image_pos = QPointF(0, 0);
 }
 
 /* Validate that map fits on the screen
@@ -60,8 +60,8 @@ void MapScreen::paintEvent(QPaintEvent *event)
 		blieng::Point prev(false);
 		BOOST_FOREACH(blieng::Point point, path.getPoints()) {
 			if (prev.isValid()) {
-				QPoint a = QPoint(prev.x, prev.y) + image_pos;
-				QPoint b = QPoint(point.x, point.y) + image_pos;
+				QPointF a = QPointF(prev.x, prev.y) + image_pos;
+				QPointF b = QPointF(point.x, point.y) + image_pos;
 				a /= zoomfactor;
 				b /= zoomfactor;
 				paint.drawLine(a, b);
@@ -73,11 +73,11 @@ void MapScreen::paintEvent(QPaintEvent *event)
 	paint.setBrush(QColor(0,0,0,255));
 	BOOST_FOREACH(blieng::Town *town, maps->getTowns()) {
 		paint.setPen(QColor(0,0,0,255));
-		QPoint town_pos(town->getPositionX(), town->getPositionY());
-		paint.drawEllipse((image_pos + town_pos) / zoomfactor, town->getSize() / zoomfactor, town->getSize() / zoomfactor);
+		QPointF town_pos(town->getPositionX(), town->getPositionY());
+		paint.drawEllipse((image_pos + town_pos) / zoomfactor, qreal((town->getSize()) / zoomfactor), qreal((town->getSize()) / zoomfactor));
 
-		QRect namebox = paint.boundingRect(0, 0, 300, 100, Qt::AlignLeft, town->getName().c_str());
-		QPoint textpos = image_pos + town_pos;
+		QRect namebox = paint.boundingRect(0, 0, 300 / zoomfactor, 100 / zoomfactor, Qt::AlignLeft, town->getName().c_str());
+		QPointF textpos = image_pos + town_pos;
 		paint.setPen(QColor(255,0,0,255));
 		textpos.setX(textpos.x() - namebox.width()/2);
 
@@ -133,17 +133,17 @@ void MapScreen::wheelEvent(QWheelEvent *event)
 void MapScreen::mouseReleaseEvent(QMouseEvent *event)
 {
 	if (canmove) {
-		QPoint now_pos = event->pos() * (zoomlevel / 100.0);
-		QPoint pos_diff = now_pos - last_pos;
+		QPointF now_pos = event->pos() * (zoomlevel / 100.0);
+		QPointF pos_diff = now_pos - last_pos;
 		if (pos_diff.manhattanLength() > 10) {
 			//qDebug() << "Diffed " << now_pos << pos_diff << pos_diff.manhattanLength();
 			image_pos += pos_diff;
 			update();
 		} else {
 			BOOST_FOREACH(blieng::Town *town, maps->getTowns()) {
-				QPoint town_pos(town->getPositionX(), town->getPositionY());
+				QPointF town_pos(town->getPositionX(), town->getPositionY());
 				town_pos += image_pos;
-				QPoint town_diff = town_pos - now_pos;
+				QPointF town_diff = town_pos - now_pos;
 				if (town_diff.manhattanLength() <= town->getSize()) {
 					qDebug() << "Clicked town " << town->getName().c_str();
 					emit townSelected(town);

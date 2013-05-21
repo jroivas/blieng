@@ -11,6 +11,8 @@ ZombieCharacter::ZombieCharacter() : zomb::PlayerCharacter()
 
 	double radiation = getRandomDouble(0, 10);
 	setValue("radiation", radiation);
+
+	setValue("class", std::string("zombie"));
 }
 
 void ZombieCharacter::fromPlayerCharacter(PlayerCharacter *chr)
@@ -21,4 +23,8 @@ void ZombieCharacter::fromPlayerCharacter(PlayerCharacter *chr)
 	assignObject(chr);
 	chr->kill();
 	setValue("dead", false);
+	setValue("class", std::string("zombie"));
+
+	static const int MAX_IMAGES = 1;
+	setValue("image", getRandomInt(0, MAX_IMAGES));
 }

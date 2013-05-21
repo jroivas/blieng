@@ -6,9 +6,11 @@
 using ui::CharacterView;
 using ui::CharacterData;
 
-CharacterView::CharacterView(QWidget *parent) : QWidget(parent)
+CharacterView::CharacterView(QWidget *parent) : QWidget(parent), fight(false)
 {
 	setLayout(&layout);
+	act = new QPushButton("Done");
+	connect(act, SIGNAL(clicked()), this, SIGNAL(done()));
 }
 
 void CharacterView::setCharacters(std::vector<zomb::PlayerCharacter* > _characters)
@@ -16,6 +18,19 @@ void CharacterView::setCharacters(std::vector<zomb::PlayerCharacter* > _characte
 	characters = _characters;
 	updateView();
 }
+
+void CharacterView::fightMode()
+{
+	fight = true;
+	updateView();
+}
+
+void CharacterView::mapMode()
+{
+	fight = false;
+	updateView();
+}
+
 
 void CharacterView::clearData()
 {
@@ -26,8 +41,10 @@ void CharacterView::clearData()
 		delete chr->box;
 		delete chr->widget;
 		delete chr->name_widget;
+		if (chr->fight != NULL) delete chr->fight;
 		delete chr;
 	}
+	layout.removeWidget(act);
 	chrdata.clear();
 }
 
@@ -58,8 +75,25 @@ void CharacterView::updateView()
 			data->box = new QVBoxLayout();
 			data->box->addWidget(data->widget);
 			data->box->addWidget(data->name_widget);
+
+			if (fight) {
+				data->fight = new QComboBox();
+				// TODO Dynamic options
+				data->fight->addItem("Gun");
+				data->fight->addItem("Machine gun");
+				data->fight->addItem("Kick");
+				data->fight->addItem("Hit");
+				data->fight->addItem("Loot");
+				data->fight->addItem("Loot with care");
+				data->fight->addItem("Run");
+				data->box->addWidget(data->fight);
+			}
+
 			layout.addLayout(data->box);
 		}
+	}
+	if (fight) {
+		layout.addWidget(act);
 	}
 	update();
 }

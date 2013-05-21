@@ -24,7 +24,8 @@ void CreateWorld::initialize()
 		unsigned int max_pop = (population+1)*2;
 
 		population = town->getRandomInt(min_pop, max_pop);
-		unsigned int max_zombies = population/10;
+		//unsigned int max_zombies = population/10;
+		unsigned int max_zombies = population/5;
 		if (last_zombies==0) zomb_force++;
 		unsigned int forced_zombies = 0;
 		if (zomb_force>=2) forced_zombies = 1;
@@ -37,7 +38,7 @@ void CreateWorld::initialize()
 		unsigned int zombcnt = zombies;
 		for (unsigned int index = 0; index < population; index++) {
 			zomb::PlayerCharacter* unit = new zomb::PlayerCharacter();
-			if (zombcnt>0) {
+			if (zombcnt > 0) {
 				zomb::ZombieCharacter* zunit = new zomb::ZombieCharacter();
 				zunit->fromPlayerCharacter(unit);
 				--zombcnt;

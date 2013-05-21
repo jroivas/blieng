@@ -37,10 +37,10 @@ private:
 
 	blieng::Maps *maps;
 	QImage bgimage;
-	QPoint image_pos;
+	QPointF image_pos;
 
 	bool canmove;
-	QPoint last_pos;
+	QPointF last_pos;
 
 	zomb::CreateWorld *create_world;
 	std::vector<ui::CharacterData *> the_fellowship;

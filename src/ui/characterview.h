@@ -11,11 +11,12 @@ namespace ui
 class CharacterData
 {
 public:
-	CharacterData() : widget(NULL), box(NULL), character(NULL) {}
+	CharacterData() : widget(NULL), box(NULL), fight(NULL), character(NULL) {}
 	QImage image;
 	QLabel *widget;
-	QLabel *name_widget;
 	QVBoxLayout *box;
+	QLabel *name_widget;
+	QComboBox *fight;
 	zomb::PlayerCharacter *character;
 };
 
@@ -26,6 +27,11 @@ public:
 	CharacterView(QWidget *parent=0);
 	void setCharacters(std::vector<zomb::PlayerCharacter *> characters);
 	std::vector<ui::CharacterData *> getCharacters();
+	void fightMode();
+	void mapMode();
+
+signals:
+	void done();
 
 private:
 	void clearData();
@@ -34,6 +40,8 @@ private:
 	std::vector<zomb::PlayerCharacter *> characters;
 	std::vector<CharacterData *> chrdata;
 	QHBoxLayout layout;
+	bool fight;
+	QPushButton *act;
 };
 
 }

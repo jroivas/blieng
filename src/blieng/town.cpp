@@ -106,3 +106,25 @@ std::string Town::toString()
 
 	return res;
 }
+
+unsigned int Town::getZombiesCnt()
+{
+	unsigned int zombies = 0;
+	BOOST_FOREACH(Character *ch, characters) {
+		if (ch->isValue("class") && ch->getStringValue("class") == "zombie") {
+			++zombies;
+		}
+	}
+	return zombies;
+}
+
+std::vector<blieng::Character *> Town::getZombies()
+{
+	std::vector<Character *> zombies; 
+	BOOST_FOREACH(Character *ch, characters) {
+		if (ch->isValue("class") && ch->getStringValue("class") == "zombie") {
+			zombies.push_back(ch);
+		}
+	}
+	return zombies;
+}

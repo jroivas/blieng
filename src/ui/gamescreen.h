@@ -8,6 +8,7 @@
 #include "blieng/town.h"
 #include "mapscreen.h"
 #include "characterview.h"
+#include "fightscreen.h"
 
 namespace ui
 {
@@ -22,6 +23,7 @@ public slots:
 	void newCharacter(zomb::PlayerCharacter *);
 	void targetTown(blieng::Town *);
 	void doWalk();
+	void zombieCheck(blieng::Town *);
 
 signals:
 	void fellowship(QPointF);
@@ -34,6 +36,7 @@ private:
 
 	GenerateCharacter *chrgen;
 	MapScreen *mapscreen;
+	FightScreen *fightscreen;
 	CharacterView *character_view;
 
 	blieng::Town *current_location;
