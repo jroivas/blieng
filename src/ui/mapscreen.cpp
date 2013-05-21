@@ -74,7 +74,7 @@ void MapScreen::paintEvent(QPaintEvent *event)
 	BOOST_FOREACH(blieng::Town *town, maps->getTowns()) {
 		paint.setPen(QColor(0,0,0,255));
 		QPoint town_pos(town->getPositionX(), town->getPositionY());
-		paint.drawEllipse((image_pos + town_pos) / zoomfactor, town->getSize(), town->getSize());
+		paint.drawEllipse((image_pos + town_pos) / zoomfactor, town->getSize() / zoomfactor, town->getSize() / zoomfactor);
 
 		QRect namebox = paint.boundingRect(0, 0, 300, 100, Qt::AlignLeft, town->getName().c_str());
 		QPoint textpos = image_pos + town_pos;
@@ -105,7 +105,7 @@ void MapScreen::paintEvent(QPaintEvent *event)
 				break;
 		}
 		fpos -= QPointF(fella_size/2, fella_size/2);
-		paint.drawImage((image_pos + fellowship_pos + fpos) / zoomfactor, fellow->image.scaled(fella_size, fella_size));
+		paint.drawImage((image_pos + fellowship_pos + fpos) / zoomfactor, fellow->image.scaled(fella_size / zoomfactor, fella_size / zoomfactor));
 		++fella;
 	}
 }
@@ -114,7 +114,7 @@ void MapScreen::mousePressEvent(QMouseEvent *event)
 {
 	if (event->buttons() & Qt::LeftButton) {
 		canmove = true;
-		last_pos = event->pos();
+		last_pos = event->pos() * (zoomlevel / 100.0);
 	}
 }
 
@@ -123,7 +123,7 @@ void MapScreen::wheelEvent(QWheelEvent *event)
 	int numDegrees = event->delta() / 8;
 	int numSteps = numDegrees / 15;
 
-	zoomlevel += numSteps;
+	zoomlevel += numSteps * 2;
 
 	bgimage = QImage(maps->getSolvedMapImageFile().c_str());
 	bgimage = bgimage.scaled(bgimage.size() / (zoomlevel / 100.0));
@@ -133,7 +133,7 @@ void MapScreen::wheelEvent(QWheelEvent *event)
 void MapScreen::mouseReleaseEvent(QMouseEvent *event)
 {
 	if (canmove) {
-		QPoint now_pos = event->pos();
+		QPoint now_pos = event->pos() * (zoomlevel / 100.0);
 		QPoint pos_diff = now_pos - last_pos;
 		if (pos_diff.manhattanLength() > 10) {
 			//qDebug() << "Diffed " << now_pos << pos_diff << pos_diff.manhattanLength();
