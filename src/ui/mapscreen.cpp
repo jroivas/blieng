@@ -120,7 +120,7 @@ void MapScreen::mousePressEvent(QMouseEvent *event)
 
 void MapScreen::wheelEvent(QWheelEvent *event)
 {
-	int numDegrees = event->delta() / 8;
+	int numDegrees = -1 * event->delta() / 8;
 	int numSteps = numDegrees / 15;
 
 	zoomlevel += numSteps * 2;

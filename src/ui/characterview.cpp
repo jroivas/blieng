@@ -22,17 +22,20 @@ void CharacterView::setCharacters(std::vector<zomb::PlayerCharacter* > _characte
 void CharacterView::fightMode()
 {
 	fight = true;
+	act->show();
 	updateView();
 }
 
 void CharacterView::mapMode()
 {
 	fight = false;
+	act->hide();
 	updateView();
 }
 
 void CharacterView::clearData()
 {
+	layout.removeWidget(act);
 	BOOST_FOREACH(CharacterData* chr, chrdata) {
 		layout.removeItem(chr->box);
 		chr->box->removeWidget(chr->widget);
@@ -43,7 +46,6 @@ void CharacterView::clearData()
 		if (chr->fight != NULL) delete chr->fight;
 		delete chr;
 	}
-	//layout.removeWidget(act);
 	chrdata.clear();
 }
 
