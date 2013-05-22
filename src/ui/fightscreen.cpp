@@ -5,6 +5,7 @@ using ui::FightScreen;
 
 static double zombieheight = 32;
 static double zombiesize = 48;
+static double safearea = 5;
 
 FightScreen::FightScreen(QWidget *parent) : QWidget(parent), town(NULL), chars(NULL)
 {
@@ -40,7 +41,14 @@ void FightScreen::initialize()
 		zomb->posy = posy;
 		zomb->posx_inc = 0;
 		zomb->posy_inc = 0;
-		zomb->default_size = zomb->size = zombiesize;
+		zomb->default_size = zombiesize;
+		zomb->size = zombiesize;
+
+		if (zomb->zombie->isValue("image")) {
+			int imagenum = zomb->zombie->getIntValue("image") + 1;
+			std::string imagefile = blieng::Data::getInstance()->findFile((boost::format("zomb00%d") % imagenum).str() + ".png");
+			zomb->image = QImage(imagefile.c_str());
+		}
 
 		++posx;
 		if (posx >= rowcnt) {
@@ -74,7 +82,10 @@ void FightScreen::calculateZombieSpeed()
 		double healthrate = 0;
 		double healthnum = 0;
 		if (zomb->zombie->isValue("health") && zomb->zombie->isValue("health-max")) {
-			double rate = zomb->zombie->getDoubleValue("health") / zomb->zombie->getDoubleValue("health-max");
+			double rate = zomb->zombie->getDoubleValue("health");
+			double maxrate = zomb->zombie->getDoubleValue("health-max");
+			if (maxrate != 0) rate /= maxrate;
+			else rate /= 100.0;
 			healthrate += rate * 1;
 			healthnum += 1;
 		}
@@ -94,7 +105,12 @@ void FightScreen::calculateZombieSpeed()
 			healthnum += 2;
 		}
 		speed *= healthrate/healthnum;
+
 		zomb->posy += speed;
+		if (zomb->posy * zombieheight >= (height() - safearea - zombieheight)) {
+			zomb->posy = (height() - safearea - zombieheight) / zombieheight;
+		}
+
 		zomb->size = zomb->default_size;
 		zomb->posx_inc = 0;
 		zomb->posy_inc = 0;
@@ -163,12 +179,21 @@ void FightScreen::calculateCollidingZombies()
 	}
 }
 
+bool FightScreen::endFight()
+{
+	return false;
+}
+
 void FightScreen::act()
 {
 	calucuateZombieDamage();
 	calculateZombieSpeed();
 	calculateCollidingZombies();
-	update();
+	if (endFight()) {
+		emit fightEnded();
+	} else {
+		update();
+	}
 }
 
 void FightScreen::paintEvent(QPaintEvent *event)
@@ -178,17 +203,17 @@ void FightScreen::paintEvent(QPaintEvent *event)
 	paint.setBrush(QColor(255,0,0));
 	paint.drawRect(0, 0, width(), height());
 	unsigned int rowcnt = fellowship.size();
+	if (rowcnt == 0) {
+		emit fightEnded();
+		return;
+	}
 
 	double zombiewidth = width() * 1.0 / rowcnt - width()/10;
 	double border = width()/20;
 
 	BOOST_FOREACH(ui::ZombieData* zomb, zombies) {
-		if (zomb->zombie->isValue("image")) {
-			int imagenum = zomb->zombie->getIntValue("image") + 1;
-			std::string imagefile = blieng::Data::getInstance()->findFile((boost::format("zomb00%d") % imagenum).str() + ".png");
-			QImage image = QImage(imagefile.c_str());
-
-			paint.drawImage(QPointF(zomb->posx * zombiewidth + border + zomb->posx_inc, zomb->posy * zombieheight + zomb->posy_inc), image.scaled(zomb->size, zomb->size));
+		if (!zomb->image.isNull()) {
+			paint.drawImage(QPointF(zomb->posx * zombiewidth + border + zomb->posx_inc, zomb->posy * zombieheight + zomb->posy_inc), zomb->image.scaled(zomb->size, zomb->size));
 		}
 	}
 }

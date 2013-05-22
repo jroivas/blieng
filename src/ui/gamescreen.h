@@ -24,6 +24,7 @@ public slots:
 	void targetTown(blieng::Town *);
 	void doWalk();
 	void zombieCheck(blieng::Town *);
+	void fightEnded();
 
 signals:
 	void fellowship(QPointF);

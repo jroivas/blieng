@@ -24,6 +24,7 @@ public:
 
 	double size;
 	double default_size;
+	QImage image;
 };
 
 class FightScreen : public QWidget
@@ -40,12 +41,16 @@ public slots:
 	void setFellowship(std::vector<ui::CharacterData *> the_fellowship);
 	void act();
 
+signals:
+	bool fightEnded();
+
 private:
 	void updateZombies(std::vector<blieng::Character*> zombies);
 	void calucuateZombieDamage();
 	void calculateZombieSpeed();
 	void calculateCollidingZombies();
 	bool collidingZombies(ui::ZombieData *a, ui::ZombieData *b);
+	bool endFight();
 
 	blieng::Town *town;
 	std::vector<ui::CharacterData *> fellowship;

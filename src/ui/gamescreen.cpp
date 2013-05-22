@@ -54,6 +54,7 @@ GameScreen::GameScreen(QWidget *parent) : QWidget(parent)
 
 	connect(this, SIGNAL(enterLocation(blieng::Town *)), SLOT(zombieCheck(blieng::Town *)));
 	connect(character_view, SIGNAL(done()), fightscreen, SLOT(act()));
+	connect(fightscreen, SIGNAL(fightEnded()), this, SLOT(fightEnded()));
 
 	setLayout(&layout);
 
@@ -236,3 +237,10 @@ void GameScreen::zombieCheck(blieng::Town *town)
 	}
 }
 
+void GameScreen::fightEnded()
+{
+	fightscreen->setVisible(false);
+	character_view->mapMode();
+	mapscreen->setVisible(true);
+	update();
+}
