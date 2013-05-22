@@ -43,10 +43,12 @@ public slots:
 
 signals:
 	bool fightEnded();
+	void killedCharacter(zomb::PlayerCharacter*);
 
 private:
 	void updateZombies(std::vector<blieng::Character*> zombies);
-	void calucuateZombieDamage();
+	void calculateZombieDamage();
+	void calculatePlayerDamage();
 	void calculateZombieSpeed();
 	void calculateCollidingZombies();
 	bool collidingZombies(ui::ZombieData *a, ui::ZombieData *b);

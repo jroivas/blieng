@@ -31,7 +31,6 @@ void CharacterView::mapMode()
 	updateView();
 }
 
-
 void CharacterView::clearData()
 {
 	BOOST_FOREACH(CharacterData* chr, chrdata) {
@@ -44,7 +43,7 @@ void CharacterView::clearData()
 		if (chr->fight != NULL) delete chr->fight;
 		delete chr;
 	}
-	layout.removeWidget(act);
+	//layout.removeWidget(act);
 	chrdata.clear();
 }
 

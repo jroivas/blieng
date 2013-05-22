@@ -61,7 +61,7 @@ void PlayerCharacter::roll()
 void PlayerCharacter::generateHealth()
 {
 	// Health
-	int health = getRandomInt(65, 100);
+	double health = getRandomDouble(65, 100);
 	setValue("health", health);
 	setValue("health-max", health);
 }

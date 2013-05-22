@@ -15,6 +15,7 @@ public:
 	Character();
 
 	bool kill();
+	bool isAlive();
 
 	void addItem(blieng::Item *);
 	blieng::Item *removeItem(blieng::Item *);

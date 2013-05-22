@@ -13,6 +13,12 @@ bool Character::kill()
 	return true;
 }
 
+bool Character::isAlive()
+{
+	if (!isValue("dead")) return true;
+	return !getBoolValue("dead");
+}
+
 void Character::addItem(blieng::Item *item)
 {
 }

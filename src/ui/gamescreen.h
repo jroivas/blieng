@@ -25,6 +25,7 @@ public slots:
 	void doWalk();
 	void zombieCheck(blieng::Town *);
 	void fightEnded();
+	void killedCharacter(zomb::PlayerCharacter*);
 
 signals:
 	void fellowship(QPointF);
@@ -34,6 +35,7 @@ signals:
 private:
 	void moveToHomeTown();
 	void solveTargetPath();
+	void removeCharacter(zomb::PlayerCharacter *chr);
 
 	GenerateCharacter *chrgen;
 	MapScreen *mapscreen;

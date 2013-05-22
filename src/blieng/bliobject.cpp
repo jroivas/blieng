@@ -65,6 +65,9 @@ Y BliObject::get ## X ## Value(std::string key)\
 		std::cout << "Error, key not found: " + key + "\n";\
 		throw "Error, key not found: " + key;\
 	}\
+	if (val.type() == typeid(Y)) {\
+		return boost::any_cast<Y>(val);\
+	}\
 	try {\
 		return boost::any_cast<Y>(val);\
 	} catch (boost::bad_any_cast c) {\

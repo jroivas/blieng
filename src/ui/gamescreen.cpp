@@ -55,6 +55,7 @@ GameScreen::GameScreen(QWidget *parent) : QWidget(parent)
 	connect(this, SIGNAL(enterLocation(blieng::Town *)), SLOT(zombieCheck(blieng::Town *)));
 	connect(character_view, SIGNAL(done()), fightscreen, SLOT(act()));
 	connect(fightscreen, SIGNAL(fightEnded()), this, SLOT(fightEnded()));
+	connect(fightscreen, SIGNAL(killedCharacter(zomb::PlayerCharacter*)), this, SLOT(killedCharacter(zomb::PlayerCharacter*)));
 
 	setLayout(&layout);
 
@@ -244,3 +245,26 @@ void GameScreen::fightEnded()
 	mapscreen->setVisible(true);
 	update();
 }
+
+void GameScreen::killedCharacter(zomb::PlayerCharacter *chr)
+{
+	removeCharacter(chr);
+	character_view->setCharacters(characters);
+	emit changeFellowship(character_view->getCharacters());
+	//emit changeFellowship(characters);
+}
+
+void GameScreen::removeCharacter(zomb::PlayerCharacter *chr)
+{
+	if (chr == NULL) return;
+
+	std::vector<zomb::PlayerCharacter *>::iterator it = characters.begin();
+	while (it != characters.end()) {
+		if (*it == chr) {
+			characters.erase(it);
+			break;
+		}
+		++it;
+	}
+}
+

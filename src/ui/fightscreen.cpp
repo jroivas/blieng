@@ -68,7 +68,7 @@ void FightScreen::setCharacterView(ui::CharacterView *charview)
 	chars = charview;
 }
 
-void FightScreen::calucuateZombieDamage()
+void FightScreen::calculateZombieDamage()
 {
 }
 
@@ -114,6 +114,47 @@ void FightScreen::calculateZombieSpeed()
 		zomb->size = zomb->default_size;
 		zomb->posx_inc = 0;
 		zomb->posy_inc = 0;
+	}
+}
+
+void FightScreen::calculatePlayerDamage()
+{
+	std::vector<zomb::PlayerCharacter*> killed;
+	fellowship = chars->getCharacters();
+	BOOST_FOREACH(ui::ZombieData* zomb, zombies) {
+		if (zomb->posy * zombieheight >= (height() - safearea - zombieheight)) {
+			double chrpos = 0;
+			BOOST_FOREACH(ui::CharacterData* chr, fellowship) {
+				if (chr->character == NULL) continue;
+				if (chr->character->isAlive()) {
+					double damage = chr->character->getRandomDouble(0.0, 1.0); //FIXME
+
+					if (zomb->zombie->isValue("radiation")) {
+						double rad = zomb->zombie->getDoubleValue("radiation");
+						damage *= rad;
+					}
+
+					// If not in line, reduce damage
+					if (chrpos != zomb->posx) {
+						damage /= 10;
+					}
+
+					double health = chr->character->getDoubleValue("health");
+					health -= damage;
+					chr->character->setValue("health", health);
+					if (health < 0) {
+						qDebug() << "DEAD: " << chr->character->getStringValue("name").c_str();
+						chr->character->kill();
+						killed.push_back(chr->character);
+					}
+				}
+
+				chrpos += 1;
+			}
+		}
+	}
+	BOOST_FOREACH(zomb::PlayerCharacter* chr, killed) {
+		emit killedCharacter(chr);
 	}
 }
 
@@ -181,12 +222,15 @@ void FightScreen::calculateCollidingZombies()
 
 bool FightScreen::endFight()
 {
+	fellowship = chars->getCharacters();
+	if (fellowship.size()==0) return true;
 	return false;
 }
 
 void FightScreen::act()
 {
-	calucuateZombieDamage();
+	calculateZombieDamage();
+	calculatePlayerDamage();
 	calculateZombieSpeed();
 	calculateCollidingZombies();
 	if (endFight()) {
