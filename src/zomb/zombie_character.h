@@ -13,6 +13,7 @@ public:
 	void filterItems();
 
 private:
+	void init();
 };
 
 }

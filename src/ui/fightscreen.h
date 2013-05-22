@@ -9,6 +9,23 @@
 namespace ui
 {
 
+class ZombieData
+{
+public:
+	ZombieData(blieng::Character *zombie) : zombie(zombie), posx(0), posy(0) {}
+	~ZombieData() { zombie = NULL; }
+	blieng::Character *zombie;
+
+	double posx;
+	double posy;
+
+	double posx_inc;
+	double posy_inc;
+
+	double size;
+	double default_size;
+};
+
 class FightScreen : public QWidget
 {
 	Q_OBJECT
@@ -17,15 +34,22 @@ public:
 	void setTown(blieng::Town *town);
 	void paintEvent(QPaintEvent *event);
 	void setCharacterView(ui::CharacterView *charview);
+	void initialize();
 
 public slots:
 	void setFellowship(std::vector<ui::CharacterData *> the_fellowship);
 	void act();
 
 private:
+	void updateZombies(std::vector<blieng::Character*> zombies);
+	void calucuateZombieDamage();
+	void calculateZombieSpeed();
+	void calculateCollidingZombies();
+	bool collidingZombies(ui::ZombieData *a, ui::ZombieData *b);
+
 	blieng::Town *town;
 	std::vector<ui::CharacterData *> fellowship;
-	std::vector<blieng::Character *> zombies;
+	std::vector<ZombieData *> zombies;
 	ui::CharacterView *chars;
 };
 

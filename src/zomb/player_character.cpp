@@ -22,6 +22,9 @@ void PlayerCharacter::roll()
 
 	generateHealth();
 
+	// Speed
+	setValue("speed", getRandomInt(80, 120) / 100.0);
+
 	// Armor
 	setValue("armor", 0);
 	setValue("armor-max", 40);

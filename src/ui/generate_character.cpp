@@ -95,8 +95,42 @@ void GenerateCharacter::update()
 	while (key_iter != keys.end()) {
 		QLabel *l = new QLabel(QString(key_iter->c_str()));
 		QLabel *l2 = NULL;
-		bool ok = false;
+		bool ok = true;
 		bool can_improve = false;
+
+		const std::type_info *valtype = character->getValueType(*key_iter);
+		if (*valtype == typeid(unsigned int)) {
+			unsigned int val = character->getIntValue(*key_iter);
+			l2 = new QLabel(QString::number(val));
+			if (key_iter->find("max") != std::string::npos) {
+				can_improve = false;
+			} else {
+				can_improve = true;
+			}
+		} else if (*valtype == typeid(int)) {
+			int val = character->getIntValue(*key_iter);
+			l2 = new QLabel(QString::number(val));
+			if (key_iter->find("max") != std::string::npos) {
+				can_improve = false;
+			} else {
+				can_improve = true;
+			}
+		} else if (*valtype == typeid(double)) {
+			int val = character->getDoubleValue(*key_iter);
+			l2 = new QLabel(QString::number(val));
+			can_improve = false;
+		} else if (*valtype == typeid(bool)) {
+			bool val = character->getBoolValue(*key_iter);
+			l2 = new QLabel(val?"Yes":"No");
+			can_improve = false;
+		} else if (*valtype == typeid(std::string)) {
+			std::string val = character->getStringValue(*key_iter);
+			l2 = new QLabel(QString(val.c_str()));
+			can_improve = false;
+		} else {
+			ok = false;
+		}
+#if 0
 		try {
 			int val = character->getIntValue(*key_iter);
 			l2 = new QLabel(QString::number(val));
@@ -141,6 +175,7 @@ void GenerateCharacter::update()
 			}
 			catch (std::string e) { }
 		}
+#endif
 		QHBoxLayout *h = new QHBoxLayout();
 		h->addWidget(l);
 		h->addSpacing(100);

@@ -230,7 +230,9 @@ void GameScreen::zombieCheck(blieng::Town *town)
 		mapscreen->setVisible(false);
 		character_view->fightMode();
 		fightscreen->setTown(town);
+		fightscreen->initialize();
 		fightscreen->setVisible(true);
+		update();
 	}
 }
 

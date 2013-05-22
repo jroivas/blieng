@@ -26,6 +26,7 @@ public:
 	virtual unsigned int getUIntValue(std::string key);
 	virtual double getDoubleValue(std::string key);
 	virtual std::string toString();
+	const std::type_info *getValueType(std::string key);
 
 	virtual std::list<std::string> getKeys();
 

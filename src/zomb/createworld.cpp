@@ -35,7 +35,7 @@ void CreateWorld::initialize()
 		}
 		last_zombies = zombies;
 		total_population += population;
-		unsigned int zombcnt = zombies;
+		unsigned int zombcnt = zombies + 5;
 		for (unsigned int index = 0; index < population; index++) {
 			zomb::PlayerCharacter* unit = new zomb::PlayerCharacter();
 			if (zombcnt > 0) {
