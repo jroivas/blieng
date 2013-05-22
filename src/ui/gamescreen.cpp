@@ -34,6 +34,7 @@ GameScreen::GameScreen(QWidget *parent) : QWidget(parent)
 	//mapscreen->setMaximumWidth(1000);
 	mapscreen->setMinimumWidth(400);
 	mapscreen->setMinimumHeight(300);
+	mapscreen->setEnabled(false);
 	fightscreen->setMinimumWidth(400);
 	fightscreen->setMinimumHeight(300);
 	//mapscreen->setMaximumHeight(700);
@@ -49,8 +50,10 @@ GameScreen::GameScreen(QWidget *parent) : QWidget(parent)
 	connect(mapscreen, SIGNAL(townSelected(blieng::Town *)), this, SLOT(targetTown(blieng::Town *)));
 	connect(walker, SIGNAL(timeout()), this, SLOT(doWalk()));
 	connect(this, SIGNAL(fellowship(QPointF)), mapscreen, SLOT(fellowship(QPointF)));
-	connect(this, SIGNAL(changeFellowship(std::vector<ui::CharacterData *>)), mapscreen, SLOT(changedFellowship(std::vector<ui::CharacterData *>)));
-	connect(this, SIGNAL(changeFellowship(std::vector<ui::CharacterData *>)), fightscreen, SLOT(setFellowship(std::vector<ui::CharacterData *>)));
+	//connect(this, SIGNAL(changeFellowship(std::vector<ui::CharacterData *>)), mapscreen, SLOT(changedFellowship(std::vector<ui::CharacterData *>)));
+	//connect(this, SIGNAL(changeFellowship(std::vector<ui::CharacterData *>)), fightscreen, SLOT(setFellowship(std::vector<ui::CharacterData *>)));
+	connect(character_view, SIGNAL(updatedCharacters(std::vector<ui::CharacterData *>)), mapscreen, SLOT(changedFellowship(std::vector<ui::CharacterData *>)));
+	connect(character_view, SIGNAL(updatedCharacters(std::vector<ui::CharacterData *>)), fightscreen, SLOT(setFellowship(std::vector<ui::CharacterData *>)));
 
 	connect(this, SIGNAL(enterLocation(blieng::Town *)), SLOT(zombieCheck(blieng::Town *)));
 	connect(character_view, SIGNAL(done()), fightscreen, SLOT(act()));
@@ -80,9 +83,10 @@ void GameScreen::newCharacter(zomb::PlayerCharacter *chr)
 	characters.push_back(chr);
 	if (characters.size() >= character_count) {
 		chrgen->hide();
+		mapscreen->setEnabled(true);
 	}
 	character_view->setCharacters(characters);
-	emit changeFellowship(character_view->getCharacters());
+	//emit changeFellowship(character_view->getCharacters());
 }
 
 void GameScreen::solveTargetPath()
@@ -250,7 +254,7 @@ void GameScreen::killedCharacter(zomb::PlayerCharacter *chr)
 {
 	removeCharacter(chr);
 	character_view->setCharacters(characters);
-	emit changeFellowship(character_view->getCharacters());
+	//emit changeFellowship(character_view->getCharacters());
 	//emit changeFellowship(characters);
 }
 

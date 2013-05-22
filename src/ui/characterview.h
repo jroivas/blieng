@@ -18,6 +18,8 @@ public:
 	QLabel *name_widget;
 	QComboBox *fight;
 	zomb::PlayerCharacter *character;
+	double damage();
+	double range();
 };
 
 class CharacterView : public QWidget
@@ -32,6 +34,7 @@ public:
 
 signals:
 	void done();
+	void updatedCharacters(std::vector<ui::CharacterData *>);
 
 private:
 	void clearData();

@@ -68,13 +68,72 @@ void FightScreen::setCharacterView(ui::CharacterView *charview)
 	chars = charview;
 }
 
+void FightScreen::zombieDamage(ui::CharacterData* chr, double range_data, double damage_data, unsigned int chrindex)
+{
+	BOOST_FOREACH(ui::ZombieData* zomb, zombies) {
+		if (!zomb->zombie->isAlive()) continue;
+		double distance = (height() - safearea - zombieheight) - (zomb->posy * zombieheight);
+		if (distance <= (range_data*zombieheight)) {
+			double damage = damage_data * chr->character->getRandomDouble(0.0, 2.0);
+			double dist = 1 - (distance / (range_data*zombieheight));
+			damage *= dist;
+			if (zomb->posx != chrindex) damage /= 10;
+			//qDebug() << "damage" << damage << dist;
+
+			int pos = chr->character->getRandomInt(0, 6);
+			double part_health = 0;
+			switch (pos) {
+				default:
+				case 0: break;
+				case 1: part_health = zomb->zombie->getDoubleValue("health-arm-left"); break;
+				case 2: part_health = zomb->zombie->getDoubleValue("health-leg-left"); break;
+				case 3: part_health = zomb->zombie->getDoubleValue("health-arm-right"); break;
+				case 4: part_health = zomb->zombie->getDoubleValue("health-leg-right"); break;
+				case 5: part_health = zomb->zombie->getDoubleValue("health-torso"); break;
+				case 6: part_health = zomb->zombie->getDoubleValue("health-head"); break;
+			}	
+
+			part_health -= damage;
+			if (part_health<0) part_health = 0;
+			//qDebug() << pos << ": "<< part_health;
+
+			switch (pos) {
+				default:
+				case 0: break;
+				case 1: zomb->zombie->setValue("health-arm-left", part_health); break;
+				case 2: zomb->zombie->setValue("health-leg-left", part_health); break;
+				case 3: zomb->zombie->setValue("health-arm-right", part_health); break;
+				case 4: zomb->zombie->setValue("health-leg-right", part_health); break;
+				case 5: zomb->zombie->setValue("health-torso", part_health); break;
+				case 6:	zomb->zombie->setValue("health-head", part_health);
+					if (part_health<=0) {
+						zomb->zombie->kill();
+						qDebug() << "KILLED zomb";
+					}
+					break;
+			}	
+		}
+	}
+}
+
 void FightScreen::calculateZombieDamage()
 {
+	fellowship = chars->getCharacters();
+	double chrindex = 0;
+	BOOST_FOREACH(ui::CharacterData* chr, fellowship) {
+		double r = chr->range();
+		double d = chr->damage();
+		if (r>0 && d>0) {
+			zombieDamage(chr, r, d, chrindex);
+		}
+		chrindex += 1;
+	}
 }
 
 void FightScreen::calculateZombieSpeed()
 {
 	BOOST_FOREACH(ui::ZombieData* zomb, zombies) {
+		if (!zomb->zombie->isAlive()) continue;
 		double speed = 1;
 		if (zomb->zombie->isValue("speed")) {
 			speed = zomb->zombie->getDoubleValue("speed");
@@ -122,6 +181,7 @@ void FightScreen::calculatePlayerDamage()
 	std::vector<zomb::PlayerCharacter*> killed;
 	fellowship = chars->getCharacters();
 	BOOST_FOREACH(ui::ZombieData* zomb, zombies) {
+		if (!zomb->zombie->isAlive()) continue;
 		if (zomb->posy * zombieheight >= (height() - safearea - zombieheight)) {
 			double chrpos = 0;
 			BOOST_FOREACH(ui::CharacterData* chr, fellowship) {
@@ -182,8 +242,10 @@ void FightScreen::calculateCollidingZombies()
 {
 	std::vector<CollideData*> coll;
 	BOOST_FOREACH(ui::ZombieData* zomb, zombies) {
+		if (!zomb->zombie->isAlive()) continue;
 		BOOST_FOREACH(ui::ZombieData* zomb2, zombies) {
 			if (zomb == zomb2) continue;
+			if (!zomb2->zombie->isAlive()) continue;
 			if (collidingZombies(zomb, zomb2)) {
 				zomb->size = zomb->default_size/2;
 				CollideData *collide_data = NULL;
@@ -224,6 +286,14 @@ bool FightScreen::endFight()
 {
 	fellowship = chars->getCharacters();
 	if (fellowship.size()==0) return true;
+
+	unsigned int alive_zombies = 0;
+	BOOST_FOREACH(ui::ZombieData* zomb, zombies) {
+		if (!zomb->zombie->isAlive()) continue;
+		alive_zombies++;
+	}
+	if (alive_zombies == 0) return true;
+
 	return false;
 }
 
@@ -256,6 +326,7 @@ void FightScreen::paintEvent(QPaintEvent *event)
 	double border = width()/20;
 
 	BOOST_FOREACH(ui::ZombieData* zomb, zombies) {
+		if (!zomb->zombie->isAlive()) continue;
 		if (!zomb->image.isNull()) {
 			paint.drawImage(QPointF(zomb->posx * zombiewidth + border + zomb->posx_inc, zomb->posy * zombieheight + zomb->posy_inc), zomb->image.scaled(zomb->size, zomb->size));
 		}

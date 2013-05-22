@@ -94,5 +94,28 @@ void CharacterView::updateView()
 	if (fight) {
 		layout.addWidget(act);
 	}
+	emit updatedCharacters(chrdata);
 	update();
+}
+
+double CharacterData::range()
+{
+	if (fight == NULL) return 0;
+	int index = fight->currentIndex();
+	if (index == 0) return 10;
+	if (index == 1) return 10;
+	if (index == 2) return 1;
+	if (index == 3) return 1;
+	return 0;
+}
+
+double CharacterData::damage()
+{
+	if (fight == NULL) return 0;
+	int index = fight->currentIndex();
+	if (index == 0) return 1;
+	if (index == 1) return 3;
+	if (index == 2) return 0.3;
+	if (index == 3) return 0.1;
+	return 0;
 }
