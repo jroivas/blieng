@@ -162,7 +162,8 @@ void FightScreen::calculateZombieSpeed()
 			speed = zomb->zombie->getDoubleValue("speed");
 		}
 		double healthrate = 0;
-		double healthnum = 0;
+		double healthnum = 1;
+		double active_parts = 0;
 		if (zomb->zombie->isValue("health") && zomb->zombie->isValue("health-max")) {
 			double rate = zomb->zombie->getDoubleValue("health");
 			double maxrate = zomb->zombie->getDoubleValue("health-max");
@@ -175,18 +176,37 @@ void FightScreen::calculateZombieSpeed()
 			double rate = zomb->zombie->getDoubleValue("health-leg-left");
 			healthrate += rate * 10;
 			healthnum += 10;
+			active_parts += rate;
 		}
 		if (zomb->zombie->isValue("health-leg-right")) {
 			double rate = zomb->zombie->getDoubleValue("health-leg-right");
 			healthrate += rate * 10;
 			healthnum += 10;
+			active_parts += rate;
+		}
+		if (zomb->zombie->isValue("health-arm-right")) {
+			double rate = zomb->zombie->getDoubleValue("health-arm-right");
+			healthrate += rate * 1;
+			healthnum += 1;
+			active_parts += rate;
+		}
+		if (zomb->zombie->isValue("health-arm-left")) {
+			double rate = zomb->zombie->getDoubleValue("health-arm-left");
+			healthrate += rate * 1;
+			healthnum += 1;
+			active_parts += rate;
 		}
 		if (zomb->zombie->isValue("health-torso")) {
 			double rate = zomb->zombie->getDoubleValue("health-torso");
 			healthrate += rate * 2;
 			healthnum += 2;
+			active_parts += rate;
 		}
-		speed *= healthrate/healthnum;
+		if (active_parts > 0) {
+			speed *= healthrate/healthnum;
+		} else {
+			speed = 0;
+		}
 
 		zomb->posy += speed;
 		if (zomb->posy * zombieheight >= (height() - safearea - zombieheight)) {

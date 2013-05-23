@@ -112,7 +112,9 @@ unsigned int Town::getZombiesCnt()
 	unsigned int zombies = 0;
 	BOOST_FOREACH(Character *ch, characters) {
 		if (ch->isValue("class") && ch->getStringValue("class") == "zombie") {
-			++zombies;
+			if (ch->isAlive()) {
+				++zombies;
+			}
 		}
 	}
 	return zombies;
