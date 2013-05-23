@@ -54,6 +54,7 @@ private:
 	bool collidingZombies(ui::ZombieData *a, ui::ZombieData *b);
 	bool endFight();
 	void zombieDamage(ui::CharacterData* chr, double range_data, double damage_data, unsigned int chrindex);
+	void updateZombiePositions();
 
 	blieng::Town *town;
 	std::vector<ui::CharacterData *> fellowship;

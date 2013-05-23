@@ -58,9 +58,32 @@ void FightScreen::initialize()
 	}
 }
 
+void FightScreen::updateZombiePositions()
+{
+	unsigned int rowcnt = fellowship.size();
+	unsigned int posx = 0;
+	unsigned int posy = 0;
+	
+	BOOST_FOREACH(ui::ZombieData *zomb, zombies) {
+		zomb->posx = posx;
+		if (posy > zomb->posy) zomb->posy = posy;
+		zomb->posx_inc = 0;
+		zomb->posy_inc = 0;
+		zomb->default_size = zombiesize;
+		zomb->size = zombiesize;
+
+		++posx;
+		if (posx >= rowcnt) {
+			posx = 0;
+			++posy;
+		}
+	}
+}
+
 void FightScreen::setFellowship(std::vector<ui::CharacterData *> the_fellowship)
 {
 	fellowship = the_fellowship;
+	updateZombiePositions();
 }
 
 void FightScreen::setCharacterView(ui::CharacterView *charview)
