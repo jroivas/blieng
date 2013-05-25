@@ -10,6 +10,7 @@
 #include "blieng/item.h"
 #include "blieng/maps.h"
 #include "blieng/wallclock.h"
+#include "blieng/configure.h"
 #include "zomb/zombie_character.h"
 #include "zomb/worldclock.h"
 
@@ -102,6 +103,19 @@ int main(int argc, char **argv)
 	
 	return app.exec();
 	#endif
+	blieng::Configure *conf = blieng::Configure::getInstance();
+	conf->addKey("random_freq", blieng::Configure::KeyUInt);
+	conf->addKey("random_prob", blieng::Configure::KeyUInt);
+
+	conf->addKey("bite_prob", blieng::Configure::KeyDouble);
+	conf->addKey("bite_threshold", blieng::Configure::KeyDouble);
+	conf->addKey("zombie_limiter", blieng::Configure::KeyDouble);
+
+	conf->load("zomb.json");
+	if (!conf->validate()) {
+		qDebug() << "Invalid config";
+		return 1;
+	}
 
 	ui::GameScreen *game = new ui::GameScreen();
 	game->show();

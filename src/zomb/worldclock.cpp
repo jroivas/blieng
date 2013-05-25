@@ -1,9 +1,10 @@
 #include "worldclock.h"
 #include "blieng/bliobject.h"
+#include "blieng/configure.h"
 
 using zomb::WorldClock;
 
-WorldClock::WorldClock()
+WorldClock::WorldClock() : QObject()
 {
 	timer.setInterval(1000);
 	timer_background.setInterval(10);
@@ -33,10 +34,12 @@ void WorldClock::tick()
 
 void WorldClock::tickBackground()
 {
+	unsigned int freq = blieng::Configure::getInstance()->getUIntValue("random_freq");
+	unsigned int prob = blieng::Configure::getInstance()->getUIntValue("random_prob");
+	
 	// This should not generate massive amount of ticks
-	// TODO Configuration
-	int r1 = blieng::BliObject::getRandomInt(0, 250);
-	int r2 = blieng::BliObject::getRandomInt(0, 250);
+	int r1 = blieng::BliObject::getRandomInt(0, freq);
+	int r2 = blieng::BliObject::getRandomInt(0, prob);
 	if (r1 == r2) {
 		QDateTime now_time = QDateTime::currentDateTime();
 		qDebug() << "rand" << last_time.msecsTo(now_time);

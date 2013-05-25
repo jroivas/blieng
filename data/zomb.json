@@ -1,0 +1,10 @@
+{
+	"random_freq": 250,        /* Random frequence */
+	"random_prob": 250,        /* Probability of random event */
+
+	"bite_prob": 0.99,         /* Maximum bite probability in background spreading */
+	"bite_threshold": 1.0,     /* Treshold to get bitten in background spreading */
+	"zombie_limiter": 10,      /* Limit zombie amount by a factor in background spreading */
+
+	"none": ""
+}

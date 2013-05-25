@@ -1,6 +1,7 @@
 #include "gamescreen.h"
 #include <boost/foreach.hpp>
 #include "blieng/bliobject.h"
+#include "blieng/configure.h"
 #include "zomb/zombie_character.h"
 
 using ui::GameScreen;
@@ -295,17 +296,18 @@ void GameScreen::zombieProceed()
 		QString popula = "";
 		BOOST_FOREACH(blieng::Character *chr, town->getCharacters()) {
 			if (chr->isAlive() && (chr->isValue("class") && chr->getStringValue("class") != "zombie")) {
-				double bitten = blieng::BliObject::getRandomDouble(0.0, 0.99); //TODO config0
-				//qDebug() << bitten << zombie_rate << bitten*zombie_rate << bitten+zombie_rate << ((bitten*zombie_rate)>0.5?"BITTEN1":"") << ((bitten+zombie_rate)>1.0?"BITTEN2":"");
-				//qDebug() << bitten << zombie_rate << bitten/zombie_rate << ((bitten/zombie_rate)>2?"BITTEN1":"");
-				bitten += (zombie_rate/10);
+				double bite_prob = blieng::Configure::getInstance()->getDoubleValue("bite_prob");
+				double bite_threshold = blieng::Configure::getInstance()->getDoubleValue("bite_threshold");
+				double zombie_limiter = blieng::Configure::getInstance()->getDoubleValue("zombie_limiter");
+				double bitten = blieng::BliObject::getRandomDouble(0.0, bite_prob);
+
+				bitten += (zombie_rate/zombie_limiter);
 				QString bb = QString::number(bitten);
-				popula += (bitten>1.0?"BITTEN ":bb.left(5) + " ");
+				popula += (bitten>bite_threshold?"BITTEN ":bb.left(5) + " ");
 
 				// Now bitten is 0..0.99 + (0..1/10), so probability get bitten is
 				// higher when more zombies in the town
-				//if (bitten > 1.0) {
-				if (bitten >= 1.0) {
+				if (bitten >= bite_threshold) {
 					zomb::PlayerCharacter *pchr = dynamic_cast<zomb::PlayerCharacter*>(chr);
 					if (pchr != NULL) {
 						//qDebug() << "killed " << chr->getStringValue("name").c_str();
