@@ -1,5 +1,5 @@
-#ifndef __BLIOBJ
-#define __BLIOBJ
+#ifndef __BLIENG_BLIOBJ
+#define __BLIENG_BLIOBJ
 
 #include <string>
 #include <map>

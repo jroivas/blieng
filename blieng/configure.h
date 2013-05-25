@@ -1,5 +1,5 @@
-#ifndef __CONFIGURE_H
-#define __CONFIGURE_H
+#ifndef __BLIENG_CONFIGURE_H
+#define __BLIENG_CONFIGURE_H
 
 #include "bliobject.h"
 #include <iostream>

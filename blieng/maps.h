@@ -1,5 +1,5 @@
-#ifndef __MAPS_H
-#define __MAPS_H
+#ifndef __BLIENG_MAPS_H
+#define __BLIENG_MAPS_H
 
 #include "bliobject.h"
 #include "item.h"

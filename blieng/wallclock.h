@@ -1,5 +1,5 @@
-#ifndef __WALLCLOCK_H
-#define __WALLCLOCK_H
+#ifndef __BLIENG_WALLCLOCK_H
+#define __BLIENG_WALLCLOCK_H
 
 #include <vector>
 #include "item.h"

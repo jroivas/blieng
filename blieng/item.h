@@ -1,5 +1,5 @@
-#ifndef __ITEM_H
-#define __ITEM_H
+#ifndef __BLIENG_ITEM_H
+#define __BLIENG_ITEM_H
 
 #include <string>
 #include <vector>

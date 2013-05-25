@@ -1,5 +1,5 @@
-#ifndef __CHARACTER_H
-#define __CHARACTER_H
+#ifndef __BLIENG_CHARACTER_H
+#define __BLIENG_CHARACTER_H
 
 /** Basic character building blocks
  */

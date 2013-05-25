@@ -1,5 +1,5 @@
-#ifndef __PATH_H
-#define __PATH_H
+#ifndef __BLIENG_PATH_H
+#define __BLIENG_PATH_H
 
 #include <string>
 #include <vector>

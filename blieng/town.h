@@ -1,5 +1,5 @@
-#ifndef __TOWN_H
-#define __TOWN_H
+#ifndef __BLIENG_TOWN_H
+#define __BLIENG_TOWN_H
 
 #include "bliobject.h"
 #include "item.h"

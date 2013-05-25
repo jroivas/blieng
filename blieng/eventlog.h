@@ -1,5 +1,5 @@
-#ifndef __EVENTLOG_H
-#define __EVENTLOG_H
+#ifndef __BLIENG_EVENTLOG_H
+#define __BLIENG_EVENTLOG_H
 
 #include "bliobject.h"
 #include <vector>

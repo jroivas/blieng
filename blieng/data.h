@@ -1,5 +1,5 @@
-#ifndef __DATA_H
-#define __DATA_H
+#ifndef __BLIENG_DATA_H
+#define __BLIENG_DATA_H
 
 #include <boost/filesystem.hpp>
 #include <vector>

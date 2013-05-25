@@ -1,5 +1,5 @@
-#ifndef _POINT_H
-#define _POINT_H
+#ifndef __BLIENG_POINT_H
+#define __BLIENG_POINT_H
 
 #include <string>
 #include <iostream>
