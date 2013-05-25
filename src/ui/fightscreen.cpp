@@ -325,11 +325,8 @@ void FightScreen::calculateCollidingZombies()
 	}
 }
 
-bool FightScreen::endFight()
+bool FightScreen::zombiesKilled()
 {
-	fellowship = chars->getCharacters();
-	if (fellowship.size()==0) return true;
-
 	unsigned int alive_zombies = 0;
 	BOOST_FOREACH(ui::ZombieData* zomb, zombies) {
 		if (!zomb->zombie->isAlive()) continue;
@@ -340,17 +337,95 @@ bool FightScreen::endFight()
 	return false;
 }
 
+bool FightScreen::playerKilled()
+{
+	fellowship = chars->getCharacters();
+	if (fellowship.size()==0) return true;
+
+	return false;
+}
+
+void FightScreen::lootWith(ui::CharacterData* chr, ui::CharacterData::LootingMode mode)
+{
+	BOOST_FOREACH(ui::ZombieData* zomb, zombies) {
+		if (zomb->zombie->isAlive() && mode == ui::CharacterData::LOOT_normal) {
+			int prob = chr->character->getRandomInt(0, 1000);
+			if (prob % 2 == 1) {
+				double damage = chr->character->getRandomDouble(0.0, 2.0);
+
+				if (zomb->zombie->isValue("radiation")) {
+					double rad = zomb->zombie->getDoubleValue("radiation");
+					damage *= rad;
+				}
+
+				double health = chr->character->getDoubleValue("health");
+				health -= damage;
+				chr->character->setValue("health", health);
+				if (health < 0) {
+					qDebug() << "DEAD: " << chr->character->getStringValue("name").c_str();
+					chr->character->kill();
+				}
+			}
+		} else if (!zomb->zombie->isAlive()) {
+			//TODO Loot items
+		}
+	}
+}
+
+bool FightScreen::loot()
+{
+	fellowship = chars->getCharacters();
+	bool done = true;
+
+	std::vector<zomb::PlayerCharacter*> killed;
+	BOOST_FOREACH(ui::CharacterData* chr, fellowship) {
+		ui::CharacterData::LootingMode loot = chr->loot();
+		if (loot != ui::CharacterData::LOOT_invalid) {
+			if (loot == ui::CharacterData::LOOT_run) {
+				//TODO Quit the fight
+			}
+			else if (loot == ui::CharacterData::LOOT_normal) {
+				lootWith(chr, loot);
+			}
+			else if (loot == ui::CharacterData::LOOT_care) {
+				lootWith(chr, loot);
+			}
+
+			if (!chr->character->isAlive()) {
+				killed.push_back(chr->character);
+			}
+		} else {
+			done = false;
+		}
+	}
+
+	BOOST_FOREACH(zomb::PlayerCharacter* chr, killed) {
+		emit killedCharacter(chr);
+	}
+
+	return done;
+}
+
 void FightScreen::act()
 {
 	calculateZombieDamage();
 	calculatePlayerDamage();
 	calculateZombieSpeed();
 	calculateCollidingZombies();
-	if (endFight()) {
+	if (loot()) {
+		emit fightEnded();
+	}
+
+#if 0
+	if (zombiesKilled()) {
+		emit fightEnded();
+	} else if (playerKilled()) {
 		emit fightEnded();
 	} else {
 		update();
 	}
+#endif
+	update();
 }
 
 void FightScreen::paintEvent(QPaintEvent *event)
@@ -369,9 +444,14 @@ void FightScreen::paintEvent(QPaintEvent *event)
 	double border = width()/20;
 
 	BOOST_FOREACH(ui::ZombieData* zomb, zombies) {
-		if (!zomb->zombie->isAlive()) continue;
 		if (!zomb->image.isNull()) {
 			paint.drawImage(QPointF(zomb->posx * zombiewidth + border + zomb->posx_inc, zomb->posy * zombieheight + zomb->posy_inc), zomb->image.scaled(zomb->size, zomb->size));
 		}
+#if 0
+		if (!zomb->zombie->isAlive()) {
+			paint.setBrush(QColor(255,0,0));
+			paint.drawRect(QRectF(QPointF(zomb->posx * zombiewidth + border + zomb->posx_inc, zomb->posy * zombieheight + zomb->posy_inc), QSizeF(10, 10)));
+		}
+#endif
 	}
 }

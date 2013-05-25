@@ -11,15 +11,19 @@ namespace ui
 class CharacterData
 {
 public:
-	CharacterData() : widget(NULL), box(NULL), fight(NULL), character(NULL) {}
+	typedef enum { LOOT_invalid, LOOT_normal, LOOT_care, LOOT_run } LootingMode;
+	CharacterData() : widget(NULL), box(NULL), fight(NULL), character(NULL), active(true) {}
 	QImage image;
 	QLabel *widget;
 	QVBoxLayout *box;
 	QLabel *name_widget;
 	QComboBox *fight;
 	zomb::PlayerCharacter *character;
+
 	double damage();
 	double range();
+	CharacterData::LootingMode loot();
+	bool active;
 };
 
 class CharacterView : public QWidget

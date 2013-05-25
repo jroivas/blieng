@@ -9,7 +9,9 @@ using ui::CharacterData;
 CharacterView::CharacterView(QWidget *parent) : QWidget(parent), fight(false)
 {
 	setLayout(&layout);
-	act = new QPushButton("Done");
+	act = new QPushButton("Act");
+	act->setMinimumWidth(20);
+	act->setMinimumHeight(50);
 	connect(act, SIGNAL(clicked()), this, SIGNAL(done()));
 }
 
@@ -22,6 +24,7 @@ void CharacterView::setCharacters(std::vector<zomb::PlayerCharacter* > _characte
 void CharacterView::fightMode()
 {
 	fight = true;
+
 	act->show();
 	updateView();
 }
@@ -29,6 +32,7 @@ void CharacterView::fightMode()
 void CharacterView::mapMode()
 {
 	fight = false;
+
 	act->hide();
 	updateView();
 }
@@ -76,6 +80,7 @@ void CharacterView::updateView()
 			data->box = new QVBoxLayout();
 			data->box->addWidget(data->widget);
 			data->box->addWidget(data->name_widget);
+			data->active = true;
 
 			if (fight) {
 				data->fight = new QComboBox();
@@ -120,4 +125,25 @@ double CharacterData::damage()
 	if (index == 2) return 0.3;
 	if (index == 3) return 0.1;
 	return 0;
+}
+
+ui::CharacterData::LootingMode CharacterData::loot()
+{
+	if (fight == NULL) return LOOT_invalid;
+	int index = fight->currentIndex();
+
+	if (fight->itemText(index) == "Loot") {
+		active = false;
+		return ui::CharacterData::LOOT_normal;
+	}
+	else if (fight->itemText(index) == "Loot with care") {
+		active = false;
+		return ui::CharacterData::LOOT_care;
+	}
+	else if (fight->itemText(index) == "Run") {
+		active = false;
+		return ui::CharacterData::LOOT_run;
+	}
+
+	return LOOT_invalid;
 }

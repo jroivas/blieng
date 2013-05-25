@@ -50,23 +50,22 @@ void Maps::parseMap()
 					BOOST_FOREACH(std::string town_item, (*it).getMemberNames()) {
 						Json::Value town_val = Data::getInstance()->getJsonValue(*it, town_item);
 						if (town_item == "name" and town_val.isString()) {
-							//std::cout << "name: " << town_val.asString() << "\n";
 							town->setName(town_val.asString());
 						}
 						else if (town_item == "size" and town_val.isNumeric()) {
-							//std::cout << "size: " << town_val.asInt() << "\n";
 							town->setSize(town_val.asUInt());
 						}
 						else if (town_item == "posx" and town_val.isNumeric()) {
-							//std::cout << "posx: " << town_val.asDouble() << "\n";
 							town->setPositionX(town_val.asDouble());
 						}
 						else if (town_item == "posy" and town_val.isNumeric()) {
-							//std::cout << "posy: " << town_val.asDouble() << "\n";
 							town->setPositionY(town_val.asDouble());
 						}
 						else if (town_item == "start" and town_val.isNumeric()) {
 							if (town_val.asInt()>0) town->setValue("start", true);
+						}
+						else if (town_item == "zombies" and town_val.isNumeric()) {
+							town->setValue("zombies", town_val.asInt());
 						}
 						else if (town_item == "population-index" and town_val.isNumeric()) {
 							town->setValue("population-index", town_val.asDouble());

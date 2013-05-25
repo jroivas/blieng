@@ -46,13 +46,16 @@ signals:
 	void killedCharacter(zomb::PlayerCharacter*);
 
 private:
+	bool loot();
+	void lootWith(ui::CharacterData* chr, ui::CharacterData::LootingMode mode);
 	void updateZombies(std::vector<blieng::Character*> zombies);
 	void calculateZombieDamage();
 	void calculatePlayerDamage();
 	void calculateZombieSpeed();
 	void calculateCollidingZombies();
 	bool collidingZombies(ui::ZombieData *a, ui::ZombieData *b);
-	bool endFight();
+	bool zombiesKilled();
+	bool playerKilled();
 	void zombieDamage(ui::CharacterData* chr, double range_data, double damage_data, unsigned int chrindex);
 	void updateZombiePositions();
 
