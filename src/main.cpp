@@ -1,5 +1,6 @@
 #include <QtCore>
 #include <QtGui>
+#include <QApplication>
 
 #include <iostream>
 #include "ui/generate_character.h"

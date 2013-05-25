@@ -2,6 +2,9 @@
 #define __UI_STARTSCREEN_H
 
 #include <QtGui>
+#include <QWidget>
+#include <QPushButton>
+#include <QVBoxLayout>
 
 namespace ui
 {

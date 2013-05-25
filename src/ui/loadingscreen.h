@@ -2,6 +2,7 @@
 #define __UI_LOADINGSCREEN_H
 
 #include <QtGui>
+#include <QWidget>
 
 namespace ui
 {

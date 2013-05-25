@@ -1,5 +1,6 @@
 #include "startscreen.h"
 #include "data.h"
+#include <QApplication>
 
 using ui::StartScreen;
 

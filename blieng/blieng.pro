@@ -11,6 +11,11 @@ unix {
 	PKGCONFIG += jsoncpp
 }
 
+windows {
+    INCLUDEPATH += C:\boost_lib
+    INCLUDEPATH += C:\Users\Jouni\gits\jsoncpp-src-0.6.0-rc2\include
+}
+
 # Input
 HEADERS += bliobject.h \
            character.h \

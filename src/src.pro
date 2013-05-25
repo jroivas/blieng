@@ -4,12 +4,39 @@ DEPENDPATH += . .. ../blieng ui
 INCLUDEPATH += . .. ../blieng ui
 #LIBS += -L/usr/lib -lboost_system -lboost_random -lboost_filesystem
 #LIBS += -L../blieng -lblieng
-LIBS += ../blieng/libblieng.a
-LIBS += -L/usr/lib -lboost_system -lboost_random -lboost_filesystem 
+
+QT += core gui
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 unix {
-	CONFIG += link_pkgconfig
-	PKGCONFIG += jsoncpp
+    CONFIG += link_pkgconfig
+    PKGCONFIG += jsoncpp
+    LIBS += -L/usr/lib -lboost_system -lboost_random -lboost_filesystem
+    LIBS += ../blieng/libblieng.a
+}
+
+windows {
+    #INCLUDEPATH += C:\Users\Jouni\gits\boost_1_53_0
+    INCLUDEPATH += C:/boost_lib
+    CONFIG += static
+    QMAKE_CXXFLAGS += -std=c++11
+    LIBS += "C:\boost_lib\bin.v2\libs\system\build\gcc-mingw-4.7.2\release\link-static\threading-multi\libboost_system-mgw47-mt-1_53.a"
+    LIBS += "C:\boost_lib\bin.v2\libs\filesystem\build\gcc-mingw-4.7.2\release\link-static\threading-multi\libboost_filesystem-mgw47-mt-1_53.a"
+    LIBS += "C:\boost_lib\bin.v2\libs\random\build\gcc-mingw-4.7.2\release\link-static\threading-multi\libboost_random-mgw47-mt-1_53.a"
+    #LIBS += "C:\boost_lib\bin.v2\libs\random\build\gcc-mingw-4.7.2\release\link-static\threading-multi\random_device.o"
+
+    INCLUDEPATH += C:/Users/Jouni/gits/jsoncpp-src-0.6.0-rc2/include
+
+
+    CONFIG(debug, debug|release) {
+        LIBS += ../blieng/debug/libblieng.a
+    } else {
+        LIBS += ../blieng/release/libblieng.a
+    }
+    LIBS += "C:\boost_lib\bin.v2\libs\system\build\gcc-mingw-4.7.2\release\link-static\threading-multi\libboost_system-mgw47-mt-1_53.a"
+    LIBS += "C:\boost_lib\bin.v2\libs\filesystem\build\gcc-mingw-4.7.2\release\link-static\threading-multi\libboost_filesystem-mgw47-mt-1_53.a"
+    LIBS += "C:\boost_lib\bin.v2\libs\random\build\gcc-mingw-4.7.2\release\link-static\threading-multi\libboost_random-mgw47-mt-1_53.a"
+    LIBS += C:/Users/Jouni/gits/jsoncpp-src-0.6.0-rc2/buildscons/mingw/src/lib_json/libjson_mingw_libmt.a
 }
 
 HEADERS += zomb/player_character.h \

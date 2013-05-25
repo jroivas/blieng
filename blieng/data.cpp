@@ -26,18 +26,21 @@ boost::filesystem::path *Data::findDataPath()
 {
 	std::list<std::string> locations;
 	locations.push_back("");
+    locations.push_back("./");
 	locations.push_back("/usr/share/zombiebli");
 	locations.push_back("../");
+    locations.push_back(".\\");
+    locations.push_back("..\\");
 
-	boost::filesystem::path *data_path = new boost::filesystem::path;
+    boost::filesystem::path *my_data_path = new boost::filesystem::path;
 	BOOST_FOREACH(std::string item, locations) {
-		*data_path = (item + "data");
-		if (boost::filesystem::exists(*data_path) && boost::filesystem::is_directory(*data_path)) {
-			return data_path;
+        *my_data_path = (item + "data");
+        if (boost::filesystem::exists(*my_data_path) && boost::filesystem::is_directory(*my_data_path)) {
+            return my_data_path;
 		}
 		
 	}
-	delete data_path;
+    delete my_data_path;
 	return NULL;
 }
 
@@ -55,7 +58,7 @@ std::string Data::findFileRecursive(const boost::filesystem::path &dir_path, std
 			std::string res = findFileRecursive(dir_iter->path(), name);
 			if (res != "") return res;
 		}
-		else if (dir_iter->path().filename() == name) {
+        else if (dir_iter->path().filename() == name) {
 			return dir_iter->path().string();
 		}
 	}
@@ -89,7 +92,11 @@ std::vector<std::string> Data::readLinesFromFile(std::string name)
 	if (data_path == NULL) return tmp;
 	
 	boost::filesystem::path first_path = *data_path;
+    boost::filesystem::path second_path = boost::filesystem::path(name);
 	first_path /= name;
+    if (!boost::filesystem::exists(first_path) &&boost::filesystem::exists(second_path)) {
+        first_path = second_path;
+    }
 	if (boost::filesystem::exists(first_path)) {
 		boost::filesystem::ifstream fd(first_path);
 		while (!fd.eof()) {
@@ -112,7 +119,11 @@ std::string Data::readString(std::string name)
 	if (data_path == NULL) return res;
 	
 	boost::filesystem::path first_path = *data_path;
-	first_path /= name;
+    boost::filesystem::path second_path = boost::filesystem::path(name);
+    first_path /= name;
+    if (!boost::filesystem::exists(first_path) && boost::filesystem::exists(second_path)) {
+        first_path = second_path;
+    }
 	if (boost::filesystem::exists(first_path)) {
 		boost::filesystem::ifstream fd(first_path, std::ifstream::binary);
 		while (!fd.eof()) {
@@ -137,7 +148,7 @@ Json::Value Data::readJson(std::string name)
 	bool parse_ok;
 	parse_ok = reader.parse(datas, val);
 	if (!parse_ok) {
-		std::cout << "Parse error: " << reader.getFormattedErrorMessages() << "!\n";
+        std::cout << "Parse error: " << reader.getFormatedErrorMessages() << "!\n";
 		throw "JSON parse error";	
 	}
 	return val;

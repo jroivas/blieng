@@ -2,6 +2,10 @@
 #define __UI_CHARACTERVIEW_H
 
 #include <QtGui>
+#include <QLabel>
+#include <QVBoxLayout>
+#include <QComboBox>
+#include <QPushButton>
 #include <vector>
 #include "zomb/player_character.h"
 

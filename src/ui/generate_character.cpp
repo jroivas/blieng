@@ -1,5 +1,6 @@
 #include "generate_character.h"
 #include <list>
+#include <QLabel>
 
 using ui::GenerateCharacter;
 

@@ -2,6 +2,9 @@
 #define __UI_GENREATE_CHARACTER_H
 
 #include <QtGui>
+#include <QWidget>
+#include <QVBoxLayout>
+#include <QPushButton>
 #include <map>
 #include "zomb/player_character.h"
 
