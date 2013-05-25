@@ -2,6 +2,7 @@
 #include <boost/filesystem/fstream.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/foreach.hpp>
+#include <sstream>
 
 using blieng::Data;
 
@@ -164,4 +165,33 @@ Json::Value Data::getJsonValue(Json::Value val, std::string key)
 		}
 	}
 	return val;
+}
+
+std::string Data::formatString(std::string replace_string, unsigned int num)
+{
+	std::ostringstream stream;
+	stream << num;
+	std::string numstr = stream.str();
+
+	std::string res = "";
+	bool num_replace = false;
+	unsigned int cnt = 0;
+	for (unsigned int i=0; i<replace_string.length(); i++) {
+		if (replace_string[i] == '#') {
+			num_replace = true;
+			cnt++;
+		} else {
+			if (num_replace) {
+				while (numstr.length() < cnt) {
+					numstr = "0" + numstr;
+				}
+				res += numstr;
+				num_replace = false;
+				cnt = 0;
+				numstr = "";
+			}
+			res += replace_string[i];
+		}
+	}
+	return res;
 }

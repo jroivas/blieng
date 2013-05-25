@@ -39,6 +39,9 @@ bool zomb::initializeConfiguration()
 	conf->addKey("bite_threshold", blieng::Configure::KeyDouble);
 	conf->addKey("zombie_limiter", blieng::Configure::KeyDouble);
 
+	conf->addKey("zombie_images", blieng::Configure::KeyString);
+	conf->addKey("chr_images", blieng::Configure::KeyString);
+
 	conf->addKey("debug", blieng::Configure::KeyBool);
 
 	conf->load("zomb.json");

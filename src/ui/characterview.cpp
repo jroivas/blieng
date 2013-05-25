@@ -65,9 +65,13 @@ void CharacterView::updateView()
 	unsigned int chr_size = blieng::Configure::getInstance()->getUIntValue("chr_size");
 	BOOST_FOREACH(zomb::PlayerCharacter* chr, characters) {
 		if (chr->isValue("image")) {
-			int image = chr->getIntValue("image") + 1;
+			int imagenum = chr->getIntValue("image") + 1;
 			CharacterData *data = new CharacterData();
-			std::string imagefile = blieng::Data::getInstance()->findFile((boost::format("chr00%d") % image).str() + ".png");
+
+			std::string fname = blieng::Configure::getInstance()->getStringValue("chr_images");
+			fname = blieng::Data::getInstance()->formatString(fname, imagenum);
+
+			std::string imagefile = blieng::Data::getInstance()->findFile(fname);
 			data->character = chr;
 			data->image = QImage(imagefile.c_str());
 			chrdata.push_back(data);
@@ -110,6 +114,7 @@ void CharacterView::updateView()
 double CharacterData::range()
 {
 	if (fight == NULL) return 0;
+	//TODO: via item options
 	int index = fight->currentIndex();
 	if (index == 0) return 10;
 	if (index == 1) return 10;
@@ -121,6 +126,7 @@ double CharacterData::range()
 double CharacterData::damage()
 {
 	if (fight == NULL) return 0;
+	//TODO: via item options
 	int index = fight->currentIndex();
 	if (index == 0) return 1;
 	if (index == 1) return 3;

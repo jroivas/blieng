@@ -35,5 +35,8 @@
 
 	"debug": "atrue",           /* Print debug messages? */
 
+	"zombie_images": "zomb###.png",  /* Zombie image file format */
+	"chr_images": "chr###.png",      /* Character image file format */
+
 	"none": ""
 }

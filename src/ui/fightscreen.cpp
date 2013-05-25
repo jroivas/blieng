@@ -1,6 +1,7 @@
 #include "fightscreen.h"
 #include <boost/foreach.hpp>
 #include "blieng/configure.h"
+#include "blieng/data.h"
 
 using ui::FightScreen;
 
@@ -48,7 +49,11 @@ void FightScreen::initialize()
 
 		if (zomb->zombie->isValue("image")) {
 			int imagenum = zomb->zombie->getIntValue("image") + 1;
-			std::string imagefile = blieng::Data::getInstance()->findFile((boost::format("zomb00%d") % imagenum).str() + ".png");
+
+			std::string fname = blieng::Configure::getInstance()->getStringValue("zombie_images");
+			fname = blieng::Data::getInstance()->formatString(fname, imagenum);
+
+			std::string imagefile = blieng::Data::getInstance()->findFile(fname);
 			zomb->image = QImage(imagefile.c_str());
 		}
 

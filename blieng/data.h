@@ -23,6 +23,7 @@ public:
 	boost::random::random_device *getGen() { return gen; }
 
 	std::string findFile(std::string name);
+	std::string formatString(std::string replace_string, unsigned int num);
 
 private:
 	Data();
