@@ -13,7 +13,7 @@ namespace blieng
 class Configure : public blieng::BliObject
 {
 public:
-	typedef enum { KeyString, KeyDouble, KeyUInt, KeyInt } key_type_t;
+	typedef enum { KeyString, KeyDouble, KeyUInt, KeyInt, KeyBool } key_type_t;
 	static Configure *getInstance();
 	void load(std::string config_file);
 

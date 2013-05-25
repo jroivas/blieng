@@ -104,12 +104,18 @@ int main(int argc, char **argv)
 	return app.exec();
 	#endif
 	blieng::Configure *conf = blieng::Configure::getInstance();
+
+	conf->addKey("clock", blieng::Configure::KeyUInt);
+	conf->addKey("clock_background", blieng::Configure::KeyUInt);
+
 	conf->addKey("random_freq", blieng::Configure::KeyUInt);
 	conf->addKey("random_prob", blieng::Configure::KeyUInt);
 
 	conf->addKey("bite_prob", blieng::Configure::KeyDouble);
 	conf->addKey("bite_threshold", blieng::Configure::KeyDouble);
 	conf->addKey("zombie_limiter", blieng::Configure::KeyDouble);
+
+	conf->addKey("debug", blieng::Configure::KeyBool);
 
 	conf->load("zomb.json");
 	if (!conf->validate()) {

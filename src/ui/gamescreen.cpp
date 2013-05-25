@@ -289,8 +289,7 @@ void GameScreen::zombieProceed()
 		unsigned int townzomb = town->getCharacterClassCnt("zombie");
 		double zombie_rate = 0.0;
 		zombie_rate = double(townzomb) / double(townpopl);
-		qDebug() << "rte" << townzomb << townpopl << zombie_rate;
-
+		if (blieng::Configure::getInstance()->getBoolValue("debug")) qDebug() << "rte" << townzomb << townpopl << zombie_rate;
 
 		std::vector<blieng::Character *> killed;
 		QString popula = "";
@@ -319,10 +318,9 @@ void GameScreen::zombieProceed()
 				}
 			}
 		}
-		qDebug() << "   " << zombie_rate << popula;
+		if (blieng::Configure::getInstance()->getBoolValue("debug")) qDebug() << "   " << zombie_rate << popula;
 		BOOST_FOREACH(blieng::Character *chr, killed) {
 			town->removeCharacter(chr);
 		}
 	}
-	qDebug() << "proceeding done";
 }
