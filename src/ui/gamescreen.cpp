@@ -1,5 +1,7 @@
 #include "gamescreen.h"
 #include <boost/foreach.hpp>
+#include "blieng/bliobject.h"
+#include "zomb/zombie_character.h"
 
 using ui::GameScreen;
 using ui::GameLayout;
@@ -16,6 +18,8 @@ GameScreen::GameScreen(QWidget *parent) : QWidget(parent)
 	target_location = NULL;
 	walker = new QTimer();
 	walker->setInterval(100);
+
+	clock = new zomb::WorldClock();
 
 #if 0
 	layout.addWidget(chrgen, 0, 0, 0, Qt::AlignLeft);
@@ -59,6 +63,8 @@ GameScreen::GameScreen(QWidget *parent) : QWidget(parent)
 	connect(character_view, SIGNAL(done()), fightscreen, SLOT(act()));
 	connect(fightscreen, SIGNAL(fightEnded()), this, SLOT(fightEnded()));
 	connect(fightscreen, SIGNAL(killedCharacter(zomb::PlayerCharacter*)), this, SLOT(killedCharacter(zomb::PlayerCharacter*)));
+
+	connect(clock, SIGNAL(randomTick()), this, SLOT(zombieProceed()));
 
 	setLayout(&layout);
 
@@ -230,7 +236,7 @@ void GameScreen::targetTown(blieng::Town *town)
 
 void GameScreen::zombieCheck(blieng::Town *town)
 {
-	unsigned int zombs = town->getZombiesCnt();
+	unsigned int zombs = town->getCharacterClassCnt("zombie");
 	qDebug() << "Zombies here: " << zombs;
 	if (zombs>0) {
 		mapscreen->setVisible(false);
@@ -272,3 +278,49 @@ void GameScreen::removeCharacter(zomb::PlayerCharacter *chr)
 	}
 }
 
+void GameScreen::zombieProceed()
+{
+	BOOST_FOREACH(blieng::Town *town, mapscreen->getMaps()->getTowns()) {
+		unsigned int townpopl = town->getPopulation();
+	
+		if (townpopl == 0) continue;
+
+		unsigned int townzomb = town->getCharacterClassCnt("zombie");
+		double zombie_rate = 0.0;
+		zombie_rate = double(townzomb) / double(townpopl);
+		qDebug() << "rte" << townzomb << townpopl << zombie_rate;
+
+
+		std::vector<blieng::Character *> killed;
+		QString popula = "";
+		BOOST_FOREACH(blieng::Character *chr, town->getCharacters()) {
+			if (chr->isAlive() && (chr->isValue("class") && chr->getStringValue("class") != "zombie")) {
+				double bitten = blieng::BliObject::getRandomDouble(0.0, 0.99); //TODO config0
+				//qDebug() << bitten << zombie_rate << bitten*zombie_rate << bitten+zombie_rate << ((bitten*zombie_rate)>0.5?"BITTEN1":"") << ((bitten+zombie_rate)>1.0?"BITTEN2":"");
+				//qDebug() << bitten << zombie_rate << bitten/zombie_rate << ((bitten/zombie_rate)>2?"BITTEN1":"");
+				bitten += (zombie_rate/10);
+				QString bb = QString::number(bitten);
+				popula += (bitten>1.0?"BITTEN ":bb.left(5) + " ");
+
+				// Now bitten is 0..0.99 + (0..1/10), so probability get bitten is
+				// higher when more zombies in the town
+				//if (bitten > 1.0) {
+				if (bitten >= 1.0) {
+					zomb::PlayerCharacter *pchr = dynamic_cast<zomb::PlayerCharacter*>(chr);
+					if (pchr != NULL) {
+						//qDebug() << "killed " << chr->getStringValue("name").c_str();
+						zomb::ZombieCharacter *zomb = new zomb::ZombieCharacter();
+						zomb->fromPlayerCharacter(pchr);
+						town->addCharacter(zomb);
+						killed.push_back(chr);
+					}
+				}
+			}
+		}
+		qDebug() << "   " << zombie_rate << popula;
+		BOOST_FOREACH(blieng::Character *chr, killed) {
+			town->removeCharacter(chr);
+		}
+	}
+	qDebug() << "proceeding done";
+}

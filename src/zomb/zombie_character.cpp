@@ -8,6 +8,10 @@ ZombieCharacter::ZombieCharacter() : zomb::PlayerCharacter()
 	init();
 }
 
+ZombieCharacter::~ZombieCharacter()
+{
+}
+
 void ZombieCharacter::init()
 {
 	int health = getRandomInt(30, 65);
@@ -41,7 +45,4 @@ void ZombieCharacter::fromPlayerCharacter(PlayerCharacter *chr)
 	chr->kill();
 
 	init();
-	/*setValue("dead", false);
-	setValue("class", std::string("zombie"));
-	*/
 }

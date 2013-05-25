@@ -63,6 +63,8 @@ private:
 	std::vector<ui::CharacterData *> fellowship;
 	std::vector<ZombieData *> zombies;
 	ui::CharacterView *chars;
+
+	double stepsize;
 };
 
 }

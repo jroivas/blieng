@@ -49,8 +49,10 @@ public:
 
 	void updatePopulation();
 	unsigned int getPopulation();
-	unsigned int getZombiesCnt();
-	std::vector<blieng::Character *> getZombies();
+	unsigned int getCharacterClassCnt(std::string character_class);
+	std::vector<blieng::Character *> getCharacterClass(std::string character_class);
+
+	void convertToZombies(double rate);
 
 private:
 	std::vector<Item *> items;

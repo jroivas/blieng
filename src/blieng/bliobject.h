@@ -32,8 +32,8 @@ public:
 
 	virtual void assignObject(BliObject *another);
 
-	int getRandomInt(int limit_low, int limit_max);
-	double getRandomDouble(double limit_low, double limit_max);
+	static int getRandomInt(int limit_low, int limit_max);
+	static double getRandomDouble(double limit_low, double limit_max);
 
 protected:
 	std::map<std::string, boost::any> values;

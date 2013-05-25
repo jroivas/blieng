@@ -12,6 +12,7 @@ class PlayerCharacter : public blieng::Character
 {
 public:
 	PlayerCharacter();
+	virtual ~PlayerCharacter();
 	void roll();
 
 private:

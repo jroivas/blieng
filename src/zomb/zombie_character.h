@@ -9,6 +9,7 @@ class ZombieCharacter : public zomb::PlayerCharacter
 {
 public:
 	ZombieCharacter();
+	virtual ~ZombieCharacter();
 	void fromPlayerCharacter(PlayerCharacter *chr);
 	void filterItems();
 

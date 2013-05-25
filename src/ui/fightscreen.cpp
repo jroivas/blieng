@@ -4,8 +4,9 @@
 using ui::FightScreen;
 
 static double zombieheight = 32;
-static double zombiesize = 48;
-static double safearea = 5;
+static const double zombiesize = 48;
+static const double safearea = 5;
+static const double zombiesteps = 10;
 
 FightScreen::FightScreen(QWidget *parent) : QWidget(parent), town(NULL), chars(NULL)
 {
@@ -14,7 +15,7 @@ FightScreen::FightScreen(QWidget *parent) : QWidget(parent), town(NULL), chars(N
 void FightScreen::setTown(blieng::Town *t)
 {
 	town = t;
-	updateZombies(town->getZombies());
+	updateZombies(town->getCharacterClass("zombie"));
 }
 
 void FightScreen::updateZombies(std::vector<blieng::Character*> _zombies)
@@ -25,8 +26,10 @@ void FightScreen::updateZombies(std::vector<blieng::Character*> _zombies)
 		delete data;
 	}
 	BOOST_FOREACH(blieng::Character* zomb, _zombies) {
-		ui::ZombieData *zomb_data = new ui::ZombieData(zomb);
-		zombies.push_back(zomb_data);
+		if (zomb->isAlive()) {
+			ui::ZombieData *zomb_data = new ui::ZombieData(zomb);
+			zombies.push_back(zomb_data);
+		}
 	}
 }
 
@@ -155,6 +158,7 @@ void FightScreen::calculateZombieDamage()
 
 void FightScreen::calculateZombieSpeed()
 {
+	stepsize = height() / zombiesteps;
 	BOOST_FOREACH(ui::ZombieData* zomb, zombies) {
 		if (!zomb->zombie->isAlive()) continue;
 		double speed = 1;
@@ -209,8 +213,8 @@ void FightScreen::calculateZombieSpeed()
 		}
 
 		zomb->posy += speed;
-		if (zomb->posy * zombieheight >= (height() - safearea - zombieheight)) {
-			zomb->posy = (height() - safearea - zombieheight) / zombieheight;
+		if (zomb->posy * stepsize >= (height() - safearea - stepsize)) {
+			zomb->posy = (height() - zombieheight - safearea) / stepsize;
 		}
 
 		zomb->size = zomb->default_size;
@@ -225,7 +229,7 @@ void FightScreen::calculatePlayerDamage()
 	fellowship = chars->getCharacters();
 	BOOST_FOREACH(ui::ZombieData* zomb, zombies) {
 		if (!zomb->zombie->isAlive()) continue;
-		if (zomb->posy * zombieheight >= (height() - safearea - zombieheight)) {
+		if (zomb->posy * stepsize >= (height() - safearea - stepsize)) {
 			double chrpos = 0;
 			BOOST_FOREACH(ui::CharacterData* chr, fellowship) {
 				if (chr->character == NULL) continue;
@@ -416,15 +420,6 @@ void FightScreen::act()
 		emit fightEnded();
 	}
 
-#if 0
-	if (zombiesKilled()) {
-		emit fightEnded();
-	} else if (playerKilled()) {
-		emit fightEnded();
-	} else {
-		update();
-	}
-#endif
 	update();
 }
 
@@ -445,7 +440,7 @@ void FightScreen::paintEvent(QPaintEvent *event)
 
 	BOOST_FOREACH(ui::ZombieData* zomb, zombies) {
 		if (!zomb->image.isNull()) {
-			paint.drawImage(QPointF(zomb->posx * zombiewidth + border + zomb->posx_inc, zomb->posy * zombieheight + zomb->posy_inc), zomb->image.scaled(zomb->size, zomb->size));
+			paint.drawImage(QPointF(zomb->posx * zombiewidth + border + zomb->posx_inc, zomb->posy * stepsize + zomb->posy_inc), zomb->image.scaled(zomb->size, zomb->size));
 		}
 #if 0
 		if (!zomb->zombie->isAlive()) {

@@ -12,6 +12,10 @@ PlayerCharacter::PlayerCharacter() : blieng::Character()
 	roll();
 }
 
+PlayerCharacter::~PlayerCharacter()
+{
+}
+
 void PlayerCharacter::roll()
 {
 	generateName();

@@ -65,7 +65,7 @@ void Maps::parseMap()
 							if (town_val.asInt()>0) town->setValue("start", true);
 						}
 						else if (town_item == "zombies" and town_val.isNumeric()) {
-							town->setValue("zombies", town_val.asInt());
+							town->setValue("zombies", town_val.asUInt());
 						}
 						else if (town_item == "population-index" and town_val.isNumeric()) {
 							town->setValue("population-index", town_val.asDouble());

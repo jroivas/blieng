@@ -13,7 +13,7 @@ void Town::updatePopulation()
 {
 	unsigned int pop = 0;
 	BOOST_FOREACH(Character *ch, characters) {
-		if (!ch->getBoolValue("dead")) ++pop;
+		if (ch->isAlive()) ++pop;
 	}
 	setValue("population", pop);
 }
@@ -75,6 +75,7 @@ std::vector<blieng::Item *> Town::getItems()
 void Town::addCharacter(Character *chr)
 {
 	characters.push_back(chr);
+	updatePopulation();
 }
 
 bool Town::removeCharacter(Character *chr)
@@ -83,8 +84,10 @@ bool Town::removeCharacter(Character *chr)
 	while (iter != characters.end()) {
 		if (*iter == chr) {
 			characters.erase(iter);
+			updatePopulation();
 			return true;
 		}
+		++iter;
 	}
 
 	return false;
@@ -107,11 +110,11 @@ std::string Town::toString()
 	return res;
 }
 
-unsigned int Town::getZombiesCnt()
+unsigned int Town::getCharacterClassCnt(std::string character_class)
 {
 	unsigned int zombies = 0;
 	BOOST_FOREACH(Character *ch, characters) {
-		if (ch->isValue("class") && ch->getStringValue("class") == "zombie") {
+		if (ch->isValue("class") && ch->getStringValue("class") == character_class) {
 			if (ch->isAlive()) {
 				++zombies;
 			}
@@ -120,11 +123,11 @@ unsigned int Town::getZombiesCnt()
 	return zombies;
 }
 
-std::vector<blieng::Character *> Town::getZombies()
+std::vector<blieng::Character *> Town::getCharacterClass(std::string character_class)
 {
 	std::vector<Character *> zombies; 
 	BOOST_FOREACH(Character *ch, characters) {
-		if (ch->isValue("class") && ch->getStringValue("class") == "zombie") {
+		if (ch->isValue("class") && ch->getStringValue("class") == character_class) {
 			zombies.push_back(ch);
 		}
 	}

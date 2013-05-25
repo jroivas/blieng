@@ -9,6 +9,7 @@
 #include "mapscreen.h"
 #include "characterview.h"
 #include "fightscreen.h"
+#include "zomb/worldclock.h"
 
 namespace ui
 {
@@ -26,6 +27,7 @@ public slots:
 	void zombieCheck(blieng::Town *);
 	void fightEnded();
 	void killedCharacter(zomb::PlayerCharacter*);
+	void zombieProceed();
 
 signals:
 	void fellowship(QPointF);
@@ -55,6 +57,7 @@ private:
 	unsigned int character_count;
 
 	QTimer *walker;
+	zomb::WorldClock *clock;
 };
 
 }

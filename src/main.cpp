@@ -11,11 +11,13 @@
 #include "blieng/maps.h"
 #include "blieng/wallclock.h"
 #include "zomb/zombie_character.h"
+#include "zomb/worldclock.h"
 
 int main(int argc, char **argv)
 {
 	QApplication app(argc, argv);
 
+	#if 0
 	blieng::Item *nail = new blieng::Item("nail");
 	blieng::Item *iron = new blieng::Item("iron");
 	iron->setUsable();
@@ -37,6 +39,7 @@ int main(int argc, char **argv)
 	} else {
 		std::cout << "Can't produce nail\n";
 	}
+	#endif
 
 	#if 0
 	for (int j=0; j<10; j++) {
@@ -44,12 +47,14 @@ int main(int argc, char **argv)
 		std::cout << z->toString() << "\n";
 	}
 	#endif
+	#if 0
 	zomb::ZombieCharacter *z1 = new zomb::ZombieCharacter();
 	zomb::ZombieCharacter *z2 = new zomb::ZombieCharacter();
 	std::cout << "a1\n";
 	z1->assignObject(z2);
 	std::cout << "a2\n";
 	z1->assignObject(nail);
+	#endif
 
 
 	#if 0
