@@ -2,6 +2,7 @@
 #include <boost/foreach.hpp>
 #include <boost/format.hpp>
 #include "blieng/data.h"
+#include "blieng/configure.h"
 
 using ui::CharacterView;
 using ui::CharacterData;
@@ -10,8 +11,8 @@ CharacterView::CharacterView(QWidget *parent) : QWidget(parent), fight(false)
 {
 	setLayout(&layout);
 	act = new QPushButton("Act");
-	act->setMinimumWidth(20);
-	act->setMinimumHeight(50);
+	act->setMinimumWidth(blieng::Configure::getInstance()->getUIntValue("act_button_width"));
+	act->setMinimumHeight(blieng::Configure::getInstance()->getUIntValue("act_button_height"));
 	connect(act, SIGNAL(clicked()), this, SIGNAL(done()));
 }
 
@@ -61,6 +62,7 @@ std::vector<ui::CharacterData *> CharacterView::getCharacters()
 void CharacterView::updateView()
 {
 	clearData();
+	unsigned int chr_size = blieng::Configure::getInstance()->getUIntValue("chr_size");
 	BOOST_FOREACH(zomb::PlayerCharacter* chr, characters) {
 		if (chr->isValue("image")) {
 			int image = chr->getIntValue("image") + 1;
@@ -71,8 +73,8 @@ void CharacterView::updateView()
 			chrdata.push_back(data);
 
 			data->widget = new QLabel();
-			data->widget->setPixmap(QPixmap::fromImage(data->image.scaled(64, 64)));
-			data->widget->setMinimumSize(64, 64);
+			data->widget->setPixmap(QPixmap::fromImage(data->image.scaled(chr_size, chr_size)));
+			data->widget->setMinimumSize(chr_size, chr_size);
 
 			data->name_widget = new QLabel();
 			data->name_widget->setText(chr->getStringValue("name").c_str());

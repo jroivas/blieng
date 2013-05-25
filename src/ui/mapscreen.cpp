@@ -1,5 +1,6 @@
 #include "mapscreen.h"
 #include "blieng/data.h"
+#include "blieng/configure.h"
 #include <boost/foreach.hpp>
 
 using ui::MapScreen;
@@ -14,7 +15,7 @@ MapScreen::MapScreen(QString mapname, QWidget *parent) : QWidget(parent)
 {
 	maps = new blieng::Maps(mapname.toStdString());
 	create_world = new zomb::CreateWorld(maps);
-	zoomlevel = 100;
+	zoomlevel = blieng::Configure::getInstance()->getUIntValue("default_zoom_level");
 	clicked_town = NULL;
 	loadImage();
 }
@@ -55,7 +56,7 @@ void MapScreen::paintEvent(QPaintEvent *event)
 	paint.drawImage(image_pos / zoomfactor, bgimage);
 
 	QPen blackpen(QColor(0,0,0,255));
-	blackpen.setWidth(3);
+	blackpen.setWidth(blieng::Configure::getInstance()->getUIntValue("path_width"));
 	paint.setPen(blackpen);
 	BOOST_FOREACH(blieng::Path path, maps->getPaths()) {
 		blieng::Point prev(false);
@@ -78,7 +79,7 @@ void MapScreen::paintEvent(QPaintEvent *event)
 		QPointF town_pos(town->getPositionX(), town->getPositionY());
 		paint.drawEllipse((image_pos + town_pos) / zoomfactor, qreal((town->getSize()) / zoomfactor), qreal((town->getSize()) / zoomfactor));
 
-		QRect namebox = paint.boundingRect(0, 0, 300 / zoomfactor, 100 / zoomfactor, Qt::AlignLeft, town->getName().c_str());
+		QRect namebox = paint.boundingRect(0, 0, blieng::Configure::getInstance()->getUIntValue("townname_max_width") / zoomfactor, 100 / zoomfactor, Qt::AlignLeft, town->getName().c_str());
 		QPointF textpos = image_pos + town_pos;
 		paint.setPen(QColor(255,0,0,255));
 		textpos.setX(textpos.x() - namebox.width()/2);
@@ -143,8 +144,7 @@ void MapScreen::mouseReleaseEvent(QMouseEvent *event)
 	if (canmove) {
 		QPointF now_pos = event->pos() * (zoomlevel / 100.0);
 		QPointF pos_diff = now_pos - last_pos;
-		if (pos_diff.manhattanLength() > 10) {
-			//qDebug() << "Diffed " << now_pos << pos_diff << pos_diff.manhattanLength();
+		if (pos_diff.manhattanLength() > blieng::Configure::getInstance()->getUIntValue("town_sensitivity_distance")) {
 			image_pos += pos_diff;
 			update();
 		} else {
@@ -153,7 +153,7 @@ void MapScreen::mouseReleaseEvent(QMouseEvent *event)
 				town_pos += image_pos;
 				QPointF town_diff = town_pos - now_pos;
 				if (town_diff.manhattanLength() <= town->getSize()) {
-					qDebug() << "Clicked town " << town->getName().c_str();
+					if (blieng::Configure::getInstance()->getBoolValue("debug")) qDebug() << "Clicked town " << town->getName().c_str();
 					clicked_town = town;
 					emit townSelected(town);
 				}

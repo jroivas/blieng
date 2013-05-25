@@ -1,15 +1,14 @@
 #include "fightscreen.h"
 #include <boost/foreach.hpp>
+#include "blieng/configure.h"
 
 using ui::FightScreen;
 
-static double zombieheight = 32;
-static const double zombiesize = 48;
-static const double safearea = 5;
-static const double zombiesteps = 20;
-
 FightScreen::FightScreen(QWidget *parent) : QWidget(parent), town(NULL), chars(NULL)
 {
+	zombiesteps = blieng::Configure::getInstance()->getUIntValue("zombie_steps");
+	safearea = blieng::Configure::getInstance()->getUIntValue("fight_safe_area");
+	zombiesize = blieng::Configure::getInstance()->getUIntValue("zombie_size");
 }
 
 void FightScreen::setTown(blieng::Town *t)
@@ -442,11 +441,5 @@ void FightScreen::paintEvent(QPaintEvent *event)
 		if (!zomb->image.isNull()) {
 			paint.drawImage(QPointF(zomb->posx * zombiewidth + border + zomb->posx_inc, zomb->posy * stepsize + zomb->posy_inc), zomb->image.scaled(zomb->size, zomb->size));
 		}
-#if 0
-		if (!zomb->zombie->isAlive()) {
-			paint.setBrush(QColor(255,0,0));
-			paint.drawRect(QRectF(QPointF(zomb->posx * zombiewidth + border + zomb->posx_inc, zomb->posy * zombieheight + zomb->posy_inc), QSizeF(10, 10)));
-		}
-#endif
 	}
 }

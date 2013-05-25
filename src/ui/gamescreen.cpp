@@ -18,38 +18,28 @@ GameScreen::GameScreen(QWidget *parent) : QWidget(parent)
 	current_location = NULL;
 	target_location = NULL;
 	walker = new QTimer();
-	walker->setInterval(100);
+	walker->setInterval(blieng::Configure::getInstance()->getUIntValue("walker_interval"));
 
 	clock = new zomb::WorldClock();
 
-#if 0
-	layout.addWidget(chrgen, 0, 0, 0, Qt::AlignLeft);
-	layout.addWidget(mapscreen, 0, 1, 1, Qt::AlignHCenter);
-	layout.addWidget(character_view, 1, 1, 0, Qt::AlignHCenter | Qt::AlignBottom);
-	layout.addWidget(chrgen, 0, 0, Qt::AlignLeft);
-	layout.addWidget(mapscreen, 0, 1, Qt::AlignCenter);
-	layout.addWidget(character_view, 3, 1, Qt::AlignHCenter | Qt::AlignBottom);
-#else
 	layout.addWidget(chrgen, GameLayout::Left);
 	layout.addWidget(mapscreen, GameLayout::Center);
 	layout.addWidget(fightscreen, GameLayout::Center);
 	layout.addWidget(character_view, GameLayout::Bottom);
-#endif
 
-	//mapscreen->setMaximumWidth(1000);
-	mapscreen->setMinimumWidth(400);
-	mapscreen->setMinimumHeight(300);
+	mapscreen->setMinimumWidth(blieng::Configure::getInstance()->getUIntValue("map_width_min"));
+	mapscreen->setMinimumHeight(blieng::Configure::getInstance()->getUIntValue("map_height_min"));
 	mapscreen->setEnabled(false);
-	fightscreen->setMinimumWidth(400);
-	fightscreen->setMinimumHeight(300);
-	//mapscreen->setMaximumHeight(700);
-	character_view->setMinimumHeight(64);
-	character_view->setMinimumWidth(400);
-	//character_view->setMaximumHeight(64);
+
+	fightscreen->setMinimumWidth(blieng::Configure::getInstance()->getUIntValue("map_width_min"));
+	fightscreen->setMinimumHeight(blieng::Configure::getInstance()->getUIntValue("map_height_min"));
+
+	character_view->setMinimumHeight(blieng::Configure::getInstance()->getUIntValue("chr_height_min"));
+	character_view->setMinimumWidth(blieng::Configure::getInstance()->getUIntValue("chr_width_min"));
 
 	fightscreen->setVisible(false);
 
-	character_count = 3;
+	character_count = blieng::Configure::getInstance()->getUIntValue("chr_count");
 
 	connect(chrgen, SIGNAL(generated(zomb::PlayerCharacter *)), this, SLOT(newCharacter(zomb::PlayerCharacter *)));
 	connect(mapscreen, SIGNAL(townSelected(blieng::Town *)), this, SLOT(targetTown(blieng::Town *)));

@@ -65,6 +65,9 @@ private:
 	ui::CharacterView *chars;
 
 	double stepsize;
+	double zombiesteps;
+	double safearea;
+	double zombiesize;
 };
 
 }

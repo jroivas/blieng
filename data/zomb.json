@@ -2,6 +2,29 @@
 	"clock": 1000,             /* Clock timeout, 1000 = 1 sec */
 	"clock_background": 10,    /* Background/random timeout, 10 = 0.010 sec / 10 milliseconds */
 
+	"walker_interval": 100,    /* Walker interval, controls walking speed, 100 ms */
+
+	"map_width_min": 400,      /* Map view minimum width */
+	"map_height_min": 400,     /* Map view minimum height */
+
+	"chr_width_min": 400,      /* Character view minimum width */
+	"chr_height_min": 64,      /* Character view minimum height */
+	"chr_count": 3,            /* Initial character count */
+	"chr_size": 64,            /* Character size */
+
+	"act_button_height": 100,  /* Height of "Act" button */
+	"act_button_width": 100,   /* Width of "Act" button */
+
+	"default_zoom_level": 100, /* Default zoom level */
+	"path_width": 3,           /* Width of path, size in pixels */
+	"townname_max_width": 300, /* Maximum width of town name in pixels */
+	"town_sensitivity_distance": 10, /* Town selection sensitivity */
+	"mouse_wheel_sensitivity": 15,   /* Mouse wheel sensitivity */
+
+	"zombie_size": 48,         /* Character size in pixels */
+	"zombie_steps": 20,        /* Steps for zombie to reach player */
+	"fight_safe_area": 5,      /* Safe area in fight screen */
+
 	"random_freq": 250,        /* Random frequence */
 	"random_prob": 250,        /* Probability of random event */
 
@@ -9,7 +32,7 @@
 	"bite_threshold": 1.0,     /* Treshold to get bitten in background spreading */
 	"zombie_limiter": 10,      /* Limit zombie amount by a factor in background spreading */
 
-	"debug": "true",           /* Print debug messages? */
+	"debug": "atrue",           /* Print debug messages? */
 
 	"none": ""
 }
