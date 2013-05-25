@@ -5,8 +5,6 @@
 
 using ui::MapScreen;
 
-static const double fella_size = 40;
-
 
 /* FIXME: Should this be implemented with QGraphicsItem, QGraphicsScene, etc.
  */
@@ -16,6 +14,7 @@ MapScreen::MapScreen(QString mapname, QWidget *parent) : QWidget(parent)
 	maps = new blieng::Maps(mapname.toStdString());
 	create_world = new zomb::CreateWorld(maps);
 	zoomlevel = blieng::Configure::getInstance()->getUIntValue("default_zoom_level");
+	fella_size = blieng::Configure::getInstance()->getUIntValue("chr_map_size");
 	clicked_town = NULL;
 	loadImage();
 }

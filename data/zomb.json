@@ -11,6 +11,7 @@
 	"chr_height_min": 64,      /* Character view minimum height */
 	"chr_count": 3,            /* Initial character count */
 	"chr_size": 64,            /* Character size */
+	"chr_map_size": 40,        /* Character size in map */
 
 	"act_button_height": 100,  /* Height of "Act" button */
 	"act_button_width": 100,   /* Width of "Act" button */

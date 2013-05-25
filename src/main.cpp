@@ -120,6 +120,7 @@ int main(int argc, char **argv)
 	conf->addKey("chr_height_min", blieng::Configure::KeyUInt);
 	conf->addKey("chr_count", blieng::Configure::KeyUInt);
 	conf->addKey("chr_size", blieng::Configure::KeyUInt);
+	conf->addKey("chr_map_size", blieng::Configure::KeyUInt);
 
 	//conf->addKey("", blieng::Configure::KeyUInt);
 	conf->addKey("default_zoom_level", blieng::Configure::KeyUInt);

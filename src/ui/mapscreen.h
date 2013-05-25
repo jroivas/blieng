@@ -48,6 +48,8 @@ private:
 	blieng::Town *clicked_town;
 
 	unsigned int zoomlevel;
+	double fella_size;
+
 };
 
 }
