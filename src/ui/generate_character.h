@@ -1,5 +1,5 @@
-#ifndef __GENREATE_CHARACTER_H
-#define __GENREATE_CHARACTER_H
+#ifndef __UI_GENREATE_CHARACTER_H
+#define __UI_GENREATE_CHARACTER_H
 
 #include <QtGui>
 #include <map>

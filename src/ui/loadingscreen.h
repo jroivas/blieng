@@ -1,5 +1,5 @@
-#ifndef __LOADINGSCREEN_H
-#define __LOADINGSCREEN_H
+#ifndef __UI_LOADINGSCREEN_H
+#define __UI_LOADINGSCREEN_H
 
 #include <QtGui>
 

@@ -1,5 +1,5 @@
-#ifndef __PLAYER_CHARACTER
-#define __PLAYER_CHARACTER
+#ifndef __ZOMB_PLAYER_CHARACTER
+#define __ZOMB_PLAYER_CHARACTER
 
 #include <string>
 #include <vector>

@@ -1,5 +1,5 @@
-#ifndef __STARTSCREEN_H
-#define __STARTSCREEN_H
+#ifndef __UI_STARTSCREEN_H
+#define __UI_STARTSCREEN_H
 
 #include <QtGui>
 

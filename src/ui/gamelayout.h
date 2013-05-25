@@ -1,5 +1,5 @@
-#ifndef __GAME_LAYOUT_H
-#define __GAME_LAYOUT_H
+#ifndef __UI_GAMELAYOUT_H
+#define __UI_GAMELAYOUT_H
 
 #include <QLayout>
 #include <QLayoutItem>

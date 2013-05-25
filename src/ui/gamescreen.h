@@ -1,5 +1,5 @@
-#ifndef __GAMESCREEN_H
-#define __GAMESCREEN_H
+#ifndef __UI_GAMESCREEN_H
+#define __UI_GAMESCREEN_H
 
 #include "ui/gamelayout.h"
 #include <QtGui>

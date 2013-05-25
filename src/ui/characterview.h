@@ -1,5 +1,5 @@
-#ifndef __CHARACTER_VIEW_H
-#define __CHARACTER_VIEW_H
+#ifndef __UI_CHARACTERVIEW_H
+#define __UI_CHARACTERVIEW_H
 
 #include <QtGui>
 #include <vector>

@@ -1,5 +1,5 @@
-#ifndef __MAPSCREEN_H
-#define __MAPSCREEN_H
+#ifndef __UI_MAPSCREEN_H
+#define __UI_MAPSCREEN_H
 
 #include <QtGui>
 #include "blieng/maps.h"

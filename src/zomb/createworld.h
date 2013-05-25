@@ -1,5 +1,5 @@
-#ifndef __CREATE_WORLD_H
-#define __CREATE_WORLD_H
+#ifndef __ZOMB_CREATEWORLD_H
+#define __ZOMB_CREATEWORLD_H
 
 #include "blieng/maps.h"
 

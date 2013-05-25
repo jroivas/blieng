@@ -1,7 +1,7 @@
 TEMPLATE = app
-TARGET = testrunner
-DEPENDPATH += . ../blieng
-INCLUDEPATH += . ../blieng
+TARGET = tests
+DEPENDPATH += . ..
+INCLUDEPATH += . ..
 
 LIBS += -lcpptest
 

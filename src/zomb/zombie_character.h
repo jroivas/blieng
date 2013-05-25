@@ -1,5 +1,5 @@
-#ifndef __ZOMBIE_CHARACTER_H
-#define __ZOMBIE_CHARACTER_H
+#ifndef __ZOMB_ZOMBIE_CHARACTER_H
+#define __ZOMB_ZOMBIE_CHARACTER_H
 
 #include "player_character.h"
 

@@ -1,5 +1,5 @@
-#ifndef __FIGHTSCREEN_H
-#define __FIGHTSCREEN_H
+#ifndef __UI_FIGHTSCREEN_H
+#define __UI_FIGHTSCREEN_H
 
 #include <QtGui>
 #include "blieng/town.h"
