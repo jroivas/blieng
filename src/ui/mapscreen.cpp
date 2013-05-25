@@ -15,6 +15,7 @@ MapScreen::MapScreen(QString mapname, QWidget *parent) : QWidget(parent)
 	maps = new blieng::Maps(mapname.toStdString());
 	create_world = new zomb::CreateWorld(maps);
 	zoomlevel = 100;
+	clicked_town = NULL;
 	loadImage();
 }
 
@@ -73,6 +74,7 @@ void MapScreen::paintEvent(QPaintEvent *event)
 	paint.setBrush(QColor(0,0,0,255));
 	BOOST_FOREACH(blieng::Town *town, maps->getTowns()) {
 		paint.setPen(QColor(0,0,0,255));
+		paint.setBrush(QColor(0,0,0,255));
 		QPointF town_pos(town->getPositionX(), town->getPositionY());
 		paint.drawEllipse((image_pos + town_pos) / zoomfactor, qreal((town->getSize()) / zoomfactor), qreal((town->getSize()) / zoomfactor));
 
@@ -82,6 +84,12 @@ void MapScreen::paintEvent(QPaintEvent *event)
 		textpos.setX(textpos.x() - namebox.width()/2);
 
 		paint.drawText(textpos / zoomfactor, town->getName().c_str());
+		if (town == clicked_town) {
+			QPointF sizemin = QPointF(town->getSize() / zoomfactor * 3, town->getSize() / zoomfactor * 3);
+			paint.setBrush(QColor(0,0,0,0));
+			QRectF selection = QRectF(((image_pos + town_pos) / zoomfactor) - (sizemin / 2), ((image_pos + town_pos) / zoomfactor) + (sizemin / 2));
+			paint.drawRect(selection);
+		}
 	}
 
 	unsigned int fella = 0;
@@ -146,6 +154,7 @@ void MapScreen::mouseReleaseEvent(QMouseEvent *event)
 				QPointF town_diff = town_pos - now_pos;
 				if (town_diff.manhattanLength() <= town->getSize()) {
 					qDebug() << "Clicked town " << town->getName().c_str();
+					clicked_town = town;
 					emit townSelected(town);
 				}
 			}

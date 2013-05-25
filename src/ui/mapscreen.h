@@ -45,6 +45,7 @@ private:
 	zomb::CreateWorld *create_world;
 	std::vector<ui::CharacterData *> the_fellowship;
 	QPointF fellowship_pos;
+	blieng::Town *clicked_town;
 
 	unsigned int zoomlevel;
 };
