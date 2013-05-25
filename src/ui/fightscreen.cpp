@@ -6,7 +6,7 @@ using ui::FightScreen;
 static double zombieheight = 32;
 static const double zombiesize = 48;
 static const double safearea = 5;
-static const double zombiesteps = 10;
+static const double zombiesteps = 20;
 
 FightScreen::FightScreen(QWidget *parent) : QWidget(parent), town(NULL), chars(NULL)
 {
@@ -98,10 +98,10 @@ void FightScreen::zombieDamage(ui::CharacterData* chr, double range_data, double
 {
 	BOOST_FOREACH(ui::ZombieData* zomb, zombies) {
 		if (!zomb->zombie->isAlive()) continue;
-		double distance = (height() - safearea - zombieheight) - (zomb->posy * zombieheight);
-		if (distance <= (range_data*zombieheight)) {
+		double distance = (height() - safearea - stepsize) - (zomb->posy * stepsize);
+		if (distance <= (range_data * stepsize)) {
 			double damage = damage_data * chr->character->getRandomDouble(0.0, 2.0);
-			double dist = 1 - (distance / (range_data*zombieheight));
+			double dist = 1 - (distance / (range_data * stepsize));
 			damage *= dist;
 			if (zomb->posx != chrindex) damage /= 10;
 			//qDebug() << "damage" << damage << dist;
@@ -214,7 +214,7 @@ void FightScreen::calculateZombieSpeed()
 
 		zomb->posy += speed;
 		if (zomb->posy * stepsize >= (height() - safearea - stepsize)) {
-			zomb->posy = (height() - zombieheight - safearea) / stepsize;
+			zomb->posy = (height() - safearea - stepsize) / stepsize;
 		}
 
 		zomb->size = zomb->default_size;
