@@ -8,25 +8,25 @@ namespace zomb
 
 class WorldClock : public QObject
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	WorldClock();
-	void pause();
-	void start();
+    WorldClock();
+    void pause();
+    void start();
 
 signals:
-	void clockTick();
-	void backgroundTick();
-	void randomTick();
+    void clockTick();
+    void backgroundTick();
+    void randomTick();
 
 private slots:
-	void tick();
-	void tickBackground();
+    void tick();
+    void tickBackground();
 
 private:
-	QTimer timer;
-	QTimer timer_background;
-	QDateTime last_time;
+    QTimer timer;
+    QTimer timer_background;
+    QDateTime last_time;
 };
 
 }

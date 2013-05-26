@@ -12,44 +12,43 @@ namespace ui
 
 class MapScreen : public QWidget
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	MapScreen(QString mapname, QWidget *parent=0);
-	void paintEvent(QPaintEvent *event);
-	blieng::Maps *getMaps() { return maps;}
+    MapScreen(QString mapname, QWidget *parent=0);
+    void paintEvent(QPaintEvent *event);
+    blieng::Maps *getMaps() { return maps;}
 
 public slots:
-	void fellowship(QPointF pos);
-	void changedFellowship(std::vector<ui::CharacterData *> fellows);
+    void fellowship(QPointF pos);
+    void changedFellowship(std::vector<ui::CharacterData *> fellows);
 
 signals:
-	void townSelected(blieng::Town *);
+    void townSelected(blieng::Town *);
 
 protected:
-	void mousePressEvent(QMouseEvent *event);
-	void mouseReleaseEvent(QMouseEvent *event);
-	void mouseMoveEvent(QMouseEvent *event);
-	void wheelEvent(QWheelEvent *event);
+    void mousePressEvent(QMouseEvent *event);
+    void mouseReleaseEvent(QMouseEvent *event);
+    void mouseMoveEvent(QMouseEvent *event);
+    void wheelEvent(QWheelEvent *event);
 
 private:
-	void loadImage();
-	void validateImage();
+    void loadImage();
+    void validateImage();
 
-	blieng::Maps *maps;
-	QImage bgimage;
-	QPointF image_pos;
+    blieng::Maps *maps;
+    QImage bgimage;
+    QPointF image_pos;
 
-	bool canmove;
-	QPointF last_pos;
+    bool canmove;
+    QPointF last_pos;
 
-	zomb::CreateWorld *create_world;
-	std::vector<ui::CharacterData *> the_fellowship;
-	QPointF fellowship_pos;
-	blieng::Town *clicked_town;
+    zomb::CreateWorld *create_world;
+    std::vector<ui::CharacterData *> the_fellowship;
+    QPointF fellowship_pos;
+    blieng::Town *clicked_town;
 
-	unsigned int zoomlevel;
-	double fella_size;
-
+    unsigned int zoomlevel;
+    double fella_size;
 };
 
 }

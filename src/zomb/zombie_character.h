@@ -3,18 +3,19 @@
 
 #include "player_character.h"
 
-namespace zomb {
+namespace zomb
+{
 
 class ZombieCharacter : public zomb::PlayerCharacter
 {
 public:
-	ZombieCharacter();
-	virtual ~ZombieCharacter();
-	void fromPlayerCharacter(PlayerCharacter *chr);
-	void filterItems();
+    ZombieCharacter();
+    virtual ~ZombieCharacter();
+    void fromPlayerCharacter(PlayerCharacter *chr);
+    void filterItems();
 
 private:
-	void init();
+    void init();
 };
 
 }

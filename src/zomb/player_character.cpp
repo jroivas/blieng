@@ -9,7 +9,7 @@ std::vector<std::string> PlayerCharacter::last_names;
 
 PlayerCharacter::PlayerCharacter() : blieng::Character()
 {
-	roll();
+    roll();
 }
 
 PlayerCharacter::~PlayerCharacter()
@@ -18,71 +18,71 @@ PlayerCharacter::~PlayerCharacter()
 
 void PlayerCharacter::roll()
 {
-	generateName();
+    generateName();
 
-	// Character level
-	setValue("level", 0);
-	setValue("level-max", 10);
+    // Character level
+    setValue("level", 0);
+    setValue("level-max", 10);
 
-	generateHealth();
+    generateHealth();
 
-	// Speed
-	setValue("speed", getRandomInt(80, 120) / 100.0);
+    // Speed
+    setValue("speed", getRandomInt(80, 120) / 100.0);
 
-	// Armor
-	setValue("armor", 0);
-	setValue("armor-max", 40);
+    // Armor
+    setValue("armor", 0);
+    setValue("armor-max", 40);
 
-	// Food
-	setValue("food", 0);
-	setValue("food-max", 350);
+    // Food
+    setValue("food", 0);
+    setValue("food-max", 350);
 
-	// Water
-	setValue("water", 0);
-	setValue("water-max", 5);
+    // Water
+    setValue("water", 0);
+    setValue("water-max", 5);
 
-	// Zombie prob
-	setValue("zombie-prob", getRandomInt(0, 100));
-	setValue("zombie-wound", (double)0);
+    // Zombie prob
+    setValue("zombie-prob", getRandomInt(0, 100));
+    setValue("zombie-wound", (double)0);
 
-	// Stats
-	setValue("might", getRandomInt(0, 50));
-	setValue("strength", getRandomInt(0, 50));
-	setValue("intelligence", getRandomInt(0, 50));
+    // Stats
+    setValue("might", getRandomInt(0, 50));
+    setValue("strength", getRandomInt(0, 50));
+    setValue("intelligence", getRandomInt(0, 50));
 
-	// Skills
-	setValue("rifle", getRandomInt(0, 50));
-	setValue("pistol", getRandomInt(0, 50));
-	setValue("computer", getRandomInt(0, 50));
+    // Skills
+    setValue("rifle", getRandomInt(0, 50));
+    setValue("pistol", getRandomInt(0, 50));
+    setValue("computer", getRandomInt(0, 50));
 
-	setValue("dead", false);
-	setValue("class", std::string("human"));
+    setValue("dead", false);
+    setValue("class", std::string("human"));
 
-	static const int MAX_IMAGES = 5;
-	setValue("image", getRandomInt(0, MAX_IMAGES));
+    static const int MAX_IMAGES = 5;
+    setValue("image", getRandomInt(0, MAX_IMAGES));
 }
 
 void PlayerCharacter::generateHealth()
 {
-	// Health
-	double health = getRandomDouble(65, 100);
-	setValue("health", health);
-	setValue("health-max", health);
+    // Health
+    double health = getRandomDouble(65, 100);
+    setValue("health", health);
+    setValue("health-max", health);
 }
 
 void PlayerCharacter::readNames()
 {
-	if (first_names.size() == 0) first_names = blieng::Data::getInstance()->readLinesFromFile("first_names");
-	if (last_names.size() == 0) last_names = blieng::Data::getInstance()->readLinesFromFile("last_names");
+    if (first_names.size() == 0) first_names = blieng::Data::getInstance()->readLinesFromFile("first_names");
+    if (last_names.size() == 0) last_names = blieng::Data::getInstance()->readLinesFromFile("last_names");
 }
 
 void PlayerCharacter::generateName()
 {
-	readNames();
+    readNames();
 
-	std::string name;
-	name = first_names.at(getRandomInt(0, first_names.size()));
-	name += " " + last_names.at(getRandomInt(0, last_names.size()));
+    std::string name;
+    name = first_names.at(getRandomInt(0, first_names.size()));
+    name += " " + last_names.at(getRandomInt(0, last_names.size()));
 
-	setValue("name", name);
+    setValue("name", name);
 }

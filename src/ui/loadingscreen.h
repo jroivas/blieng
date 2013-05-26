@@ -9,17 +9,17 @@ namespace ui
 
 class LoadingScreen : public QWidget
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	LoadingScreen(QWidget *parent=0);
-	void paintEvent(QPaintEvent *event);
+    LoadingScreen(QWidget *parent=0);
+    void paintEvent(QPaintEvent *event);
 
 private:
-	void drawCircle(QPainter *painter, double _angle, double _radius);
-	QImage bg_img;
-	double angle;
-	double radius;
-	QTimer *anim;
+    void drawCircle(QPainter *painter, double _angle, double _radius);
+    QImage bg_img;
+    double angle;
+    double radius;
+    QTimer *anim;
 };
 
 }

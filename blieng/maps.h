@@ -15,27 +15,27 @@ namespace blieng
 class Maps : public BliObject
 {
 public:
-	Maps(std::string mapname);
+    Maps(std::string mapname);
 
-	std::string getMapImageFile() { return map_image_file; }
-	std::string getSolvedMapImageFile();
-	std::vector<blieng::Town *> getTowns() { return towns; }
-	std::vector<blieng::Path> getPaths() { return paths; }
-	std::vector<blieng::Path> getRevPaths() { return rev_paths; }
+    std::string getMapImageFile() { return map_image_file; }
+    std::string getSolvedMapImageFile();
+    std::vector<blieng::Town *> getTowns() { return towns; }
+    std::vector<blieng::Path> getPaths() { return paths; }
+    std::vector<blieng::Path> getRevPaths() { return rev_paths; }
 
 private:
-	void loadMap(std::string name);
-	void parseMap();
+    void loadMap(std::string name);
+    void parseMap();
 
-	std::string map_name;
-	std::string map_file;
-	Json::Value map_json;
+    std::string map_name;
+    std::string map_file;
+    Json::Value map_json;
 
-	std::string map_image_file;
-	std::string solved_map_image_file;
-	std::vector<blieng::Town *> towns;
-	std::vector<blieng::Path> paths;
-	std::vector<blieng::Path> rev_paths;
+    std::string map_image_file;
+    std::string solved_map_image_file;
+    std::vector<blieng::Town *> towns;
+    std::vector<blieng::Path> paths;
+    std::vector<blieng::Path> rev_paths;
 };
 
 }

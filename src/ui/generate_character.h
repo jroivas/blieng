@@ -13,27 +13,27 @@ namespace ui
 
 class GenerateCharacter : public QWidget
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	GenerateCharacter(QWidget *parent=0);
+    GenerateCharacter(QWidget *parent=0);
 
 public Q_SLOTS:
-	void reroll();
-	void improve();
-	void done();
+    void reroll();
+    void improve();
+    void done();
 
 signals:
-	void generated(zomb::PlayerCharacter *);
+    void generated(zomb::PlayerCharacter *);
 
 private:
-	void clearLayout(QLayout *del_layout);
-	void clear();
-	void update();
+    void clearLayout(QLayout *del_layout);
+    void clear();
+    void update();
 
-	zomb::PlayerCharacter *character;
-	QVBoxLayout layout;
-	int improve_points;
-	std::map<QPushButton*, std::string> improve_map;
+    zomb::PlayerCharacter *character;
+    QVBoxLayout layout;
+    int improve_points;
+    std::map<QPushButton*, std::string> improve_map;
 };
 
 }

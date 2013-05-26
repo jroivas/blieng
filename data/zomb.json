@@ -38,5 +38,17 @@
 	"zombie_images": "zomb###.png",  /* Zombie image file format */
 	"chr_images": "chr###.png",      /* Character image file format */
 
+	"zombie_damage_multiple_max": 2.0,
+	"zombie_damage_row_reduce": 10,
+	"zombie_damage_left_leg": 10,
+	"zombie_damage_right_leg": 10,
+	"zombie_damage_left_arm": 1,
+	"zombie_damage_right_arm": 1,
+	"zombie_damage_torso": 2,
+
+	"player_damage_multiple_max": 2.0,
+	"player_damage_row_reduce": 10, 
+	"player_damage_loot_range": 1000,
+
 	"none": ""
 }

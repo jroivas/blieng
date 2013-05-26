@@ -9,11 +9,11 @@ namespace zomb
 class CreateWorld
 {
 public:
-	CreateWorld(blieng::Maps *maps);
+    CreateWorld(blieng::Maps *maps);
 
 private:
-	void initialize();
-	blieng::Maps *maps;
+    void initialize();
+    blieng::Maps *maps;
 };
 
 }

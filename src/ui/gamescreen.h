@@ -16,48 +16,48 @@ namespace ui
 
 class GameScreen : public QWidget
 {
-	Q_OBJECT
+    Q_OBJECT
 public:
-	GameScreen(QWidget *parent=0);
+    GameScreen(QWidget *parent=0);
 
 public slots:
-	void newCharacter(zomb::PlayerCharacter *);
-	void targetTown(blieng::Town *);
-	void doWalk();
-	void zombieCheck(blieng::Town *);
-	void fightEnded();
-	void killedCharacter(zomb::PlayerCharacter*);
-	void zombieProceed();
+    void newCharacter(zomb::PlayerCharacter *);
+    void targetTown(blieng::Town *);
+    void doWalk();
+    void zombieCheck(blieng::Town *);
+    void fightEnded();
+    void killedCharacter(zomb::PlayerCharacter*);
+    void zombieProceed();
 
 signals:
-	void fellowship(QPointF);
-	void changeFellowship(std::vector<ui::CharacterData *>);
-	void enterLocation(blieng::Town *);
+    void fellowship(QPointF);
+    void changeFellowship(std::vector<ui::CharacterData *>);
+    void enterLocation(blieng::Town *);
 
 private:
-	void moveToHomeTown();
-	void solveTargetPath();
-	void removeCharacter(zomb::PlayerCharacter *chr);
+    void moveToHomeTown();
+    void solveTargetPath();
+    void removeCharacter(zomb::PlayerCharacter *chr);
 
-	GenerateCharacter *chrgen;
-	MapScreen *mapscreen;
-	FightScreen *fightscreen;
-	CharacterView *character_view;
+    GenerateCharacter *chrgen;
+    MapScreen *mapscreen;
+    FightScreen *fightscreen;
+    CharacterView *character_view;
 
-	blieng::Town *current_location;
-	blieng::Town *target_location;
-	blieng::Path target_path;
-	blieng::Point waypoint;
-	double walk_progress;
-	double walk_length;
-	double walk_speed;
+    blieng::Town *current_location;
+    blieng::Town *target_location;
+    blieng::Path target_path;
+    blieng::Point waypoint;
+    double walk_progress;
+    double walk_length;
+    double walk_speed;
 
-	ui::GameLayout layout;
-	std::vector<zomb::PlayerCharacter *> characters;
-	unsigned int character_count;
+    ui::GameLayout layout;
+    std::vector<zomb::PlayerCharacter *> characters;
+    unsigned int character_count;
 
-	QTimer *walker;
-	zomb::WorldClock *clock;
+    QTimer *walker;
+    zomb::WorldClock *clock;
 };
 
 }

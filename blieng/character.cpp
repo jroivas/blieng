@@ -4,19 +4,19 @@ using blieng::Character;
 
 Character::Character() : blieng::BliObject()
 {
-	setValue("dead", false);
+    setValue("dead", false);
 }
 
 bool Character::kill()
 {
-	setValue("dead", true);
-	return true;
+    setValue("dead", true);
+    return true;
 }
 
 bool Character::isAlive()
 {
-	if (!isValue("dead")) return true;
-	return !getBoolValue("dead");
+    if (!isValue("dead")) return true;
+    return !getBoolValue("dead");
 }
 
 void Character::addItem(blieng::Item *item)
@@ -25,22 +25,22 @@ void Character::addItem(blieng::Item *item)
 
 blieng::Item *Character::removeItem(blieng::Item *item)
 {
-	return item;
+    return item;
 }
 
 std::vector<blieng::Item *> Character::getItems()
 {
-	return items;
+    return items;
 }
 
 void Character::assignObject(BliObject *another)
 {
-	blieng::BliObject::assignObject(another);
+    blieng::BliObject::assignObject(another);
 }
 
 void Character::assignObject(Character *another)
 {
-	if (another == NULL) return;
-	blieng::BliObject::assignObject((BliObject*)another);
-	items = another->items;
+    if (another == NULL) return;
+    blieng::BliObject::assignObject((BliObject*)another);
+    items = another->items;
 }

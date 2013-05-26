@@ -6,24 +6,25 @@
 #include "blieng/character.h"
 #include "blieng/data.h"
 
-namespace zomb {
+namespace zomb
+{
 
 class PlayerCharacter : public blieng::Character
 {
 public:
-	PlayerCharacter();
-	virtual ~PlayerCharacter();
-	void roll();
+    PlayerCharacter();
+    virtual ~PlayerCharacter();
+    void roll();
 
 private:
-	// Generators
-	void generateName();
-	void generateHealth();
+    // Generators
+    void generateName();
+    void generateHealth();
 
-	void readNames();
+    void readNames();
 
-	static std::vector<std::string> first_names;
-	static std::vector<std::string> last_names;
+    static std::vector<std::string> first_names;
+    static std::vector<std::string> last_names;
 };
 
 }

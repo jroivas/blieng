@@ -13,21 +13,21 @@ namespace blieng
 class Configure : public blieng::BliObject
 {
 public:
-	typedef enum { KeyString, KeyDouble, KeyUInt, KeyInt, KeyBool } key_type_t;
-	static Configure *getInstance();
-	static Configure *getInstance(std::string config);
-	void load(std::string config_file);
+    typedef enum { KeyString, KeyDouble, KeyUInt, KeyInt, KeyBool } key_type_t;
+    static Configure *getInstance();
+    static Configure *getInstance(std::string config);
+    void load(std::string config_file);
 
-	void addKey(std::string val, key_type_t keytype);
-	bool validate();
+    void addKey(std::string val, key_type_t keytype);
+    bool validate();
 
 private:
-	Configure();
-	void parse();
+    Configure();
+    void parse();
 
-	std::string config_file;
-	Json::Value data_json;
-	std::map<std::string, key_type_t> keys;
+    std::string config_file;
+    Json::Value data_json;
+    std::map<std::string, key_type_t> keys;
 };
 
 }

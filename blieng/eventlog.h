@@ -13,31 +13,30 @@ namespace blieng
 class ObjectLog : public BliObject
 {
 public:
-	ObjectLog();
-	ObjectLog(void *obj);
-	
-	void assign(void *obj);
-	void addEvent(boost::any event);
-	void *getObject();
+    ObjectLog();
+    ObjectLog(void *obj);
+    
+    void assign(void *obj);
+    void addEvent(boost::any event);
+    void *getObject();
 
-	std::vector<std::pair<boost::posix_time::ptime, boost::any> > events;
+    std::vector<std::pair<boost::posix_time::ptime, boost::any> > events;
 
 private:
-	void *object;
+    void *object;
 };
 
 class EventLog
 {
 public:
-	EventLog *getInstance();
-	void log(void *object, boost::any event);
-	ObjectLog *get(void *object);
-	std::vector<ObjectLog *> getAll();
-	
-
+    EventLog *getInstance();
+    void log(void *object, boost::any event);
+    ObjectLog *get(void *object);
+    std::vector<ObjectLog *> getAll();
+    
 private:
-	EventLog();
-	std::vector<ObjectLog *> events;
+    EventLog();
+    std::vector<ObjectLog *> events;
 };
 
 }

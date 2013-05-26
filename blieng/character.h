@@ -7,25 +7,26 @@
 #include "bliobject.h"
 #include "item.h"
 
-namespace blieng {
+namespace blieng
+{
 
 class Character : public blieng::BliObject
 {
 public:
-	Character();
+    Character();
 
-	bool kill();
-	bool isAlive();
+    bool kill();
+    bool isAlive();
 
-	void addItem(blieng::Item *);
-	blieng::Item *removeItem(blieng::Item *);
-	std::vector<blieng::Item *> getItems();
+    void addItem(blieng::Item *);
+    blieng::Item *removeItem(blieng::Item *);
+    std::vector<blieng::Item *> getItems();
 
-	virtual void assignObject(blieng::BliObject *another);
-	virtual void assignObject(Character *another);
+    virtual void assignObject(blieng::BliObject *another);
+    virtual void assignObject(Character *another);
 
 protected:
-	std::vector<blieng::Item *> items;
+    std::vector<blieng::Item *> items;
 };
 
 }
