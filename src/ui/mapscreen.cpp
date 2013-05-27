@@ -9,7 +9,18 @@ using ui::MapScreen;
 /* FIXME: Should this be implemented with QGraphicsItem, QGraphicsScene, etc.?
  */
 
+MapScreen::MapScreen(QWidget *parent) : QWidget(parent)
+{
+    maps = NULL;
+    create_world = NULL;
+}
+
 MapScreen::MapScreen(QString mapname, QWidget *parent) : QWidget(parent)
+{
+    loadMap(mapname);
+}
+
+void MapScreen::loadMap(QString mapname)
 {
     maps = new blieng::Maps(mapname.toStdString());
     create_world = new zomb::CreateWorld(maps);
@@ -49,13 +60,21 @@ void MapScreen::changedFellowship(std::vector<ui::CharacterData *> fellows)
 
 void MapScreen::paintEvent(QPaintEvent *event)
 {
+    if (maps == NULL) return;
     QPainter paint(this);
     validateImage();
     double zoomfactor = zoomlevel / 100.0;
     paint.drawImage(image_pos / zoomfactor, bgimage);
 
     QPen blackpen(QColor(0,0,0,255));
-    blackpen.setWidth(blieng::Configure::getInstance()->getUIntValue("path_width"));
+    double path_width = 1;
+    try {
+        path_width = blieng::Configure::getInstance()->getUIntValue("path_width");
+    }
+    catch (std::string res) {
+        path_width = 3;
+    }
+    blackpen.setWidth(path_width);
     paint.setPen(blackpen);
     BOOST_FOREACH(blieng::Path path, maps->getPaths()) {
         blieng::Point prev(false);

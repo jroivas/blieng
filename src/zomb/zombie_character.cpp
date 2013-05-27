@@ -1,5 +1,5 @@
 #include "zombie_character.h"
-#include "character.h"
+#include "blieng/character.h"
 
 using zomb::ZombieCharacter;
 

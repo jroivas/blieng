@@ -21,11 +21,11 @@ public:
     bool changeIntValue(std::string key, int diff);
 
     virtual boost::any getValue(std::string key);
-    virtual std::string getStringValue(std::string key);
-    virtual bool getBoolValue(std::string key);
-    virtual int getIntValue(std::string key);
-    virtual unsigned int getUIntValue(std::string key);
-    virtual double getDoubleValue(std::string key);
+    virtual std::string getStringValue(std::string key, std::string default_value="");
+    virtual bool getBoolValue(std::string key, bool default_value=false);
+    virtual int getIntValue(std::string key, int default_value=0);
+    virtual unsigned int getUIntValue(std::string key, unsigned int default_value=0);
+    virtual double getDoubleValue(std::string key, double default_value=0.0);
     virtual std::string toString();
     const std::type_info *getValueType(std::string key);
 

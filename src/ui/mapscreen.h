@@ -14,9 +14,11 @@ class MapScreen : public QWidget
 {
     Q_OBJECT
 public:
+    MapScreen(QWidget *parent=0);
     MapScreen(QString mapname, QWidget *parent=0);
     void paintEvent(QPaintEvent *event);
     blieng::Maps *getMaps() { return maps;}
+    void loadMap(QString mapname);
 
 public slots:
     void fellowship(QPointF pos);

@@ -60,7 +60,7 @@ void BliObject::setValue(std::string key, boost::any value)
 }
 
 #define getConvertValue(X, Y) \
-Y BliObject::get ## X ## Value(std::string key)\
+Y BliObject::get ## X ## Value(std::string key, Y default_value)\
 {\
     boost::any val = getValue(key);\
     if (val.empty()) {\
@@ -74,12 +74,13 @@ Y BliObject::get ## X ## Value(std::string key)\
         return boost::any_cast<Y>(val);\
     } catch (boost::bad_any_cast c) {\
         std::cout << "Error, not a " #X " value at: " + key + "\n";\
-        throw "Error, not a " #X " value at: " + key;\
+        /*throw "Error, not a " #X " value at: " + key;*/\
+        return default_value;\
     }\
 }
 
 #define getConvertNumberValue(X, Y, A, B, C) \
-Y BliObject::get ## X ## Value(std::string key)\
+Y BliObject::get ## X ## Value(std::string key, Y default_value)\
 {\
     boost::any val = getValue(key);\
     if (val.empty()) {\
@@ -93,7 +94,9 @@ Y BliObject::get ## X ## Value(std::string key)\
         if (val.type() == typeid(B)) { return boost::any_cast<B>(val); }\
         if (val.type() == typeid(C)) { return boost::any_cast<C>(val); }\
     }\
-    throw "Error, not a " #X " value at: " + key;\
+    std::cout << "Error, not a " #X " value at: " + key;\
+    /*throw "Error, not a " #X " value at: " + key;*/\
+    return default_value;\
 }
 
 getConvertValue(String, std::string)
