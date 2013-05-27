@@ -11,11 +11,6 @@ unix {
     LIBS += -L/usr/lib -lboost_system -lboost_random -lboost_filesystem
 }
 
-windows {
-    INCLUDEPATH += C:\boost_lib
-    INCLUDEPATH += C:\build\jsoncpp-src-0.6.0-rc2\include
-}
-
 # Input
 HEADERS += \
     bliobject.h \

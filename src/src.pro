@@ -19,21 +19,16 @@ unix {
 }
 
 windows {
-    INCLUDEPATH += C:\boost_lib
-    #CONFIG += static
-    #QMAKE_CXXFLAGS += -std=c++11
-    INCLUDEPATH += C:\build\jsoncpp-src-0.6.0-rc2\include
-
 
     CONFIG(debug, debug|release) {
         LIBS += ../blieng/debug/libblieng.a
     } else {
         LIBS += ../blieng/release/libblieng.a
     }
-    LIBS += "C:\boost_lib\bin.v2\libs\system\build\gcc-mingw-4.7.2\release\link-static\threading-multi\libboost_system-mgw47-mt-1_53.a"
-    LIBS += "C:\boost_lib\bin.v2\libs\filesystem\build\gcc-mingw-4.7.2\release\link-static\threading-multi\libboost_filesystem-mgw47-mt-1_53.a"
-    LIBS += "C:\boost_lib\bin.v2\libs\random\build\gcc-mingw-4.7.2\release\link-static\threading-multi\libboost_random-mgw47-mt-1_53.a"
-    LIBS += "C:\build\jsoncpp-src-0.6.0-rc2\buildscons\mingw\src\lib_json\libjson_mingw_libmt.a"
+    LIBS += -lboost_system-mt
+    LIBS += -lboost_filesystem-mt
+    LIBS += -lboost_random-mt
+    LIBS += -ljsoncpp
 }
 
 HEADERS += \
