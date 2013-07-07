@@ -25,6 +25,10 @@ protected slots:
     void townSelected(blieng::Town *);
     void doUpdate();
 
+    void mouseDown(QMouseEvent *);
+    void mouseRelease(QMouseEvent *);
+    void mouseMove(QMouseEvent *);
+
 private:
     ui::MapScreen *map;
     QHBoxLayout layout;
@@ -33,6 +37,7 @@ private:
     QPushButton *new_path;
 
     TownProperties *town_prop;
+    bool moving;
 };
 
 }

@@ -142,7 +142,6 @@ void MapScreen::mousePressEvent(QMouseEvent *event)
 {
     if (edit_mode) {
         emit mousePressed(event);
-        return;
     }
     if (event->buttons() & Qt::LeftButton) {
         canmove = true;
@@ -166,7 +165,7 @@ void MapScreen::mouseReleaseEvent(QMouseEvent *event)
 {
     if (edit_mode) {
         emit mouseReleased(event);
-        return;
+        //return;
     }
     if (canmove) {
         QPointF now_pos = event->pos() * (zoomlevel / 100.0);
@@ -194,7 +193,6 @@ void MapScreen::mouseMoveEvent(QMouseEvent *event)
 {
     if (edit_mode) {
         emit mouseMoved(event);
-        return;
     }
 }
 

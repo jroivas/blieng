@@ -20,6 +20,7 @@ public:
     blieng::Maps *getMaps() { return maps;}
     void loadMap(QString mapname);
     void setEditMode(bool mode);
+    QPointF getImagePos() { return image_pos; }
 
 public slots:
     void fellowship(QPointF pos);

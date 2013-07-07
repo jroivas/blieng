@@ -12,6 +12,10 @@ EditScreen::EditScreen(QWidget *parent) : QWidget(parent)
 {
     setLayout(&layout);
     map = new ui::MapScreen();
+    map->setEditMode(true);
+
+    moving = false;
+
     new_town = new QPushButton("Add town");
     new_path = new QPushButton("Draw path");
     town_prop = new TownProperties();
@@ -34,6 +38,10 @@ EditScreen::EditScreen(QWidget *parent) : QWidget(parent)
     connect(new_town, SIGNAL(clicked()), this, SLOT(addTown()));
     connect(map, SIGNAL(townSelected(blieng::Town*)), this, SLOT(townSelected(blieng::Town*)));
     connect(town_prop, SIGNAL(updated()), this, SLOT(doUpdate()));
+
+    connect(map, SIGNAL(mousePressed(QMouseEvent*)), this, SLOT(mouseDown(QMouseEvent*)));
+    connect(map, SIGNAL(mouseReleased(QMouseEvent*)), this, SLOT(mouseRelease(QMouseEvent*)));
+    connect(map, SIGNAL(mouseMoved(QMouseEvent*)), this, SLOT(mouseMove(QMouseEvent*)));
 }
 
 void EditScreen::loadMap(QString mapname)
@@ -46,10 +54,41 @@ void EditScreen::doUpdate()
     map->update();
 }
 
+void EditScreen::mouseDown(QMouseEvent *e)
+{
+    blieng::Town *town = town_prop->getTown();
+    if (town == NULL) return;
+
+}
+
+void EditScreen::mouseRelease(QMouseEvent *e)
+{
+    moving = false;
+
+    blieng::Town *town = town_prop->getTown();
+    if (town == NULL) return;
+}
+
+void EditScreen::mouseMove(QMouseEvent *e)
+{
+    blieng::Town *town = town_prop->getTown();
+    if (town == NULL) return;
+
+    if (moving) {
+        QPointF pos = e->pos();
+        pos -= map->getImagePos();
+        town->setPositionX(pos.x());
+        town->setPositionY(pos.y());
+        town_prop->updatePos();
+        map->update();
+    }
+}
+
 void EditScreen::townSelected(blieng::Town *town)
 {
     town_prop->setTown(town);
     town_prop->setVisible(true);
+    moving = true;
 }
 
 void EditScreen::addTown()
