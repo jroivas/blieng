@@ -15,6 +15,8 @@ int main(int argc, char **argv)
     MapEditor::EditScreen *edit = new MapEditor::EditScreen();
 
     edit->loadMap("world1");
+    edit->setMinimumWidth(800);
+    edit->setMinimumHeight(600);
     edit->show();
 
     return app.exec();

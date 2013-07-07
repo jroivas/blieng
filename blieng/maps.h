@@ -23,6 +23,9 @@ public:
     std::vector<blieng::Path> getPaths() { return paths; }
     std::vector<blieng::Path> getRevPaths() { return rev_paths; }
 
+    void addTown(blieng::Town *town);
+    void addPath(blieng::Path path);
+
 private:
     void loadMap(std::string name);
     void parseMap();

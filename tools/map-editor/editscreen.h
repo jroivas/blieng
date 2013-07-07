@@ -3,9 +3,12 @@
 
 #include <QWidget>
 #include <QVBoxLayout>
+#include <QHBoxLayout>
+#include <QPushButton>
 #include "ui/mapscreen.h"
 #include "blieng/maps.h"
 #include "blieng/data.h"
+#include "townproperties.h"
 
 namespace MapEditor
 {
@@ -17,9 +20,19 @@ public:
     EditScreen(QWidget *parent=0);
     void loadMap(QString mapname);
 
+protected slots:
+    void addTown();
+    void townSelected(blieng::Town *);
+    void doUpdate();
+
 private:
     ui::MapScreen *map;
-    QVBoxLayout layout;
+    QHBoxLayout layout;
+    QVBoxLayout control_layout;
+    QPushButton *new_town;
+    QPushButton *new_path;
+
+    TownProperties *town_prop;
 };
 
 }

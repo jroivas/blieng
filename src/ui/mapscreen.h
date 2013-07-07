@@ -19,6 +19,7 @@ public:
     void paintEvent(QPaintEvent *event);
     blieng::Maps *getMaps() { return maps;}
     void loadMap(QString mapname);
+    void setEditMode(bool mode);
 
 public slots:
     void fellowship(QPointF pos);
@@ -26,6 +27,9 @@ public slots:
 
 signals:
     void townSelected(blieng::Town *);
+    void mousePressed(QMouseEvent *event);
+    void mouseReleased(QMouseEvent *event);
+    void mouseMoved(QMouseEvent *event);
 
 protected:
     void mousePressEvent(QMouseEvent *event);
@@ -51,6 +55,8 @@ private:
 
     unsigned int zoomlevel;
     double fella_size;
+
+    bool edit_mode;
 };
 
 }

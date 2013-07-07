@@ -13,6 +13,7 @@ MapScreen::MapScreen(QWidget *parent) : QWidget(parent)
 {
     maps = NULL;
     create_world = NULL;
+    edit_mode = false;
 }
 
 MapScreen::MapScreen(QString mapname, QWidget *parent) : QWidget(parent)
@@ -139,6 +140,10 @@ void MapScreen::paintEvent(QPaintEvent *event)
 
 void MapScreen::mousePressEvent(QMouseEvent *event)
 {
+    if (edit_mode) {
+        emit mousePressed(event);
+        return;
+    }
     if (event->buttons() & Qt::LeftButton) {
         canmove = true;
         last_pos = event->pos() * (zoomlevel / 100.0);
@@ -159,6 +164,10 @@ void MapScreen::wheelEvent(QWheelEvent *event)
 
 void MapScreen::mouseReleaseEvent(QMouseEvent *event)
 {
+    if (edit_mode) {
+        emit mouseReleased(event);
+        return;
+    }
     if (canmove) {
         QPointF now_pos = event->pos() * (zoomlevel / 100.0);
         QPointF pos_diff = now_pos - last_pos;
@@ -183,4 +192,13 @@ void MapScreen::mouseReleaseEvent(QMouseEvent *event)
 
 void MapScreen::mouseMoveEvent(QMouseEvent *event)
 {
+    if (edit_mode) {
+        emit mouseMoved(event);
+        return;
+    }
+}
+
+void MapScreen::setEditMode(bool mode)
+{
+    edit_mode = mode;
 }

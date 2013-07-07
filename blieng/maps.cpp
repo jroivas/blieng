@@ -30,6 +30,16 @@ std::string Maps::getSolvedMapImageFile()
     return solved_map_image_file;
 }
 
+void Maps::addTown(blieng::Town *town)
+{
+    towns.push_back(town);
+}
+
+void Maps::addPath(blieng::Path path)
+{
+    paths.push_back(path);
+}
+
 void Maps::parseMap()
 {
     if (!map_json.isObject()) return;

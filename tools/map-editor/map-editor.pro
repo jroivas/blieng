@@ -16,6 +16,7 @@ windows {
 
 # Input
 HEADERS += editscreen.h \
+    townproperties.h \
     ../../src/ui/mapscreen.h \
     ../../src/zomb/player_character.h \
     ../../src/zomb/zombie_character.h \
@@ -23,6 +24,7 @@ HEADERS += editscreen.h \
     ../../src/zomb/createworld.h
 SOURCES += main.cpp \
     editscreen.cpp \
+    townproperties.cpp \
     ../../src/ui/mapscreen.cpp \
     ../../src/zomb/player_character.cpp \
     ../../src/zomb/zombie_character.cpp \
