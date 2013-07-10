@@ -67,16 +67,9 @@ void MapScreen::changedFellowship(std::vector<ui::CharacterData *> fellows)
     update();
 }
 
-void MapScreen::paintEvent(QPaintEvent *event)
+void MapScreen::paintPaths(QPainter *paint)
 {
-    if (maps == NULL) return;
-    QPainter paint(this);
-
     double zoomfactor = zoomlevel / 100.0;
-    if (!bgimage.isNull()) {
-        validateImage();
-        paint.drawImage(image_pos / zoomfactor, bgimage);
-    }
 
     QPen blackpen(QColor(0,0,0,255));
     double path_width = 1;
@@ -88,51 +81,75 @@ void MapScreen::paintEvent(QPaintEvent *event)
     }
 
     blackpen.setWidth(path_width);
-    paint.setPen(blackpen);
+    paint->setPen(blackpen);
     BOOST_FOREACH(blieng::Path path, maps->getPaths()) {
         blieng::Point prev(false);
         BOOST_FOREACH(blieng::Point point, path.getPoints()) {
             if (prev.isValid()) {
-                paint.setPen(blackpen);
+                paint->setPen(blackpen);
                 QPointF a = QPointF(prev.x, prev.y) + image_pos;
                 QPointF b = QPointF(point.x, point.y) + image_pos;
                 a /= zoomfactor;
                 b /= zoomfactor;
-                paint.drawLine(a, b);
+                paint->drawLine(a, b);
             }
             if (edit_mode) {
-                paint.setPen(QColor(255,0,0,255));
-                paint.setBrush(QColor(255,0,0,255));
+                paint->setPen(QColor(255,0,0,255));
+                paint->setBrush(QColor(255,0,0,255));
                 QPointF b = QPointF(point.x, point.y) + image_pos;
                 b /= zoomfactor;
-                paint.drawEllipse(b, 3/zoomfactor, 3/zoomfactor);
+                paint->drawEllipse(b, 3/zoomfactor, 3/zoomfactor);
             }
             prev = point;
         }
     }
+}
 
-    paint.setBrush(QColor(0,0,0,255));
+void MapScreen::paintTowns(QPainter *paint)
+{
+    double zoomfactor = zoomlevel / 100.0;
+
+    paint->setBrush(QColor(0,0,0,255));
     BOOST_FOREACH(blieng::Town *town, maps->getTowns()) {
-        paint.setPen(QColor(0,0,0,255));
-        paint.setBrush(QColor(0,0,0,255));
+        paint->setPen(QColor(0,0,0,255));
+        paint->setBrush(QColor(0,0,0,255));
         QPointF town_pos(town->getPositionX(), town->getPositionY());
-        paint.drawEllipse((image_pos + town_pos) / zoomfactor, qreal((town->getSize()) / zoomfactor), qreal((town->getSize()) / zoomfactor));
+        paint->drawEllipse((image_pos + town_pos) / zoomfactor, qreal((town->getSize()) / zoomfactor), qreal((town->getSize()) / zoomfactor));
 
-        QRect namebox = paint.boundingRect(0, 0, blieng::Configure::getInstance()->getUIntValue("townname_max_width") / zoomfactor, 100 / zoomfactor, Qt::AlignLeft, town->getName().c_str());
+        QRect namebox = paint->boundingRect(0, 0, blieng::Configure::getInstance()->getUIntValue("townname_max_width") / zoomfactor, 100 / zoomfactor, Qt::AlignLeft, town->getName().c_str());
         QPointF textpos = image_pos + town_pos;
-        paint.setPen(QColor(255,0,0,255));
+        paint->setPen(QColor(255,0,0,255));
         textpos.setX(textpos.x() - namebox.width()/2);
 
-        paint.drawText(textpos / zoomfactor, town->getName().c_str());
+        paint->drawText(textpos / zoomfactor, town->getName().c_str());
         if (town == clicked_town) {
             QPointF sizemin = QPointF(town->getSize() / zoomfactor * 3, town->getSize() / zoomfactor * 3);
-            paint.setBrush(QColor(0,0,0,0));
+            paint->setBrush(QColor(0,0,0,0));
             QRectF selection = QRectF(((image_pos + town_pos) / zoomfactor) - (sizemin / 2), ((image_pos + town_pos) / zoomfactor) + (sizemin / 2));
-            paint.drawRect(selection);
+            paint->drawRect(selection);
         }
     }
+}
+
+void MapScreen::paintEvent(QPaintEvent *event)
+{
+    if (maps == NULL) return;
+    QPainter paint(this);
+
+    double zoomfactor = zoomlevel / 100.0;
+    if (!bgimage.isNull()) {
+        validateImage();
+        paint.drawImage(image_pos / zoomfactor, bgimage);
+    }
+
+    if (!edit_mode) {
+        paintPaths(&paint);
+    }
+
+    paintTowns(&paint);
 
     if (edit_mode) {
+        paintPaths(&paint);
         if (!edit_point_pos.isNull()) {
             paint.setPen(QColor(255,0,0,255));
             paint.setBrush(QColor(0,0,0,255));
@@ -164,6 +181,7 @@ void MapScreen::paintEvent(QPaintEvent *event)
         paint.drawImage((image_pos + fellowship_pos + fpos) / zoomfactor, fellow->image.scaled(fella_size / zoomfactor, fella_size / zoomfactor));
         ++fella;
     }
+    paint.end();
 }
 
 void MapScreen::mousePressEvent(QMouseEvent *event)
@@ -247,6 +265,7 @@ void MapScreen::mouseReleaseEvent(QMouseEvent *event)
                     if (blieng::Configure::getInstance()->getBoolValue("debug")) qDebug() << "Clicked town " << town->getName().c_str();
                     clicked_town = town;
                     emit townSelected(town);
+                    update();
                 }
             }
         }

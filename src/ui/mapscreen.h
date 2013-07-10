@@ -50,6 +50,9 @@ private:
     void init();
     void validateImage();
 
+    void paintPaths(QPainter *paint);
+    void paintTowns(QPainter *paint);
+
     blieng::Maps *maps;
     QImage bgimage;
     QPointF image_pos;

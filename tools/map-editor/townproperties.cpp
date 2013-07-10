@@ -26,6 +26,7 @@ TownProperties::TownProperties(QWidget *parent) : QWidget(parent)
     _zombies_label = new QLabel("Zombies:");
     _population_label = new QLabel("Population index:");
     _save = new QPushButton("Save town");
+    _delete = new QPushButton("Delete town");
     _start = new QCheckBox("Hometown");
 
     layout.addWidget(_name);
@@ -48,8 +49,10 @@ TownProperties::TownProperties(QWidget *parent) : QWidget(parent)
     layout.addWidget(_ylab);
 
     layout.addWidget(_save);
+    layout.addWidget(_delete);
 
     connect(_save, SIGNAL(clicked()), this, SLOT(saveInfo()));
+    connect(_delete, SIGNAL(clicked()), this, SLOT(deleteTown()));
 
     setLayout(&layout);
 }
@@ -81,6 +84,14 @@ void TownProperties::saveInfo()
     emit updated();
 
     town = NULL;
+    hide();
+}
+
+void TownProperties::deleteTown()
+{
+    if (town == NULL) return;
+
+    emit deleted(town);
     hide();
 }
 

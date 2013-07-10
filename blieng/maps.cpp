@@ -121,6 +121,19 @@ void Maps::addTown(blieng::Town *town)
     towns.push_back(town);
 }
 
+bool Maps::removeTown(blieng::Town *town)
+{
+    std::vector<blieng::Town*>::iterator ti = towns.begin();
+    while (ti != towns.end()) {
+        if (*ti == town) {
+            towns.erase(ti);
+            return true;
+        } 
+        ti++;
+    }
+    return false;
+}
+
 void Maps::addPath(blieng::Path path)
 {
     paths.push_back(path);

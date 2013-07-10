@@ -19,12 +19,14 @@ public:
 
 signals:
     void updated();
+    void deleted(blieng::Town*);
 
 public slots:
     void updatePos();
 
 private slots:
     void saveInfo();
+    void deleteTown();
 
 private:
     void updateInfo();
@@ -41,6 +43,7 @@ private:
     QHBoxLayout size_layout;
 
     QPushButton *_save;
+    QPushButton *_delete;
     QLabel *_xlab;
     QLabel *_ylab;
     QCheckBox *_start;

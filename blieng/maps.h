@@ -29,6 +29,7 @@ public:
 
     void addTown(blieng::Town *town);
     void addPath(blieng::Path path);
+    bool removeTown(blieng::Town *town);
 
     blieng::Path updatePath(blieng::Path path, int index, blieng::Point point);
     blieng::Path updatePath(blieng::Path path, blieng::Point point);

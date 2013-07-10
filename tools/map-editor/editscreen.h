@@ -28,6 +28,7 @@ protected slots:
     void drawPath(bool);
     void townSelected(blieng::Town *);
     void doUpdate();
+    void doDelete(blieng::Town*);
 
     void mouseDown(QMouseEvent *, double);
     void mouseRelease(QMouseEvent *, double);

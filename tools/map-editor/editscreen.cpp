@@ -54,6 +54,7 @@ EditScreen::EditScreen(QWidget *parent) : QWidget(parent)
 
     connect(map, SIGNAL(townSelected(blieng::Town*)), this, SLOT(townSelected(blieng::Town*)));
     connect(town_prop, SIGNAL(updated()), this, SLOT(doUpdate()));
+    connect(town_prop, SIGNAL(deleted(blieng::Town*)), this, SLOT(doDelete(blieng::Town*)));
 
     connect(map, SIGNAL(mousePressed(QMouseEvent*, double)), this, SLOT(mouseDown(QMouseEvent*, double)));
     connect(map, SIGNAL(mouseReleased(QMouseEvent*, double)), this, SLOT(mouseRelease(QMouseEvent*, double)));
@@ -75,13 +76,27 @@ void EditScreen::doUpdate()
     map->update();
 }
 
+void EditScreen::doDelete(blieng::Town *town)
+{
+    QStringList items;
+    items << tr("Do not delete") << tr("Yes, delete");
+
+    bool ok;
+
+    QString item = QInputDialog::getItem(this, tr("Delete town?)"), tr("Delete town ") + QString(town->getName().c_str()) + tr("?"), items, 0, false, &ok);
+    if (ok && !item.isEmpty() && item == tr("Yes, delete")) {
+        map->getMaps()->removeTown(town);
+        doUpdate();
+    }
+}
+
 void EditScreen::mouseDown(QMouseEvent *e, double zoomlevel)
 {
     blieng::Town *town = town_prop->getTown();
 
     if (map->getEditPath().isValid()) {
         moving_path = true;
-        if ((e->buttons() & Qt::RightButton) > 0) {
+        if (((e->buttons() & Qt::RightButton) > 0) && ((e->modifiers() & Qt::ControlModifier) > 0)) {
             blieng::Point pt = map->getEditPoint();
             if (pt == edit_point) {
                 QPointF pos = e->pos() * (zoomlevel / 100);
@@ -90,7 +105,7 @@ void EditScreen::mouseDown(QMouseEvent *e, double zoomlevel)
                 map->updateEditPath(new_path);
                 map->update();
             }
-        } else {
+        } else if ((e->modifiers() & Qt::ControlModifier) > 0) {
             edit_point = map->getEditPoint();
         }
     }
@@ -101,7 +116,6 @@ void EditScreen::mouseRelease(QMouseEvent *e, double zoomlevel)
     moving = false;
     moving_path = false;
 
-    blieng::Town *town = town_prop->getTown();
     if (drawing_path) {
         QPointF pos = e->pos() * (zoomlevel / 100);
         pos -= map->getImagePos();
@@ -130,13 +144,15 @@ void EditScreen::mouseMove(QMouseEvent *e, double zoomlevel)
 
     QPointF pos = e->pos() * (zoomlevel / 100);
     pos -= map->getImagePos();
-    if (town != NULL && moving) {
+    Qt::KeyboardModifiers mods = e->modifiers();
+
+    if (town != NULL && moving && ((mods & Qt::ShiftModifier) > 0)) {
         town->setPositionX(pos.x());
         town->setPositionY(pos.y());
         town_prop->updatePos();
         map->update();
     }
-    if (moving_path && map->getEditPath().isValid()) {
+    if (moving_path && map->getEditPath().isValid() && ((mods & Qt::ControlModifier) > 0)) {
         blieng::Point new_point = blieng::Point(pos.x(), pos.y());
         blieng::Path new_path = map->getMaps()->updatePath(map->getEditPath(), map->getEditPointIndex(), new_point);
         edit_point = new_point;
