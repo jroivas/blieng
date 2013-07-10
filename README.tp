@@ -1,0 +1,47 @@
+Zombiebli
+=========
+
+Copyright (c) 2013 Blistud:io
+
+All rights reserved
+
+
+
+This is limited tech preview.
+
+Unauthorized use is forbidden.
+
+Use of this product is limited only for selected users.
+
+
+
+
+To edit or create maps, use map-editor.
+
+Add a new town by pressing "Add town" button. Default name and location will be selected.
+Edit town information by pressing it. Town properties should be shown.
+
+Draw a new path by clicking "Draw path" button. You're now in path draw mode.
+Click first waypoint to the map, it will NOT be shown. Select second waypoint and the path will be drawn.
+You can set as many waypoints you like. When ready, click again "Draw path" button to end path drawing.
+
+Extending paths happens by selecting one of the waypoints in the path and clicking RIGHT mouse button while CTRL pressed.
+New waypoint will be added at the end of the path.
+
+Move towns by first selecting target town and then drag it with SHIFT pressed down.
+
+Move path waypoints by first selecting target point and then drag it with CTRL pressed down.
+
+You may select background image in PNG or JPEG format.
+
+Map must be saved in order not to lose changes. Click "Save map" button and write a map name.
+
+You may continue editing, load another map (or load previously edited map) or quit.
+
+
+
+To start game with other than "world1" map happens by adding map name in command line:
+zombiebli mapname
+
+For example:
+zombiebli world2

@@ -201,7 +201,7 @@ void EditScreen::loadMap()
     }
 
     bool ok;
-    QString item = QInputDialog::getItem(this, tr("Load map)"), tr("Map name:"), items, 0, false, &ok);
+    QString item = QInputDialog::getItem(this, tr("Load map"), tr("Map name:"), items, 0, false, &ok);
     if (ok && !item.isEmpty()) {
         map->loadMap(item.toLatin1().constData());
     }

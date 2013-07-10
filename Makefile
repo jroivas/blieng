@@ -32,6 +32,7 @@ linux-item-editor:
 
 linux-dist:
 	mkdir -p dist/zombiebli-$(VERS)-linux
+	cp README.tp dist/zombiebli-$(VERS)-linux/README
 	cp -f src/zombiebli dist/zombiebli-$(VERS)-linux/
 	cp -f tools/map-editor/map-editor dist/zombiebli-$(VERS)-linux
 	cp -rf data dist/zombiebli-$(VERS)-linux/
@@ -66,6 +67,7 @@ win-item-editor:
 
 win-dist:
 	mkdir -p dist/zombiebli-$(VERS)-win
+	cp README.tp dist/zombiebli-$(VERS)-win/README.txt
 	cp -f src/release/zombiebli.exe dist/zombiebli-$(VERS)-win/
 	cp -f tools/map-editor/release/map-editor.exe dist/zombiebli-$(VERS)-win
 	cp -rf data dist/zombiebli-$(VERS)-win/
