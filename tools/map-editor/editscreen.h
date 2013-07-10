@@ -22,7 +22,6 @@ public:
 
 protected slots:
     void addTown();
-    void addPath();
     void drawPath(bool);
     void townSelected(blieng::Town *);
     void doUpdate();

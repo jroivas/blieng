@@ -1,5 +1,6 @@
 #include "editscreen.h"
 #include "blieng/town.h"
+#include "blieng/configure.h"
 
 using MapEditor::EditScreen;
 
@@ -15,6 +16,7 @@ EditScreen::EditScreen(QWidget *parent) : QWidget(parent)
     map->setEditMode(true);
 
     moving = false;
+    drawing_path = false;
 
     new_town = new QPushButton("Add town");
     new_path = new QPushButton("Draw path");
@@ -37,7 +39,6 @@ EditScreen::EditScreen(QWidget *parent) : QWidget(parent)
     new_path->setCheckable(true);
 
     connect(new_town, SIGNAL(clicked()), this, SLOT(addTown()));
-    //connect(new_path, SIGNAL(clicked()), this, SLOT(addPath()));
     connect(new_path, SIGNAL(toggled(bool)), this, SLOT(drawPath(bool)));
 
     connect(map, SIGNAL(townSelected(blieng::Town*)), this, SLOT(townSelected(blieng::Town*)));
@@ -144,14 +145,5 @@ void EditScreen::addTown()
     town->setPositionX(NEW_TOWN_POSX);
     town->setPositionY(NEW_TOWN_POSY);
     map->getMaps()->addTown(town);
-    map->update();
-}
-
-void EditScreen::addPath()
-{
-    blieng::Path path;
-    path.addPoint(blieng::Point(0, 0));
-    path.addPoint(blieng::Point(50, 50));
-    map->getMaps()->addPath(path);
     map->update();
 }
