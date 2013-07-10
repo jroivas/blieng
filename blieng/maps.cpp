@@ -38,6 +38,21 @@ void Maps::addTown(blieng::Town *town)
 void Maps::addPath(blieng::Path path)
 {
     paths.push_back(path);
+    rev_paths.push_back(path.reversed());
+}
+
+blieng::Path Maps::updatePath(blieng::Path path, blieng::Point point)
+{
+    std::vector<blieng::Path>::iterator pi = paths.begin();
+    while (pi != paths.end()) {
+        if (*pi == path) {
+            paths.erase(pi);
+            path.addPoint(point);
+            paths.push_back(path);
+            return path;
+        }
+        pi++;
+    }
 }
 
 blieng::Path Maps::updatePath(blieng::Path path, int index, blieng::Point point)
@@ -129,8 +144,10 @@ void Maps::parseMap()
                         point_it++;
                     }
                     if (ok) {
-                        paths.push_back(path);
+                        /*paths.push_back(path);
                         rev_paths.push_back(path.reversed());
+                        */
+                        addPath(path);
                     }
                 }
                 it++;

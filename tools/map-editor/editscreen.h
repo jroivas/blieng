@@ -22,6 +22,8 @@ public:
 
 protected slots:
     void addTown();
+    void addPath();
+    void drawPath(bool);
     void townSelected(blieng::Town *);
     void doUpdate();
 
@@ -40,6 +42,8 @@ private:
     blieng::Point edit_point;
     bool moving;
     bool moving_path;
+    bool drawing_path;
+    blieng::Path draw_path;
 };
 
 }

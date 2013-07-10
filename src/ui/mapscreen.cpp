@@ -14,6 +14,8 @@ MapScreen::MapScreen(QWidget *parent) : QWidget(parent)
     maps = NULL;
     create_world = NULL;
     edit_mode = false;
+    edit_point = blieng::Point();
+    edit_path = blieng::Path();
 }
 
 MapScreen::MapScreen(QString mapname, QWidget *parent) : QWidget(parent)
@@ -81,11 +83,19 @@ void MapScreen::paintEvent(QPaintEvent *event)
         blieng::Point prev(false);
         BOOST_FOREACH(blieng::Point point, path.getPoints()) {
             if (prev.isValid()) {
+                paint.setPen(blackpen);
                 QPointF a = QPointF(prev.x, prev.y) + image_pos;
                 QPointF b = QPointF(point.x, point.y) + image_pos;
                 a /= zoomfactor;
                 b /= zoomfactor;
                 paint.drawLine(a, b);
+            }
+            if (edit_mode) {
+                paint.setPen(QColor(255,0,0,255));
+                paint.setBrush(QColor(255,0,0,255));
+                QPointF b = QPointF(point.x, point.y) + image_pos;
+                b /= zoomfactor;
+                paint.drawEllipse(b, 3/zoomfactor, 3/zoomfactor);
             }
             prev = point;
         }
@@ -116,7 +126,6 @@ void MapScreen::paintEvent(QPaintEvent *event)
         if (!edit_point_pos.isNull()) {
             paint.setPen(QColor(255,0,0,255));
             paint.setBrush(QColor(0,0,0,255));
-            //qDebug() << image_pos + edit_point_pos;
             paint.drawEllipse((image_pos + edit_point_pos) / zoomfactor, 8/zoomfactor, 8/zoomfactor);
         }
     }

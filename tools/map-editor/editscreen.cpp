@@ -34,8 +34,12 @@ EditScreen::EditScreen(QWidget *parent) : QWidget(parent)
     layout.addWidget(map);
 
     town_prop->setVisible(false);
+    new_path->setCheckable(true);
 
     connect(new_town, SIGNAL(clicked()), this, SLOT(addTown()));
+    //connect(new_path, SIGNAL(clicked()), this, SLOT(addPath()));
+    connect(new_path, SIGNAL(toggled(bool)), this, SLOT(drawPath(bool)));
+
     connect(map, SIGNAL(townSelected(blieng::Town*)), this, SLOT(townSelected(blieng::Town*)));
     connect(town_prop, SIGNAL(updated()), this, SLOT(doUpdate()));
 
@@ -57,11 +61,21 @@ void EditScreen::doUpdate()
 void EditScreen::mouseDown(QMouseEvent *e, double zoomlevel)
 {
     blieng::Town *town = town_prop->getTown();
-    //if (town == NULL) return;
 
     if (map->getEditPath().isValid()) {
         moving_path = true;
-        edit_point = map->getEditPoint();
+        if ((e->buttons() & Qt::RightButton) > 0) {
+            blieng::Point pt = map->getEditPoint();
+            if (pt == edit_point) {
+                QPointF pos = e->pos() * (zoomlevel / 100);
+                pos -= map->getImagePos();
+                blieng::Path new_path = map->getMaps()->updatePath(map->getEditPath(), blieng::Point(pos.x(), pos.y() + 30));
+                map->updateEditPath(new_path);
+                map->update();
+            }
+        } else {
+            edit_point = map->getEditPoint();
+        }
     }
 }
 
@@ -71,14 +85,33 @@ void EditScreen::mouseRelease(QMouseEvent *e, double zoomlevel)
     moving_path = false;
 
     blieng::Town *town = town_prop->getTown();
-    if (town == NULL) return;
+    if (drawing_path) {
+        QPointF pos = e->pos() * (zoomlevel / 100);
+        pos -= map->getImagePos();
+        if (draw_path.size() >= 2) {
+            draw_path = map->getMaps()->updatePath(draw_path, blieng::Point(pos.x(), pos.y()));
+            map->update();
+        } else {
+            draw_path.addPoint(blieng::Point(pos.x(), pos.y()));
+            if (draw_path.size() == 2) {
+                map->getMaps()->addPath(draw_path);
+                map->update();
+            }
+        }
+    }
+}
+
+void EditScreen::drawPath(bool drawpath)
+{
+    drawing_path = drawpath;
+    draw_path = blieng::Path();
 }
 
 void EditScreen::mouseMove(QMouseEvent *e, double zoomlevel)
 {
     blieng::Town *town = town_prop->getTown();
 
-    QPointF pos = e->pos() * ( zoomlevel / 100);
+    QPointF pos = e->pos() * (zoomlevel / 100);
     pos -= map->getImagePos();
     if (town != NULL && moving) {
         town->setPositionX(pos.x());
@@ -86,7 +119,7 @@ void EditScreen::mouseMove(QMouseEvent *e, double zoomlevel)
         town_prop->updatePos();
         map->update();
     }
-    if (moving_path) {
+    if (moving_path && map->getEditPath().isValid()) {
         blieng::Point new_point = blieng::Point(pos.x(), pos.y());
         blieng::Path new_path = map->getMaps()->updatePath(map->getEditPath(), map->getEditPointIndex(), new_point);
         edit_point = new_point;
@@ -111,5 +144,14 @@ void EditScreen::addTown()
     town->setPositionX(NEW_TOWN_POSX);
     town->setPositionY(NEW_TOWN_POSY);
     map->getMaps()->addTown(town);
+    map->update();
+}
+
+void EditScreen::addPath()
+{
+    blieng::Path path;
+    path.addPoint(blieng::Point(0, 0));
+    path.addPoint(blieng::Point(50, 50));
+    map->getMaps()->addPath(path);
     map->update();
 }
