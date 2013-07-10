@@ -37,7 +37,7 @@ bool Maps::saveMap(std::string name)
     
     json += "{\n";
     json += "    \"image\": \"" + imagefile + "\",\n";
-    json += "    \"towns\": [\n";
+
     std::string str_towns = "";
     BOOST_FOREACH(blieng::Town *town, towns) {
         if (str_towns != "") str_towns += ",\n";
@@ -47,18 +47,52 @@ bool Maps::saveMap(std::string name)
         tmp << "\", \"size\": " << town->getSize();
         tmp << ", \"posx\": " << town->getPositionX();
         tmp << ", \"posy\": " << town->getPositionY();
+
+        if (town->isValue("population-index")) {
+            tmp << ", \"population-index\": " << town->getDoubleValue("population-index");
+        }
+        if (town->isValue("zombies")) {
+            tmp << ", \"zombies\": " << town->getUIntValue("zombies");
+        }
+        if (town->isValue("start") && town->getBoolValue("start")) {
+            tmp << ", \"start\": 1";
+        }
         tmp << " }";
         str_towns += tmp.str();
     }
     str_towns += "\n";
+
+    std::string str_paths = "";
+    BOOST_FOREACH(blieng::Path path, paths) {
+        if (str_paths != "") str_paths += ",\n";
+        std::ostringstream tmp;
+        tmp << "         ";
+        tmp << "[";
+        std::string str_points;
+        BOOST_FOREACH(blieng::Point pt, path.getPoints()) {
+            if (str_points.size() > 0) str_points += ", ";
+            std::ostringstream tmp_points;
+            tmp_points << "[" << pt.x << ", " << pt.y << "]";
+            str_points += tmp_points.str();
+        }
+        tmp << str_points;
+        tmp << "]";
+        str_paths += tmp.str();
+    }
+    str_paths += "\n";
+
+    json += "    \"towns\": [\n";
     json += str_towns;
-    json += "    ]\n";
+    json += "    ],\n";
+
     json += "    \"paths\": [\n";
+    json += str_paths;
     json += "    ]\n";
     json += "}\n";
 
     printf("%s\n", json.c_str());
-    return true;
+
+    return Data::getInstance()->saveMapJSON(name, json);
 }
 
 std::string Maps::getMapName()
@@ -105,6 +139,8 @@ blieng::Path Maps::updatePath(blieng::Path path, blieng::Point point)
         }
         pi++;
     }
+
+    return path;
 }
 
 blieng::Path Maps::updatePath(blieng::Path path, int index, blieng::Point point)
@@ -119,6 +155,8 @@ blieng::Path Maps::updatePath(blieng::Path path, int index, blieng::Point point)
         }
         pi++;
     }
+
+    return path;
 }
 
 void Maps::parseMap()

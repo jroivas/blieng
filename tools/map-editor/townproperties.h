@@ -31,15 +31,27 @@ private:
 
     blieng::Town *town;
     QVBoxLayout layout;
-    QHBoxLayout size_layout;
+    bool start;
 
 
     QLineEdit *_name;
+
     QLabel *_size_label;
     QSpinBox  *_size;
+    QHBoxLayout size_layout;
+
     QPushButton *_save;
     QLabel *_xlab;
     QLabel *_ylab;
+    QCheckBox *_start;
+
+    QLabel *_zombies_label;
+    QSpinBox  *_zombies;
+    QHBoxLayout zombies_layout;
+
+    QLabel *_population_label;
+    QSpinBox  *_population;
+    QHBoxLayout population_layout;
 };
 
 }

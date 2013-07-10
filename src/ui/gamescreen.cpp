@@ -7,10 +7,10 @@
 using ui::GameScreen;
 using ui::GameLayout;
 
-GameScreen::GameScreen(QWidget *parent) : QWidget(parent)
+GameScreen::GameScreen(QString map, QWidget *parent) : QWidget(parent)
 {
     chrgen = new GenerateCharacter(this);
-    mapscreen = new MapScreen("world1", this);
+    mapscreen = new MapScreen(map, this);
     character_view = new CharacterView(this);
     fightscreen = new FightScreen(this);
     fightscreen->setCharacterView(character_view);

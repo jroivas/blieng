@@ -18,7 +18,7 @@ class GameScreen : public QWidget
 {
     Q_OBJECT
 public:
-    GameScreen(QWidget *parent=0);
+    GameScreen(QString map = "world1", QWidget *parent=0);
 
 public slots:
     void newCharacter(zomb::PlayerCharacter *);

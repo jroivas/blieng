@@ -109,7 +109,12 @@ int main(int argc, char **argv)
             return 1;
     }
 
-    ui::GameScreen *game = new ui::GameScreen();
+    ui::GameScreen *game = NULL;
+    if (argc > 1) {
+        game = new ui::GameScreen(argv[1]);
+    } else {
+        game = new ui::GameScreen();
+    }
     game->show();
     QObject::connect(&app, SIGNAL(lastWindowClosed()), &app, SLOT(quit()));
     

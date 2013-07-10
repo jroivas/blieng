@@ -19,7 +19,12 @@ void CreateWorld::initialize()
     unsigned int last_zombies = 0;
     unsigned int zomb_force = 0;
     BOOST_FOREACH(blieng::Town *town, maps->getTowns()) {
-        double population = town->getDoubleValue("population-index");
+        double population = 0;
+        if (town->isValue("population-index")) {
+            population = town->getDoubleValue("population-index");
+        } else {
+            population = town->getSize() / 10;
+        }
         unsigned int min_pop = (population-1)*2;
         unsigned int max_pop = (population+1)*2;
 

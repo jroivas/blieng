@@ -98,6 +98,43 @@ std::vector<std::string> Data::listMaps()
     return findFileExtRecursive(mapfiles, maps_path, ".json");
 }
 
+bool Data::saveMapJSON(std::string name, std::string json)
+{
+    if (!boost::filesystem::exists(*data_path)) return false;
+
+    boost::filesystem::path maps_path = *data_path;
+    maps_path /= "maps"; // FIXME Hardcoded
+
+    if (!boost::filesystem::exists(maps_path)) return false;
+
+    std::string clean_name = "";
+    std::string::iterator si = name.begin();
+    while (si != name.end()) {
+        if (std::isalnum(*si) || *si == '_' || *si == '-') {
+            clean_name += *si;
+        }
+        //if (*si == '.') break; // FIXME What to do with dots?
+        si++;
+    }
+
+    if (clean_name == "") return false;
+
+    maps_path /= clean_name;
+
+    if (!boost::filesystem::exists(maps_path)) {
+        if (!boost::filesystem::create_directory(maps_path)) return false;
+    }
+
+    maps_path /= clean_name + ".json";
+    boost::filesystem::ofstream fd(maps_path, std::ios_base::out | std::ios_base::trunc | std::ofstream::binary);
+    if (!fd.is_open()) return false;
+    
+    fd << json;
+    fd.close();
+
+    return true;
+}
+
 boost::filesystem::path Data::solveFilePath(std::string name)
 {
     boost::filesystem::path first_path = *data_path;

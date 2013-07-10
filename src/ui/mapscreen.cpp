@@ -13,9 +13,6 @@ MapScreen::MapScreen(QWidget *parent) : QWidget(parent)
 {
     maps = new blieng::Maps("");
     create_world = NULL;
-    edit_mode = false;
-    edit_point = blieng::Point();
-    edit_path = blieng::Path();
     init();
 }
 
@@ -30,6 +27,9 @@ void MapScreen::init()
     zoomlevel = blieng::Configure::getInstance()->getUIntValue("default_zoom_level");
     fella_size = blieng::Configure::getInstance()->getUIntValue("chr_map_size");
     clicked_town = NULL;
+    edit_mode = false;
+    edit_point = blieng::Point();
+    edit_path = blieng::Path();
 }
 
 void MapScreen::loadMap(QString mapname)
