@@ -39,9 +39,9 @@ EditScreen::EditScreen(QWidget *parent) : QWidget(parent)
     connect(map, SIGNAL(townSelected(blieng::Town*)), this, SLOT(townSelected(blieng::Town*)));
     connect(town_prop, SIGNAL(updated()), this, SLOT(doUpdate()));
 
-    connect(map, SIGNAL(mousePressed(QMouseEvent*)), this, SLOT(mouseDown(QMouseEvent*)));
-    connect(map, SIGNAL(mouseReleased(QMouseEvent*)), this, SLOT(mouseRelease(QMouseEvent*)));
-    connect(map, SIGNAL(mouseMoved(QMouseEvent*)), this, SLOT(mouseMove(QMouseEvent*)));
+    connect(map, SIGNAL(mousePressed(QMouseEvent*, double)), this, SLOT(mouseDown(QMouseEvent*, double)));
+    connect(map, SIGNAL(mouseReleased(QMouseEvent*, double)), this, SLOT(mouseRelease(QMouseEvent*, double)));
+    connect(map, SIGNAL(mouseMoved(QMouseEvent*, double)), this, SLOT(mouseMove(QMouseEvent*, double)));
 }
 
 void EditScreen::loadMap(QString mapname)
@@ -54,32 +54,44 @@ void EditScreen::doUpdate()
     map->update();
 }
 
-void EditScreen::mouseDown(QMouseEvent *e)
+void EditScreen::mouseDown(QMouseEvent *e, double zoomlevel)
 {
     blieng::Town *town = town_prop->getTown();
-    if (town == NULL) return;
+    //if (town == NULL) return;
 
+    if (map->getEditPath().isValid()) {
+        moving_path = true;
+        edit_point = map->getEditPoint();
+    }
 }
 
-void EditScreen::mouseRelease(QMouseEvent *e)
+void EditScreen::mouseRelease(QMouseEvent *e, double zoomlevel)
 {
     moving = false;
+    moving_path = false;
 
     blieng::Town *town = town_prop->getTown();
     if (town == NULL) return;
 }
 
-void EditScreen::mouseMove(QMouseEvent *e)
+void EditScreen::mouseMove(QMouseEvent *e, double zoomlevel)
 {
     blieng::Town *town = town_prop->getTown();
-    if (town == NULL) return;
 
-    if (moving) {
-        QPointF pos = e->pos();
-        pos -= map->getImagePos();
+    QPointF pos = e->pos() * ( zoomlevel / 100);
+    pos -= map->getImagePos();
+    if (town != NULL && moving) {
         town->setPositionX(pos.x());
         town->setPositionY(pos.y());
         town_prop->updatePos();
+        map->update();
+    }
+    if (moving_path) {
+        blieng::Point new_point = blieng::Point(pos.x(), pos.y());
+        blieng::Path new_path = map->getMaps()->updatePath(map->getEditPath(), map->getEditPointIndex(), new_point);
+        edit_point = new_point;
+        map->updateEditPoint(new_point);
+        map->updateEditPath(new_path);
         map->update();
     }
 }

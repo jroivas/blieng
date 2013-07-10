@@ -25,6 +25,12 @@ bool Point::operator!=(const Point &other) const {
     return false;
 }
 
+void Point::update(Point another)
+{
+    x = another.x;
+    y = another.y;
+}
+
 Point Point::traverse(Point target, double now, double time)
 {
     //Travel to another point, in specific time, specify now as current time

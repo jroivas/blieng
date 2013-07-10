@@ -22,15 +22,22 @@ public:
     void setEditMode(bool mode);
     QPointF getImagePos() { return image_pos; }
 
+    blieng::Path getEditPath() { return edit_path; }
+    blieng::Point getEditPoint() { return edit_point; }
+    int getEditPointIndex() { return edit_point_index; }
+
+    void updateEditPath(blieng::Path path);
+    void updateEditPoint(blieng::Point point);
+
 public slots:
     void fellowship(QPointF pos);
     void changedFellowship(std::vector<ui::CharacterData *> fellows);
 
 signals:
     void townSelected(blieng::Town *);
-    void mousePressed(QMouseEvent *event);
-    void mouseReleased(QMouseEvent *event);
-    void mouseMoved(QMouseEvent *event);
+    void mousePressed(QMouseEvent *event, double zoomlevel);
+    void mouseReleased(QMouseEvent *event, double zoomlevel);
+    void mouseMoved(QMouseEvent *event, double zoomlevel);
 
 protected:
     void mousePressEvent(QMouseEvent *event);
@@ -48,6 +55,10 @@ private:
 
     bool canmove;
     QPointF last_pos;
+    QPointF edit_point_pos;
+    blieng::Point edit_point;
+    blieng::Path edit_path;
+    int edit_point_index;
 
     zomb::CreateWorld *create_world;
     std::vector<ui::CharacterData *> the_fellowship;

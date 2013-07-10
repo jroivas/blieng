@@ -29,6 +29,43 @@ void Path::addPoint(Point pt)
     points.push_back(pt);
 }
 
+int Path::getPointIndex(Point point)
+{
+    int index = 0;
+    BOOST_FOREACH(blieng::Point pt, points) {
+        if (point == pt) return index;
+        index++;
+    }
+    return -1;
+}
+
+void Path::updatePointAt(int index, Point new_point)
+{
+    std::vector<Point> new_points;
+    int cnt = 0;
+    BOOST_FOREACH(blieng::Point pt, points) {
+        if (cnt == index) {
+            new_points.push_back(new_point);
+        } else {
+            new_points.push_back(pt);
+        }
+        cnt++;
+    }
+
+    points = new_points;
+}
+
+void Path::updatePoint(Point point, Point new_point)
+{
+    std::vector<Point>::iterator pi = points.begin();
+    while (pi != points.end()) {
+        if ((*pi) == point) {
+            (*pi).update(new_point);
+        }
+        pi++;
+    }
+}
+
 void Path::append(Path another)
 {
     BOOST_FOREACH(blieng::Point pt, another.points) {

@@ -17,6 +17,8 @@ public:
     void setX(double px) { x = px; }
     void setY(double py) { y = py; }
 
+    void update(Point another);
+
     std::string toString();
     bool operator==(const Point &other) const;
     bool operator!=(const Point &other) const;

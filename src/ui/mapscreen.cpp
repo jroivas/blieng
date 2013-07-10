@@ -112,6 +112,15 @@ void MapScreen::paintEvent(QPaintEvent *event)
         }
     }
 
+    if (edit_mode) {
+        if (!edit_point_pos.isNull()) {
+            paint.setPen(QColor(255,0,0,255));
+            paint.setBrush(QColor(0,0,0,255));
+            //qDebug() << image_pos + edit_point_pos;
+            paint.drawEllipse((image_pos + edit_point_pos) / zoomfactor, 8/zoomfactor, 8/zoomfactor);
+        }
+    }
+
     unsigned int fella = 0;
     BOOST_FOREACH(ui::CharacterData *fellow, the_fellowship) {
         QPointF fpos;
@@ -140,8 +149,28 @@ void MapScreen::paintEvent(QPaintEvent *event)
 
 void MapScreen::mousePressEvent(QMouseEvent *event)
 {
+    QPointF now_pos = event->pos() * (zoomlevel / 100.0);
     if (edit_mode) {
-        emit mousePressed(event);
+        emit mousePressed(event, zoomlevel);
+
+        BOOST_FOREACH(blieng::Path path, maps->getPaths()) {
+            int index = 0;
+            BOOST_FOREACH(blieng::Point point, path.getPoints()) {
+                QPointF point_pos(point.x, point.y);
+                QPointF point_diff = point_pos  + image_pos - now_pos;
+                if (point_diff.manhattanLength() <= 5) {
+                    //qDebug() << "press" << point.x << point.y;
+                    edit_point_pos = point_pos;
+                    edit_point = point;
+                    edit_point_index = index;
+                    edit_path = path;
+                    update();
+                    emit mousePressed(event, zoomlevel);
+                    return;
+                }
+                index++;
+            }
+        }
     }
     if (event->buttons() & Qt::LeftButton) {
         canmove = true;
@@ -163,12 +192,29 @@ void MapScreen::wheelEvent(QWheelEvent *event)
 
 void MapScreen::mouseReleaseEvent(QMouseEvent *event)
 {
+    QPointF now_pos = event->pos() * (zoomlevel / 100.0);
     if (edit_mode) {
-        emit mouseReleased(event);
-        //return;
+        emit mouseReleased(event, zoomlevel);
+
+        edit_path = blieng::Path();
+        edit_point = blieng::Point();
+        /*
+        BOOST_FOREACH(blieng::Path path, maps->getPaths()) {
+            BOOST_FOREACH(blieng::Point point, path.getPoints()) {
+                QPointF point_pos(point.x, point.y);
+                point_pos += image_pos;
+                QPointF point_diff = point_pos - now_pos;
+                if (point_diff.manhattanLength() <= 5) {
+                    qDebug() << point.x << point.y;
+                    edit_point_pos = point_pos;
+                    edit_path = path;
+                    update();
+                }
+            }
+        }
+        */
     }
     if (canmove) {
-        QPointF now_pos = event->pos() * (zoomlevel / 100.0);
         QPointF pos_diff = now_pos - last_pos;
         if (pos_diff.manhattanLength() > blieng::Configure::getInstance()->getUIntValue("town_sensitivity_distance")) {
             image_pos += pos_diff;
@@ -192,11 +238,22 @@ void MapScreen::mouseReleaseEvent(QMouseEvent *event)
 void MapScreen::mouseMoveEvent(QMouseEvent *event)
 {
     if (edit_mode) {
-        emit mouseMoved(event);
+        emit mouseMoved(event, zoomlevel);
     }
 }
 
 void MapScreen::setEditMode(bool mode)
 {
     edit_mode = mode;
+}
+
+void MapScreen::updateEditPoint(blieng::Point point)
+{
+    edit_point = point;
+    edit_point_pos = QPointF(point.x, point.y);
+}
+
+void MapScreen::updateEditPath(blieng::Path path)
+{
+    edit_path = path;
 }

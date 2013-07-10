@@ -40,6 +40,20 @@ void Maps::addPath(blieng::Path path)
     paths.push_back(path);
 }
 
+blieng::Path Maps::updatePath(blieng::Path path, int index, blieng::Point point)
+{
+    std::vector<blieng::Path>::iterator pi = paths.begin();
+    while (pi != paths.end()) {
+        if (*pi == path) {
+            paths.erase(pi);
+            path.updatePointAt(index, point);
+            paths.push_back(path);
+            return path;
+        }
+        pi++;
+    }
+}
+
 void Maps::parseMap()
 {
     if (!map_json.isObject()) return;

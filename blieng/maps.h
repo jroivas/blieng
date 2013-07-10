@@ -26,6 +26,8 @@ public:
     void addTown(blieng::Town *town);
     void addPath(blieng::Path path);
 
+    blieng::Path updatePath(blieng::Path path, int index, blieng::Point point);
+
 private:
     void loadMap(std::string name);
     void parseMap();

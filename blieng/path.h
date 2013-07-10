@@ -29,6 +29,9 @@ public:
     Point getEnd();
 
     void addPoint(Point pt);
+    int getPointIndex(Point pt);
+    void updatePointAt(int index, Point new_point);
+    void updatePoint(Point point, Point new_point);
 
     unsigned int size();
 
