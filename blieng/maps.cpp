@@ -1,6 +1,7 @@
 #include "maps.h"
 #include "data.h"
 #include <boost/foreach.hpp>
+#include <boost/filesystem/path.hpp>
 
 using blieng::Maps;
 
@@ -18,6 +19,46 @@ void Maps::loadMap(std::string name)
         map_json = Data::getInstance()->readJson(map_file);
         parseMap();
     }
+}
+
+#include <cstdio>
+#include <sstream>
+
+bool Maps::saveMap(std::string name)
+{
+    std::string json = "";
+
+    std::string imagefile = "";
+
+    boost::filesystem::path my_image = boost::filesystem::path(solved_map_image_file);
+    if (boost::filesystem::is_regular_file(boost::filesystem::status(my_image))) {
+       imagefile = my_image.filename().string();
+    }
+    
+    json += "{\n";
+    json += "    \"image\": \"" + imagefile + "\",\n";
+    json += "    \"towns\": [\n";
+    std::string str_towns = "";
+    BOOST_FOREACH(blieng::Town *town, towns) {
+        if (str_towns != "") str_towns += ",\n";
+        std::ostringstream tmp;
+        tmp << "         ";
+        tmp << "{ \"name\": \"" << town->getName();
+        tmp << "\", \"size\": " << town->getSize();
+        tmp << ", \"posx\": " << town->getPositionX();
+        tmp << ", \"posy\": " << town->getPositionY();
+        tmp << " }";
+        str_towns += tmp.str();
+    }
+    str_towns += "\n";
+    json += str_towns;
+    json += "    ]\n";
+    json += "    \"paths\": [\n";
+    json += "    ]\n";
+    json += "}\n";
+
+    printf("%s\n", json.c_str());
+    return true;
 }
 
 std::string Maps::getMapName()

@@ -33,6 +33,8 @@ public:
     blieng::Path updatePath(blieng::Path path, int index, blieng::Point point);
     blieng::Path updatePath(blieng::Path path, blieng::Point point);
 
+    bool saveMap(std::string name);
+
 private:
     void loadMap(std::string name);
     void parseMap();

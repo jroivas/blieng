@@ -170,6 +170,7 @@ void EditScreen::saveMap()
     QString mapname = QInputDialog::getText(this, tr("Save map"), tr("Give map name:"), QLineEdit::Normal, map->getMaps()->getMapName().c_str(), &ok);
     if (ok && !mapname.isEmpty()) {
         qDebug() << "Saving" << mapname;
+        map->getMaps()->saveMap(mapname.toLatin1().constData());
     } else {
         qDebug() << "failed";
     }
