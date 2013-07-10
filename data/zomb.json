@@ -50,5 +50,7 @@
 	"player_damage_row_reduce": 10, 
 	"player_damage_loot_range": 1000,
 
+	"path_selection_resolution": 10, /* Resolution when selecting joined and available paths, in pixels */
+
 	"none": ""
 }

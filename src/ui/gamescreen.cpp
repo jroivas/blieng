@@ -64,13 +64,22 @@ GameScreen::GameScreen(QString map, QWidget *parent) : QWidget(parent)
 
 void GameScreen::moveToHomeTown()
 {
+    blieng::Town *start_town = NULL;
+
     BOOST_FOREACH(blieng::Town *town, mapscreen->getMaps()->getTowns()) {
+        /* Ensure we have a home town*/
+        if (start_town == NULL) start_town = town;
+        /* Try to check for the proper home town */
         if (town->isValue("start") && town->getBoolValue("start")) {
-            current_location = town;
-            blieng::Point pos = town->getPosition();
-            emit fellowship(QPointF(pos.x, pos.y));
-            return;
+            start_town = town;
+            break;
         }
+    }
+
+    if (start_town != NULL) {
+            current_location = start_town;
+            blieng::Point pos = start_town->getPosition();
+            emit fellowship(QPointF(pos.x, pos.y));
     }
 }
 
@@ -96,15 +105,17 @@ void GameScreen::solveTargetPath()
 
     std::vector<blieng::Path> test_paths;
 
+    unsigned int path_diff = blieng::Configure::getInstance()->getUIntValue("path_selection_resolution");
+
     BOOST_FOREACH(blieng::Path path, mapscreen->getMaps()->getPaths()) {
         blieng::Point start = path.getStart();
-        if (start == from) {
+        if (start.length(from) < path_diff) {
             test_paths.push_back(path.copy());
         }
     }
     BOOST_FOREACH(blieng::Path path, mapscreen->getMaps()->getRevPaths()) {
         blieng::Point start = path.getStart();
-        if (start == from) {
+        if (start.length(from) < path_diff) {
             test_paths.push_back(path.copy());
         }
     }
@@ -119,13 +130,13 @@ void GameScreen::solveTargetPath()
             if (end.isValid()) {
                 BOOST_FOREACH(blieng::Path path, mapscreen->getMaps()->getPaths()) {
                     blieng::Point str = path.getStart();
-                    if (str.isValid() && end == str) {
+                    if (str.isValid() && end.length(str) < path_diff) {
                         append_test_paths.push_back(continue_path.combine(path));
                     }
                 }
                 BOOST_FOREACH(blieng::Path path, mapscreen->getMaps()->getRevPaths()) {
                     blieng::Point str = path.getStart();
-                    if (str.isValid() && end == str) {
+                    if (str.isValid() && end.length(str) < path_diff) {
                         append_test_paths.push_back(continue_path.combine(path));
                     }
                 }
@@ -135,7 +146,7 @@ void GameScreen::solveTargetPath()
             test_paths.push_back(continue_path);
         }
         BOOST_FOREACH(blieng::Path candi, test_paths) {
-            if (candi.getEnd() == to && candi.getStart() == from && (candi.getEnd() != candi.getStart())) {
+            if ((candi.getEnd().length(to) < path_diff) && (candi.getStart().length(from) < path_diff) && (candi.getEnd() != candi.getStart())) {
                 ok = true;
                 break;
             }
@@ -147,7 +158,7 @@ void GameScreen::solveTargetPath()
     BOOST_FOREACH(blieng::Path candi, test_paths) {
         double len = candi.length();
         if (len < min_len) {
-            if (candi.getEnd() == to && candi.getStart() == from && (candi.getEnd() != candi.getStart())) {
+            if ((candi.getEnd().length(to) < path_diff) && (candi.getStart().length(from) < path_diff) && (candi.getEnd() != candi.getStart())) {
                 target_path = candi;
                 waypoint = NULL;
                 min_len = len;

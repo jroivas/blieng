@@ -45,6 +45,8 @@ bool zomb::initializeConfiguration()
 
     conf->addKey("debug", blieng::Configure::KeyBool);
 
+    conf->addKey("path_selection_resolution", blieng::Configure::KeyUInt);
+
     conf->addKey("zombie_damage_multiple_max", blieng::Configure::KeyDouble);
     conf->addKey("zombie_damage_row_reduce", blieng::Configure::KeyDouble);
     conf->addKey("zombie_damage_left_leg", blieng::Configure::KeyDouble);
