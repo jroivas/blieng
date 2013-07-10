@@ -67,12 +67,43 @@ std::string Data::findFile(std::string name)
     return findFileRecursive(*data_path, name);
 }
 
+std::vector<std::string> Data::findFileExtRecursive(std::vector<std::string> mapfiles, const boost::filesystem::path &dir_path, std::string ext)
+{
+    if (!boost::filesystem::exists(dir_path)) return mapfiles;
+
+    boost::filesystem::directory_iterator end_iter;
+    boost::filesystem::directory_iterator dir_iter(dir_path);
+    
+    for (;dir_iter != end_iter; dir_iter++) {
+        if (boost::filesystem::is_directory(dir_iter->status())) {
+            mapfiles = findFileExtRecursive(mapfiles, dir_iter->path(), ext);
+        } else if (dir_iter->path().extension() == ext) {
+            mapfiles.push_back(dir_iter->path().filename().string());
+        }
+    }
+    return mapfiles;
+}
+
+std::vector<std::string> Data::listMaps()
+{
+    std::vector<std::string> mapfiles;
+
+    if (!boost::filesystem::exists(*data_path)) return mapfiles;
+
+    boost::filesystem::path maps_path = *data_path;
+    maps_path /= "maps"; // FIXME Hardcoded
+
+    if (!boost::filesystem::exists(maps_path)) return mapfiles;
+
+    return findFileExtRecursive(mapfiles, maps_path, ".json");
+}
+
 boost::filesystem::path Data::solveFilePath(std::string name)
 {
     boost::filesystem::path first_path = *data_path;
     boost::filesystem::path second_path = boost::filesystem::path(name);
     first_path /= name;
-    if (!boost::filesystem::exists(first_path) &&boost::filesystem::exists(second_path)) {
+    if (!boost::filesystem::exists(first_path) && boost::filesystem::exists(second_path)) {
         first_path = second_path;
     }
     return first_path;

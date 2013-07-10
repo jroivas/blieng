@@ -22,6 +22,9 @@ public:
 
 protected slots:
     void addTown();
+    void loadBG();
+    void loadMap();
+    void saveMap();
     void drawPath(bool);
     void townSelected(blieng::Town *);
     void doUpdate();
@@ -30,12 +33,19 @@ protected slots:
     void mouseRelease(QMouseEvent *, double);
     void mouseMove(QMouseEvent *, double);
 
+protected:
+    void resizeEvent(QResizeEvent *event);
+
 private:
     ui::MapScreen *map;
     QHBoxLayout layout;
     QVBoxLayout control_layout;
     QPushButton *new_town;
     QPushButton *new_path;
+    QPushButton *load_bg;
+    QPushButton *save_map;
+    QPushButton *load_map;
+    QPushButton *quit;
 
     TownProperties *town_prop;
     blieng::Point edit_point;

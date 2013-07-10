@@ -26,6 +26,9 @@ public:
     std::string findFile(std::string name);
     std::string formatString(std::string replace_string, unsigned int num);
 
+    std::vector<std::string> findFileExtRecursive(std::vector<std::string> mapfiles, const boost::filesystem::path &dir_path, std::string ext);
+    std::vector<std::string> listMaps();
+
 private:
     Data();
 

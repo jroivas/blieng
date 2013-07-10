@@ -1,6 +1,8 @@
 #include "editscreen.h"
 #include "blieng/town.h"
+#include "blieng/data.h"
 #include "blieng/configure.h"
+#include <boost/foreach.hpp>
 
 using MapEditor::EditScreen;
 
@@ -20,16 +22,21 @@ EditScreen::EditScreen(QWidget *parent) : QWidget(parent)
 
     new_town = new QPushButton("Add town");
     new_path = new QPushButton("Draw path");
+    load_bg = new QPushButton("Select BG image");
+    load_map = new QPushButton("Load map");
+    save_map = new QPushButton("Save map");
+    quit = new QPushButton("Quit editor");
     town_prop = new TownProperties();
 
-    new_town->setMaximumWidth(150);
-    new_path->setMaximumWidth(150);
     new_path->setCheckable(true);
-    town_prop->setMaximumWidth(150);
     map->setMinimumWidth(width()/10*9);
 
     control_layout.addWidget(new_town);
     control_layout.addWidget(new_path);
+    control_layout.addWidget(load_bg);
+    control_layout.addWidget(load_map);
+    control_layout.addWidget(save_map);
+    control_layout.addWidget(quit);
     control_layout.addWidget(town_prop);
     layout.addLayout(&control_layout);
 
@@ -39,7 +46,11 @@ EditScreen::EditScreen(QWidget *parent) : QWidget(parent)
     new_path->setCheckable(true);
 
     connect(new_town, SIGNAL(clicked()), this, SLOT(addTown()));
+    connect(load_bg, SIGNAL(clicked()), this, SLOT(loadBG()));
+    connect(load_map, SIGNAL(clicked()), this, SLOT(loadMap()));
+    connect(save_map, SIGNAL(clicked()), this, SLOT(saveMap()));
     connect(new_path, SIGNAL(toggled(bool)), this, SLOT(drawPath(bool)));
+    connect(quit, SIGNAL(clicked()), QApplication::instance(), SLOT(quit()));
 
     connect(map, SIGNAL(townSelected(blieng::Town*)), this, SLOT(townSelected(blieng::Town*)));
     connect(town_prop, SIGNAL(updated()), this, SLOT(doUpdate()));
@@ -47,6 +58,11 @@ EditScreen::EditScreen(QWidget *parent) : QWidget(parent)
     connect(map, SIGNAL(mousePressed(QMouseEvent*, double)), this, SLOT(mouseDown(QMouseEvent*, double)));
     connect(map, SIGNAL(mouseReleased(QMouseEvent*, double)), this, SLOT(mouseRelease(QMouseEvent*, double)));
     connect(map, SIGNAL(mouseMoved(QMouseEvent*, double)), this, SLOT(mouseMove(QMouseEvent*, double)));
+}
+
+void EditScreen::resizeEvent(QResizeEvent *event)
+{
+    map->setMinimumWidth(width()/10*9);
 }
 
 void EditScreen::loadMap(QString mapname)
@@ -145,5 +161,39 @@ void EditScreen::addTown()
     town->setPositionX(NEW_TOWN_POSX);
     town->setPositionY(NEW_TOWN_POSY);
     map->getMaps()->addTown(town);
+    map->update();
+}
+
+void EditScreen::saveMap()
+{
+    bool ok;
+    QString mapname = QInputDialog::getText(this, tr("Save map"), tr("Give map name:"), QLineEdit::Normal, map->getMaps()->getMapName().c_str(), &ok);
+    if (ok && !mapname.isEmpty()) {
+        qDebug() << "Saving" << mapname;
+    } else {
+        qDebug() << "failed";
+    }
+}
+
+void EditScreen::loadMap()
+{
+    QStringList items;
+    std::vector<std::string> maps = blieng::Data::getInstance()->listMaps();
+    BOOST_FOREACH(std::string map, maps) {
+        items << QString(map.c_str()).replace(".json", "");
+    }
+
+    bool ok;
+    QString item = QInputDialog::getItem(this, tr("Load map)"), tr("Map name:"), items, 0, false, &ok);
+    if (ok && !item.isEmpty()) {
+        map->loadMap(item.toLatin1().constData());
+    }
+}
+
+void EditScreen::loadBG()
+{
+    QString filename = QFileDialog::getOpenFileName(this, tr("Load background image"), "", tr("Images (*.png *.jpg *.jpeg)"));
+    map->getMaps()->setBackgroundImage(filename.toLatin1().constData());
+    map->loadImage();
     map->update();
 }

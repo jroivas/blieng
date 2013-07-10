@@ -17,7 +17,7 @@ public:
     MapScreen(QWidget *parent=0);
     MapScreen(QString mapname, QWidget *parent=0);
     void paintEvent(QPaintEvent *event);
-    blieng::Maps *getMaps() { return maps;}
+    blieng::Maps *getMaps() { return maps; }
     void loadMap(QString mapname);
     void setEditMode(bool mode);
     QPointF getImagePos() { return image_pos; }
@@ -28,6 +28,7 @@ public:
 
     void updateEditPath(blieng::Path path);
     void updateEditPoint(blieng::Point point);
+    void loadImage();
 
 public slots:
     void fellowship(QPointF pos);
@@ -46,7 +47,7 @@ protected:
     void wheelEvent(QWheelEvent *event);
 
 private:
-    void loadImage();
+    void init();
     void validateImage();
 
     blieng::Maps *maps;

@@ -11,25 +11,31 @@ using ui::MapScreen;
 
 MapScreen::MapScreen(QWidget *parent) : QWidget(parent)
 {
-    maps = NULL;
+    maps = new blieng::Maps("");
     create_world = NULL;
     edit_mode = false;
     edit_point = blieng::Point();
     edit_path = blieng::Path();
+    init();
 }
 
 MapScreen::MapScreen(QString mapname, QWidget *parent) : QWidget(parent)
 {
     loadMap(mapname);
+    init();
+}
+
+void MapScreen::init()
+{
+    zoomlevel = blieng::Configure::getInstance()->getUIntValue("default_zoom_level");
+    fella_size = blieng::Configure::getInstance()->getUIntValue("chr_map_size");
+    clicked_town = NULL;
 }
 
 void MapScreen::loadMap(QString mapname)
 {
     maps = new blieng::Maps(mapname.toStdString());
     create_world = new zomb::CreateWorld(maps);
-    zoomlevel = blieng::Configure::getInstance()->getUIntValue("default_zoom_level");
-    fella_size = blieng::Configure::getInstance()->getUIntValue("chr_map_size");
-    clicked_town = NULL;
     loadImage();
 }
 
@@ -65,9 +71,12 @@ void MapScreen::paintEvent(QPaintEvent *event)
 {
     if (maps == NULL) return;
     QPainter paint(this);
-    validateImage();
+
     double zoomfactor = zoomlevel / 100.0;
-    paint.drawImage(image_pos / zoomfactor, bgimage);
+    if (!bgimage.isNull()) {
+        validateImage();
+        paint.drawImage(image_pos / zoomfactor, bgimage);
+    }
 
     QPen blackpen(QColor(0,0,0,255));
     double path_width = 1;
@@ -77,6 +86,7 @@ void MapScreen::paintEvent(QPaintEvent *event)
     catch (std::string res) {
         path_width = 3;
     }
+
     blackpen.setWidth(path_width);
     paint.setPen(blackpen);
     BOOST_FOREACH(blieng::Path path, maps->getPaths()) {

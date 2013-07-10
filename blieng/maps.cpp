@@ -20,6 +20,17 @@ void Maps::loadMap(std::string name)
     }
 }
 
+std::string Maps::getMapName()
+{
+    return map_name;
+}
+
+void Maps::setBackgroundImage(std::string filename)
+{
+    map_image_file = filename;
+    solved_map_image_file = filename;
+}
+
 std::string Maps::getSolvedMapImageFile()
 {
     if (map_image_file == "") return "";

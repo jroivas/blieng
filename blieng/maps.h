@@ -17,11 +17,15 @@ class Maps : public BliObject
 public:
     Maps(std::string mapname);
 
+    std::string getMapName();
+
     std::string getMapImageFile() { return map_image_file; }
     std::string getSolvedMapImageFile();
     std::vector<blieng::Town *> getTowns() { return towns; }
     std::vector<blieng::Path> getPaths() { return paths; }
     std::vector<blieng::Path> getRevPaths() { return rev_paths; }
+
+    void setBackgroundImage(std::string filename);
 
     void addTown(blieng::Town *town);
     void addPath(blieng::Path path);
