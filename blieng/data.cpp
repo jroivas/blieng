@@ -34,7 +34,7 @@ boost::filesystem::path *Data::findDataPath()
 
     boost::filesystem::path *my_data_path = new boost::filesystem::path;
     BOOST_FOREACH(std::string item, locations) {
-        *my_data_path = (item + "data");
+        *my_data_path = (item + "data").c_str();
         if (boost::filesystem::exists(*my_data_path) && boost::filesystem::is_directory(*my_data_path)) {
             return my_data_path;
         }
@@ -54,7 +54,7 @@ std::string Data::findFileRecursive(const boost::filesystem::path &dir_path, std
         if (boost::filesystem::is_directory(dir_iter->status())) {
             std::string res = findFileRecursive(dir_iter->path(), name);
             if (res != "") return res;
-        } else if (dir_iter->path().filename() == name) {
+        } else if (dir_iter->path().filename().string() == name) {
             return dir_iter->path().string();
         }
     }
@@ -138,8 +138,8 @@ bool Data::saveMapJSON(std::string name, std::string json)
 boost::filesystem::path Data::solveFilePath(std::string name)
 {
     boost::filesystem::path first_path = *data_path;
-    boost::filesystem::path second_path = boost::filesystem::path(name);
-    first_path /= name;
+    boost::filesystem::path second_path = boost::filesystem::path(name.c_str());
+    first_path /= name.c_str();
     if (!boost::filesystem::exists(first_path) && boost::filesystem::exists(second_path)) {
         first_path = second_path;
     }

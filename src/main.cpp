@@ -1,6 +1,8 @@
 #include <QtCore>
 #include <QtGui>
 #include <QApplication>
+#include <QTranslator>
+#include <locale.h>
 
 #include <iostream>
 #include "ui/generate_character.h"
@@ -18,6 +20,8 @@
 int main(int argc, char **argv)
 {
     QApplication app(argc, argv);
+
+    QTranslator translate;
 
     #if 0
     blieng::Item *nail = new blieng::Item("nail");
@@ -105,9 +109,14 @@ int main(int argc, char **argv)
     return app.exec();
     #endif
 
+    qDebug() << QLocale::system().name();
+
     if (!zomb::initializeConfiguration()) {
             return 1;
     }
+
+    translate.load("zombiebli." + QLocale::system().name(), "translations");
+    app.installTranslator(&translate);
 
     ui::GameScreen *game = NULL;
     if (argc > 1) {
@@ -115,6 +124,7 @@ int main(int argc, char **argv)
     } else {
         game = new ui::GameScreen();
     }
+
     game->show();
     QObject::connect(&app, SIGNAL(lastWindowClosed()), &app, SLOT(quit()));
     

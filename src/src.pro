@@ -3,6 +3,8 @@ TARGET = zombiebli
 DEPENDPATH += . .. ../blieng ui
 INCLUDEPATH += . .. ../blieng ui
 
+TRANSLATIONS = zombiebli.ts
+
 QT += core gui
 # For Qt5
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets

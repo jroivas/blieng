@@ -77,18 +77,21 @@ void GenerateCharacter::update()
 {
     clear();
 
-    QPushButton *reroll_button = new QPushButton("Re-roll");
+    //: Re-roll a character
+    QPushButton *reroll_button = new QPushButton(tr("Re-roll"));
     reroll_button->setMinimumHeight(20);
     connect(reroll_button, SIGNAL(clicked()), this, SLOT(reroll()));
 
-    QPushButton *done_button = new QPushButton("Done");
+    //: Done selecting character
+    QPushButton *done_button = new QPushButton(tr("Done"));
     done_button->setMinimumHeight(20);
     connect(done_button, SIGNAL(clicked()), this, SLOT(done()));
 
     layout.addWidget(done_button);
     layout.addWidget(reroll_button);
 
-    QLabel *improve = new QLabel("Improve points left: " + QString::number(improve_points));
+    //: Improve points for a character left
+    QLabel *improve = new QLabel(tr("Improve points left:") + " " + QString::number(improve_points));
     layout.addWidget(improve);
 
     std::list<std::string> keys = character->getKeys();
@@ -114,7 +117,8 @@ void GenerateCharacter::update()
             can_improve = false;
         } else if (*valtype == typeid(bool)) {
             bool val = character->getBoolValue(*key_iter);
-            l2 = new QLabel(val?"Yes":"No");
+            //: For boolean values show Yes/No as verbosal output
+            l2 = new QLabel(val ? tr("Yes") : tr("No"));
             can_improve = false;
         } else if (*valtype == typeid(std::string)) {
             std::string val = character->getStringValue(*key_iter);
@@ -133,7 +137,8 @@ void GenerateCharacter::update()
             h->addWidget(l2);
             h->setAlignment(l2, Qt::AlignRight);
             if (can_improve) {
-                QPushButton *imp = new QPushButton("+");
+                //: Increase points of a feature of the character
+                QPushButton *imp = new QPushButton(tr("+"));
                 imp->setMaximumWidth(30);
                 connect(imp, SIGNAL(clicked()), this, SLOT(improve()));
                 improve_map[imp] = *key_iter;

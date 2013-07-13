@@ -11,9 +11,9 @@ StartScreen::StartScreen(QWidget *parent) : QWidget(parent)
         bg_img = QImage(startfile.c_str());
     }
 
-    new_game = new QPushButton("New Game");
-    settings = new QPushButton("Settings");
-    quit = new QPushButton("Quit");
+    new_game = new QPushButton(tr("New Game"));
+    settings = new QPushButton(tr("Settings"));
+    quit = new QPushButton(tr("Quit"));
 
     /*
     new_game->setFlat(true);
@@ -37,7 +37,7 @@ StartScreen::StartScreen(QWidget *parent) : QWidget(parent)
 
 void StartScreen::newGame()
 {
-    new_game->setText("Starting a new game...");
+    new_game->setText(tr("Starting a new game..."));
     new_game->setStyleSheet("* { color: black; background-color: rgba(225,0,0,100) }");
     new_game->setMinimumHeight(200);
     settings->setVisible(false);

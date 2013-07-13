@@ -10,7 +10,7 @@ using ui::CharacterData;
 CharacterView::CharacterView(QWidget *parent) : QWidget(parent), fight(false)
 {
     setLayout(&layout);
-    act = new QPushButton("Act");
+    act = new QPushButton(tr("Act"));
     act->setMinimumWidth(blieng::Configure::getInstance()->getUIntValue("act_button_width"));
     act->setMinimumHeight(blieng::Configure::getInstance()->getUIntValue("act_button_height"));
     connect(act, SIGNAL(clicked()), this, SIGNAL(done()));
@@ -93,11 +93,11 @@ void CharacterView::updateView()
                 // TODO Dynamic options
                 data->fight->addItem("Gun");
                 data->fight->addItem("Machine gun");
-                data->fight->addItem("Kick");
-                data->fight->addItem("Hit");
-                data->fight->addItem("Loot");
-                data->fight->addItem("Loot with care");
-                data->fight->addItem("Run");
+                data->fight->addItem(tr("Kick"));
+                data->fight->addItem(tr("Hit"));
+                data->fight->addItem(tr("Loot"));
+                data->fight->addItem(tr("Loot with care"));
+                data->fight->addItem(tr("Run"));
                 data->box->addWidget(data->fight);
             }
 
@@ -140,15 +140,15 @@ ui::CharacterData::LootingMode CharacterData::loot()
     if (fight == NULL) return LOOT_invalid;
     int index = fight->currentIndex();
 
-    if (fight->itemText(index) == "Loot") {
+    if (fight->itemText(index) == ui::CharacterView::tr("Loot")) {
         active = false;
         return ui::CharacterData::LOOT_normal;
     }
-    else if (fight->itemText(index) == "Loot with care") {
+    else if (fight->itemText(index) == ui::CharacterView::tr("Loot with care")) {
         active = false;
         return ui::CharacterData::LOOT_care;
     }
-    else if (fight->itemText(index) == "Run") {
+    else if (fight->itemText(index) == ui::CharacterView::tr("Run")) {
         active = false;
         return ui::CharacterData::LOOT_run;
     }

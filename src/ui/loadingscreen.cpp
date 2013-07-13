@@ -55,8 +55,9 @@ void LoadingScreen::paintEvent(QPaintEvent *event)
     QFont ff;
     ff.setPointSize(34);
     paint.setFont(ff);
-    QRect bb = paint.boundingRect(QRect(0, 0, width(), 50), Qt::AlignLeft, "Loading...");
-    paint.drawText(xpos - bb.width()/2 + 20, ypos + 150, "Loading...");
+    QString loading_text = tr("Loading...");
+    QRect bb = paint.boundingRect(QRect(0, 0, width(), 50), Qt::AlignLeft, loading_text);
+    paint.drawText(xpos - bb.width()/2 + 20, ypos + 150, loading_text);
 
     angle += 1;
     //angle -= 1;
