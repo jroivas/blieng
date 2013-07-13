@@ -73,6 +73,9 @@ win-dist:
 	cp -rf data dist/zombiebli-$(VERS)-win/
 	cd dist && zip -r -9 -q zombiebli-$(VERS)-win.zip zombiebli-$(VERS)-win
 
+translations-base:
+	cd src && lupdate -verbose src.pro
+
 translations:
 	cd src/translations && make all
 

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.0">
+<TS version="2.0" language="en_US">
 <context>
     <name>ui::CharacterView</name>
     <message>
@@ -72,7 +72,7 @@
         <location filename="ui/generate_character.cpp" line="141"/>
         <source>+</source>
         <extracomment>Increase points of a feature of the character</extracomment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">++</translation>
     </message>
 </context>
 <context>
