@@ -2,7 +2,7 @@ cores := $(shell cat /proc/cpuinfo | grep -i 'processor' | wc -l)
 coreflags = -j$(cores)
 #coreflags = -j2
 topdir := $(shell pwd)
-VERS=etp3
+VERS=etp4
 
 all: linux win translations
 

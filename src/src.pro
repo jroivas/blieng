@@ -46,6 +46,7 @@ HEADERS += \
     ui/fightscreen.h \
     ui/gamelayout.h \
     ui/characterview.h \
+    ui/zombpushbutton.h \
     ui/startscreen.h
 SOURCES += \
     main.cpp \
@@ -61,4 +62,5 @@ SOURCES += \
     ui/gamelayout.cpp \
     ui/fightscreen.cpp \
     ui/characterview.cpp \
+    ui/zombpushbutton.cpp \
     ui/startscreen.cpp

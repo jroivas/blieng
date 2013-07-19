@@ -258,6 +258,7 @@ void FightScreen::calculatePlayerDamage()
                         chr->character->kill();
                         killed.push_back(chr->character);
                     }
+                    //TODO Check if bitten
                 }
 
                 chrpos += 1;

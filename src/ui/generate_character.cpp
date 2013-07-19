@@ -58,7 +58,7 @@ void GenerateCharacter::clear()
 void GenerateCharacter::improve()
 {
     if (improve_points > 0) {
-        std::string key = improve_map[(QPushButton*)sender()];
+        std::string key = improve_map[(ZombPushButton*)sender()];
         if (character->increase(key)) {
             --improve_points;
             update();
@@ -78,13 +78,13 @@ void GenerateCharacter::update()
     clear();
 
     //: Re-roll a character
-    QPushButton *reroll_button = new QPushButton(tr("Re-roll"));
-    reroll_button->setMinimumHeight(20);
+    ZombPushButton *reroll_button = new ZombPushButton(tr("Re-roll"));
+    reroll_button->setMinimumHeight(40);
     connect(reroll_button, SIGNAL(clicked()), this, SLOT(reroll()));
 
     //: Done selecting character
-    QPushButton *done_button = new QPushButton(tr("Done"));
-    done_button->setMinimumHeight(20);
+    ZombPushButton *done_button = new ZombPushButton(tr("Done"));
+    done_button->setMinimumHeight(40);
     connect(done_button, SIGNAL(clicked()), this, SLOT(done()));
 
     layout.addWidget(done_button);
@@ -138,8 +138,12 @@ void GenerateCharacter::update()
             h->setAlignment(l2, Qt::AlignRight);
             if (can_improve) {
                 //: Increase points of a feature of the character
-                QPushButton *imp = new QPushButton(tr("+"));
+                ZombPushButton *imp = new ZombPushButton(tr("+"));
                 imp->setMaximumWidth(30);
+                imp->setBorder(QColor(127,127,127,255));
+                imp->setBorderDown(QColor(200,200,200,255));
+                imp->setBackground(QColor(200,200,200,255));
+                imp->setBackgroundDown(QColor(127,127,127,255));
                 connect(imp, SIGNAL(clicked()), this, SLOT(improve()));
                 improve_map[imp] = *key_iter;
                 h->addWidget(imp);

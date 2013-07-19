@@ -4,9 +4,10 @@
 #include <QtGui>
 #include <QWidget>
 #include <QVBoxLayout>
-#include <QPushButton>
+//#include <QPushButton>
 #include <map>
 #include "zomb/player_character.h"
+#include "ui/zombpushbutton.h"
 
 namespace ui
 {
@@ -33,7 +34,7 @@ private:
     zomb::PlayerCharacter *character;
     QVBoxLayout layout;
     int improve_points;
-    std::map<QPushButton*, std::string> improve_map;
+    std::map<ZombPushButton*, std::string> improve_map;
 };
 
 }
