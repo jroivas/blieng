@@ -17,14 +17,17 @@ CharacterView::CharacterView(QWidget *parent) : QWidget(parent), fight(false)
     group_actions->addItem(tr("Loot with care"));
     group_actions->addItem(tr("Run"));
 
-    act = new ZombPushButton(tr("Act"));
+    //act = new ZombPushButton(tr("Act"));
+    /*
     act->setMinimumWidth(blieng::Configure::getInstance()->getUIntValue("act_button_width"));
     act->setMinimumHeight(blieng::Configure::getInstance()->getUIntValue("act_button_height"));
+    */
 
     group_layout.addWidget(group_actions);
-    group_layout.addWidget(act);
+    //group_layout.addWidget(act);
 
-    connect(act, SIGNAL(clicked()), this, SIGNAL(done()));
+    //connect(act, SIGNAL(clicked()), this, SIGNAL(done()));
+    connect(group_actions, SIGNAL(clicked()), this, SIGNAL(done()));
 }
 
 void CharacterView::setCharacters(std::vector<zomb::PlayerCharacter* > _characters)
@@ -38,7 +41,7 @@ void CharacterView::fightMode()
     fight = true;
 
     group_actions->show();
-    act->show();
+    group_actions->setCurrentIndex(0);
     updateView();
 }
 
@@ -47,8 +50,15 @@ void CharacterView::mapMode()
     fight = false;
 
     group_actions->hide();
-    act->hide();
     updateView();
+}
+
+QSize CharacterView::sizeHint() const
+{
+    int chr_size = blieng::Configure::getInstance()->getUIntValue("chr_size");
+    int maxh = chr_size + 30 + 20 + 30;
+    
+    return QSize(width(), maxh);
 }
 
 void CharacterView::clearData()

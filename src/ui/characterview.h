@@ -40,6 +40,7 @@ public:
     std::vector<ui::CharacterData *> getCharacters();
     void fightMode();
     void mapMode();
+    QSize sizeHint() const;
 
 signals:
     void done();
@@ -54,7 +55,6 @@ private:
     QHBoxLayout layout;
     QVBoxLayout group_layout;
     bool fight;
-    ZombPushButton *act;
     ZombComboBox *group_actions;
 };
 

@@ -11,53 +11,149 @@ ZombComboBox::ZombComboBox(QWidget *parent) : QWidget(parent), ui::ZombStyles(),
 {
     model = new QStandardItemModel();
     _style = ComboBox_Horizontal;
+    _buttons = ComboBox_None;
+    updateGeometries();
 }
 
-void ZombComboBox::paintEvent(QPaintEvent *event)
+void ZombComboBox::updateGeometries()
 {
-    QPainter paint(this);
-
-    QRect geom = geometry();
     unsigned int norm_margin_left = 0;
     if (_style == ComboBox_Horizontal) {
         norm_margin_left = 20;
     }
     static const unsigned int norm_margin = 2;
 
-    QPoint topLeft;
-    topLeft = QPoint(norm_margin, norm_margin);
-    QPoint bottomRight;
-    bottomRight = QPoint(geom.size().width() - norm_margin, geom.size().height() - norm_margin);
+    QRect geom = geometry();
+    _topLeft = QPoint(norm_margin, norm_margin);
+    _bottomRight = QPoint(geom.size().width() - norm_margin, geom.size().height() - norm_margin);
 
-    QRect geom2 = QRect(QPoint(2, 2), geom.size());
+    sub_geom = QRect(QPoint(norm_margin, norm_margin), geom.size());
 
+    if (_style == ComboBox_Horizontal) {
+        _leftBoxPoint = QPoint(norm_margin + norm_margin_left, geom.size().height() - norm_margin);
+        _rightBoxPoint = QPoint(geom.size().width() - norm_margin - norm_margin_left, norm_margin);
+        _topRight = QPoint(geom.size().width() - norm_margin, geom.size().height() - norm_margin);
+
+        _leftBox = QRect(_topLeft, _leftBoxPoint);
+        _rightBox = QRect(_rightBoxPoint, _topRight);
+        _box = QRect(norm_margin + norm_margin_left, norm_margin, geom.size().width() - norm_margin*2 - norm_margin_left*2, geom.size().height() - norm_margin*2);
+        _smaller_box = QRect(norm_margin*2 + norm_margin_left + 2, norm_margin*2, geom.size().width() - norm_margin*4 - norm_margin_left*2 - 2, geom.size().height() - norm_margin*4);
+        _full_box = QRect(_topLeft, _bottomRight);
+
+        _polyLeft = QPolygon();
+        _polyLeft.append(QPoint(norm_margin*2, (geom.size().height() - norm_margin) / 2 + norm_margin));
+        _polyLeft.append(QPoint(norm_margin_left, norm_margin*2 + 1));
+        _polyLeft.append(QPoint(norm_margin_left, geom.size().height() - norm_margin*2 + 1));
+
+        _polyRight = QPolygon();
+        _polyRight.append(QPoint(geom.size().width() - norm_margin*2, (geom.size().height() - norm_margin) / 2 + norm_margin));
+        _polyRight.append(QPoint(geom.size().width() - norm_margin_left + norm_margin, norm_margin*2 + 1));
+        _polyRight.append(QPoint(geom.size().width() - norm_margin_left + norm_margin, geom.size().height() - norm_margin*2 + 1));
+
+    }
+}
+
+bool ZombComboBox::event(QEvent *event)
+{
+    if (event->type() == QEvent::Resize ||
+        event->type() == QEvent::Show) {
+        updateGeometries();
+    }
+    return QWidget::event(event);
+}
+
+void ZombComboBox::paintEvent(QPaintEvent *event)
+{
+    QPainter paint(this);
     paint.setPen(_bg);
     paint.setBrush(_bg);
-    paint.drawRect(geom2);
+    paint.drawRect(sub_geom);
 
-    paint.setPen(_text_color);
     paint.setBrush(_none);
 
-    QRect namebox = paint.boundingRect(0, 0, geom.width() - norm_margin_left*2, geom.height(), Qt::AlignLeft, currentText());
-    QPoint textpos = QPoint(geom.width()/2 - namebox.width()/2 + 1, geom.height()/2 + namebox.height()/2 - 1);
+    unsigned int norm_margin_left = 0;
+    if (_style == ComboBox_Horizontal) {
+        norm_margin_left = 20;
+    }
+    QRect namebox = paint.boundingRect(0, 0, geometry().width() - norm_margin_left*2, geometry().height(), Qt::AlignLeft, currentText());
+    QPoint textpos = QPoint(geometry().width()/2 - namebox.width()/2 + 1, geometry().height()/2 + namebox.height()/2 - 1);
+    paint.setPen(_text_color);
     paint.drawText(textpos, currentText());
 
     paint.setPen(_border);
 
-    paint.drawRect(QRect(topLeft, bottomRight));
+    paint.drawRect(_full_box);
+
+    if (_buttons == ComboBox_Item) {
+        paint.setPen(_border_down);
+        paint.setBrush(_none);
+        paint.drawRect(_smaller_box);
+    }
 
     if (_style == ComboBox_Horizontal) {
-        QPoint leftBox;
-        leftBox = QPoint(norm_margin + norm_margin_left, geom.size().height() - norm_margin);
+        paint.setBrush(_none);
 
-        QPoint rightBox;
-        rightBox = QPoint(geom.size().width() - norm_margin - norm_margin_left, norm_margin);
-        QPoint topRight;
-        topRight = QPoint(geom.size().width() - norm_margin, geom.size().height() - norm_margin);
+        paint.setPen(_buttons == ComboBox_Left?_border_down:_border);
+        paint.drawRect(_leftBox);
 
-        paint.drawRect(QRect(topLeft, leftBox));
-        paint.drawRect(QRect(rightBox, topRight));
+        paint.setPen(_buttons == ComboBox_Right?_border_down:_border);
+        paint.drawRect(_rightBox);
+
+        paint.setPen(_buttons == ComboBox_Left?_border_down:_border);
+        paint.setBrush(_buttons == ComboBox_Left?_border_down:_border);
+        paint.drawPolygon(_polyLeft);
+
+        paint.setPen(_buttons == ComboBox_Right?_border_down:_border);
+        paint.setBrush(_buttons == ComboBox_Right?_border_down:_border);
+        paint.drawPolygon(_polyRight);
     }
+}
+
+void ZombComboBox::mouseMoveEvent(QMouseEvent *)
+{
+}
+
+void ZombComboBox::mousePressEvent(QMouseEvent *e)
+{
+    if (e->button() == Qt::LeftButton) {
+        if (_leftBox.contains(e->pos())) {
+            _buttons = ComboBox_Left;
+        } else if (_rightBox.contains(e->pos())) {
+            _buttons = ComboBox_Right;
+        } else if (_box.contains(e->pos())) {
+            _buttons = ComboBox_Item;
+        }
+    }
+    update();
+}
+
+void ZombComboBox::prevItem()
+{
+    int index = currentIndex() + 1;
+    if (index >= count()) index = 0;
+    setCurrentIndex(index);
+}
+
+void ZombComboBox::nextItem()
+{
+    int index = currentIndex() - 1;
+    if (index < 0) index = count()-1;
+    setCurrentIndex(index);
+}
+
+void ZombComboBox::mouseReleaseEvent(QMouseEvent *e)
+{
+    if (e->button() == Qt::LeftButton) {
+        if (_leftBox.contains(e->pos())) {
+            nextItem();
+        } else if (_rightBox.contains(e->pos())) {
+            prevItem();
+        } else if (_box.contains(e->pos())) {
+            emit clicked();
+        }
+    }
+    _buttons = ComboBox_None;
+    update();
 }
 
 QString ZombComboBox::currentText() const
@@ -103,9 +199,8 @@ void ZombComboBox::setCurrentIndex(const QModelIndex &mi)
         normalized = mi;    // Fallback to passed index.
 
     bool indexChanged = (normalized != _currentIndex);
-    if (indexChanged)
-        _currentIndex = QPersistentModelIndex(normalized);
     if (indexChanged) {
+        _currentIndex = QPersistentModelIndex(normalized);
         update();
         //_q_emitCurrentIndexChanged(currentIndex);
     }
@@ -120,27 +215,16 @@ void ZombComboBox::setCurrentIndex(int index)
 
 void ZombComboBox::insertItem(int index, const QString &text, const QVariant &userData)
 {
-    index = qBound(0, index, count());
-    if (!_currentIndex.isValid()) {
-        setCurrentIndex(0);
-    }
+    int itemCount = count();
+    index = qBound(0, index, itemCount);
 
     QStandardItem *item = new QStandardItem(text);
     if (userData.isValid()) item->setData(userData, Qt::UserRole);
     model->insertRow(index, item);
 
-    /*if (index < 0) {
-        _items.push_back(
+    if (!_currentIndex.isValid()) {
+        setCurrentIndex(0);
     }
-
-    std::vector<QVariant>::iterator ii = _items.begin();
-
-    int num = 0;
-    while (ii != _items.end()) {
-        ii++;
-        num++;
-    }
-    */
 }
 
 int ZombComboBox::count() const
