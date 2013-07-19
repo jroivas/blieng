@@ -3,46 +3,14 @@
 #include <QPainter>
 #include <QApplication>
 #include <QDebug>
+#include <QStyleOptionButton>
 
 using ui::ZombPushButton;
 
-ZombPushButton::ZombPushButton(QString label, QWidget *parent) : QAbstractButton(parent)
+ZombPushButton::ZombPushButton(QString label, QWidget *parent) : QAbstractButton(parent), ui::ZombStyles()
 {
     setText(label);
-
-    _none = QColor(0, 0, 0, 0);
-    _bg = QColor(255, 255, 255, 255);
-    _bg_down = QColor(255, 255, 255, 255);
-    _border = QColor(255, 0, 0, 255);
-    _border_down = QColor(0, 0, 255, 255);
-    _text_color = QColor(0, 0, 0, 255);
 }
-
-void ZombPushButton::setTextColor(QColor text)
-{
-    _text_color = text;
-}
-
-void ZombPushButton::setBackground(QColor bg)
-{
-    _bg = bg;
-}
-
-void ZombPushButton::setBackgroundDown(QColor bg)
-{
-    _bg_down = bg;
-}
-
-void ZombPushButton::setBorder(QColor border)
-{
-    _border = border;
-}
-
-void ZombPushButton::setBorderDown(QColor border)
-{
-    _border_down = border;
-}
-
 
 void ZombPushButton::paintEvent(QPaintEvent *event)
 {

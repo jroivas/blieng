@@ -2,14 +2,17 @@
 #define __UI_ZOMB_PUSH_BUTTON_H
 
 #include <QAbstractButton>
-#include <QStyle>
-#include <QStyleOptionButton>
-#include <QEvent>
+#include <QPaintEvent>
+#include <QString>
+#include <QWidget>
+#include <QPaintEvent>
+#include <QSize>
+#include "ui/zombstyles.h"
 
 namespace ui
 {
 
-class ZombPushButton : public QAbstractButton
+class ZombPushButton : public QAbstractButton, public ui::ZombStyles
 {
     Q_OBJECT
 
@@ -19,19 +22,7 @@ public:
 
     QSize sizeHint() const;
 
-    void setTextColor(QColor text);
-    void setBackground(QColor bg);
-    void setBackgroundDown(QColor bg);
-    void setBorder(QColor border);
-    void setBorderDown(QColor border);
-
 private:
-    QColor _text_color;
-    QColor _border;
-    QColor _border_down;
-    QColor _bg;
-    QColor _bg_down;
-    QColor _none;
 };
 
 }

@@ -6,11 +6,12 @@
 
 using ui::CharacterView;
 using ui::CharacterData;
+using ui::ZombComboBox;
 
 CharacterView::CharacterView(QWidget *parent) : QWidget(parent), fight(false)
 {
     setLayout(&layout);
-    group_actions = new QComboBox();
+    group_actions = new ZombComboBox();
     group_actions->addItem(tr("Fight"));
     group_actions->addItem(tr("Loot"));
     group_actions->addItem(tr("Loot with care"));
@@ -102,7 +103,7 @@ void CharacterView::updateView()
             data->active = true;
 
             if (fight) {
-                data->fight = new QComboBox();
+                data->fight = new ZombComboBox();
 
                 data->group_action = group_actions;
 

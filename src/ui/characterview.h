@@ -4,10 +4,10 @@
 #include <QtGui>
 #include <QLabel>
 #include <QVBoxLayout>
-#include <QComboBox>
 #include <vector>
 #include "zomb/player_character.h"
 #include "ui/zombpushbutton.h"
+#include "ui/zombcombobox.h"
 
 namespace ui
 {
@@ -21,8 +21,8 @@ public:
     QLabel *widget;
     QVBoxLayout *box;
     QLabel *name_widget;
-    QComboBox *fight;
-    QComboBox *group_action;
+    ZombComboBox *fight;
+    ZombComboBox *group_action;
     zomb::PlayerCharacter *character;
 
     double damage();
@@ -55,7 +55,7 @@ private:
     QVBoxLayout group_layout;
     bool fight;
     ZombPushButton *act;
-    QComboBox *group_actions;
+    ZombComboBox *group_actions;
 };
 
 }
