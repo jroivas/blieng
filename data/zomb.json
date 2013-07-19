@@ -13,8 +13,8 @@
 	"chr_size": 64,            /* Character size */
 	"chr_map_size": 40,        /* Character size in map */
 
-	"act_button_height": 100,  /* Height of "Act" button */
-	"act_button_width": 100,   /* Width of "Act" button */
+	"act_button_height": 50,  /* Height of "Act" button */
+	"act_button_width": 50,   /* Width of "Act" button */
 
 	"default_zoom_level": 100, /* Default zoom level */
 	"path_width": 3,           /* Width of path, size in pixels */

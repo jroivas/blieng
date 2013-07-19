@@ -10,9 +10,19 @@ using ui::CharacterData;
 CharacterView::CharacterView(QWidget *parent) : QWidget(parent), fight(false)
 {
     setLayout(&layout);
-    act = new QPushButton(tr("Act"));
+    group_actions = new QComboBox();
+    group_actions->addItem(tr("Fight"));
+    group_actions->addItem(tr("Loot"));
+    group_actions->addItem(tr("Loot with care"));
+    group_actions->addItem(tr("Run"));
+
+    act = new ZombPushButton(tr("Act"));
     act->setMinimumWidth(blieng::Configure::getInstance()->getUIntValue("act_button_width"));
     act->setMinimumHeight(blieng::Configure::getInstance()->getUIntValue("act_button_height"));
+
+    group_layout.addWidget(group_actions);
+    group_layout.addWidget(act);
+
     connect(act, SIGNAL(clicked()), this, SIGNAL(done()));
 }
 
@@ -26,6 +36,7 @@ void CharacterView::fightMode()
 {
     fight = true;
 
+    group_actions->show();
     act->show();
     updateView();
 }
@@ -34,15 +45,17 @@ void CharacterView::mapMode()
 {
     fight = false;
 
+    group_actions->hide();
     act->hide();
     updateView();
 }
 
 void CharacterView::clearData()
 {
-    layout.removeWidget(act);
+    layout.removeItem(&group_layout);
     BOOST_FOREACH(CharacterData* chr, chrdata) {
         layout.removeItem(chr->box);
+        chr->group_action = NULL;
         chr->box->removeWidget(chr->widget);
         chr->box->removeWidget(chr->name_widget);
         delete chr->box;
@@ -90,14 +103,14 @@ void CharacterView::updateView()
 
             if (fight) {
                 data->fight = new QComboBox();
+
+                data->group_action = group_actions;
+
                 // TODO Dynamic options
                 data->fight->addItem("Gun");
                 data->fight->addItem("Machine gun");
                 data->fight->addItem(tr("Kick"));
                 data->fight->addItem(tr("Hit"));
-                data->fight->addItem(tr("Loot"));
-                data->fight->addItem(tr("Loot with care"));
-                data->fight->addItem(tr("Run"));
                 data->box->addWidget(data->fight);
             }
 
@@ -105,7 +118,10 @@ void CharacterView::updateView()
         }
     }
     if (fight) {
+            /*layout.addWidget(group_options);
             layout.addWidget(act);
+            */
+            layout.addLayout(&group_layout);
     }
     emit updatedCharacters(chrdata);
     update();
@@ -137,18 +153,23 @@ double CharacterData::damage()
 
 ui::CharacterData::LootingMode CharacterData::loot()
 {
-    if (fight == NULL) return LOOT_invalid;
-    int index = fight->currentIndex();
+    if (group_action == NULL) return LOOT_invalid;
 
-    if (fight->itemText(index) == ui::CharacterView::tr("Loot")) {
+    int index = group_action->currentIndex();
+
+    if (group_action->itemText(index) == ui::CharacterView::tr("Fight")) {
+        active = false;
+        return ui::CharacterData::LOOT_invalid;
+    }
+    else if (group_action->itemText(index) == ui::CharacterView::tr("Loot")) {
         active = false;
         return ui::CharacterData::LOOT_normal;
     }
-    else if (fight->itemText(index) == ui::CharacterView::tr("Loot with care")) {
+    else if (group_action->itemText(index) == ui::CharacterView::tr("Loot with care")) {
         active = false;
         return ui::CharacterData::LOOT_care;
     }
-    else if (fight->itemText(index) == ui::CharacterView::tr("Run")) {
+    else if (group_action->itemText(index) == ui::CharacterView::tr("Run")) {
         active = false;
         return ui::CharacterData::LOOT_run;
     }

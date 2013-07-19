@@ -5,9 +5,9 @@
 #include <QLabel>
 #include <QVBoxLayout>
 #include <QComboBox>
-#include <QPushButton>
 #include <vector>
 #include "zomb/player_character.h"
+#include "ui/zombpushbutton.h"
 
 namespace ui
 {
@@ -15,13 +15,14 @@ namespace ui
 class CharacterData
 {
 public:
-    typedef enum { LOOT_invalid, LOOT_normal, LOOT_care, LOOT_run } LootingMode;
-    CharacterData() : widget(NULL), box(NULL), fight(NULL), character(NULL), active(true) {}
+    typedef enum { LOOT_invalid, LOOT_fight, LOOT_normal, LOOT_care, LOOT_run } LootingMode;
+    CharacterData() : widget(NULL), box(NULL), fight(NULL), group_action(NULL), character(NULL), active(true) {}
     QImage image;
     QLabel *widget;
     QVBoxLayout *box;
     QLabel *name_widget;
     QComboBox *fight;
+    QComboBox *group_action;
     zomb::PlayerCharacter *character;
 
     double damage();
@@ -51,8 +52,10 @@ private:
     std::vector<zomb::PlayerCharacter *> characters;
     std::vector<CharacterData *> chrdata;
     QHBoxLayout layout;
+    QVBoxLayout group_layout;
     bool fight;
-    QPushButton *act;
+    ZombPushButton *act;
+    QComboBox *group_actions;
 };
 
 }
