@@ -33,8 +33,8 @@ public:
     unsigned int getData(std::string name, const char **data);
     DataFileObject *getObject(std::string name);
 
-    bool read(std::string key="");
-    bool write(std::string key="");
+    bool read(const char *key, unsigned int key_len);
+    bool write(const char *key, unsigned int key_len);
     char *obfuscateSimple(const char *data, unsigned int len);
 
 private:

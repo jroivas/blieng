@@ -97,7 +97,7 @@ char *DataFile::obfuscateSimple(const char *data, unsigned int len)
     return res;
 }
 
-bool DataFile::read(std::string key)
+bool DataFile::read(const char *key, unsigned int key_len)
 {
     boost::filesystem::ifstream fd(_name, std::ios_base::in | std::ofstream::binary);
     if (!fd.is_open()) return false;
@@ -133,8 +133,8 @@ bool DataFile::read(std::string key)
         std::string sname = name;
         free(name);
 
-        if (key != "") {
-            DataFileObject *new_tmp = tmp->deobfuscate(key.c_str(), key.size(), sname);
+        if (key != NULL && key_len > 0) {
+            DataFileObject *new_tmp = tmp->deobfuscate(key, key_len, sname);
             if (new_tmp) {
                 free(tmp);
                 tmp = new_tmp;
@@ -148,7 +148,7 @@ bool DataFile::read(std::string key)
     return true;
 }
 
-bool DataFile::write(std::string key)
+bool DataFile::write(const char *key, unsigned int key_len)
 {
     boost::filesystem::ofstream fd(_name, std::ios_base::out | std::ios_base::trunc | std::ofstream::binary);
     if (!fd.is_open()) return false;
@@ -156,8 +156,8 @@ bool DataFile::write(std::string key)
     std::map<std::string, DataFileObject*>::iterator di = _data.begin();
     while (di != _data.end()) {
         DataFileObject *tmp = di->second;
-        if (key != "") {
-            DataFileObject *new_tmp = tmp->obfuscate(key.c_str(), key.size(), di->first);
+        if (key != NULL && key_len > 0) {
+            DataFileObject *new_tmp = tmp->obfuscate(key, key_len, di->first);
             if (new_tmp) {
                 free(tmp);
                 tmp = new_tmp;
@@ -199,10 +199,13 @@ unsigned char *blieng::DataFile::DataFileObject::setupKey(const char *key, unsig
 {
     unsigned char *res = (unsigned char*)calloc(1, __key_size);
     unsigned int index = 0;
+#if 0
     #define KEY_INIT_LOOP(A_res, A_index, A_cnt, A_tmp) \
         while (A_cnt > 0) {\
-            A_res[A_index] ^= *(A_tmp++);\
-            (++A_index) %= __key_size;\
+            A_res[A_index] ^= *A_tmp;\
+            A_index++;\
+            A_index %= (__key_size-1);\
+            A_tmp++;\
             A_cnt--;\
         }
         
@@ -217,9 +220,31 @@ unsigned char *blieng::DataFile::DataFileObject::setupKey(const char *key, unsig
         unsigned int cnt = len;
         KEY_INIT_LOOP(res, index, cnt, tmp);
     }
+#endif
+    if (iv != NULL && iv_len > 0) {
+        const char *tmp = iv;
+        unsigned int cnt = iv_len;
+        while (cnt > 0) {
+            res[index] ^= *tmp;
+            index++;
+            index %= (__key_size);
+            tmp++;
+            cnt--;
+        }
+    }
+
+    if (key != NULL && len > 0) {
+        const char *tmp = key;
+        unsigned int cnt = len;
+        res[index] ^= *tmp;
+        index++;
+        index %= (__key_size);
+        tmp++;
+        cnt--;
+    }
 
     return res;
-    #undef KEY_INIT_LOOP
+    //#undef KEY_INIT_LOOP
 }
 
 #include "rijndael-alg-fst.h"
@@ -230,6 +255,7 @@ blieng::DataFile::DataFileObject* blieng::DataFile::DataFileObject::obfuscate(co
     olen *= 16;
 
     uint32_t *key_data = (uint32_t*)calloc(sizeof(uint32_t),(MAXNR+1)*4);
+    //uint32_t *key_data = (uint32_t*)calloc(sizeof(uint32_t), 64);
 
     unsigned char *init_key = setupKey(seed.c_str(), seed.length());
     unsigned char *tmp_key = setupKey(key, key_len, (const char*)init_key, __key_size);
@@ -249,20 +275,22 @@ blieng::DataFile::DataFileObject* blieng::DataFile::DataFileObject::obfuscate(co
     unsigned int cnt = len;
     unsigned int ocnt = olen;
 
-    const char *pos = data;
-    char *tmp = (char*)calloc(1, len);
+    char *pos = data;
+    char *tmp = (char*)calloc(1, olen);
     char *opos = tmp;
     while (cnt > 0) {
-        for (int i=0; i <16; i++) {
+        for (int i=0; i < 16; i++) {
             if (cnt > 0) {
                 in_block[i] = *pos;
                 pos++;
                 cnt--;
             } else {
-                in_block[i] = 0;
+                in_block[i] = 0x0;
             }
         }
+
         rijndaelEncrypt(key_data, nr, in_block, out_block);
+
         for (int i = 0; i < 16; i++) {
             if (ocnt > 0) {
                 *opos = out_block[i];
@@ -281,13 +309,8 @@ blieng::DataFile::DataFileObject* blieng::DataFile::DataFileObject::obfuscate(co
 
 blieng::DataFile::DataFileObject* blieng::DataFile::DataFileObject::deobfuscate(const char *key, unsigned int key_len, std::string seed)
 {
-    unsigned int olen = len/16;
-    if (len % 16 != 0) olen++;
-    olen *= 16;
-
-    char *tmp = (char*)calloc(1, real_len);
-
     uint32_t *key_data = (uint32_t*)calloc(sizeof(uint32_t),(MAXNR+1)*4);
+    //uint32_t *key_data = (uint32_t*)calloc(sizeof(uint32_t), 64);
 
     unsigned char *init_key = setupKey(seed.c_str(), seed.length());
     unsigned char *tmp_key = setupKey(key, key_len, (const char*)init_key, __key_size);
@@ -302,11 +325,12 @@ blieng::DataFile::DataFileObject* blieng::DataFile::DataFileObject::deobfuscate(
         return NULL;
     }
 
+    char *tmp = (char*)calloc(1, real_len);
     unsigned char in_block[16];
     unsigned char out_block[16];
     unsigned int cnt = len;
     unsigned int ocnt = real_len;
-    const char *pos = data;
+    char *pos = data;
     char *opos = tmp;
     while (cnt > 0) {
         for (int i=0; i < 16; i++) {
@@ -331,5 +355,6 @@ blieng::DataFile::DataFileObject* blieng::DataFile::DataFileObject::deobfuscate(
     key_data = NULL;
 
     blieng::DataFile::DataFileObject *res = new DataFileObject(tmp, real_len);
+    res->real_len = real_len;
     return res;
 }
