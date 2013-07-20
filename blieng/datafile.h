@@ -15,15 +15,15 @@ public:
     public:
         DataFileObject() : data(NULL), len(0), real_len(0) {}
         DataFileObject(const char *new_data, unsigned int new_len);
-        DataFileObject* obfuscate(const char *key, unsigned int len);
-        DataFileObject* deobfuscate(const char *key, unsigned int len);
+        DataFileObject* obfuscate(const char *key, unsigned int len, std::string seed="");
+        DataFileObject* deobfuscate(const char *key, unsigned int len, std::string seed="");
 
         char *data;
         unsigned int len;
         friend class DataFile;
 
     protected:
-        unsigned char *setupKey(const char *key, unsigned int len);
+        unsigned char *setupKey(const char *key, unsigned int len, const char *iv=NULL, unsigned int iv_len=0);
         unsigned int real_len;
     };
 
@@ -35,6 +35,7 @@ public:
 
     bool read(std::string key="");
     bool write(std::string key="");
+    char *obfuscateSimple(const char *data, unsigned int len);
 
 private:
     std::string _name;
