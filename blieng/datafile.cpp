@@ -111,7 +111,11 @@ bool DataFile::read(std::string key)
         tmp->real_len = datareallen;
 
         if (key != "") {
-            tmp = tmp->deobfuscate(key.c_str(), key.size());
+            DataFileObject *new_tmp = tmp->deobfuscate(key.c_str(), key.size());
+            if (new_tmp) {
+                free(tmp);
+                tmp = new_tmp;
+            }
         }
         _data[name] = tmp;
     }
@@ -130,7 +134,11 @@ bool DataFile::write(std::string key)
     while (di != _data.end()) {
         DataFileObject *tmp = di->second;
         if (key != "") {
-            tmp = tmp->obfuscate(key.c_str(), key.size());
+            DataFileObject *new_tmp = tmp->obfuscate(key.c_str(), key.size());
+            if (new_tmp) {
+                free(tmp);
+                tmp = new_tmp;
+            }
         }
 
         uint32_t itmp = di->first.length();

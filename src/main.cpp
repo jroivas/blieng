@@ -34,6 +34,9 @@ int main(int argc, char **argv)
     }
 
     if (argc > 1) {
+        char *pass;
+        pass = "";
+        if (argc > 2) pass = argv[2];
         blieng::DataFile datafile("test.dat");
 
         if (std::string(argv[1]) == "write" || std::string(argv[1]) == "rw") {
@@ -43,12 +46,12 @@ int main(int argc, char **argv)
             datafile.addData("/joopa/joo2/", "42 42");
             datafile.addData("!:w#!)#!(#=)(¤#=)\"#¤?¸ä'ö'^~;|mas", "123213");
 
-            if (datafile.write("hessu hopo")) {
+            if (datafile.write(pass)) {
                 std::cout << "wrote\n";
             }
         }
         if (std::string(argv[1]) == "read" || std::string(argv[1]) == "rw") {
-            if (datafile.read("hessu hopo")) {
+            if (datafile.read(pass)) {
                 std::cout << "read\n";
                 blieng::DataFile::DataFileObject *obj = datafile.getObject("joopa");
                 if (obj) {
@@ -57,29 +60,8 @@ int main(int argc, char **argv)
                 }
             }
         }
+        return 0;
     }
-#if 0
-    const char *datatmp;
-    unsigned len = datafile.getData("joopa", &datatmp);
-    if (len>0) {
-         std::cout << "got " << datatmp << "\n";
-    }
-    blieng::DataFile::DataFileObject *obj = datafile.getObject("joopa");
-    if (obj) {
-         std::cout << "got: " << obj->data << "\n";
-    }
-    char *key = "kakkasuut_paskiaiset12";
-    blieng::DataFile::DataFileObject *fusc = obj->obfuscate(key, strlen(key));
-    if (fusc) {
-         std::cout << "got: " << fusc->data << "\n";
-    }
-    blieng::DataFile::DataFileObject *defusc = fusc->deobfuscate(key, strlen(key));
-    if (defusc) {
-         std::cout << "got: " << defusc->data << "\n";
-    }
-#endif
-
-    return 0;
 
     blieng::Item *tmp = new blieng::Item();
     std::vector<std::string> items = tmp->listItems();
