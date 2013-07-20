@@ -17,6 +17,8 @@
 #include "zomb/zombie_character.h"
 #include "zomb/worldclock.h"
 
+#include "blieng/datafile.h"
+
 #include <boost/foreach.hpp>
 
 int main(int argc, char **argv)
@@ -30,6 +32,54 @@ int main(int argc, char **argv)
     if (!zomb::initializeConfiguration()) {
             return 1;
     }
+
+    if (argc > 1) {
+        blieng::DataFile datafile("test.dat");
+
+        if (std::string(argv[1]) == "write" || std::string(argv[1]) == "rw") {
+            datafile.addData("joopa", "123213");
+            datafile.addData("/joopa", "heipä hei kakkiaiset... pullaposki palleroiset \12 jipa \n joo");
+            datafile.addData("/joopa/joo", "123213");
+            datafile.addData("/joopa/joo2/", "42 42");
+            datafile.addData("!:w#!)#!(#=)(¤#=)\"#¤?¸ä'ö'^~;|mas", "123213");
+
+            if (datafile.write("hessu hopo")) {
+                std::cout << "wrote\n";
+            }
+        }
+        if (std::string(argv[1]) == "read" || std::string(argv[1]) == "rw") {
+            if (datafile.read("hessu hopo")) {
+                std::cout << "read\n";
+                blieng::DataFile::DataFileObject *obj = datafile.getObject("joopa");
+                if (obj) {
+                    std::cout << "got: " << obj->len << "\n";
+                    std::cout << "got: " << obj->data << "\n";
+                }
+            }
+        }
+    }
+#if 0
+    const char *datatmp;
+    unsigned len = datafile.getData("joopa", &datatmp);
+    if (len>0) {
+         std::cout << "got " << datatmp << "\n";
+    }
+    blieng::DataFile::DataFileObject *obj = datafile.getObject("joopa");
+    if (obj) {
+         std::cout << "got: " << obj->data << "\n";
+    }
+    char *key = "kakkasuut_paskiaiset12";
+    blieng::DataFile::DataFileObject *fusc = obj->obfuscate(key, strlen(key));
+    if (fusc) {
+         std::cout << "got: " << fusc->data << "\n";
+    }
+    blieng::DataFile::DataFileObject *defusc = fusc->deobfuscate(key, strlen(key));
+    if (defusc) {
+         std::cout << "got: " << defusc->data << "\n";
+    }
+#endif
+
+    return 0;
 
     blieng::Item *tmp = new blieng::Item();
     std::vector<std::string> items = tmp->listItems();

@@ -1,3 +1,7 @@
 *.o
 *.a
+*/Makefile*
+*/*/Makefile*
+*.Debug
+*.Release
 moc_*.cpp

@@ -17,22 +17,26 @@ HEADERS += \
     character.h \
     configure.h \
     data.h \
+    datafile.h \
     eventlog.h \
     item.h \
     maps.h \
     path.h \
     point.h \
     town.h \
+    rijndael-alg-fst.h \
     wallclock.h
 SOURCES += \
     bliobject.cpp \
     character.cpp \
     configure.cpp \
     data.cpp \
+    datafile.cpp \
     eventlog.cpp \
     item.cpp \
     maps.cpp \
     path.cpp \
     point.cpp \
     town.cpp \
+    rijndael-alg-fst.c \
     wallclock.cpp
