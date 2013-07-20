@@ -13,10 +13,10 @@ namespace blieng {
 
 /* Item base, which contais mandatory parts of the item.
  */
-class ItemBase
+class ItemBase : public BliObject
 {
 public:
-    ItemBase():base(""), type(""), image(""), rarity(1.0), amount(0.0), life(-1), usable(false) { }
+    ItemBase() : BliObject(), base(""), type(""), image(""), rarity(1.0), amount(0.0), life(-1), usable(false) { }
 
     boost::flyweight<std::string> base;
     boost::flyweight<std::string> type;
@@ -54,7 +54,7 @@ public:
 
 /* Item object itself, may contain item specific stuff
 */
-class Item : public BliObject, public ItemBase
+class Item : public ItemBase
 {
 public:
     Item();
@@ -66,6 +66,7 @@ public:
     bool isUsable() { return usable; }
     void setUsable() { usable = true; }
     std::vector<std::string> listItems();
+    bool isItem(std::string name);
     bool removeItem(Item *);
     bool registerItem(Item *);
     std::string generateBaseJson();

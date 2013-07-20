@@ -2,6 +2,7 @@
 #include <boost/random/uniform_int_distribution.hpp>
 #include <boost/foreach.hpp>
 #include "data.h"
+#include "configure.h"
 #include <string>
 
 using blieng::Item;
@@ -13,7 +14,7 @@ std::map<std::string, blieng::ItemBase *> Item::item_bases;
 typedef std::pair<std::string, ItemBase *> item_bases_t;
 typedef std::pair<std::string, double> consume_t;
 
-Item::Item() : BliObject(), ItemBase()
+Item::Item() : ItemBase()
 {
     init();
     return;
@@ -26,7 +27,7 @@ void Item::init()
     getItemBases();
 }
 
-Item::Item(std::string name) : BliObject(), ItemBase()
+Item::Item(std::string name) : ItemBase()
 {
     init();
     usable = false;
@@ -54,6 +55,14 @@ std::vector<std::string> Item::listItems()
         tmp.push_back(val.first);
     }
     return tmp;
+}
+
+bool Item::isItem(std::string name)
+{
+    BOOST_FOREACH(item_bases_t val, item_bases) {
+        if (val.first == name) return true;
+    }
+    return false;
 }
 
 bool Item::removeItem(Item *item)
@@ -87,7 +96,8 @@ void Item::getItemBases()
 {
     if (ok) return;
 
-    Json::Value root_val = Data::getInstance()->readJson("items.json");
+    std::string items_file = Configure::getInstance()->getStringValue("itemfile");
+    Json::Value root_val = Data::getInstance()->readJson(items_file); //FIXME
     if (!root_val.isObject()) return;
 
     /* Go thorough items */
@@ -97,6 +107,60 @@ void Item::getItemBases()
         ItemBase *item = new ItemBase();
         if (item_val.isObject()) {
             item->base = mi;
+            std::vector<std::string> item_names = Data::getInstance()->getJsonKeys(item_val);
+            BOOST_FOREACH(std::string keyname, item_names) {
+
+                Json::Value val = Data::getInstance()->getJsonValue(item_val, keyname);
+                bool ok = false;
+                if (keyname == "type") {
+                    if (val.isString()) item->type = val.asString();
+                    ok = true;
+                }
+                else if (keyname == "image") {
+                    if (val.isString()) item->image = val.asString();
+                    ok = true;
+                }
+                else if (keyname == "rarity") {
+                    if (val.isNumeric()) {
+                        item->rarity = val.asDouble();
+                        ok = true;
+                    }
+                }
+                else if (keyname == "life") {
+                    if (val.isNumeric()) {
+                        item->life = val.asInt();
+                        ok = true;
+                    }
+                }
+                else if (keyname == "life") {
+                    if (val.isNumeric()) {
+                        item->amount = val.asDouble();
+                        ok = true;
+                    }
+                }
+                else if (keyname == "consume") {
+                    std::map<std::string, double> consumes;
+                    if (val.isObject()) {
+                        BOOST_FOREACH(std::string cmi, val.getMemberNames()) {
+                            Json::Value cnt_val = Data::getInstance()->getJsonValue(val, cmi);
+                            if (cnt_val.isNumeric()) {
+                                consumes[cmi] = cnt_val.asDouble();
+                            }
+                        }
+                    }
+                    item->consumes = consumes;
+                    ok = true;
+                }
+                if (val.type() == Json::intValue) item->setValue(keyname, val.asInt());
+                else if (val.type() == Json::uintValue) item->setValue(keyname, val.asUInt());
+                else if (val.type() == Json::realValue) item->setValue(keyname, val.asDouble());
+                else if (val.type() == Json::stringValue) item->setValue(keyname, val.asString());
+                else if (val.type() == Json::booleanValue) item->setValue(keyname, val.asBool());
+                else { //TODO unsupported
+                    if (!ok) std::cout << keyname << "has unsupported type!\n";
+                }
+            }
+            #if 0
             if (Data::getInstance()->isJsonKey(item_val, "type")) {
                 Json::Value val = Data::getInstance()->getJsonValue(item_val, "type");
                 if (val.isString()) item->type = val.asString();
@@ -136,6 +200,7 @@ void Item::getItemBases()
                 }
                 item->consumes = consumes;
             }
+            #endif
             item_bases[mi] = item;
         }
     }
@@ -200,6 +265,7 @@ void ItemBase::assignItem(ItemBase *parent) {
     life = parent->life;
     image = parent->image;
     setupStock();
+    assignObject(parent);
 }
 
 bool ItemBase::equals(ItemBase *another)

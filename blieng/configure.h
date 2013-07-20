@@ -19,6 +19,7 @@ public:
     void load(std::string config_file);
 
     void addKey(std::string val, key_type_t keytype);
+    void addOptionalKey(std::string val, key_type_t keytype);
     bool validate();
 
 private:
@@ -28,6 +29,7 @@ private:
     std::string config_file;
     Json::Value data_json;
     std::map<std::string, key_type_t> keys;
+    std::map<std::string, key_type_t> opt_keys;
 };
 
 }

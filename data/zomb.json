@@ -37,6 +37,7 @@
 
 	"zombie_images": "zomb###.png",  /* Zombie image file format */
 	"chr_images": "chr###.png",      /* Character image file format */
+	"itemfile": "zombie_items.json", /* Items file name*/
 
 	"zombie_damage_multiple_max": 2.0,
 	"zombie_damage_row_reduce": 10,

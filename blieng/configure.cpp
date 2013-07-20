@@ -44,6 +44,11 @@ void Configure::addKey(std::string val, key_type_t key_type)
     keys[val] = key_type;
 }
 
+void Configure::addOptionalKey(std::string val, key_type_t key_type)
+{
+    opt_keys[val] = key_type;
+}
+
 bool Configure::validate()
 {
     BOOST_FOREACH(key_values_t key, keys) {
@@ -61,7 +66,9 @@ void Configure::parse()
 
     BOOST_FOREACH(std::string data_key, data_json.getMemberNames()) {
         std::map<std::string, key_type_t>::iterator val = keys.find(data_key);
-        if (val != keys.end()) {
+        if (val == keys.end()) val = opt_keys.find(data_key);
+
+        if (val != keys.end() || val != opt_keys.end()) {
             Json::Value realval = Data::getInstance()->getJsonValue(data_json, data_key);
             if (val->second == Configure::KeyString) {
                 if (realval.isString()) setValue(data_key, realval.asString());

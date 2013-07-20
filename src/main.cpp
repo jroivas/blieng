@@ -17,11 +17,30 @@
 #include "zomb/zombie_character.h"
 #include "zomb/worldclock.h"
 
+#include <boost/foreach.hpp>
+
 int main(int argc, char **argv)
 {
     QApplication app(argc, argv);
 
     QTranslator translate;
+
+    qDebug() << QLocale::system().name();
+
+    if (!zomb::initializeConfiguration()) {
+            return 1;
+    }
+
+    blieng::Item *tmp = new blieng::Item();
+    std::vector<std::string> items = tmp->listItems();
+    BOOST_FOREACH(std::string name, items) {
+        std::cout << name << "\n";
+        blieng::Item *ni = new blieng::Item(name);
+        if (ni->isValue("randomize")) {
+            std::cout << "  Randomize: " << ni->getBoolValue("randomize") << "\n";
+        }
+    }
+
 
     #if 0
     blieng::Item *nail = new blieng::Item("nail");
@@ -108,12 +127,6 @@ int main(int argc, char **argv)
     
     return app.exec();
     #endif
-
-    qDebug() << QLocale::system().name();
-
-    if (!zomb::initializeConfiguration()) {
-            return 1;
-    }
 
     translate.load("zombiebli." + QLocale::system().name(), "translations");
     app.installTranslator(&translate);

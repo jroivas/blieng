@@ -59,6 +59,8 @@ bool zomb::initializeConfiguration()
     conf->addKey("player_damage_row_reduce", blieng::Configure::KeyDouble);
     conf->addKey("player_damage_loot_range", blieng::Configure::KeyUInt);
 
+    conf->addOptionalKey("itemfile", blieng::Configure::KeyString);
+
     // Load it
     conf->load("zomb.json");
 

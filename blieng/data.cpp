@@ -199,8 +199,8 @@ Json::Value Data::readJson(std::string name)
     bool parse_ok;
     parse_ok = reader.parse(datas, val);
     if (!parse_ok) {
-    std::cout << "Parse error: " << reader.getFormatedErrorMessages() << "!\n";
-        throw "JSON parse error";	
+        std::cout << "Parse error while parsing '" << name << "':" << reader.getFormatedErrorMessages() << "!\n";
+        throw "JSON parse error";
     }
     return val;
 }
