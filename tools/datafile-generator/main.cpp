@@ -55,7 +55,7 @@ int main(int argc, char **argv)
             int cnt = fd.readsome(tmp, BUFSIZE);
             if (cnt > 0) {
                 totalsize += cnt;
-                if (cnt == BUFSIZE) buffer = (char*)realloc(buffer, totalsize + BUFSIZE);
+                buffer = (char*)realloc(buffer, totalsize + BUFSIZE);
                 tmp = buffer + totalsize;
             }
         }
@@ -65,6 +65,7 @@ int main(int argc, char **argv)
             std::cout << "Adding " << argv[3] << " (input file " << argv[2] << ", " << totalsize << " bytes)\n";
             datafile.addData(argv[3], buffer, totalsize);
         }
+        free(buffer);
 
         if (!datafile.write((const char*)_mul_array, _mul_array_len)) {
             std::cerr << "Can't write data file!\n";

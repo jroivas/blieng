@@ -20,7 +20,7 @@ linux-src: linux-prep
 	cd src && qmake
 	make -C src $(coreflags)
 
-linux-tools: linux-map-editor
+linux-tools: linux-map-editor linux-datafile-generator
 
 linux-map-editor: linux-prep
 	cd tools/map-editor && qmake
@@ -30,12 +30,17 @@ linux-item-editor: linux-prep
 	cd tools/item-editor && qmake
 	make -C tools/item-editor $(coreflags)
 
-linux-dist:
+linux-datafile-generator: linux-prep
+	cd tools/datafile-generator && qmake
+	make -C tools/datafile-generator $(coreflags)
+
+linux-dist: linux-datafile-generator
 	mkdir -p dist/zombiebli-$(VERS)-linux
 	cp README.tp dist/zombiebli-$(VERS)-linux/README
 	cp -f src/zombiebli dist/zombiebli-$(VERS)-linux/
 	cp -f tools/map-editor/map-editor dist/zombiebli-$(VERS)-linux
-	cp -rf data dist/zombiebli-$(VERS)-linux/
+	#cp -rf data dist/zombiebli-$(VERS)-linux/
+	./tools/datafile-generator/pack_files.sh data/ dist/zombiebli-$(VERS)-linux/data.dat
 	cd dist && tar czf zombiebli-$(VERS)-linux.tar.gz zombiebli-$(VERS)-linux
 
 win:
@@ -65,6 +70,10 @@ win-item-editor: win-prep
 	cd tools/item-editor && $(topdir)/tools/winbuild/winqmake.sh
 	$(topdir)/tools/winbuild/winmake.sh -C tools/item-editor $(coreflags)
 
+win-datafile-generator: linux-prep
+	cd tools/datafile-generator && $(topdir)/tools/winbuild/winqmake.sh
+	$(topdir)/tools/winbuild/winmake.sh -C tools/datafile-generator $(coreflags)
+
 win-dist:
 	mkdir -p dist/zombiebli-$(VERS)-win
 	cp README.tp dist/zombiebli-$(VERS)-win/README.txt
@@ -84,6 +93,7 @@ clean:
 	make -C src clean
 	make -C tools/map-editor clean
 	make -C tools/item-editor clean
+	make -C tools/datafile-generator clean
 	cd src/translations && make clean
 
 dist-clean:

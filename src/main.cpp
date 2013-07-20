@@ -34,14 +34,15 @@ int main(int argc, char **argv)
     }
 
     if (argc > 1) {
-        std::string pass = "";
-        unsigned char _mul_array[] = { 0xF2, 0x0F, 0x11, 0x40, 0x28, 0x77,
-            0x05, 0x83, 0xC6, 0x01, 0x31, 0xD2, 0x48,
-            0x83, 0xC1, 0x08, 0x49, 0x39,
-            0xC8, 0x75, 0xAE, 0xF3, 0xC3 };
-        pass = (char*)_mul_array;
+        unsigned char _mul_array[] = {
+            0xF2, 0x0F, 0x11, 0x40,
+            0x28, 0x77, 0x05, 0x83,
+            0xC6, 0x01, 0x31, 0xD2,
+            0x48, 0x83, 0xC1, 0x08,
+            0x49, 0x39, 0xC8, 0x75,
+            0xAE, 0xF3, 0xC3 };
+        unsigned int _mul_array_len = 23;
         
-        if (argc > 2) pass = argv[2];
         blieng::DataFile datafile("test.dat");
 
         if (std::string(argv[1]) == "write" || std::string(argv[1]) == "rw") {
@@ -51,12 +52,12 @@ int main(int argc, char **argv)
             datafile.addData("/joopa/joo2/", "42 42");
             datafile.addData("!:w#!)#!(#=)(¤#=)\"#¤?¸ä'ö'^~;|mas", "123213");
 
-            if (datafile.write(pass)) {
+            if (datafile.write((const char*)_mul_array, _mul_array_len)) {
                 std::cout << "wrote\n";
             }
         }
         if (std::string(argv[1]) == "read" || std::string(argv[1]) == "rw") {
-            if (datafile.read(pass)) {
+            if (datafile.read((const char*)_mul_array, _mul_array_len)) {
                 std::cout << "read\n";
                 blieng::DataFile::DataFileObject *obj = datafile.getObject("joopa");
                 if (obj) {
