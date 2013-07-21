@@ -4,6 +4,8 @@ coreflags = -j$(cores)
 topdir := $(shell pwd)
 VERS=etp4
 
+native: linux
+
 all: linux win translations
 
 linux: linux-blieng linux-src linux-tools
@@ -39,7 +41,7 @@ linux-dist: linux-datafile-generator
 	cp README.tp dist/zombiebli-$(VERS)-linux/README
 	cp -f src/zombiebli dist/zombiebli-$(VERS)-linux/
 	cp -f tools/map-editor/map-editor dist/zombiebli-$(VERS)-linux
-	#cp -rf data dist/zombiebli-$(VERS)-linux/
+	mkdir -p dist/zombiebli-$(VERS)-linux/data
 	./tools/datafile-generator/pack_files.sh data/ dist/zombiebli-$(VERS)-linux/data.dat
 	cd dist && tar czf zombiebli-$(VERS)-linux.tar.gz zombiebli-$(VERS)-linux
 
@@ -79,7 +81,7 @@ win-dist: linux-datafile-generator
 	cp README.tp dist/zombiebli-$(VERS)-win/README.txt
 	cp -f src/release/zombiebli.exe dist/zombiebli-$(VERS)-win/
 	cp -f tools/map-editor/release/map-editor.exe dist/zombiebli-$(VERS)-win
-	#cp -rf data dist/zombiebli-$(VERS)-win/
+	mkdir -p dist/zombiebli-$(VERS)-win/data
 	./tools/datafile-generator/pack_files.sh data/ dist/zombiebli-$(VERS)-win/data.dat
 	cd dist && zip -r -9 -q zombiebli-$(VERS)-win.zip zombiebli-$(VERS)-win
 
