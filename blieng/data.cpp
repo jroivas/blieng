@@ -232,10 +232,11 @@ std::vector<std::string> Data::readLinesFromFile(std::string name)
             unsigned int pos = 0;
             std::string line;
             while (pos < obj->len) {
-                line += obj->data[pos];
                 if (obj->data[pos] == '\n') {
                     tmp.push_back(line);
                     line = "";
+                } else {
+                    line += obj->data[pos];
                 }
                 pos++;
             }

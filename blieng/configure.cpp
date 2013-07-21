@@ -32,7 +32,6 @@ Configure *Configure::getInstance(std::string config)
 void Configure::load(std::string config_file)
 {
     std::string fname = Data::getInstance()->findFile(config_file);
-    //std::cout << fname << "\n";
     if (fname != "") {
         data_json = Data::getInstance()->readJson(fname);
         parse();

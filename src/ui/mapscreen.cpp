@@ -7,9 +7,6 @@
 using ui::MapScreen;
 
 
-/* FIXME: Should this be implemented with QGraphicsItem, QGraphicsScene, etc.?
- */
-
 MapScreen::MapScreen(QWidget *parent) : QWidget(parent)
 {
     maps = new blieng::Maps("");
