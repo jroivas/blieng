@@ -14,6 +14,7 @@ unix {
     PKGCONFIG += jsoncpp
     LIBS += ../blieng/libblieng.a
     LIBS += -L/usr/lib -lboost_system -lboost_random -lboost_filesystem
+    POST_TARGETDEPS += ../blieng/libblieng.a
 
     ### For dynamic linking
     #LIBS += -L/usr/lib -lboost_system -lboost_random -lboost_filesystem
@@ -24,8 +25,10 @@ windows {
 
     CONFIG(debug, debug|release) {
         LIBS += ../blieng/debug/libblieng.a
+        POST_TARGETDEPS += ../blieng/debug/libblieng.a
     } else {
         LIBS += ../blieng/release/libblieng.a
+        POST_TARGETDEPS += ../blieng/release/libblieng.a
     }
     LIBS += -lboost_system-mt
     LIBS += -lboost_filesystem-mt

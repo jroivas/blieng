@@ -178,7 +178,7 @@ bool Data::saveMapJSON(std::string name, std::string json)
     // TODO Do we need data file support here? Probably not..
     if (data_path == NULL) {
         std::cerr << "Data path not found, please create it in order to save maps" << "\n";
-        return false
+        return false;
     }
     if (!boost::filesystem::exists(*data_path)) return false;
 
