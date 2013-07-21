@@ -59,6 +59,7 @@ int main(int argc, char **argv)
                 tmp = buffer + totalsize;
             }
         }
+        #undef BUFSIZE
         fd.close();
 
         if (totalsize > 0) {

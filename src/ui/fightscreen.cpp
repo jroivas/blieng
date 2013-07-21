@@ -2,6 +2,7 @@
 #include <boost/foreach.hpp>
 #include "blieng/configure.h"
 #include "blieng/data.h"
+#include "ui/imageloader.h"
 
 using ui::FightScreen;
 
@@ -54,7 +55,7 @@ void FightScreen::initialize()
             fname = blieng::Data::getInstance()->formatString(fname, imagenum);
 
             std::string imagefile = blieng::Data::getInstance()->findFile(fname);
-            zomb->image = QImage(imagefile.c_str());
+            zomb->image = ImageLoader::load(imagefile);
         }
 
         ++posx;

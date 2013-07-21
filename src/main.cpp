@@ -12,6 +12,7 @@
 #include "ui/gamescreen.h"
 #include "blieng/item.h"
 #include "blieng/maps.h"
+#include "blieng/data.h"
 #include "blieng/wallclock.h"
 #include "zomb/configure.h"
 #include "zomb/zombie_character.h"
@@ -29,19 +30,23 @@ int main(int argc, char **argv)
 
     qDebug() << QLocale::system().name();
 
+    const unsigned char _mul_array[] = {
+        0xF2, 0x0F, 0x11, 0x40,
+        0x28, 0x77, 0x05, 0x83,
+        0xC6, 0x01, 0x31, 0xD2,
+        0x48, 0x83, 0xC1, 0x08,
+        0x49, 0x39, 0xC8, 0x75,
+        0xAE, 0xF3, 0xC3 };
+    unsigned int _mul_array_len = 23;
+
+    if (!blieng::Data::getInstance()->initialize((const char*)_mul_array, _mul_array_len)) return 1;
+
     if (!zomb::initializeConfiguration()) {
             return 1;
     }
 
+#if 0
     if (argc > 1) {
-        unsigned char _mul_array[] = {
-            0xF2, 0x0F, 0x11, 0x40,
-            0x28, 0x77, 0x05, 0x83,
-            0xC6, 0x01, 0x31, 0xD2,
-            0x48, 0x83, 0xC1, 0x08,
-            0x49, 0x39, 0xC8, 0x75,
-            0xAE, 0xF3, 0xC3 };
-        unsigned int _mul_array_len = 23;
         
         blieng::DataFile datafile("test.dat");
 
@@ -68,6 +73,7 @@ int main(int argc, char **argv)
         }
         return 0;
     }
+#endif
 
     blieng::Item *tmp = new blieng::Item();
     std::vector<std::string> items = tmp->listItems();

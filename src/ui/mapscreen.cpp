@@ -1,6 +1,7 @@
 #include "mapscreen.h"
 #include "blieng/data.h"
 #include "blieng/configure.h"
+#include "ui/imageloader.h"
 #include <boost/foreach.hpp>
 
 using ui::MapScreen;
@@ -39,10 +40,11 @@ void MapScreen::loadMap(QString mapname)
     loadImage();
 }
 
-void MapScreen::loadImage()
+void MapScreen::loadImage(bool update_pos)
 {
-    bgimage = QImage(maps->getSolvedMapImageFile().c_str());
-    image_pos = QPointF(0, 0);
+    bgimage = ImageLoader::load(maps->getSolvedMapImageFile());
+
+    if (update_pos) image_pos = QPointF(0, 0);
 }
 
 /* Validate that map fits on the screen
@@ -222,7 +224,7 @@ void MapScreen::wheelEvent(QWheelEvent *event)
 
     zoomlevel += numSteps * 2;
 
-    bgimage = QImage(maps->getSolvedMapImageFile().c_str());
+    loadImage(false);
     bgimage = bgimage.scaled(bgimage.size() / (zoomlevel / 100.0));
     update();
 }

@@ -3,6 +3,7 @@
 #include <boost/format.hpp>
 #include "blieng/data.h"
 #include "blieng/configure.h"
+#include "ui/imageloader.h"
 
 using ui::CharacterView;
 using ui::CharacterData;
@@ -97,7 +98,7 @@ void CharacterView::updateView()
 
             std::string imagefile = blieng::Data::getInstance()->findFile(fname);
             data->character = chr;
-            data->image = QImage(imagefile.c_str());
+            data->image = ImageLoader::load(imagefile);
             chrdata.push_back(data);
 
             data->widget = new QLabel();

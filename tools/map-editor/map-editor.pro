@@ -33,6 +33,7 @@ SOURCES += main.cpp \
     editscreen.cpp \
     townproperties.cpp \
     ../../src/ui/mapscreen.cpp \
+    ../../src/ui/imageloader.cpp \
     ../../src/zomb/player_character.cpp \
     ../../src/zomb/zombie_character.cpp \
     ../../src/zomb/configure.cpp \

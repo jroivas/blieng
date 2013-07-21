@@ -49,6 +49,7 @@ HEADERS += \
     ui/zombpushbutton.h \
     ui/zombcombobox.h \
     ui/zombstyles.h \
+    ui/imageloader.h \
     ui/startscreen.h
 SOURCES += \
     main.cpp \
@@ -67,4 +68,5 @@ SOURCES += \
     ui/zombpushbutton.cpp \
     ui/zombcombobox.cpp \
     ui/zombstyles.cpp \
+    ui/imageloader.cpp \
     ui/startscreen.cpp

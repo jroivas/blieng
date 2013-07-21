@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <map>
+#include <vector>
 
 namespace blieng
 {
@@ -27,11 +28,18 @@ public:
         unsigned int real_len;
     };
 
+    DataFile();
     DataFile(std::string name);
+
+    void setName(std::string name);
+    bool isValid() { return _ok; }
+
     bool addData(std::string name, std::string data);
     bool addData(std::string name, char *data, unsigned int len);
     unsigned int getData(std::string name, const char **data);
     DataFileObject *getObject(std::string name);
+
+    std::vector<std::string> listFiles();
 
     bool read(const char *key, unsigned int key_len);
     bool write(const char *key, unsigned int key_len);
@@ -42,6 +50,7 @@ private:
     std::string unifyName(std::string name);
 
     std::map<std::string, DataFileObject*> _data;
+    bool _ok;
 };
 
 }

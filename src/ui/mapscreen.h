@@ -28,7 +28,7 @@ public:
 
     void updateEditPath(blieng::Path path);
     void updateEditPoint(blieng::Point point);
-    void loadImage();
+    void loadImage(bool update_pos=true);
 
 public slots:
     void fellowship(QPointF pos);

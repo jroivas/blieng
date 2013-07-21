@@ -3,13 +3,27 @@
 #include <stdint.h>
 #include <string.h>
 #include <boost/filesystem/fstream.hpp>
+#include <boost/foreach.hpp>
 
 using blieng::DataFile;
 
 static unsigned int __key_size = 256/8;
+typedef std::pair<std::string, blieng::DataFile::DataFileObject*> datafile_item_t;
 
-DataFile::DataFile(std::string name) : _name(name)
+DataFile::DataFile()
 {
+    _ok = false;
+}
+
+DataFile::DataFile(std::string name)
+{
+    setName(name);
+}
+
+void DataFile::setName(std::string name)
+{
+    _ok = true;
+    _name = name;
 }
 
 std::string DataFile::unifyName(std::string name)
@@ -38,6 +52,17 @@ std::string DataFile::unifyName(std::string name)
     }
 
     return tmp;
+}
+
+std::vector<std::string> blieng::DataFile::listFiles()
+{
+    std::vector<std::string> res;
+    
+    BOOST_FOREACH(datafile_item_t val, _data) {
+        res.push_back(val.first);
+    }
+
+    return res;
 }
 
 blieng::DataFile::DataFileObject *DataFile::getObject(std::string name)
@@ -99,6 +124,8 @@ char *DataFile::obfuscateSimple(const char *data, unsigned int len)
 
 bool DataFile::read(const char *key, unsigned int key_len)
 {
+    if (!_ok) return false;
+
     boost::filesystem::ifstream fd(_name, std::ios_base::in | std::ofstream::binary);
     if (!fd.is_open()) return false;
 
@@ -150,6 +177,8 @@ bool DataFile::read(const char *key, unsigned int key_len)
 
 bool DataFile::write(const char *key, unsigned int key_len)
 {
+    if (!_ok) return false;
+
     boost::filesystem::ofstream fd(_name, std::ios_base::out | std::ios_base::trunc | std::ofstream::binary);
     if (!fd.is_open()) return false;
 
@@ -272,6 +301,7 @@ blieng::DataFile::DataFileObject* blieng::DataFile::DataFileObject::obfuscate(co
     unsigned char out_block[16];
     unsigned char iv[16];
     memset(iv, 0, 16);
+    memcpy(iv, key, key_len>16?16:key_len);
 
     unsigned int cnt = len;
     unsigned int ocnt = olen;
@@ -333,6 +363,7 @@ blieng::DataFile::DataFileObject* blieng::DataFile::DataFileObject::deobfuscate(
     unsigned char out_block[16];
     unsigned char iv[16];
     memset(iv, 0, 16);
+    memcpy(iv, key, key_len>16?16:key_len);
 
     unsigned int cnt = len;
     unsigned int ocnt = real_len;

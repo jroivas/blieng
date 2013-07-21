@@ -5,6 +5,7 @@
 #include <vector>
 #include <json/reader.h>
 #include <boost/random/random_device.hpp>
+#include "datafile.h"
 
 namespace blieng
 {
@@ -13,8 +14,12 @@ class Data
 {
 public:
     static Data *getInstance();
+
+    bool initialize(const char*, unsigned int);
+
     std::string readString(std::string name);
     std::vector<std::string> readLinesFromFile(std::string name);
+    unsigned int readData(std::string name, char **data);
 
     Json::Value readJson(std::string name);
     std::vector<std::string> getJsonKeys(Json::Value val);
@@ -37,10 +42,17 @@ private:
     std::string findFileRecursive(const boost::filesystem::path &dir_path, std::string name);
     boost::filesystem::path solveFilePath(std::string name);
 
+    std::string findFileFromDataFile(std::string name);
+    std::vector<std::string> findFileExtFromDataFile(std::string path, std::string ext);
+
+    boost::filesystem::path *findDataFile();
     boost::filesystem::path *findDataPath();
     boost::filesystem::path *data_path;
+    boost::filesystem::path *data_file_path;
     static Data *__data_instance;
     boost::random::random_device *gen;
+
+    blieng::DataFile *datafile;
 };
 
 }

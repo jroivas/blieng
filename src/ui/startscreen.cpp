@@ -1,6 +1,7 @@
 #include "startscreen.h"
 #include "data.h"
 #include <QApplication>
+#include "ui/imageloader.h"
 
 using ui::StartScreen;
 
@@ -8,7 +9,7 @@ StartScreen::StartScreen(QWidget *parent) : QWidget(parent)
 {
     std::string startfile = blieng::Data::getInstance()->findFile("startscreen.png");
     if (startfile != "") {
-        bg_img = QImage(startfile.c_str());
+        bg_img = ImageLoader::load(startfile);
     }
 
     new_game = new QPushButton(tr("New Game"));

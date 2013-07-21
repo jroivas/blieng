@@ -19,7 +19,42 @@ Data *Data::getInstance()
 Data::Data()
 {
     data_path = findDataPath();
+    data_file_path = findDataFile();
     gen = new boost::random::random_device();
+
+    datafile = NULL;
+    if (data_file_path != NULL) {
+        datafile = new blieng::DataFile(data_file_path->filename().string());
+    }
+}
+
+bool Data::initialize(const char *key, unsigned int key_len)
+{
+    if (datafile != NULL) {
+        return datafile->read(key, key_len);
+    }
+    return true;
+}
+
+boost::filesystem::path *Data::findDataFile()
+{
+    std::list<std::string> locations;
+    locations.push_back("");
+    locations.push_back("./");
+    locations.push_back("/usr/share/zombiebli/");
+    locations.push_back("../");
+    locations.push_back(".\\");
+    locations.push_back("..\\");
+
+    boost::filesystem::path *my_data_path = new boost::filesystem::path;
+    BOOST_FOREACH(std::string item, locations) {
+        *my_data_path = (item + "data.dat").c_str(); // FIXME Hardcoded
+        if (boost::filesystem::exists(*my_data_path) && boost::filesystem::is_regular_file(*my_data_path)) {
+            return my_data_path;
+        }
+    }
+    delete my_data_path;
+    return NULL;
 }
 
 boost::filesystem::path *Data::findDataPath()
@@ -27,7 +62,7 @@ boost::filesystem::path *Data::findDataPath()
     std::list<std::string> locations;
     locations.push_back("");
     locations.push_back("./");
-    locations.push_back("/usr/share/zombiebli");
+    locations.push_back("/usr/share/zombiebli/");
     locations.push_back("../");
     locations.push_back(".\\");
     locations.push_back("..\\");
@@ -61,10 +96,45 @@ std::string Data::findFileRecursive(const boost::filesystem::path &dir_path, std
     return "";
 }
 
+std::string Data::findFileFromDataFile(std::string name)
+{
+    BOOST_FOREACH(std::string fname, datafile->listFiles()) {
+        if (fname == name) {
+            return fname;
+        }
+
+        boost::filesystem::path handle(fname.c_str());
+        // Find "recursively"
+        if (handle.filename() == name) {
+            return fname;
+        }
+    }
+    return "";
+}
+
 std::string Data::findFile(std::string name)
 {
+    if (datafile != NULL) {
+        std::string res = findFileFromDataFile(name);
+        if (res != "") return res;
+    }
+
     if (data_path == NULL) return "";
     return findFileRecursive(*data_path, name);
+}
+
+std::vector<std::string> Data::findFileExtFromDataFile(std::string path, std::string ext)
+{
+    std::vector<std::string> res;
+    BOOST_FOREACH(std::string fname, datafile->listFiles()) {
+        if (fname.substr(0, path.length()) == path) {
+            boost::filesystem::path handle(fname.c_str());
+            if (handle.extension() == ext) {
+                res.push_back(handle.filename().string());
+            }
+        }
+    }
+    return res;
 }
 
 std::vector<std::string> Data::findFileExtRecursive(std::vector<std::string> mapfiles, const boost::filesystem::path &dir_path, std::string ext)
@@ -88,6 +158,11 @@ std::vector<std::string> Data::listMaps()
 {
     std::vector<std::string> mapfiles;
 
+    if (datafile != NULL) {
+        std::vector<std::string> res = findFileExtFromDataFile("data/maps/", ".json"); // FIXME Hardcoded
+        if (res.size() > 0) return res;
+    }
+
     if (!boost::filesystem::exists(*data_path)) return mapfiles;
 
     boost::filesystem::path maps_path = *data_path;
@@ -100,6 +175,7 @@ std::vector<std::string> Data::listMaps()
 
 bool Data::saveMapJSON(std::string name, std::string json)
 {
+    // TODO Do we need data file support here? Probably not..
     if (!boost::filesystem::exists(*data_path)) return false;
 
     boost::filesystem::path maps_path = *data_path;
@@ -149,6 +225,27 @@ boost::filesystem::path Data::solveFilePath(std::string name)
 std::vector<std::string> Data::readLinesFromFile(std::string name)
 {
     std::vector<std::string> tmp;
+    if (datafile != NULL) {
+        blieng::DataFile::DataFileObject *obj = datafile->getObject("data/" + name);
+        if (obj == NULL) obj = datafile->getObject(name);
+        if (obj != NULL) {
+            unsigned int pos = 0;
+            std::string line;
+            while (pos < obj->len) {
+                line += obj->data[pos];
+                if (obj->data[pos] == '\n') {
+                    tmp.push_back(line);
+                    line = "";
+                }
+                pos++;
+            }
+            if (line.size() > 0) {
+                tmp.push_back(line);
+            }
+            return tmp;
+        }
+    }
+
     if (data_path == NULL) return tmp;
     
     boost::filesystem::path first_path = solveFilePath(name);
@@ -168,9 +265,64 @@ std::vector<std::string> Data::readLinesFromFile(std::string name)
     return tmp;
 }
 
+unsigned int Data::readData(std::string name, char **data)
+{
+    if (datafile != NULL) {
+        blieng::DataFile::DataFileObject *obj = datafile->getObject("data/" + name);
+        if (obj == NULL) obj = datafile->getObject(name);
+        if (obj != NULL) {
+            if (data != NULL) *data = obj->data;
+            return obj->len;
+        }
+    }
+
+    if (data_path == NULL) return 0;
+    
+    boost::filesystem::path first_path = solveFilePath(name);
+    if (boost::filesystem::exists(first_path)) {
+        boost::filesystem::ifstream fd(first_path, std::ifstream::binary);
+
+        #define BUFSIZE 1024
+        char *buffer = (char*)malloc(BUFSIZE);
+        char *tmp = buffer;
+        unsigned int totalsize = 0;
+        while (!fd.eof() && fd.good()) {
+            if (fd.rdbuf()->in_avail() <= 0) break;
+            int cnt = fd.readsome(tmp, BUFSIZE);
+            if (cnt > 0) {
+                totalsize += cnt;
+                buffer = (char*)realloc(buffer, totalsize + BUFSIZE);
+                tmp = buffer + totalsize;
+            }
+        }
+        #undef BUFSIZE
+        fd.close();
+
+        if (data != NULL) {
+            *data = buffer;
+        } else {
+            free(buffer);
+        }
+
+        return totalsize;
+    }
+
+    return 0;
+}
+
 std::string Data::readString(std::string name)
 {
     std::string res = "";
+
+    if (datafile != NULL) {
+        blieng::DataFile::DataFileObject *obj = datafile->getObject("data/" + name);
+        if (obj == NULL) obj = datafile->getObject(name);
+        if (obj != NULL) {
+            res.append(obj->data, obj->len);
+            return res;
+        }
+    }
+
     if (data_path == NULL) return res;
     
     boost::filesystem::path first_path = solveFilePath(name);
@@ -179,10 +331,8 @@ std::string Data::readString(std::string name)
         while (!fd.eof()) {
             char tmp[256];
             fd.read(tmp, 255);
-            //tmp[255] = 0;
             unsigned int cnt = fd.gcount();
             res.append(tmp, cnt);
-            //res += tmp;
         }
         fd.close();
     }
