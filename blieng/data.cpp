@@ -176,12 +176,18 @@ std::vector<std::string> Data::listMaps()
 bool Data::saveMapJSON(std::string name, std::string json)
 {
     // TODO Do we need data file support here? Probably not..
+    if (data_path == NULL) {
+        std::cerr << "Data path not found, please create it in order to save maps" << "\n";
+        return false
+    }
     if (!boost::filesystem::exists(*data_path)) return false;
 
     boost::filesystem::path maps_path = *data_path;
     maps_path /= "maps"; // FIXME Hardcoded
 
-    if (!boost::filesystem::exists(maps_path)) return false;
+    if (!boost::filesystem::exists(maps_path)) {
+        if (!boost::filesystem::create_directory(maps_path)) return false;
+    }
 
     std::string clean_name = "";
     std::string::iterator si = name.begin();

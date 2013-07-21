@@ -31,9 +31,10 @@ bool Maps::saveMap(std::string name)
     std::string imagefile = "";
 
     boost::filesystem::path my_image = boost::filesystem::path(solved_map_image_file);
-    if (boost::filesystem::is_regular_file(boost::filesystem::status(my_image))) {
-       imagefile = my_image.filename().string();
-    }
+    //FIXME: No real checks because of datafile
+    //if (boost::filesystem::is_regular_file(boost::filesystem::status(my_image))) {
+    imagefile = my_image.filename().string();
+    //}
     
     json += "{\n";
     json += "    \"image\": \"" + imagefile + "\",\n";
