@@ -8,15 +8,15 @@
 
 int main(int argc, char **argv)
 {
-        (void)argc;
-        (void)argv;
+    (void)argc;
+    (void)argv;
 
-        Test::Suite tests;
+    Test::Suite tests;
 
-        tests.add(std::auto_ptr<Test::Suite>(new PointTest));
-        tests.add(std::auto_ptr<Test::Suite>(new PathTest));
-        tests.add(std::auto_ptr<Test::Suite>(new BliObjectTest));
+    tests.add(std::auto_ptr<Test::Suite>(new PointTest));
+    tests.add(std::auto_ptr<Test::Suite>(new PathTest));
+    tests.add(std::auto_ptr<Test::Suite>(new BliObjectTest));
 
-        Test::TextOutput output(Test::TextOutput::Verbose);
-        return tests.run(output) ? 0 : 1;
+    Test::TextOutput output(Test::TextOutput::Verbose);
+    return tests.run(output) ? 0 : 1;
 }
