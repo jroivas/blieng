@@ -48,7 +48,7 @@ std::string DataFile::unifyName(std::string name)
                 got_letter = true;
             }
         }
-        ni++;
+        ++ni;
     }
 
     return tmp;
@@ -209,7 +209,7 @@ bool DataFile::write(const char *key, unsigned int key_len)
 
         fd.write(tmp->data, tmp->len);
         fd.flush();
-        di++;
+        ++di;
     }
 
     fd.close();
@@ -299,8 +299,7 @@ blieng::DataFile::DataFileObject* blieng::DataFile::DataFileObject::obfuscate(co
 
     unsigned char in_block[16];
     unsigned char out_block[16];
-    unsigned char iv[16];
-    memset(iv, 0, 16);
+    unsigned char iv[16] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
     memcpy(iv, key, key_len>16?16:key_len);
 
     unsigned int cnt = len;
@@ -361,8 +360,7 @@ blieng::DataFile::DataFileObject* blieng::DataFile::DataFileObject::deobfuscate(
     char *tmp = (char*)calloc(1, real_len);
     unsigned char in_block[16];
     unsigned char out_block[16];
-    unsigned char iv[16];
-    memset(iv, 0, 16);
+    unsigned char iv[16] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
     memcpy(iv, key, key_len>16?16:key_len);
 
     unsigned int cnt = len;

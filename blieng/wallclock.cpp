@@ -26,11 +26,10 @@ bool Wallclock::addProducer(Item *item)
 
 void Wallclock::produceTime(unsigned long int amount)
 {
-    std::vector<Item *> items; 
+    //std::vector<Item *> items; 
     BOOST_FOREACH(Item *item, producers) {
-        Item *time = NULL;
         if (time_producer != NULL) {
-            time = time_producer->produce(amount);
+            Item *time = time_producer->produce(amount);
             if (time == NULL) {
                 std::cout << "Can't create time\n";
                 exit(1);
@@ -68,7 +67,7 @@ std::vector<blieng::Item *> Wallclock::produceTier2(std::vector<Item *> items)
         do  {
             new_item = item->produce();
             if (new_item != NULL) {
-                items.push_back(new_item);
+                items.push_back(new_item); //FIXME!
             }
         } while (new_item != NULL && (--count)>0);
     }

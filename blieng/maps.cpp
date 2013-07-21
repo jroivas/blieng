@@ -28,12 +28,10 @@ bool Maps::saveMap(std::string name)
 {
     std::string json = "";
 
-    std::string imagefile = "";
-
     boost::filesystem::path my_image = boost::filesystem::path(solved_map_image_file);
     //FIXME: No real checks because of datafile
     //if (boost::filesystem::is_regular_file(boost::filesystem::status(my_image))) {
-    imagefile = my_image.filename().string();
+    std::string imagefile = my_image.filename().string();
     //}
     
     json += "{\n";
@@ -130,7 +128,7 @@ bool Maps::removeTown(blieng::Town *town)
             towns.erase(ti);
             return true;
         } 
-        ti++;
+        ++ti;
     }
     return false;
 }
@@ -151,7 +149,7 @@ blieng::Path Maps::updatePath(blieng::Path path, blieng::Point point)
             paths.push_back(path);
             return path;
         }
-        pi++;
+        ++pi;
     }
 
     return path;
@@ -167,7 +165,7 @@ blieng::Path Maps::updatePath(blieng::Path path, int index, blieng::Point point)
             paths.push_back(path);
             return path;
         }
-        pi++;
+        ++pi;
     }
 
     return path;
@@ -222,7 +220,7 @@ void Maps::parseMap()
                         delete town;
                     }
                 }
-                it++;
+                ++it;
             }
         }
         else if (mi == "paths" and item_val.isArray()) {
@@ -245,7 +243,7 @@ void Maps::parseMap()
                                 }
                             }
                         }
-                        point_it++;
+                        ++point_it;
                     }
                     if (ok) {
                         /*paths.push_back(path);
@@ -254,7 +252,7 @@ void Maps::parseMap()
                         addPath(path);
                     }
                 }
-                it++;
+                ++it;
             }
         }
     }

@@ -72,7 +72,7 @@ Y BliObject::get ## X ## Value(std::string key, Y default_value)\
     }\
     try {\
         return boost::any_cast<Y>(val);\
-    } catch (boost::bad_any_cast c) {\
+    } catch (boost::bad_any_cast &c) {\
         std::cout << "Error, not a " #X " value at: " + key + "\n";\
         /*throw "Error, not a " #X " value at: " + key;*/\
         return default_value;\
@@ -171,7 +171,7 @@ bool BliObject::changeIntValue(std::string key, int diff)
     try {
         val = getIntValue(key);
     }
-    catch (std::string e) {
+    catch (std::string &e) {
         return false;
     }
     if ((val + diff >= 0) && (maxval == -1 || (val + diff) < maxval)) {

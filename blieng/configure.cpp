@@ -89,7 +89,6 @@ void Configure::parse()
                 } else if (realval.isString()) {
                     std::string sval = realval.asString();
                     boost::algorithm::to_lower(sval);
-                    bool res = false;
                     if (sval == "yes" || sval == "on" ||
                         sval == "true" || sval == "y") {
                             res = true;

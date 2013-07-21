@@ -32,7 +32,7 @@ Item::Item(std::string name) : ItemBase()
     init();
     usable = false;
     std::cout << "Creating: " << name << "\n";
-    if (item_bases.size() > 0) {
+    if (!item_bases.empty()) {
         ItemBase *orig = NULL;
         BOOST_FOREACH(item_bases_t val, item_bases) {
             if (val.first == name) {
@@ -72,7 +72,7 @@ bool Item::removeItem(Item *item)
     BOOST_FOREACH(item_bases_t val, item_bases) {
         if (item->base == val.first) {
             item_bases.erase(val.first);
-            res = true;
+            return true;
         }
     }
 
@@ -132,12 +132,15 @@ void Item::getItemBases()
                         ok = true;
                     }
                 }
+                //TODO XXX
+                #if 0
                 else if (keyname == "life") {
                     if (val.isNumeric()) {
                         item->amount = val.asDouble();
                         ok = true;
                     }
                 }
+                #endif
                 else if (keyname == "consume") {
                     std::map<std::string, double> consumes;
                     if (val.isObject()) {

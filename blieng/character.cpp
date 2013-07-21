@@ -41,6 +41,6 @@ void Character::assignObject(BliObject *another)
 void Character::assignObject(Character *another)
 {
     if (another == NULL) return;
-    blieng::BliObject::assignObject((BliObject*)another);
+    blieng::BliObject::assignObject(static_cast<BliObject*>(another));
     items = another->items;
 }

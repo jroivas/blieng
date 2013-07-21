@@ -160,7 +160,7 @@ std::vector<std::string> Data::listMaps()
 
     if (datafile != NULL) {
         std::vector<std::string> res = findFileExtFromDataFile("data/maps/", ".json"); // FIXME Hardcoded
-        if (res.size() > 0) return res;
+        if (!res.empty()) return res;
     }
 
     if (!boost::filesystem::exists(*data_path)) return mapfiles;
@@ -196,7 +196,7 @@ bool Data::saveMapJSON(std::string name, std::string json)
             clean_name += *si;
         }
         //if (*si == '.') break; // FIXME What to do with dots?
-        si++;
+        ++si;
     }
 
     if (clean_name == "") return false;

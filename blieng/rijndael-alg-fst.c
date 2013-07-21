@@ -1232,7 +1232,7 @@ void rijndaelEncryptRound(const u32 rk[/*4*(Nr + 1)*/], int Nr, u8 block[16], in
     /*
 	 * Nr - 1 full rounds:
 	 */
-	for (r = (rounds < Nr ? rounds : Nr - 1); r > 0; r--) {
+	for (r = ((rounds < Nr) ? rounds : Nr - 1); r > 0; r--) {
 		t0 =
 			Te0[(s0 >> 24)       ] ^
 			Te1[(s1 >> 16) & 0xff] ^

@@ -34,7 +34,7 @@ int Path::getPointIndex(Point point)
     int index = 0;
     BOOST_FOREACH(blieng::Point pt, points) {
         if (point == pt) return index;
-        index++;
+        ++index;
     }
     return -1;
 }
@@ -49,7 +49,7 @@ void Path::updatePointAt(int index, Point new_point)
         } else {
             new_points.push_back(pt);
         }
-        cnt++;
+        ++cnt;
     }
 
     points = new_points;
@@ -62,7 +62,7 @@ void Path::updatePoint(Point point, Point new_point)
         if ((*pi) == point) {
             (*pi).update(new_point);
         }
-        pi++;
+        ++pi;
     }
 }
 
