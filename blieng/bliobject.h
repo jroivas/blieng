@@ -13,12 +13,13 @@ class BliObject
 {
 public:
     BliObject();
+
     virtual void setValue(std::string key, boost::any value);
     virtual bool isValue(std::string key);
 
     virtual bool increase(std::string key);
     virtual bool decrease(std::string key);
-    bool changeIntValue(std::string key, int diff);
+    bool changeNumberValue(std::string key, int diff);
 
     virtual boost::any getValue(std::string key);
     virtual std::string getStringValue(std::string key, std::string default_value="");

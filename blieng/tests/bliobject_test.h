@@ -12,6 +12,7 @@ public:
         TEST_ADD(BliObjectTest::toString);
         TEST_ADD(BliObjectTest::assign);
         TEST_ADD(BliObjectTest::random);
+        TEST_ADD(BliObjectTest::incdec);
     }
 private:
     void values();
@@ -19,6 +20,7 @@ private:
     void toString();
     void assign();
     void random();
+    void incdec();
 };
 
 #endif

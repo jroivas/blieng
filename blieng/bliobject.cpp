@@ -47,10 +47,12 @@ double BliObject::getRandomDouble(double limit_low, double limit_max)
 boost::any BliObject::getValue(std::string key)
 {
     values_iter_t value_iter = values.find(key);
+
     if (value_iter == values.end()) {
         std::cout << "Error, key not found: " + key + "\n";
-        throw "Error, key not found: " + key;
+        throw std::string("Error, key not found: " + key);
     }
+
     return value_iter->second;
 }
 
@@ -157,36 +159,50 @@ std::list<std::string> BliObject::getKeys()
     return res;
 }
 
-bool BliObject::changeIntValue(std::string key, int diff)
+bool BliObject::changeNumberValue(std::string key, int diff)
 {
-    int maxval = -1;
-    if (isValue(key + "-max")) {
-        boost::any max_item = getValue(key + "-max");
-        if (max_item.type() == typeid(int)) {
-            maxval = boost::any_cast<int>(max_item);
-        }
-    }
+    if (!isValue(key)) return false;
 
-    int val = -1;
-    try {
-        val = getIntValue(key);
+    boost::any val = getValue(key);
+    if (val.type() == typeid(int)) {
+        int num = boost::any_cast<int>(val);
+        num += diff;
+        if (isValue(key + "-max")) {
+            int max = getIntValue(key + "-max");
+            if (num > max) return false;
+        }
+        setValue(key, num);
     }
-    catch (std::string &e) {
+    else if (val.type() == typeid(unsigned int)) {
+        unsigned int num = boost::any_cast<unsigned int>(val);
+        num += diff;
+        if (isValue(key + "-max")) {
+            unsigned int max = getUIntValue(key + "-max");
+            if (num > max) return false;
+        }
+        setValue(key, num);
+    }
+    else if (val.type() == typeid(double)) {
+        double num = boost::any_cast<double>(val);
+        num += (double)diff;
+        if (isValue(key + "-max")) {
+            double max = getDoubleValue(key + "-max");
+            if (num > max) return false;
+        }
+        setValue(key, num);
+    } else {
         return false;
     }
-    if ((val + diff >= 0) && (maxval == -1 || (val + diff) < maxval)) {
-        setValue(key, val + diff);
-        return true;
-    }
-    return false;
+
+    return true;
 }
 
 bool BliObject::increase(std::string key)
 {
-    return changeIntValue(key, 1);
+    return changeNumberValue(key, 1);
 }
 
 bool BliObject::decrease(std::string key)
 {
-    return changeIntValue(key, -1);
+    return changeNumberValue(key, -1);
 }

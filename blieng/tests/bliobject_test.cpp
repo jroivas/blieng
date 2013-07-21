@@ -146,3 +146,48 @@ void BliObjectTest::random()
     TEST_ASSERT( min <= 2 );
     TEST_ASSERT( max >= 98 );
 }
+
+void BliObjectTest::incdec()
+{
+    BliObject *obj = new BliObject();
+
+    obj->setValue("test1", (unsigned int)42);
+    obj->setValue("test2", (int)-55);
+    obj->setValue("test3", 5.99);
+
+    obj->setValue("test1-max", (unsigned int)43);
+    obj->setValue("test3-max", (unsigned int)10);
+
+    TEST_ASSERT( obj->increase("test1") );
+    TEST_ASSERT( obj->increase("test2") );
+    TEST_ASSERT( obj->increase("test3") );
+
+    TEST_ASSERT( obj->getUIntValue("test1") == 43 );
+    TEST_ASSERT( obj->getIntValue("test2") == -54 );
+    TEST_ASSERT( obj->getDoubleValue("test3") == 6.99 );
+
+    TEST_ASSERT( !obj->increase("test1") );
+    TEST_ASSERT( obj->increase("test2") );
+    TEST_ASSERT( obj->increase("test3") );
+
+    TEST_ASSERT( obj->getUIntValue("test1") == 43 );
+    TEST_ASSERT( obj->getIntValue("test2") == -53 );
+    TEST_ASSERT( obj->getDoubleValue("test3") == 7.99 );
+
+    TEST_ASSERT( obj->increase("test3") );
+    TEST_ASSERT( obj->getDoubleValue("test3") == 8.99 );
+
+    TEST_ASSERT( obj->increase("test3") );
+    TEST_ASSERT( obj->getDoubleValue("test3") == 9.99 );
+
+    TEST_ASSERT( !obj->increase("test3") );
+    TEST_ASSERT( obj->getDoubleValue("test3") == 9.99 );
+
+    TEST_ASSERT( obj->decrease("test1") );
+    TEST_ASSERT( obj->decrease("test2") );
+    TEST_ASSERT( obj->decrease("test3") );
+
+    TEST_ASSERT( obj->getUIntValue("test1") == 42 );
+    TEST_ASSERT( obj->getIntValue("test2") == -54 );
+    TEST_ASSERT( obj->getDoubleValue("test3") == 8.99 );
+}
