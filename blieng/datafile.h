@@ -32,7 +32,7 @@ public:
     DataFile(std::string name);
 
     void setName(std::string name);
-    bool isValid() { return _ok; }
+    bool isValid() const { return _ok; }
 
     bool addData(std::string name, std::string data);
     bool addData(std::string name, char *data, unsigned int len);

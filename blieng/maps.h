@@ -19,11 +19,11 @@ public:
 
     std::string getMapName();
 
-    std::string getMapImageFile() { return map_image_file; }
+    std::string getMapImageFile() const { return map_image_file; }
     std::string getSolvedMapImageFile();
     std::vector<blieng::Town *> getTowns() { return towns; }
-    std::vector<blieng::Path> getPaths() { return paths; }
-    std::vector<blieng::Path> getRevPaths() { return rev_paths; }
+    std::vector<blieng::Path> getPaths() const { return paths; }
+    std::vector<blieng::Path> getRevPaths() const { return rev_paths; }
 
     void setBackgroundImage(std::string filename);
 

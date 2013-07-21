@@ -63,7 +63,7 @@ public:
 
     bool consume(Item *);
     Item *produce(double amount=1);
-    bool isUsable() { return usable; }
+    bool isUsable() const { return usable; }
     void setUsable() { usable = true; }
     std::vector<std::string> listItems();
     bool isItem(std::string name);

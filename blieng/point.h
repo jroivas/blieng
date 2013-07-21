@@ -23,7 +23,7 @@ public:
     bool operator==(const Point &other) const;
     bool operator!=(const Point &other) const;
 
-    bool isValid() { return valid; }
+    bool isValid() const { return valid; }
 
     Point traverse(Point target, double now, double time);
     double length(Point another);
