@@ -56,5 +56,4 @@ void Character::assignObject(Character *another)
     BOOST_FOREACH(blieng::Item *item, another->items) {
         items.push_back(item->copy());
     }
-    //items = another->items;
 }
