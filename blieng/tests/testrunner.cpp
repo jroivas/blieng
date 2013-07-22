@@ -5,6 +5,7 @@
 #include "point_test.h"
 #include "path_test.h"
 #include "bliobject_test.h"
+#include "character_test.h"
 
 int main(int argc, char **argv)
 {
@@ -16,6 +17,7 @@ int main(int argc, char **argv)
     tests.add(std::auto_ptr<Test::Suite>(new PointTest));
     tests.add(std::auto_ptr<Test::Suite>(new PathTest));
     tests.add(std::auto_ptr<Test::Suite>(new BliObjectTest));
+    tests.add(std::auto_ptr<Test::Suite>(new CharacterTest));
 
     Test::TextOutput output(Test::TextOutput::Verbose);
     return tests.run(output) ? 0 : 1;

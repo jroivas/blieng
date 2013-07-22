@@ -19,8 +19,8 @@ public:
     bool isAlive();
 
     void addItem(blieng::Item *);
-    blieng::Item *removeItem(blieng::Item *);
-    std::vector<blieng::Item *> getItems();
+    bool removeItem(blieng::Item *);
+    std::vector<blieng::Item *> getItems() const;
 
     virtual void assignObject(blieng::BliObject *another);
     virtual void assignObject(Character *another);

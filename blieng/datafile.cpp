@@ -163,6 +163,7 @@ bool DataFile::read(const char *key, unsigned int key_len)
         if (key != NULL && key_len > 0) {
             DataFileObject *new_tmp = tmp->deobfuscate(key, key_len, sname);
             if (new_tmp) {
+                // cppcheck-suppress mismatchAllocDealloc
                 free(tmp);
                 tmp = new_tmp;
             }

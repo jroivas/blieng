@@ -1,4 +1,5 @@
 #include "character.h"
+#include <boost/foreach.hpp>
 
 using blieng::Character;
 
@@ -21,14 +22,23 @@ bool Character::isAlive()
 
 void Character::addItem(blieng::Item *item)
 {
+    items.push_back(item);
 }
 
-blieng::Item *Character::removeItem(blieng::Item *item)
+bool Character::removeItem(blieng::Item *item)
 {
-    return item;
+    std::vector<blieng::Item *>::iterator ii = items.begin();
+    while (ii != items.end()) {
+        if (*ii == item) {
+            items.erase(ii);
+            return true;
+        }
+        ++ii;
+    }
+    return false;
 }
 
-std::vector<blieng::Item *> Character::getItems()
+std::vector<blieng::Item *> Character::getItems() const
 {
     return items;
 }
@@ -42,5 +52,9 @@ void Character::assignObject(Character *another)
 {
     if (another == NULL) return;
     blieng::BliObject::assignObject(static_cast<BliObject*>(another));
-    items = another->items;
+    
+    BOOST_FOREACH(blieng::Item *item, another->items) {
+        items.push_back(item->copy());
+    }
+    //items = another->items;
 }

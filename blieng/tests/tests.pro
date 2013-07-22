@@ -18,12 +18,10 @@ unix {
 # Input
 HEADERS += point_test.h \
            path_test.h \
-           bliobject_test.h
-#           ../blieng/point.h \
-#           ../blieng/path.h
+           bliobject_test.h \
+           character_test.h
 SOURCES += point_test.cpp \
            path_test.cpp \
            bliobject_test.cpp \
+           character_test.cpp \
            testrunner.cpp
-#           ../blieng/point.cpp \
-#           ../blieng/path.cpp

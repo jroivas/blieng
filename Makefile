@@ -91,6 +91,11 @@ translations-base:
 translations:
 	cd src/translations && make all
 
+cppcheck:
+	cppcheck --enable=all --inconclusive --inline-suppr --xml-version=2 blieng 2> cppcheck_report_blieng.xml
+	cppcheck --enable=all --inconclusive --inline-suppr --xml-version=2 src 2> cppcheck_report_src.xml
+	cppcheck --enable=all --inconclusive --inline-suppr --xml-version=2 tools 2> cppcheck_report_tools.xml
+
 clean:
 	make -C blieng clean
 	make -C src clean

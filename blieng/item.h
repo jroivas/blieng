@@ -61,6 +61,8 @@ public:
     Item(std::string name);
     virtual ~Item() { }
 
+    Item *copy();
+
     bool consume(Item *);
     Item *produce(double amount=1);
     bool isUsable() const { return usable; }

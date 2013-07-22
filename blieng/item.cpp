@@ -95,6 +95,7 @@ bool Item::registerItem(Item *item)
 void Item::getItemBases()
 {
     if (ok) return;
+    if (!Configure::getInstance()->isValue("itemfile")) return;
 
     std::string items_file = Configure::getInstance()->getStringValue("itemfile");
     Json::Value root_val = Data::getInstance()->readJson(items_file); //FIXME
@@ -477,4 +478,11 @@ std::string Item::generateBaseJson()
         res += val.second->generateJson("  ");
     }
     return "{\n" + res + "\n}\n";
+}
+
+Item *Item::copy()
+{
+    Item *res = new Item();
+    res->assignItem(this);
+    return res;
 }
