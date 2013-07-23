@@ -1,5 +1,6 @@
 #include "character_test.h"
 #include <character.h>
+#include <bliobject.h>
 #include <item.h>
 
 using blieng::Character;
@@ -144,4 +145,37 @@ void CharacterTest::assign()
         ++ii;
     }
     TEST_ASSERT( found );
+}
+
+void CharacterTest::assign_object()
+{
+    Character *chr = new Character();
+    blieng::BliObject *obj = new blieng::BliObject();
+
+    obj->setValue("name", std::string("obj"));
+    obj->setValue("test1", 42);
+
+    chr->setValue("name", std::string("chr"));
+    chr->setValue("cnt", 1);
+
+    TEST_ASSERT( obj->getStringValue("name") == "obj" );
+    TEST_ASSERT( obj->getIntValue("test1") == 42 );
+
+    TEST_ASSERT( chr->getStringValue("name") == "chr" );
+    TEST_ASSERT( chr->getIntValue("cnt") == 1 );
+
+    TEST_ASSERT( !obj->isValue("cnt") );
+    TEST_ASSERT( !chr->isValue("test1") );
+
+    chr->assignObject(obj);
+
+    TEST_ASSERT( obj->getStringValue("name") == "obj" );
+    TEST_ASSERT( obj->getIntValue("test1") == 42 );
+
+    TEST_ASSERT( chr->getStringValue("name") == "obj" );
+    TEST_ASSERT( chr->getIntValue("cnt") == 1 );
+    TEST_ASSERT( chr->getIntValue("test1") == 42 );
+
+    TEST_ASSERT( !obj->isValue("cnt") );
+    TEST_ASSERT( chr->isValue("test1") );
 }
