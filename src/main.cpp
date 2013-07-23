@@ -42,8 +42,10 @@ int main(int argc, char **argv)
     if (!blieng::Data::getInstance()->initialize((const char*)_mul_array, _mul_array_len)) return 1;
 
     if (!zomb::initializeConfiguration()) {
-            return 1;
+        std::cout << "hep\n";
+        return 1;
     }
+    std::cout << "ohepo\n";
 
 #if 0
     if (argc > 1) {

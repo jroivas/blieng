@@ -6,6 +6,7 @@
 #include "path_test.h"
 #include "bliobject_test.h"
 #include "character_test.h"
+#include "data_test.h"
 
 int main(int argc, char **argv)
 {
@@ -18,6 +19,7 @@ int main(int argc, char **argv)
     tests.add(std::auto_ptr<Test::Suite>(new PathTest));
     tests.add(std::auto_ptr<Test::Suite>(new BliObjectTest));
     tests.add(std::auto_ptr<Test::Suite>(new CharacterTest));
+    tests.add(std::auto_ptr<Test::Suite>(new DataTest));
 
     Test::TextOutput output(Test::TextOutput::Verbose);
     return tests.run(output) ? 0 : 1;

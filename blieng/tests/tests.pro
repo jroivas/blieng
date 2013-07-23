@@ -19,9 +19,11 @@ unix {
 HEADERS += point_test.h \
            path_test.h \
            bliobject_test.h \
+           data_test.h \
            character_test.h
 SOURCES += point_test.cpp \
            path_test.cpp \
            bliobject_test.cpp \
            character_test.cpp \
+           data_test.cpp \
            testrunner.cpp

@@ -18,25 +18,41 @@ Data *Data::getInstance()
 
 Data::Data()
 {
-    data_path = findDataPath();
-    data_file_path = findDataFile();
     gen = new boost::random::random_device();
-
+    data_path = findDataPath();
     datafile = NULL;
-    if (data_file_path != NULL) {
-        datafile = new blieng::DataFile(data_file_path->filename().string());
+
+    initialize("", NULL, 0);
+}
+
+bool Data::initialize(std::string datafilename, const char *key, unsigned int key_len)
+{
+    if (datafile == NULL || datafilename != "") {
+        if (datafilename == "") {
+            data_file_path = findDataFile();
+        } else {
+            data_file_path = findDataFile(datafilename);
+        }
+        if (data_file_path != NULL) {
+            datafile = new blieng::DataFile(data_file_path->filename().string());
+        }
     }
+    bool res = false;
+    if (datafile != NULL) {
+        res = datafile->read(key, key_len);
+    }
+    if (!res && data_path != NULL) {
+        res = true;
+    }
+    return res;
 }
 
 bool Data::initialize(const char *key, unsigned int key_len)
 {
-    if (datafile != NULL) {
-        return datafile->read(key, key_len);
-    }
-    return true;
+    return initialize("", key, key_len);
 }
 
-boost::filesystem::path *Data::findDataFile()
+boost::filesystem::path *Data::findDataFile(std::string datafilename)
 {
     std::list<std::string> locations;
     locations.push_back("");
@@ -48,7 +64,7 @@ boost::filesystem::path *Data::findDataFile()
 
     boost::filesystem::path *my_data_path = new boost::filesystem::path;
     BOOST_FOREACH(std::string item, locations) {
-        *my_data_path = (item + "data.dat").c_str(); // FIXME Hardcoded
+        *my_data_path = (item + datafilename).c_str();
         if (boost::filesystem::exists(*my_data_path) && boost::filesystem::is_regular_file(*my_data_path)) {
             return my_data_path;
         }

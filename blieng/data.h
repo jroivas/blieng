@@ -15,7 +15,8 @@ class Data
 public:
     static Data *getInstance();
 
-    bool initialize(const char*, unsigned int);
+    bool initialize(const char *key, unsigned int key_len);
+    bool initialize(std::string datafilename, const char*, unsigned int);
 
     std::string readString(std::string name);
     std::vector<std::string> readLinesFromFile(std::string name);
@@ -45,7 +46,7 @@ private:
     std::string findFileFromDataFile(std::string name);
     std::vector<std::string> findFileExtFromDataFile(std::string path, std::string ext);
 
-    boost::filesystem::path *findDataFile();
+    boost::filesystem::path *findDataFile(std::string datafilename = "data.dat");
     boost::filesystem::path *findDataPath();
     boost::filesystem::path *data_path;
     boost::filesystem::path *data_file_path;
