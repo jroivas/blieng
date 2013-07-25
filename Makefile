@@ -3,6 +3,7 @@ coreflags = -j$(cores)
 #coreflags = -j2
 topdir := $(shell pwd)
 VERS=etp4
+PRODUCT="blieng"
 
 native: linux
 
@@ -18,32 +19,13 @@ linux-blieng: linux-prep
 	cd blieng && qmake
 	make -C blieng $(coreflags)
 
-linux-src: linux-prep
-	cd src && qmake
-	make -C src $(coreflags)
-
-linux-tools: linux-map-editor linux-datafile-generator
-
-linux-map-editor: linux-prep
-	cd tools/map-editor && qmake
-	make -C tools/map-editor $(coreflags)
-
-linux-item-editor: linux-prep
-	cd tools/item-editor && qmake
-	make -C tools/item-editor $(coreflags)
-
-linux-datafile-generator:
-	cd tools/datafile-generator && qmake
-	make -C tools/datafile-generator $(coreflags)
-
-linux-dist: linux-datafile-generator
-	mkdir -p dist/zombiebli-$(VERS)-linux
-	cp README.tp dist/zombiebli-$(VERS)-linux/README
-	cp -f src/zombiebli dist/zombiebli-$(VERS)-linux/
-	cp -f tools/map-editor/map-editor dist/zombiebli-$(VERS)-linux
-	mkdir -p dist/zombiebli-$(VERS)-linux/data
-	./tools/datafile-generator/pack_files.sh data/ dist/zombiebli-$(VERS)-linux/data.dat
-	cd dist && tar czf zombiebli-$(VERS)-linux.tar.gz zombiebli-$(VERS)-linux
+linux-dist:
+	mkdir -p dist/$(PRODUCT)-$(VERS)-linux
+	mkdir -p dist/$(PRODUCT)-$(VERS)-linux/include
+	cp README dist/$(PRODUCT)-$(VERS)-linux/README
+	cp -f blieng/libblieng.a dist/$(PRODUCT)-$(VERS)-linux/
+	cp -f blieng/*.h dist/$(PRODUCT)-$(VERS)-linux/include/
+	cd dist && tar czf $(PRODUCT)-$(VERS)-linux.tar.gz $(PRODUCT)-$(VERS)-linux
 
 win:
 	$(topdir)/tools/winbuild/winbuild.sh win-build
@@ -52,57 +34,28 @@ win-prep:
 	@./tools/winbuild/clean.sh win
 	@echo "win" > build.last
 
-win-build: win-blieng win-src win-tools
+win-build: win-blieng
 
 win-blieng: win-prep
 	cd blieng && $(topdir)/tools/winbuild/winqmake.sh
 	$(topdir)/tools/winbuild/winmake.sh -C blieng $(coreflags)
 
-win-src: win-prep
-	cd src && $(topdir)/tools/winbuild/winqmake.sh
-	$(topdir)/tools/winbuild/winmake.sh -C src $(coreflags)
-
-win-tools: win-map-editor
-
-win-map-editor: win-prep
-	cd tools/map-editor && $(topdir)/tools/winbuild/winqmake.sh
-	$(topdir)/tools/winbuild/winmake.sh -C tools/map-editor $(coreflags)
-
-win-item-editor: win-prep
-	cd tools/item-editor && $(topdir)/tools/winbuild/winqmake.sh
-	$(topdir)/tools/winbuild/winmake.sh -C tools/item-editor $(coreflags)
-
-win-datafile-generator: linux-prep
-	cd tools/datafile-generator && $(topdir)/tools/winbuild/winqmake.sh
-	$(topdir)/tools/winbuild/winmake.sh -C tools/datafile-generator $(coreflags)
-
 win-dist: linux-datafile-generator
-	mkdir -p dist/zombiebli-$(VERS)-win
-	cp README.tp dist/zombiebli-$(VERS)-win/README.txt
-	cp -f src/release/zombiebli.exe dist/zombiebli-$(VERS)-win/
-	cp -f tools/map-editor/release/map-editor.exe dist/zombiebli-$(VERS)-win
-	mkdir -p dist/zombiebli-$(VERS)-win/data
-	./tools/datafile-generator/pack_files.sh data/ dist/zombiebli-$(VERS)-win/data.dat
-	cd dist && zip -r -9 -q zombiebli-$(VERS)-win.zip zombiebli-$(VERS)-win
-
-translations-base:
-	cd src && lupdate -verbose src.pro
-
-translations:
-	cd src/translations && make all
+	mkdir -p dist/$(PRODUCT)-$(VERS)-win
+	mkdir -p dist/$(PRODUCT)-$(VERS)-win/debug
+	mkdir -p dist/$(PRODUCT)-$(VERS)-win/release
+	mkdir -p dist/$(PRODUCT)-$(VERS)-win/include
+	cp README dist/$(PRODUCT)-$(VERS)-win/README
+	cp -f blieng/debug/libblieng.a dist/$(PRODUCT)-$(VERS)-win/debug/
+	cp -f blieng/release/libblieng.a dist/$(PRODUCT)-$(VERS)-win/release/
+	cp -f blieng/*.h dist/$(PRODUCT)-$(VERS)-win/include/
+	cd dist && tar czf $(PRODUCT)-$(VERS)-win.tar.gz $(PRODUCT)-$(VERS)-win
 
 cppcheck:
 	cppcheck --enable=all --inconclusive --inline-suppr --xml-version=2 blieng 2> cppcheck_report_blieng.xml
-	cppcheck --enable=all --inconclusive --inline-suppr --xml-version=2 src 2> cppcheck_report_src.xml
-	cppcheck --enable=all --inconclusive --inline-suppr --xml-version=2 tools 2> cppcheck_report_tools.xml
 
 clean:
 	make -C blieng clean
-	make -C src clean
-	make -C tools/map-editor clean
-	make -C tools/item-editor clean
-	make -C tools/datafile-generator clean
-	cd src/translations && make clean
 
 dist-clean:
 	rm -rf dist
