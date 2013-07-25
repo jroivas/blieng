@@ -55,6 +55,11 @@ win-dist:
 cppcheck:
 	cppcheck --enable=all --inconclusive --inline-suppr --xml-version=2 blieng 2> cppcheck_report_blieng.xml
 
+test:
+	cd blieng/tests && qmake
+	make -C blieng/tests
+	blieng/tests/tests
+
 clean:
 	make -C blieng clean
 
