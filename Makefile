@@ -9,7 +9,7 @@ native: linux
 
 all: linux win translations
 
-linux: linux-blieng linux-src linux-tools
+linux: linux-blieng
 
 linux-prep:
 	@./tools/winbuild/clean.sh linux
@@ -40,16 +40,17 @@ win-blieng: win-prep
 	cd blieng && $(topdir)/tools/winbuild/winqmake.sh
 	$(topdir)/tools/winbuild/winmake.sh -C blieng $(coreflags)
 
-win-dist: linux-datafile-generator
+win-dist:
 	mkdir -p dist/$(PRODUCT)-$(VERS)-win
-	mkdir -p dist/$(PRODUCT)-$(VERS)-win/debug
-	mkdir -p dist/$(PRODUCT)-$(VERS)-win/release
+	#mkdir -p dist/$(PRODUCT)-$(VERS)-win/debug
+	#mkdir -p dist/$(PRODUCT)-$(VERS)-win/release
 	mkdir -p dist/$(PRODUCT)-$(VERS)-win/include
 	cp README dist/$(PRODUCT)-$(VERS)-win/README
-	cp -f blieng/debug/libblieng.a dist/$(PRODUCT)-$(VERS)-win/debug/
-	cp -f blieng/release/libblieng.a dist/$(PRODUCT)-$(VERS)-win/release/
+	#cp -f blieng/debug/libblieng.a dist/$(PRODUCT)-$(VERS)-win/debug/
+	#cp -f blieng/release/libblieng.a dist/$(PRODUCT)-$(VERS)-win/release/
+	cp -f blieng/release/libblieng.a dist/$(PRODUCT)-$(VERS)-win/
 	cp -f blieng/*.h dist/$(PRODUCT)-$(VERS)-win/include/
-	cd dist && tar czf $(PRODUCT)-$(VERS)-win.tar.gz $(PRODUCT)-$(VERS)-win
+	cd dist && zip -r $(PRODUCT)-$(VERS)-win.zip $(PRODUCT)-$(VERS)-win
 
 cppcheck:
 	cppcheck --enable=all --inconclusive --inline-suppr --xml-version=2 blieng 2> cppcheck_report_blieng.xml
