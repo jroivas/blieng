@@ -15,3 +15,8 @@ void DataTest::object()
 
     CPPUNIT_ASSERT( obj == obj2  );
 }
+
+void DataTest::object_fail()
+{
+    CPPUNIT_ASSERT( false );
+}
