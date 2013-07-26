@@ -58,7 +58,7 @@ cppcheck:
 test:
 	cd blieng/tests && qmake
 	make -C blieng/tests
-	blieng/tests/tests > test_result.xml
+	blieng/tests/tests 2> test_result.xml
 
 clean:
 	make -C blieng clean
