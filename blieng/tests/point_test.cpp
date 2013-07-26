@@ -1,6 +1,8 @@
 #include "point_test.h"
 #include <point.h>
 
+CPPUNIT_TEST_SUITE_REGISTRATION( PointTest );
+
 void PointTest::basic()
 {
     blieng::Point p(1,1);
@@ -8,9 +10,9 @@ void PointTest::basic()
     blieng::Point p2(1,0);
     blieng::Point p3(1,1);
 
-    TEST_ASSERT( p != d );
-    TEST_ASSERT( p != p2 );
-    TEST_ASSERT( p == p3 );
+    CPPUNIT_ASSERT( p != d );
+    CPPUNIT_ASSERT( p != p2 );
+    CPPUNIT_ASSERT( p == p3 );
 }
 
 void PointTest::set()
@@ -20,38 +22,38 @@ void PointTest::set()
     blieng::Point c(1,0);
     blieng::Point d(1,1);
 
-    TEST_ASSERT( a == b );
-    TEST_ASSERT( a != c );
-    TEST_ASSERT( b != c );
+    CPPUNIT_ASSERT( a == b );
+    CPPUNIT_ASSERT( a != c );
+    CPPUNIT_ASSERT( b != c );
 
     b.setX(1);
-    TEST_ASSERT( a != b );
-    TEST_ASSERT( a != c );
-    TEST_ASSERT( b == c );
+    CPPUNIT_ASSERT( a != b );
+    CPPUNIT_ASSERT( a != c );
+    CPPUNIT_ASSERT( b == c );
 
     b.setY(1);
-    TEST_ASSERT( a != b );
-    TEST_ASSERT( a != c );
-    TEST_ASSERT( b != c );
-    TEST_ASSERT( b == d );
+    CPPUNIT_ASSERT( a != b );
+    CPPUNIT_ASSERT( a != c );
+    CPPUNIT_ASSERT( b != c );
+    CPPUNIT_ASSERT( b == d );
 
     b.setY(2);
-    TEST_ASSERT( a != b );
-    TEST_ASSERT( a != c );
-    TEST_ASSERT( b != c );
-    TEST_ASSERT( b != d );
+    CPPUNIT_ASSERT( a != b );
+    CPPUNIT_ASSERT( a != c );
+    CPPUNIT_ASSERT( b != c );
+    CPPUNIT_ASSERT( b != d );
 
     a.setY(2);
-    TEST_ASSERT( a != b );
-    TEST_ASSERT( a != c );
-    TEST_ASSERT( b != c );
-    TEST_ASSERT( b != d );
+    CPPUNIT_ASSERT( a != b );
+    CPPUNIT_ASSERT( a != c );
+    CPPUNIT_ASSERT( b != c );
+    CPPUNIT_ASSERT( b != d );
 
     a.setX(1);
-    TEST_ASSERT( a == b );
-    TEST_ASSERT( a != c );
-    TEST_ASSERT( b != c );
-    TEST_ASSERT( b != d );
+    CPPUNIT_ASSERT( a == b );
+    CPPUNIT_ASSERT( a != c );
+    CPPUNIT_ASSERT( b != c );
+    CPPUNIT_ASSERT( b != d );
 }
 
 void PointTest::length()
@@ -63,13 +65,13 @@ void PointTest::length()
     blieng::Point e(2,2);
     blieng::Point e_neg(-2,-2);
 
-    TEST_ASSERT (a.length(a) == 0)
-    TEST_ASSERT (a.length(b) == 1)
-    TEST_ASSERT (a.length(c) == 2)
-    TEST_ASSERT (a.length(d) == 3)
-    TEST_ASSERT (a.length(e) == 4)
-    TEST_ASSERT (a.length(e) == a.length(e_neg))
-    TEST_ASSERT (a.length(e) == e.length(a))
+    CPPUNIT_ASSERT (a.length(a) == 0);
+    CPPUNIT_ASSERT (a.length(b) == 1);
+    CPPUNIT_ASSERT (a.length(c) == 2);
+    CPPUNIT_ASSERT (a.length(d) == 3);
+    CPPUNIT_ASSERT (a.length(e) == 4);
+    CPPUNIT_ASSERT (a.length(e) == a.length(e_neg));
+    CPPUNIT_ASSERT (a.length(e) == e.length(a));
 }
 
 void PointTest::traverse()
@@ -79,15 +81,15 @@ void PointTest::traverse()
     blieng::Point c(300,2000);
 
     
-    TEST_ASSERT (a.traverse(b, 0, 10) == a)
-    TEST_ASSERT (a.traverse(b, -10, 10) == a)
-    TEST_ASSERT (a.traverse(b, 10, 10) == b)
-    TEST_ASSERT (a.traverse(b, 100, 10) == b)
+    CPPUNIT_ASSERT (a.traverse(b, 0, 10) == a);
+    CPPUNIT_ASSERT (a.traverse(b, -10, 10) == a);
+    CPPUNIT_ASSERT (a.traverse(b, 10, 10) == b);
+    CPPUNIT_ASSERT (a.traverse(b, 100, 10) == b);
 
-    TEST_ASSERT (a.traverse(b, 5, 10).x == 50)
-    TEST_ASSERT (a.traverse(b, 5, 10).y == 100)
+    CPPUNIT_ASSERT (a.traverse(b, 5, 10).x == 50);
+    CPPUNIT_ASSERT (a.traverse(b, 5, 10).y == 100);
 
-    TEST_ASSERT (c.traverse(b, 5, 10) == c.traverse(b, 500, 1000))
+    CPPUNIT_ASSERT (c.traverse(b, 5, 10) == c.traverse(b, 500, 1000));
 }
 
 void PointTest::assign()
@@ -95,21 +97,21 @@ void PointTest::assign()
     blieng::Point a(5,42);
     blieng::Point b(100,200);
 
-    TEST_ASSERT( a.x == 5 );
-    TEST_ASSERT( a.y == 42 );
+    CPPUNIT_ASSERT( a.x == 5 );
+    CPPUNIT_ASSERT( a.y == 42 );
 
-    TEST_ASSERT( a != b );
+    CPPUNIT_ASSERT( a != b );
 
     a = b;
 
-    TEST_ASSERT( a == b );
-    TEST_ASSERT( a.x == b.x );
-    TEST_ASSERT( a.y == b.y );
-    TEST_ASSERT( a.x == 100 );
-    TEST_ASSERT( a.y == 200 );
+    CPPUNIT_ASSERT( a == b );
+    CPPUNIT_ASSERT( a.x == b.x );
+    CPPUNIT_ASSERT( a.y == b.y );
+    CPPUNIT_ASSERT( a.x == 100 );
+    CPPUNIT_ASSERT( a.y == 200 );
 
     b.x = 99;
-    TEST_ASSERT( a != b );
+    CPPUNIT_ASSERT( a != b );
 }
 
 void PointTest::valid()
@@ -118,12 +120,12 @@ void PointTest::valid()
     blieng::Point b(100,200);
     blieng::Point c(false);
 
-    TEST_ASSERT(a.isValid() == true);
-    TEST_ASSERT(b.isValid() == true);
-    TEST_ASSERT(c.isValid() != true);
+    CPPUNIT_ASSERT(a.isValid() == true);
+    CPPUNIT_ASSERT(b.isValid() == true);
+    CPPUNIT_ASSERT(c.isValid() != true);
 
     a.valid = false;
     c.valid = true;
-    TEST_ASSERT(a.isValid() != true);
-    TEST_ASSERT(c.isValid() == true);
+    CPPUNIT_ASSERT(a.isValid() != true);
+    CPPUNIT_ASSERT(c.isValid() == true);
 }

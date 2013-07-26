@@ -3,19 +3,21 @@
 #include <bliobject.h>
 #include <item.h>
 
+CPPUNIT_TEST_SUITE_REGISTRATION( CharacterTest );
+
 using blieng::Character;
 
 void CharacterTest::alive_kill()
 {
     Character *obj = new Character();
-    TEST_ASSERT( obj->isAlive() );
+    CPPUNIT_ASSERT( obj->isAlive() );
 
-    TEST_ASSERT( !obj->getBoolValue("dead") );
+    CPPUNIT_ASSERT( !obj->getBoolValue("dead") );
 
     obj->kill();
-    TEST_ASSERT( !obj->isAlive() );
+    CPPUNIT_ASSERT( !obj->isAlive() );
 
-    TEST_ASSERT( obj->getBoolValue("dead") );
+    CPPUNIT_ASSERT( obj->getBoolValue("dead") );
 }
 
 void CharacterTest::items()
@@ -25,30 +27,30 @@ void CharacterTest::items()
 
     Character *obj = new Character();
 
-    TEST_ASSERT( obj->getItems().size() == 0);
+    CPPUNIT_ASSERT( obj->getItems().size() == 0);
 
     obj->addItem(tmp);
-    TEST_ASSERT( obj->getItems().size() == 1);
+    CPPUNIT_ASSERT( obj->getItems().size() == 1);
 
     obj->addItem(tmp2);
-    TEST_ASSERT( obj->getItems().size() == 2);
+    CPPUNIT_ASSERT( obj->getItems().size() == 2);
 
 
-    TEST_ASSERT( obj->removeItem(tmp2) );
-    TEST_ASSERT( obj->getItems().size() == 1);
+    CPPUNIT_ASSERT( obj->removeItem(tmp2) );
+    CPPUNIT_ASSERT( obj->getItems().size() == 1);
 
-    TEST_ASSERT( !obj->removeItem(tmp2) );
-    TEST_ASSERT( obj->getItems().size() == 1);
+    CPPUNIT_ASSERT( !obj->removeItem(tmp2) );
+    CPPUNIT_ASSERT( obj->getItems().size() == 1);
 
-    TEST_ASSERT( obj->removeItem(tmp) );
-    TEST_ASSERT( obj->getItems().size() == 0);
+    CPPUNIT_ASSERT( obj->removeItem(tmp) );
+    CPPUNIT_ASSERT( obj->getItems().size() == 0);
 
-    TEST_ASSERT( !obj->removeItem(tmp) );
-    TEST_ASSERT( obj->getItems().size() == 0);
+    CPPUNIT_ASSERT( !obj->removeItem(tmp) );
+    CPPUNIT_ASSERT( obj->getItems().size() == 0);
 
     obj->addItem(tmp);
     obj->addItem(tmp2);
-    TEST_ASSERT( obj->getItems().size() == 2);
+    CPPUNIT_ASSERT( obj->getItems().size() == 2);
 
     bool found = false;
     std::vector<blieng::Item*> items = obj->getItems();
@@ -57,7 +59,7 @@ void CharacterTest::items()
         if (*ii == tmp2) found = true;
         ++ii;
     }
-    TEST_ASSERT( found );
+    CPPUNIT_ASSERT( found );
 
     found = false;
     ii = items.begin();
@@ -65,9 +67,9 @@ void CharacterTest::items()
         if (*ii == tmp) found = true;
         ++ii;
     }
-    TEST_ASSERT( found );
+    CPPUNIT_ASSERT( found );
 
-    TEST_ASSERT( obj->removeItem(tmp) );
+    CPPUNIT_ASSERT( obj->removeItem(tmp) );
 
     found = false;
     items = obj->getItems();
@@ -76,7 +78,7 @@ void CharacterTest::items()
         if (*ii == tmp) found = true;
         ++ii;
     }
-    TEST_ASSERT( !found );
+    CPPUNIT_ASSERT( !found );
 }
 
 void CharacterTest::assign()
@@ -91,14 +93,14 @@ void CharacterTest::assign()
     obj->addItem(tmp);
     obj->addItem(tmp2);
 
-    TEST_ASSERT( obj->getItems().size() == 2);
+    CPPUNIT_ASSERT( obj->getItems().size() == 2);
 
     Character *obj2 = new Character();
-    TEST_ASSERT( obj2->getItems().size() == 0);
+    CPPUNIT_ASSERT( obj2->getItems().size() == 0);
 
     obj2->assignObject(obj);
 
-    TEST_ASSERT( obj2->getItems().size() == 2);
+    CPPUNIT_ASSERT( obj2->getItems().size() == 2);
 
     std::vector<blieng::Item*> items = obj2->getItems();
     std::vector<blieng::Item*>::iterator ii = items.begin();
@@ -111,7 +113,7 @@ void CharacterTest::assign()
         }
         ++ii;
     }
-    TEST_ASSERT( found );
+    CPPUNIT_ASSERT( found );
 
     ii = items.begin();
     found = false;
@@ -119,16 +121,16 @@ void CharacterTest::assign()
         if ((*ii)->getStringValue("name") == "item2") found = true;
         ++ii;
     }
-    TEST_ASSERT( found );
+    CPPUNIT_ASSERT( found );
 
-    TEST_ASSERT( tmp3 != tmp );
-    TEST_ASSERT( tmp->getStringValue("name") == "item1" );
-    TEST_ASSERT( tmp3->getStringValue("name") == "item1" );
+    CPPUNIT_ASSERT( tmp3 != tmp );
+    CPPUNIT_ASSERT( tmp->getStringValue("name") == "item1" );
+    CPPUNIT_ASSERT( tmp3->getStringValue("name") == "item1" );
 
     tmp3->setValue("name", std::string("item3") );
 
-    TEST_ASSERT( tmp->getStringValue("name") == "item1" );
-    TEST_ASSERT( tmp3->getStringValue("name") == "item3" );
+    CPPUNIT_ASSERT( tmp->getStringValue("name") == "item1" );
+    CPPUNIT_ASSERT( tmp3->getStringValue("name") == "item3" );
 
     ii = items.begin();
     found = false;
@@ -136,7 +138,7 @@ void CharacterTest::assign()
         if ((*ii)->getStringValue("name") == "item1") found = true;
         ++ii;
     }
-    TEST_ASSERT( !found );
+    CPPUNIT_ASSERT( !found );
 
     ii = items.begin();
     found = false;
@@ -144,7 +146,7 @@ void CharacterTest::assign()
         if ((*ii)->getStringValue("name") == "item3") found = true;
         ++ii;
     }
-    TEST_ASSERT( found );
+    CPPUNIT_ASSERT( found );
 }
 
 void CharacterTest::assign_object()
@@ -158,24 +160,24 @@ void CharacterTest::assign_object()
     chr->setValue("name", std::string("chr"));
     chr->setValue("cnt", 1);
 
-    TEST_ASSERT( obj->getStringValue("name") == "obj" );
-    TEST_ASSERT( obj->getIntValue("test1") == 42 );
+    CPPUNIT_ASSERT( obj->getStringValue("name") == "obj" );
+    CPPUNIT_ASSERT( obj->getIntValue("test1") == 42 );
 
-    TEST_ASSERT( chr->getStringValue("name") == "chr" );
-    TEST_ASSERT( chr->getIntValue("cnt") == 1 );
+    CPPUNIT_ASSERT( chr->getStringValue("name") == "chr" );
+    CPPUNIT_ASSERT( chr->getIntValue("cnt") == 1 );
 
-    TEST_ASSERT( !obj->isValue("cnt") );
-    TEST_ASSERT( !chr->isValue("test1") );
+    CPPUNIT_ASSERT( !obj->isValue("cnt") );
+    CPPUNIT_ASSERT( !chr->isValue("test1") );
 
     chr->assignObject(obj);
 
-    TEST_ASSERT( obj->getStringValue("name") == "obj" );
-    TEST_ASSERT( obj->getIntValue("test1") == 42 );
+    CPPUNIT_ASSERT( obj->getStringValue("name") == "obj" );
+    CPPUNIT_ASSERT( obj->getIntValue("test1") == 42 );
 
-    TEST_ASSERT( chr->getStringValue("name") == "obj" );
-    TEST_ASSERT( chr->getIntValue("cnt") == 1 );
-    TEST_ASSERT( chr->getIntValue("test1") == 42 );
+    CPPUNIT_ASSERT( chr->getStringValue("name") == "obj" );
+    CPPUNIT_ASSERT( chr->getIntValue("cnt") == 1 );
+    CPPUNIT_ASSERT( chr->getIntValue("test1") == 42 );
 
-    TEST_ASSERT( !obj->isValue("cnt") );
-    TEST_ASSERT( chr->isValue("test1") );
+    CPPUNIT_ASSERT( !obj->isValue("cnt") );
+    CPPUNIT_ASSERT( chr->isValue("test1") );
 }

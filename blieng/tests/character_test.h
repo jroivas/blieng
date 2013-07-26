@@ -1,18 +1,17 @@
 #ifndef __TEST_CHARACTER_H
 #define __TEST_CHARACTER_H
 
-#include <cpptest.h>
+#include <cppunit/extensions/HelperMacros.h>
 
-class CharacterTest : public Test::Suite
+class CharacterTest : public CppUnit::TestFixture
 {
+    CPPUNIT_TEST_SUITE(CharacterTest);
+    CPPUNIT_TEST(alive_kill);
+    CPPUNIT_TEST(items);
+    CPPUNIT_TEST(assign);
+    CPPUNIT_TEST(assign_object);
+    CPPUNIT_TEST_SUITE_END();
 public:
-    CharacterTest() {
-        TEST_ADD(CharacterTest::alive_kill);
-        TEST_ADD(CharacterTest::items);
-        TEST_ADD(CharacterTest::assign);
-        TEST_ADD(CharacterTest::assign_object);
-    }
-private:
     void alive_kill();
     void items();
     void assign();

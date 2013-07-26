@@ -1,7 +1,10 @@
 /* Test blieng
  */
 
-#include <cpptest.h>
+#include <cppunit/XmlOutputter.h>
+#include <cppunit/extensions/TestFactoryRegistry.h>
+#include <cppunit/ui/text/TestRunner.h>
+
 #include "point_test.h"
 #include "path_test.h"
 #include "bliobject_test.h"
@@ -13,14 +16,13 @@ int main(int argc, char **argv)
     (void)argc;
     (void)argv;
 
-    Test::Suite tests;
+    CppUnit::Test *suite = CppUnit::TestFactoryRegistry::getRegistry().makeTest();
 
-    tests.add(std::auto_ptr<Test::Suite>(new PointTest));
-    tests.add(std::auto_ptr<Test::Suite>(new PathTest));
-    tests.add(std::auto_ptr<Test::Suite>(new BliObjectTest));
-    tests.add(std::auto_ptr<Test::Suite>(new CharacterTest));
-    tests.add(std::auto_ptr<Test::Suite>(new DataTest));
+    CppUnit::TextUi::TestRunner runner;
+    runner.addTest( suite );
 
-    Test::TextOutput output(Test::TextOutput::Verbose);
-    return tests.run(output) ? 0 : 1;
+    runner.setOutputter( new CppUnit::XmlOutputter( &runner.result(), std::cerr ) );
+    bool wasSucessful = runner.run();
+
+    return wasSucessful ? 0 : 1;
 }

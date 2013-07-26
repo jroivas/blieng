@@ -3,7 +3,7 @@ TARGET = tests
 DEPENDPATH += . ..
 INCLUDEPATH += . ..
 
-LIBS += -lcpptest
+LIBS += -lcppunit
 
 INCLUDEPATH += ../
 

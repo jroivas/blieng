@@ -1,20 +1,19 @@
 #ifndef __TEST_BLIOBJECT_H
 #define __TEST_BLIOBJECT_H
 
-#include <cpptest.h>
+#include <cppunit/extensions/HelperMacros.h>
 
-class BliObjectTest : public Test::Suite
+class BliObjectTest : public CppUnit::TestFixture
 {
+    CPPUNIT_TEST_SUITE( BliObjectTest );
+    CPPUNIT_TEST(values);
+    CPPUNIT_TEST(getValues);
+    CPPUNIT_TEST(toString);
+    CPPUNIT_TEST(assign);
+    CPPUNIT_TEST(random);
+    CPPUNIT_TEST(incdec);
+    CPPUNIT_TEST_SUITE_END();
 public:
-    BliObjectTest() {
-        TEST_ADD(BliObjectTest::values);
-        TEST_ADD(BliObjectTest::getValues);
-        TEST_ADD(BliObjectTest::toString);
-        TEST_ADD(BliObjectTest::assign);
-        TEST_ADD(BliObjectTest::random);
-        TEST_ADD(BliObjectTest::incdec);
-    }
-private:
     void values();
     void getValues();
     void toString();

@@ -1,20 +1,19 @@
 #ifndef __TEST_PATH_H
 #define __TEST_PATH_H
 
-#include <cpptest.h>
+#include <cppunit/extensions/HelperMacros.h>
 
-class PathTest : public Test::Suite
+class PathTest : public CppUnit::TestFixture
 {
+    CPPUNIT_TEST_SUITE( PathTest );
+    CPPUNIT_TEST( basic );
+    CPPUNIT_TEST( append );
+    CPPUNIT_TEST( reverse );
+    CPPUNIT_TEST( copy );
+    CPPUNIT_TEST( take );
+    CPPUNIT_TEST( length );
+    CPPUNIT_TEST_SUITE_END();
 public:
-    PathTest() {
-        TEST_ADD(PathTest::basic);
-        TEST_ADD(PathTest::append);
-        TEST_ADD(PathTest::reverse);
-        TEST_ADD(PathTest::copy);
-        TEST_ADD(PathTest::take);
-        TEST_ADD(PathTest::length);
-    }
-private:
     void basic();
     void append();
     void reverse();

@@ -1,14 +1,14 @@
 #ifndef __TEST_DATA_H
 #define __TEST_DATA_H
 
-#include <cpptest.h>
+#include <cppunit/extensions/HelperMacros.h>
 
-class DataTest : public Test::Suite
+class DataTest : public CppUnit::TestFixture
 {
 public:
-    DataTest() {
-        TEST_ADD(DataTest::object);
-    }
+    CPPUNIT_TEST_SUITE(DataTest);
+    CPPUNIT_TEST(object);
+    CPPUNIT_TEST_SUITE_END();
 private:
     void object();
 };
