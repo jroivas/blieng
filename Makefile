@@ -28,7 +28,7 @@ linux-dist:
 	cd dist && tar czf $(PRODUCT)-$(VERS)-linux.tar.gz $(PRODUCT)-$(VERS)-linux
 
 win:
-	$(topdir)/tools/winbuild/winbuild.sh win-build
+	"$(topdir)"/tools/winbuild/winbuild.sh win-build
 
 win-prep:
 	@./tools/winbuild/clean.sh win
@@ -37,8 +37,8 @@ win-prep:
 win-build: win-blieng
 
 win-blieng: win-prep
-	cd blieng && $(topdir)/tools/winbuild/winqmake.sh
-	$(topdir)/tools/winbuild/winmake.sh -C blieng $(coreflags)
+	cd blieng && "$(topdir)"/tools/winbuild/winqmake.sh
+	"$(topdir)"/tools/winbuild/winmake.sh -C blieng $(coreflags)
 
 win-dist:
 	mkdir -p dist/$(PRODUCT)-$(VERS)-win

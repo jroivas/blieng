@@ -3,6 +3,7 @@
 
 PKG             := jsoncpp
 $(PKG)_IGNORE   :=
+$(PKG)_VERSION  := 0.6.0-rc2
 $(PKG)_CHECKSUM := a14eb501c44e610b8aaa2962bd1cc1775ed4fde2
 $(PKG)_SUBDIR   := $(PKG)-src-$($(PKG)_VERSION)
 $(PKG)_FILE     := $(PKG)-src-$($(PKG)_VERSION).tar.gz
