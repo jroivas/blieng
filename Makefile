@@ -9,15 +9,18 @@ native: linux
 
 all: linux win translations
 
-linux: linux-blieng
+prepare:
+	./tools/fetch_build.sh
+
+linux: prepare linux-blieng
 
 linux-prep:
-	@./tools/winbuild/clean.sh linux
+	@./tools/build/clean.sh linux
 	@echo "linux" > build.last
 
 linux-blieng: linux-prep
-	cd blieng && qmake
-	make -C blieng $(coreflags)
+	cd blieng && "$(topdir)"/tools/build/qmake.sh linux
+	 "$(topdir)"/tools/build/make.sh linux -C blieng $(coreflags)
 
 linux-dist:
 	mkdir -p dist/$(PRODUCT)-$(VERS)-linux
@@ -27,18 +30,18 @@ linux-dist:
 	cp -f blieng/*.h dist/$(PRODUCT)-$(VERS)-linux/include/
 	cd dist && tar czf $(PRODUCT)-$(VERS)-linux.tar.gz $(PRODUCT)-$(VERS)-linux
 
-win:
-	"$(topdir)"/tools/winbuild/winbuild.sh win-build
+win: prepare
+	"$(topdir)"/tools/build/build.sh win-build
 
 win-prep:
-	@./tools/winbuild/clean.sh win
+	@./tools/build/clean.sh win
 	@echo "win" > build.last
 
 win-build: win-blieng
 
 win-blieng: win-prep
-	cd blieng && "$(topdir)"/tools/winbuild/winqmake.sh
-	"$(topdir)"/tools/winbuild/winmake.sh -C blieng $(coreflags)
+	cd blieng && "$(topdir)"/tools/build/qmake.sh win
+	"$(topdir)"/tools/build/make.sh win -C blieng $(coreflags)
 
 win-dist:
 	mkdir -p dist/$(PRODUCT)-$(VERS)-win
@@ -56,8 +59,8 @@ cppcheck:
 	cppcheck --enable=all --inconclusive --inline-suppr --xml-version=2 blieng 2> cppcheck_report_blieng.xml
 
 test:
-	cd blieng/tests && qmake
-	make -C blieng/tests
+	cd blieng/tests && "$(topdir)"/tools/build/qmake.sh linux
+	"$(topdir)"/tools/build/make.sh linux -C blieng/tests
 	blieng/tests/tests 2> test_result.xml
 
 clean:
