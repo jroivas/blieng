@@ -8,9 +8,11 @@ class DataTest : public CppUnit::TestFixture
 public:
     CPPUNIT_TEST_SUITE(DataTest);
     CPPUNIT_TEST(object);
+    CPPUNIT_TEST(gen);
     CPPUNIT_TEST_SUITE_END();
 private:
     void object();
+    void gen();
 };
 
 #endif
