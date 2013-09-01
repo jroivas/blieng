@@ -24,6 +24,7 @@ HEADERS += \
     path.h \
     point.h \
     town.h \
+    card.h \
     rijndael-alg-fst.h \
     wallclock.h
 SOURCES += \
@@ -38,5 +39,6 @@ SOURCES += \
     path.cpp \
     point.cpp \
     town.cpp \
+    card.cpp \
     rijndael-alg-fst.c \
     wallclock.cpp
