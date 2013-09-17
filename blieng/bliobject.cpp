@@ -206,3 +206,13 @@ bool BliObject::decrease(std::string key)
 {
     return changeNumberValue(key, -1);
 }
+
+bool BliObject::getRandomBoolean()
+{
+    int tmp1 = getRandomInt(0, 420000);
+    int tmp2 = getRandomInt(12345, 999999);
+
+    tmp1 %= 2;
+    tmp2 %= 2;
+    return (tmp1 == tmp2);
+}

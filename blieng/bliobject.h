@@ -36,6 +36,7 @@ public:
 
     static int getRandomInt(int limit_low, int limit_max);
     static double getRandomDouble(double limit_low, double limit_max);
+    static bool getRandomBoolean();
 
 protected:
     std::map<std::string, boost::any> values;
