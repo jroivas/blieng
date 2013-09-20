@@ -38,7 +38,7 @@ public:
     void clearConsume();
 
     std::string itemToString();
-    void assignItem(ItemBase *parent);
+    void assignItem(std::auto_ptr<ItemBase> &parent);
     bool equals(ItemBase *another);
     void setupStock();
 
@@ -69,8 +69,10 @@ public:
     void setUsable() { usable = true; }
     std::vector<std::string> listItems();
     bool isItem(std::string name);
-    bool removeItem(Item *);
-    bool registerItem(Item *);
+    //bool removeItem(Item *);
+    bool removeItem(std::auto_ptr<Item> item);
+    bool registerItem(std::auto_ptr<Item> item);
+
     std::string generateBaseJson();
     virtual std::string toString();
 
@@ -79,7 +81,8 @@ private:
     void getItemBases();
 
     static bool ok;
-    static std::map<std::string, ItemBase *> item_bases;
+    //static std::map<std::string, ItemBase *> item_bases;
+    static std::map<std::string, std::auto_ptr<ItemBase> > item_bases;
 };
 
 }

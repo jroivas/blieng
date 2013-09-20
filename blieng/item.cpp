@@ -3,15 +3,19 @@
 #include <boost/foreach.hpp>
 #include "data.h"
 #include "configure.h"
+#include "auto_vector.h"
 #include <string>
+#include <memory>
 
 using blieng::Item;
 using blieng::ItemBase;
 
 bool Item::ok = false;
-std::map<std::string, blieng::ItemBase *> Item::item_bases;
+//std::map<std::string, blieng::ItemBase *> Item::item_bases;
+std::map<std::string, std::auto_ptr<ItemBase> > item_bases;
 
-typedef std::pair<std::string, ItemBase *> item_bases_t;
+//typedef std::pair<std::string, ItemBase *> item_bases_t;
+typedef std::pair<std::string, std::auto_ptr<ItemBase> > item_bases_t;
 typedef std::pair<std::string, double> consume_t;
 
 Item::Item() : ItemBase()
@@ -33,13 +37,14 @@ Item::Item(std::string name) : ItemBase()
     usable = false;
     std::cout << "Creating: " << name << "\n";
     if (!item_bases.empty()) {
-        ItemBase *orig = NULL;
+        //ItemBase *orig = NULL;
+        std::auto_ptr<ItemBase> orig;
         BOOST_FOREACH(item_bases_t val, item_bases) {
             if (val.first == name) {
                 orig = val.second;
             }
         }
-        if (orig != NULL) {
+        if (orig.get()) {
             assignItem(orig);
         } else {
             base = name;
@@ -65,9 +70,10 @@ bool Item::isItem(std::string name)
     return false;
 }
 
-bool Item::removeItem(Item *item)
+bool Item::removeItem(std::auto_ptr<Item> item)
 {
-    if (item == NULL) return false;
+    if (!item.get()) return false;
+
     bool res = false;
     BOOST_FOREACH(item_bases_t val, item_bases) {
         if (item->base == val.first) {
@@ -79,15 +85,17 @@ bool Item::removeItem(Item *item)
     return res;
 }
 
-bool Item::registerItem(Item *item)
+bool Item::registerItem(std::auto_ptr<Item> item)
 {
-    if (item == NULL) return false;
+    if (!item.get()) return false;
+
     BOOST_FOREACH(item_bases_t val, item_bases) {
         if (item->base == val.first) {
             return false;
         }
     }
     item_bases[item->base] = item;
+
     return true;
 }
 
@@ -105,7 +113,9 @@ void Item::getItemBases()
     //TODO Refactor
     BOOST_FOREACH(std::string mi, root_val.getMemberNames()) {
         Json::Value item_val = Data::getInstance()->getJsonValue(root_val, mi);
-        ItemBase *item = new ItemBase();
+        //ItemBase *item = new ItemBase();
+        std::auto_ptr<ItemBase> item(new ItemBase());
+
         if (item_val.isObject()) {
             item->base = mi;
             std::vector<std::string> item_names = Data::getInstance()->getJsonKeys(item_val);
@@ -164,47 +174,6 @@ void Item::getItemBases()
                     if (!ok) std::cout << keyname << "has unsupported type!\n";
                 }
             }
-            #if 0
-            if (Data::getInstance()->isJsonKey(item_val, "type")) {
-                Json::Value val = Data::getInstance()->getJsonValue(item_val, "type");
-                if (val.isString()) item->type = val.asString();
-            }
-            if (Data::getInstance()->isJsonKey(item_val, "image")) {
-                Json::Value val = Data::getInstance()->getJsonValue(item_val, "image");
-                if (val.isString()) item->image = val.asString();
-            }
-            if (Data::getInstance()->isJsonKey(item_val, "rarity")) {
-                Json::Value val = Data::getInstance()->getJsonValue(item_val, "rarity");
-                if (val.isNumeric()) {
-                    item->rarity = val.asDouble();
-                }
-            }
-            if (Data::getInstance()->isJsonKey(item_val, "life")) {
-                Json::Value val = Data::getInstance()->getJsonValue(item_val, "life");
-                if (val.isNumeric()) {
-                    item->life = val.asInt();
-                }
-            }
-            if (Data::getInstance()->isJsonKey(item_val, "amount")) {
-                Json::Value val = Data::getInstance()->getJsonValue(item_val, "amount");
-                if (val.isNumeric()) {
-                    item->amount = val.asDouble();
-                }
-            }
-            if (Data::getInstance()->isJsonKey(item_val, "consume")) {
-                Json::Value val = Data::getInstance()->getJsonValue(item_val, "consume");
-                std::map<std::string, double> consumes;
-                if (val.isObject()) {
-                    BOOST_FOREACH(std::string cmi, val.getMemberNames()) {
-                        Json::Value cnt_val = Data::getInstance()->getJsonValue(val, cmi);
-                        if (cnt_val.isNumeric()) {
-                            consumes[cmi] = cnt_val.asDouble();
-                        }
-                    }
-                }
-                item->consumes = consumes;
-            }
-            #endif
             item_bases[mi] = item;
         }
     }
@@ -244,6 +213,7 @@ Item *Item::produce(double produce_amount)
         std::cout << "Can't create item!\n";
         exit(1);
     }
+
     produced->assignItem(this);
     produced->usable = true;
     if (amount > 0) {
@@ -258,7 +228,8 @@ Item *Item::produce(double produce_amount)
     return produced;
 }
 
-void ItemBase::assignItem(ItemBase *parent) {
+void ItemBase::assignItem(std::auto_ptr<ItemBase> parent)
+{
     if (parent == NULL) return;
 
     base = parent->base;

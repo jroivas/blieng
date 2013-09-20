@@ -1,4 +1,5 @@
 Blieng(tm)
+==========
 
 Proprietary game engine by Blistud:io
 
@@ -6,3 +7,23 @@ Copyright(c) 2013 Blistud:io
 All rights reserved
 
 http://blistud.io
+
+
+
+3rd party components
+--------------------
+
+auto_vector.h
+  Any use, commercial or noncommercial of this code
+  is hereby granted, under the condition
+  that this copyright notice be not removed.
+
+  Reliable Software (c) 2003, http://www.relisoft.com
+  http://relisoft.com/resource/source/autovector.zip
+
+Optimised ANSI C code for the Rijndael cipher
+  Public Domain / BSD alike
+
+  Vincent Rijmen <vincent.rijmen@esat.kuleuven.ac.be>
+  Antoon Bosselaers <antoon.bosselaers@esat.kuleuven.ac.be>
+  Paulo Barreto <paulo.barreto@terra.com.br>
