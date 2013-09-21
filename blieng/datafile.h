@@ -30,7 +30,7 @@ public:
         friend class DataFile;
 
     protected:
-        unsigned char *setupKey(const char *key, unsigned int len, const char *iv=NULL, unsigned int iv_len=0);
+        auto_ptr<blieng::SafeDataPtr> setupKey(const char *key, unsigned int len, const char *iv=NULL, unsigned int iv_len=0);
         unsigned int real_len;
     };
 

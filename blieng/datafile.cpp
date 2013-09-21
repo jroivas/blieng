@@ -12,6 +12,26 @@ static unsigned int __key_size = 256/8;
 //typedef std::pair<std::string, blieng::DataFile::DataFileObject*> datafile_item_t;
 typedef auto_map<std::string,blieng::DataFile::DataFileObject>::iterator_value datafile_item_t;
 
+class blieng::SafeDataPtr
+{
+public:
+    SafeDataPtr(char data[], unsigned int len) : data(data), len(len) {
+    }
+    virtual ~SafeDataPtr() {
+        if (data != NULL) delete [] data;
+        data = NULL;
+    }
+
+    const char * getData() { return data; }
+    unsigned int length() { return len; }
+    unsigned int size() { return len; }
+
+private:
+    char *data;
+    unsigned int len;
+};
+
+
 DataFile::DataFile()
 {
     _ok = false;
@@ -116,25 +136,6 @@ bool DataFile::addData(std::string name, char *data, unsigned int len)
     return true;
 }
 
-class blieng::SafeDataPtr
-{
-public:
-    SafeDataPtr(char data[], unsigned int len) : data(data), len(len) {
-    }
-    virtual ~SafeDataPtr() {
-        if (data != NULL) delete [] data;
-        data = NULL;
-    }
-
-    const char * getData() { return data; }
-    unsigned int length() { return len; }
-    unsigned int size() { return len; }
-
-private:
-    char *data;
-    unsigned int len;
-};
-
 auto_ptr<blieng::SafeDataPtr> DataFile::obfuscateSimple(const char *data, unsigned int len)
 {
     //char *res = (char *)calloc(1, len + 1);
@@ -198,7 +199,6 @@ bool DataFile::read(const char *key, unsigned int key_len)
         //delete [] name;
 
         if (key != NULL && key_len > 0) {
-            //FIXME
             //DataFileObject *new_tmp = tmp->deobfuscate(key, key_len, sname);
             auto_ptr<DataFileObject> new_tmp(tmp->deobfuscate(key, key_len, sname));
             if (new_tmp.get()) {
@@ -273,12 +273,13 @@ blieng::DataFile::DataFileObject::DataFileObject(const char *new_data, unsigned 
     memcpy(data, new_data, len);
 }
 
-unsigned char *blieng::DataFile::DataFileObject::setupKey(const char *key, unsigned int len, const char *iv, unsigned int iv_len)
+//unsigned char *blieng::DataFile::DataFileObject::setupKey(const char *key, unsigned int len, const char *iv, unsigned int iv_len)
+auto_ptr<blieng::SafeDataPtr> blieng::DataFile::DataFileObject::setupKey(const char *key, unsigned int len, const char *iv, unsigned int iv_len)
 {
     //unsigned char *res = (unsigned char*)calloc(1, __key_size);
     unsigned char *res = new unsigned char[__key_size];
     unsigned int index = 0;
-#if 1
+
     #define KEY_INIT_LOOP(A_res, A_index, A_cnt, A_tmp) \
         while (A_cnt > 0) {\
             A_res[A_index++] ^= *(A_tmp++);\
@@ -297,31 +298,8 @@ unsigned char *blieng::DataFile::DataFileObject::setupKey(const char *key, unsig
         unsigned int cnt = len;
         KEY_INIT_LOOP(res, index, cnt, tmp);
     }
-#else
-    if (iv != NULL && iv_len > 0) {
-        const char *tmp = iv;
-        unsigned int cnt = iv_len;
-        while (cnt > 0) {
-            res[index] ^= *tmp;
-            index++;
-            index %= (__key_size);
-            tmp++;
-            cnt--;
-        }
-    }
 
-    if (key != NULL && len > 0) {
-        const char *tmp = key;
-        unsigned int cnt = len;
-        res[index] ^= *tmp;
-        index++;
-        index %= (__key_size);
-        tmp++;
-        cnt--;
-    }
-#endif
-
-    return res;
+    return auto_ptr<SafeDataPtr>(new SafeDataPtr(res, _key_size));
     #undef KEY_INIT_LOOP
 }
 
@@ -335,11 +313,15 @@ auto_ptr<blieng::DataFile::DataFileObject> blieng::DataFile::DataFileObject::obf
     //uint32_t *key_data = (uint32_t*)calloc(sizeof(uint32_t),(MAXNR+1)*4);
     uint32_t *key_data = new uint32_t[(MAXNR+1)*4];
 
-    unsigned char *init_key = setupKey(seed.c_str(), seed.length());
+    /*unsigned char *init_key = setupKey(seed.c_str(), seed.length());
     unsigned char *tmp_key = setupKey(key, key_len, (const char*)init_key, __key_size);
     delete [] init_key;
+    */
+    auto_ptr<SafeDataPtr> init_key = setupKey(seed.c_str(), seed.length());
+    auto_ptr<SafeDataPtr> tmp_key = setupKey(key, key_len, (const char*)init_key->getData(), __key_size);
+
     //free(init_key);
-    init_key = NULL;
+    //init_key = NULL;
 
     int nr = rijndaelKeySetupEnc(key_data, (const unsigned char*)tmp_key, 256);
     //free(tmp_key);
