@@ -66,6 +66,7 @@ public:
     virtual ~Item() { }
 
     std::auto_ptr<Item> copy();
+    //Item* copy();
 
     //bool consume(Item *);
     bool consume(std::auto_ptr<Item>);
@@ -89,6 +90,7 @@ private:
     //static std::map<std::string, ItemBase *> item_bases;
     //static std::map<std::string, std::auto_ptr<ItemBase> > item_bases;
     static auto_vector<ItemBase> item_bases;
+    //static std::vector<ItemBase*> item_bases;
 };
 
 }

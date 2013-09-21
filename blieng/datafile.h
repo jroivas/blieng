@@ -22,6 +22,10 @@ public:
     public:
         DataFileObject() : data(NULL), len(0), real_len(0) {}
         DataFileObject(const char *new_data, unsigned int new_len);
+        ~DataFileObject() {
+            if (data != NULL) delete data;
+        }
+
         auto_ptr<DataFileObject> obfuscate(const char *key, unsigned int len, std::string seed="");
         auto_ptr<DataFileObject> deobfuscate(const char *key, unsigned int len, std::string seed="");
 

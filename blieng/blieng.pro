@@ -25,6 +25,8 @@ HEADERS += \
     point.h \
     town.h \
     card.h \
+    auto_map.h \
+    auto_vector.h \
     rijndael-alg-fst.h \
     wallclock.h
 SOURCES += \

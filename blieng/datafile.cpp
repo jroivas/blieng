@@ -17,6 +17,8 @@ class blieng::SafeDataPtr
 public:
     SafeDataPtr(char data[], unsigned int len) : data(data), len(len) {
     }
+    SafeDataPtr(unsigned char data[], unsigned int len) : data((char*)data), len(len) {
+    }
     virtual ~SafeDataPtr() {
         if (data != NULL) delete [] data;
         data = NULL;
@@ -299,7 +301,7 @@ auto_ptr<blieng::SafeDataPtr> blieng::DataFile::DataFileObject::setupKey(const c
         KEY_INIT_LOOP(res, index, cnt, tmp);
     }
 
-    return auto_ptr<SafeDataPtr>(new SafeDataPtr(res, _key_size));
+    return auto_ptr<SafeDataPtr>(new SafeDataPtr(res, __key_size));
     #undef KEY_INIT_LOOP
 }
 
@@ -311,7 +313,8 @@ auto_ptr<blieng::DataFile::DataFileObject> blieng::DataFile::DataFileObject::obf
     olen *= 16;
 
     //uint32_t *key_data = (uint32_t*)calloc(sizeof(uint32_t),(MAXNR+1)*4);
-    uint32_t *key_data = new uint32_t[(MAXNR+1)*4];
+    //uint32_t *key_data = new uint32_t[(MAXNR+1)*4];
+    auto_ptr<uint32_t> key_data(new uint32_t[(MAXNR+1)*4]);
 
     /*unsigned char *init_key = setupKey(seed.c_str(), seed.length());
     unsigned char *tmp_key = setupKey(key, key_len, (const char*)init_key, __key_size);
@@ -323,13 +326,13 @@ auto_ptr<blieng::DataFile::DataFileObject> blieng::DataFile::DataFileObject::obf
     //free(init_key);
     //init_key = NULL;
 
-    int nr = rijndaelKeySetupEnc(key_data, (const unsigned char*)tmp_key, 256);
+    int nr = rijndaelKeySetupEnc(key_data.get(), (const unsigned char*)tmp_key->getData(), 256);
     //free(tmp_key);
-    delete [] tmp_key;
-    tmp_key = NULL;
+    //delete [] tmp_key;
+    //tmp_key = NULL;
     if (nr == 0) {
         //free(key_data);
-        delete [] key_data;
+        //delete [] key_data;
         //return NULL;
         return auto_ptr<DataFileObject>();
     }
@@ -358,7 +361,7 @@ auto_ptr<blieng::DataFile::DataFileObject> blieng::DataFile::DataFileObject::obf
             }
         }
 
-        rijndaelEncrypt(key_data, nr, in_block, out_block);
+        rijndaelEncrypt(key_data.get(), nr, in_block, out_block);
 
         for (int i = 0; i < 16; i++) {
             if (ocnt > 0) {
@@ -371,8 +374,8 @@ auto_ptr<blieng::DataFile::DataFileObject> blieng::DataFile::DataFileObject::obf
         blocknum++;
     }
     //free(key_data);
-    delete [] key_data;
-    key_data = NULL;
+    //delete [] key_data;
+    //key_data = NULL;
 
     //blieng::DataFile::DataFileObject *res = new DataFileObject(tmp, olen);
     auto_ptr<DataFileObject> res(new DataFileObject(tmp, olen));
@@ -383,6 +386,7 @@ auto_ptr<blieng::DataFile::DataFileObject> blieng::DataFile::DataFileObject::obf
 auto_ptr<blieng::DataFile::DataFileObject> blieng::DataFile::DataFileObject::deobfuscate(const char *key, unsigned int key_len, std::string seed)
 {
     //uint32_t *key_data = (uint32_t*)calloc(sizeof(uint32_t),(MAXNR+1)*4);
+#if 0
     uint32_t *key_data = new uint32_t[(MAXNR+1)*4];
 
     unsigned char *init_key = setupKey(seed.c_str(), seed.length());
@@ -390,14 +394,20 @@ auto_ptr<blieng::DataFile::DataFileObject> blieng::DataFile::DataFileObject::deo
     //free(init_key);
     delete [] init_key;
     init_key = NULL;
+#endif
 
-    int nr = rijndaelKeySetupDec(key_data, (const unsigned char*)tmp_key, 256);
+    auto_ptr<uint32_t> key_data(new uint32_t[(MAXNR+1)*4]);
+
+    auto_ptr<SafeDataPtr> init_key = setupKey(seed.c_str(), seed.length());
+    auto_ptr<SafeDataPtr> tmp_key = setupKey(key, key_len, (const char*)init_key->getData(), __key_size);
+
+    int nr = rijndaelKeySetupDec(key_data.get(), (const unsigned char*)tmp_key->getData(), 256);
     //free(tmp_key);
-    delete [] tmp_key;
-    tmp_key = NULL;
+    //delete [] tmp_key;
+    //tmp_key = NULL;
     if (nr == 0) {
         //free(key_data);
-        delete [] key_data;
+        //delete [] key_data;
         return auto_ptr<DataFileObject>();
     }
 
@@ -422,7 +432,7 @@ auto_ptr<blieng::DataFile::DataFileObject> blieng::DataFile::DataFileObject::deo
                 in_block[i] = 0;
             }
         }
-        rijndaelDecrypt(key_data, nr, in_block, out_block);
+        rijndaelDecrypt(key_data.get(), nr, in_block, out_block);
         for (int i = 0; i < 16; i++) {
             if (ocnt > 0) {
                 *opos = out_block[i] ^ iv[i];
@@ -433,8 +443,8 @@ auto_ptr<blieng::DataFile::DataFileObject> blieng::DataFile::DataFileObject::deo
         memcpy(iv, in_block, 16);
     }
     //free(key_data);
-    delete [] key_data;
-    key_data = NULL;
+    //delete [] key_data;
+    //key_data = NULL;
 
     //blieng::DataFile::DataFileObject *res = new DataFileObject(tmp, real_len);
     auto_ptr<DataFileObject> res(new DataFileObject(tmp, real_len));

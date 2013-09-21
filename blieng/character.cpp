@@ -21,11 +21,13 @@ bool Character::isAlive()
 }
 
 void Character::addItem(auto_ptr<blieng::Item> item)
+//void Character::addItem(Item* item)
 {
     items.push_back(item);
 }
 
 bool Character::removeItem(const blieng::Item* item)
+//bool Character::removeItem(const auto_ptr<blieng::Item> item)
 {
     auto_vector<blieng::Item>::iterator ii = items.begin();
     while (ii != items.end()) {
@@ -39,15 +41,17 @@ bool Character::removeItem(const blieng::Item* item)
 }
 
 const auto_vector<blieng::Item>* Character::getItems()
+//const std::vector<blieng::Item*> Character::getItems() const
 {
     return &items;
 }
 
-/*void Character::assignObject(BliObject *another)
+#if 0
+void Character::assignObject(BliObject *another)
 {
     blieng::BliObject::assignObject(another);
 }
-*/
+#endif
 
 void Character::assignObject(Character *another)
 {

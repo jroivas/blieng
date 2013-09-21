@@ -17,9 +17,10 @@ BliObject::BliObject()
 
 BliObject::~BliObject()
 {
+    //std::cout << "Delete bliobject " << (long long)this << "\n";
     // Enforce deletion
     while (!values.empty()) {
-        values_iter_t data = values.begin();        
+        values_iter_t data = values.begin();
         values.erase(data);
     }
 }

@@ -36,7 +36,7 @@ public:
 
     virtual std::list<std::string> getKeys();
 
-    virtual void assignObject(const BliObject *another);
+    void assignObject(const BliObject *another);
 
     static int getRandomInt(int limit_low, int limit_max);
     static double getRandomDouble(double limit_low, double limit_max);
