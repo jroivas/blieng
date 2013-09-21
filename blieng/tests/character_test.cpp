@@ -2,6 +2,9 @@
 #include <character.h>
 #include <bliobject.h>
 #include <item.h>
+#include <memory>
+
+using std::auto_ptr;
 
 CPPUNIT_TEST_SUITE_REGISTRATION( CharacterTest );
 
@@ -22,60 +25,61 @@ void CharacterTest::alive_kill()
 
 void CharacterTest::items()
 {
-    blieng::Item *tmp = new blieng::Item();
-    blieng::Item *tmp2 = new blieng::Item();
+    auto_ptr<blieng::Item> tmp(new blieng::Item());
+    auto_ptr<blieng::Item> tmp2(new blieng::Item());
 
-    Character *obj = new Character();
+    auto_ptr<Character> obj(new Character());
 
-    CPPUNIT_ASSERT( obj->getItems().size() == 0);
-
-    obj->addItem(tmp);
-    CPPUNIT_ASSERT( obj->getItems().size() == 1);
-
-    obj->addItem(tmp2);
-    CPPUNIT_ASSERT( obj->getItems().size() == 2);
-
-
-    CPPUNIT_ASSERT( obj->removeItem(tmp2) );
-    CPPUNIT_ASSERT( obj->getItems().size() == 1);
-
-    CPPUNIT_ASSERT( !obj->removeItem(tmp2) );
-    CPPUNIT_ASSERT( obj->getItems().size() == 1);
-
-    CPPUNIT_ASSERT( obj->removeItem(tmp) );
-    CPPUNIT_ASSERT( obj->getItems().size() == 0);
-
-    CPPUNIT_ASSERT( !obj->removeItem(tmp) );
-    CPPUNIT_ASSERT( obj->getItems().size() == 0);
+    CPPUNIT_ASSERT( obj->getItems()->size() == 0);
 
     obj->addItem(tmp);
+    CPPUNIT_ASSERT( obj->getItems()->size() == 1);
+
     obj->addItem(tmp2);
-    CPPUNIT_ASSERT( obj->getItems().size() == 2);
+    CPPUNIT_ASSERT( obj->getItems()->size() == 2);
+
+
+    CPPUNIT_ASSERT( obj->removeItem(tmp2.get()) );
+    CPPUNIT_ASSERT( obj->getItems()->size() == 1);
+
+    CPPUNIT_ASSERT( !obj->removeItem(tmp2.get()) );
+    CPPUNIT_ASSERT( obj->getItems()->size() == 1);
+
+    CPPUNIT_ASSERT( obj->removeItem(tmp.get()) );
+    CPPUNIT_ASSERT( obj->getItems()->size() == 0);
+
+    CPPUNIT_ASSERT( !obj->removeItem(tmp.get()) );
+    CPPUNIT_ASSERT( obj->getItems()->size() == 0);
+
+    obj->addItem(tmp);
+    obj->addItem(tmp2);
+    CPPUNIT_ASSERT( obj->getItems()->size() == 2);
 
     bool found = false;
-    std::vector<blieng::Item*> items = obj->getItems();
-    std::vector<blieng::Item*>::iterator ii = items.begin();
-    while (ii != items.end()) {
-        if (*ii == tmp2) found = true;
+    const auto_vector<blieng::Item> *items = obj->getItems();
+
+    auto_vector<blieng::Item>::const_iterator ii = items->begin();
+    while (ii != items->end()) {
+        if (*ii == tmp2.get()) found = true;
         ++ii;
     }
     CPPUNIT_ASSERT( found );
 
     found = false;
-    ii = items.begin();
-    while (ii != items.end()) {
-        if (*ii == tmp) found = true;
+    ii = items->begin();
+    while (ii != items->end()) {
+        if (*ii == tmp.get()) found = true;
         ++ii;
     }
     CPPUNIT_ASSERT( found );
 
-    CPPUNIT_ASSERT( obj->removeItem(tmp) );
+    CPPUNIT_ASSERT( obj->removeItem(tmp.get()) );
 
     found = false;
     items = obj->getItems();
-    ii = items.begin();
-    while (ii != items.end()) {
-        if (*ii == tmp) found = true;
+    ii = items->begin();
+    while (ii != items->end()) {
+        if (*ii == tmp.get()) found = true;
         ++ii;
     }
     CPPUNIT_ASSERT( !found );

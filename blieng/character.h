@@ -6,6 +6,9 @@
 
 #include "bliobject.h"
 #include "item.h"
+#include "auto_vector.h"
+
+using std::auto_ptr;
 
 namespace blieng
 {
@@ -18,15 +21,17 @@ public:
     bool kill();
     bool isAlive();
 
-    void addItem(blieng::Item *);
-    bool removeItem(blieng::Item *);
-    std::vector<blieng::Item *> getItems() const;
+    void addItem(auto_ptr<blieng::Item>);
+    //bool removeItem(auto_ptr<blieng::Item>);
+    bool removeItem(const blieng::Item *);
+    //std::vector<blieng::Item *> getItems() const;
+    const auto_vector<blieng::Item>* getItems();
 
-    virtual void assignObject(blieng::BliObject *another);
+    //virtual void assignObject(blieng::BliObject *another);
     virtual void assignObject(Character *another);
 
 protected:
-    std::vector<blieng::Item *> items;
+    auto_vector<blieng::Item> items;
 };
 
 }

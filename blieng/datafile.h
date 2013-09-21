@@ -2,11 +2,17 @@
 #define __BLIENG_DATA_FILE_H
 
 #include <iostream>
-#include <map>
+//#include <map>
+#include "auto_map.h"
 #include <vector>
+#include <memory>
+
+using std::auto_ptr;
 
 namespace blieng
 {
+
+class SafeDataPtr;
 
 class DataFile
 {
@@ -16,8 +22,8 @@ public:
     public:
         DataFileObject() : data(NULL), len(0), real_len(0) {}
         DataFileObject(const char *new_data, unsigned int new_len);
-        DataFileObject* obfuscate(const char *key, unsigned int len, std::string seed="");
-        DataFileObject* deobfuscate(const char *key, unsigned int len, std::string seed="");
+        auto_ptr<DataFileObject> obfuscate(const char *key, unsigned int len, std::string seed="");
+        auto_ptr<DataFileObject> deobfuscate(const char *key, unsigned int len, std::string seed="");
 
         char *data;
         unsigned int len;
@@ -43,13 +49,14 @@ public:
 
     bool read(const char *key, unsigned int key_len);
     bool write(const char *key, unsigned int key_len);
-    char *obfuscateSimple(const char *data, unsigned int len);
+    auto_ptr<SafeDataPtr> obfuscateSimple(const char *data, unsigned int len);
 
 private:
     std::string _name;
     std::string unifyName(std::string name);
 
-    std::map<std::string, DataFileObject*> _data;
+    //std::map<std::string, DataFileObject*> _data;
+    auto_map<std::string, DataFileObject> _data;
     bool _ok;
 };
 

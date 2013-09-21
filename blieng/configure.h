@@ -13,6 +13,8 @@ namespace blieng
 class Configure : public blieng::BliObject
 {
 public:
+    virtual ~Configure();
+
     typedef enum { KeyString, KeyDouble, KeyUInt, KeyInt, KeyBool } key_type_t;
     static Configure *getInstance();
     static Configure *getInstance(std::string config);
@@ -24,6 +26,7 @@ public:
 
 private:
     Configure();
+
     void parse();
 
     std::string config_file;

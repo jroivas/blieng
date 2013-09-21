@@ -4,7 +4,10 @@
 #include <string>
 #include <map>
 #include <list>
+#include <memory>
 #include <boost/any.hpp>
+
+using std::auto_ptr;
 
 namespace blieng
 {
@@ -13,6 +16,7 @@ class BliObject
 {
 public:
     BliObject();
+    virtual ~BliObject();
 
     virtual void setValue(std::string key, boost::any value);
     virtual bool isValue(std::string key);
@@ -32,7 +36,7 @@ public:
 
     virtual std::list<std::string> getKeys();
 
-    virtual void assignObject(BliObject *another);
+    virtual void assignObject(const BliObject *another);
 
     static int getRandomInt(int limit_low, int limit_max);
     static double getRandomDouble(double limit_low, double limit_max);

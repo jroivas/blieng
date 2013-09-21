@@ -15,7 +15,16 @@ BliObject::BliObject()
 {
 }
 
-void BliObject::assignObject(BliObject *another)
+BliObject::~BliObject()
+{
+    // Enforce deletion
+    while (!values.empty()) {
+        values_iter_t data = values.begin();        
+        values.erase(data);
+    }
+}
+
+void BliObject::assignObject(const BliObject *another)
 {
     if (another == NULL) return;
 

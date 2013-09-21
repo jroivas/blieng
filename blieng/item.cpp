@@ -3,7 +3,6 @@
 #include <boost/foreach.hpp>
 #include "data.h"
 #include "configure.h"
-#include "auto_vector.h"
 #include <string>
 #include <memory>
 
@@ -12,10 +11,12 @@ using blieng::ItemBase;
 
 bool Item::ok = false;
 //std::map<std::string, blieng::ItemBase *> Item::item_bases;
-std::map<std::string, std::auto_ptr<ItemBase> > item_bases;
+//std::map<std::string, std::auto_ptr<ItemBase> > item_bases;
+auto_vector<ItemBase> Item::item_bases;
 
 //typedef std::pair<std::string, ItemBase *> item_bases_t;
-typedef std::pair<std::string, std::auto_ptr<ItemBase> > item_bases_t;
+//typedef std::pair<std::string, std::auto_ptr<ItemBase> > item_bases_t;
+typedef const ItemBase* item_bases_t;
 typedef std::pair<std::string, double> consume_t;
 
 Item::Item() : ItemBase()
@@ -37,14 +38,14 @@ Item::Item(std::string name) : ItemBase()
     usable = false;
     std::cout << "Creating: " << name << "\n";
     if (!item_bases.empty()) {
-        //ItemBase *orig = NULL;
-        std::auto_ptr<ItemBase> orig;
+        const ItemBase *orig = NULL;
+        //std::auto_ptr<ItemBase> orig;
         BOOST_FOREACH(item_bases_t val, item_bases) {
-            if (val.first == name) {
-                orig = val.second;
+            if (val->base == name) {
+                orig = val;
             }
         }
-        if (orig.get()) {
+        if (orig != NULL) {
             assignItem(orig);
         } else {
             base = name;
@@ -57,7 +58,7 @@ std::vector<std::string> Item::listItems()
 {
     std::vector<std::string> tmp;
     BOOST_FOREACH(item_bases_t val, item_bases) {
-        tmp.push_back(val.first);
+        tmp.push_back(val->base);
     }
     return tmp;
 }
@@ -65,7 +66,7 @@ std::vector<std::string> Item::listItems()
 bool Item::isItem(std::string name)
 {
     BOOST_FOREACH(item_bases_t val, item_bases) {
-        if (val.first == name) return true;
+        if (val->base == name) return true;
     }
     return false;
 }
@@ -74,31 +75,41 @@ bool Item::removeItem(std::auto_ptr<Item> item)
 {
     if (!item.get()) return false;
 
-    bool res = false;
-    BOOST_FOREACH(item_bases_t val, item_bases) {
-        if (item->base == val.first) {
-            item_bases.erase(val.first);
+    auto_vector<ItemBase>::iterator it = item_bases.begin();
+    while (it != item_bases.end()) {
+        if (item->base == (*it)->base) {
+            item_bases.erase(it);
             return true;
         }
     }
+/*
+    BOOST_FOREACH(item_bases_t val, item_bases) {
+        if (item->base == val->base) {
+            item_bases.erase(val);
+            return true;
+        }
+    }
+*/
 
-    return res;
+    return false;
 }
 
-bool Item::registerItem(std::auto_ptr<Item> item)
+#if 0
+bool Item::registerItem(std::auto_ptr<Item> &item)
 {
     if (!item.get()) return false;
 
     BOOST_FOREACH(item_bases_t val, item_bases) {
-        if (item->base == val.first) {
+        if (item->base == val->base) {
             return false;
         }
     }
-    item_bases[item->base] = item;
+    item_bases.push_back(item);
+    //item_bases[item->base] = item;
 
     return true;
 }
-
+#endif
 
 void Item::getItemBases()
 {
@@ -174,13 +185,14 @@ void Item::getItemBases()
                     if (!ok) std::cout << keyname << "has unsupported type!\n";
                 }
             }
-            item_bases[mi] = item;
+            item_bases.push_back(item);
+            //item_bases[mi] = item;
         }
     }
     ok = true;
 }
 
-bool Item::consume(Item *another)
+bool Item::consume(std::auto_ptr<Item> another)
 {
     if (!doesConsume(another->base)) return false;
     if (!another->isUsable()) return false;
@@ -197,7 +209,7 @@ bool Item::consume(Item *another)
     return true;
 }
 
-Item *Item::produce(double produce_amount)
+std::auto_ptr<Item> Item::produce(double produce_amount) throw (char *)
 {
     bool can_consume = true;
     BOOST_FOREACH(consume_t val, consumes.get()) {
@@ -206,12 +218,14 @@ Item *Item::produce(double produce_amount)
         }
     }
     std::cout << base << "  " << can_consume << " rai" << produce_amount <<"\n";
-    if (!can_consume) return NULL;
+    if (!can_consume) throw "Can't consume";
 
-    Item *produced = new Item(base);
-    if (produced == NULL) {
-        std::cout << "Can't create item!\n";
+    std::auto_ptr<Item> produced (new Item(base));
+    if (!produced.get()) {
+        throw "Can't create item!";
+        /*std::cout << "Can't create item!\n";
         exit(1);
+        */
     }
 
     produced->assignItem(this);
@@ -228,7 +242,7 @@ Item *Item::produce(double produce_amount)
     return produced;
 }
 
-void ItemBase::assignItem(std::auto_ptr<ItemBase> parent)
+void ItemBase::assignItem(const ItemBase* parent)
 {
     if (parent == NULL) return;
 
@@ -248,7 +262,7 @@ bool ItemBase::equals(ItemBase *another)
     return (base == another->base && type == another->type && rarity == another->rarity);
 }
 
-bool ItemBase::doesConsume(std::string name)
+bool ItemBase::doesConsume(std::string name) const
 {
     BOOST_FOREACH(consume_t val, consumes.get()) {
         if (val.first == name) return true;
@@ -407,7 +421,7 @@ std::string Item::toString()
     return blieng::BliObject::toString() + itemToString();
 }
 
-std::string ItemBase::generateJson(std::string indent)
+std::string ItemBase::generateJson(std::string indent) const
 {
     std::list<std::string> res;
     if (type != "") res.push_back("\"type\": \"" + type.get() + "\"");
@@ -446,14 +460,14 @@ std::string Item::generateBaseJson()
     BOOST_FOREACH(item_bases_t val, item_bases) {
         if (!first) res += ",\n";
         first = false;
-        res += val.second->generateJson("  ");
+        res += val->generateJson("  ");
     }
     return "{\n" + res + "\n}\n";
 }
 
-Item *Item::copy()
+std::auto_ptr<Item> Item::copy()
 {
-    Item *res = new Item();
+    std::auto_ptr<Item> res(new Item());
     res->assignItem(this);
     return res;
 }

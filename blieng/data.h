@@ -3,9 +3,12 @@
 
 #include <boost/filesystem.hpp>
 #include <vector>
+#include <memory>
 #include <json/reader.h>
 #include <boost/random/random_device.hpp>
 #include "datafile.h"
+
+using std::auto_ptr;
 
 namespace blieng
 {
@@ -13,6 +16,7 @@ namespace blieng
 class Data
 {
 public:
+    virtual ~Data();
     static Data *getInstance();
 
     bool initialize(const char *key, unsigned int key_len);
@@ -46,14 +50,15 @@ private:
     std::string findFileFromDataFile(std::string name);
     std::vector<std::string> findFileExtFromDataFile(std::string path, std::string ext);
 
-    boost::filesystem::path *findDataFile(std::string datafilename = "data.dat");
-    boost::filesystem::path *findDataPath();
-    boost::filesystem::path *data_path;
-    boost::filesystem::path *data_file_path;
-    static Data *__data_instance;
+    std::auto_ptr<boost::filesystem::path> findDataFile(std::string datafilename = "data.dat");
+    std::auto_ptr<boost::filesystem::path> findDataPath();
+    std::auto_ptr<boost::filesystem::path> data_path;
+    auto_ptr<boost::filesystem::path> data_file_path;
     boost::random::random_device *gen;
 
-    blieng::DataFile *datafile;
+    std::auto_ptr<blieng::DataFile> datafile;
+
+    static Data *__data_instance;
 };
 
 }
