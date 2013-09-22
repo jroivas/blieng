@@ -15,9 +15,9 @@ Card::~Card()
     }
 }
 
-void Card::combine(auto_ptr<blieng::Card> card)
+void Card::combine(std::unique_ptr<blieng::Card> card)
 {
-    combined.push_back(card);
+    combined.push_back(std::move(card));
 }
 
 /*

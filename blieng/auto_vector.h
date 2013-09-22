@@ -28,7 +28,7 @@ public:
         auto_lvalue (T * & p) : _p (p) {}
         operator T * () const { return _p; }
         T * operator-> () const { return _p; }
-        auto_lvalue & operator= (std::auto_ptr<T> ap)
+        auto_lvalue & operator= (std::unique_ptr<T> ap)
         {
             delete _p;
             _p = ap.release ();
@@ -63,20 +63,20 @@ public:
     { 
         return auto_lvalue (_arr [i]); 
     }
-    void assign (size_t i, std::auto_ptr<T> p);
+    void assign (size_t i, std::unique_ptr<T> p);
     void assign_direct (size_t i, T * p);
-    void insert (size_t idx, std::auto_ptr<T> p);
+    void insert (size_t idx, std::unique_ptr<T> p);
 
     // stack access
-    void push_back (std::auto_ptr<T> p);
-    std::auto_ptr<T> pop_back (); // non-standard
+    void push_back (std::unique_ptr<T> p);
+    std::unique_ptr<T> pop_back (); // non-standard
     T * back () { return _arr.back (); }
     T const * back () const { return _arr.back (); }
     T * front () { return _arr.front (); }
     T const * front () const { return _arr.front (); }
 
-    std::auto_ptr<T> pop (const T *);
-    std::auto_ptr<T> pop (size_t idx);
+    std::unique_ptr<T> pop (const T *);
+    std::unique_ptr<T> pop (size_t idx);
 
     // iterators
     typedef typename std::vector<T*>::iterator iterator;
@@ -84,8 +84,8 @@ public:
     typedef typename std::vector<T*>::reverse_iterator reverse_iterator;
     typedef typename std::vector<T*>::const_reverse_iterator const_reverse_iterator;
 
-    std::auto_ptr<T> pop (iterator it);
-    void insert (iterator idx, std::auto_ptr<T> p);
+    std::unique_ptr<T> pop (iterator it);
+    void insert (iterator idx, std::unique_ptr<T> p);
 
     iterator begin () { return _arr.begin (); }
     iterator end () { return _arr.end (); }
@@ -124,21 +124,21 @@ auto_vector<T>::~auto_vector ()
 }
 
 template <class T>
-void auto_vector<T>::push_back (std::auto_ptr<T> ptr)
+void auto_vector<T>::push_back (std::unique_ptr<T> ptr)
 {
     _arr.push_back (ptr.get ());
     ptr.release ();
 }
 
 template <class T>
-std::auto_ptr<T> auto_vector<T>::pop (typename auto_vector<T>::iterator it)
+std::unique_ptr<T> auto_vector<T>::pop (typename auto_vector<T>::iterator it)
 {
     assert (it < end ());
 
     T *p = *it;
     _arr.erase (it);
 
-    return std::auto_ptr<T> (p);
+    return std::unique_ptr<T> (p);
     /*
     assert (it < end ());
     delete *it;
@@ -147,7 +147,7 @@ std::auto_ptr<T> auto_vector<T>::pop (typename auto_vector<T>::iterator it)
 }
 
 template <class T>
-std::auto_ptr<T> auto_vector<T>::pop (size_t idx)
+std::unique_ptr<T> auto_vector<T>::pop (size_t idx)
 {
     assert (idx < size ());
 
@@ -156,11 +156,11 @@ std::auto_ptr<T> auto_vector<T>::pop (size_t idx)
     // Compact array
     _arr.erase (ToIter (idx));
 
-    return std::auto_ptr<T> (item);
+    return std::unique_ptr<T> (item);
 }
 
 template <class T>
-std::auto_ptr<T> auto_vector<T>::pop (const T * p)
+std::unique_ptr<T> auto_vector<T>::pop (const T * p)
 {
     assert (size () != 0);
 
@@ -174,16 +174,16 @@ std::auto_ptr<T> auto_vector<T>::pop (const T * p)
         ++it;
     }
 
-    return std::auto_ptr<T> (res);
+    return std::unique_ptr<T> (res);
 }
 
 template <class T>
-inline std::auto_ptr<T> auto_vector<T>::pop_back () 
+inline std::unique_ptr<T> auto_vector<T>::pop_back () 
 {
     assert (size () != 0);
     T * p = _arr.back ();
     _arr.pop_back ();
-    return std::auto_ptr<T> (p);
+    return std::unique_ptr<T> (p);
 }
 
 template <class T>
@@ -213,7 +213,7 @@ inline void auto_vector<T>::assign_direct (size_t i, T * p)
 }
 
 template <class T>
-inline void auto_vector<T>::assign (size_t i, std::auto_ptr<T> p)
+inline void auto_vector<T>::assign (size_t i, std::unique_ptr<T> p)
 {
     assert (i < size ());
     if (_arr [i] != p.get ())
@@ -293,7 +293,7 @@ inline void auto_vector<T>::resize (unsigned int newSize)
 }
 
 template <class T>
-void auto_vector<T>::insert (size_t idx, std::auto_ptr<T> p)
+void auto_vector<T>::insert (size_t idx, std::unique_ptr<T> p)
 {
     assert (idx <= size ());
     _arr.insert (ToIter (idx), p.get ());
@@ -301,7 +301,7 @@ void auto_vector<T>::insert (size_t idx, std::auto_ptr<T> p)
 }
 
 template <class T>
-void auto_vector<T>::insert (iterator idx, std::auto_ptr<T> p)
+void auto_vector<T>::insert (iterator idx, std::unique_ptr<T> p)
 {
     assert (idx <= _arr.end());
     _arr.insert (idx, p.get ());

@@ -16,11 +16,11 @@ void Wallclock::forward(unsigned long int amount)
     produce(amount);
 }
 
-bool Wallclock::addProducer(auto_ptr<Item> item)
+bool Wallclock::addProducer(std::unique_ptr<Item> item)
 {
     if (!item.get()) return false;
 
-    producers.push_back(item);
+    producers.push_back(std::move(item));
 
     return true;
 }
@@ -30,13 +30,13 @@ void Wallclock::produceTime(unsigned long int amount)
     //auto_vector<Item> items; 
     BOOST_FOREACH(Item *item, producers) {
         if (time_producer != NULL) {
-            auto_ptr<Item> time = time_producer->produce(amount);
+            std::unique_ptr<Item> time = time_producer->produce(amount);
             if (!time.get()) {
                 std::cout << "Can't create time\n";
                 exit(1);
             }
             if (item->doesConsume(time->base)) {
-                item->consume(time);
+                item->consume(std::move(time));
             }
         }
         item->age(amount);
@@ -51,7 +51,7 @@ auto_vector<Item> Wallclock::produceTier1()
         int count = 0x1000;
         bool ok = true;
         do  {
-            auto_ptr<Item> new_item = item->produce();
+            std::unique_ptr<Item> new_item = item->produce();
             if (new_item.get()) {
                 items.push_back(new_item);
             } else {
@@ -72,9 +72,9 @@ void Wallclock::produceTier2()
         int count = 0x1000;
         bool ok = true;
         do  {
-            auto_ptr<Item> new_item = item->produce();
+            std::unique_ptr<Item> new_item = item->produce();
             if (new_item.get()) {
-                items.push_back(new_item); //FIXME!
+                items.push_back(std::move(new_item)); //FIXME!
             } else {
                 ok = false;
             }
@@ -85,9 +85,9 @@ void Wallclock::produceTier2()
         int count = 0x1000;
         bool ok = true;
         do  {
-            auto_ptr<Item> new_item = item->produce();
+            std::unique_ptr<Item> new_item = item->produce();
             if (new_item.get()) {
-                items.push_back(new_item);
+                items.push_back(std::move(new_item));
             } else {
                 ok = false;
             }
@@ -102,7 +102,7 @@ bool Wallclock::consume()
     BOOST_FOREACH(Item *item, items) {
         while (item->amount>0) {
             bool last_ok = false;
-            auto_ptr<Item> in_need;
+            std::unique_ptr<Item> in_need;
             //BOOST_FOREACH(const Item *item2, producers) {
             auto_vector<Item>::iterator it = producers.begin();
             while (it != producers.end()) {
@@ -131,7 +131,7 @@ bool Wallclock::consume()
     BOOST_FOREACH(Item *item, items) {
         while (item->amount>0) {
             bool last_ok = false;
-            auto_ptr<Item> in_need;
+            std::unique_ptr<Item> in_need;
             auto_vector<Item>::iterator it = producers.begin();
             while (it != producers.end()) {
                 if (item == *it) continue;

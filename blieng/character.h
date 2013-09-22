@@ -7,8 +7,7 @@
 #include "bliobject.h"
 #include "item.h"
 #include "auto_vector.h"
-
-using std::auto_ptr;
+#include <boost/shared_ptr.hpp>
 
 namespace blieng
 {
@@ -22,8 +21,8 @@ public:
     bool isAlive();
 
     //void addItem(blieng::Item*);
-    void addItem(auto_ptr<blieng::Item>);
-    //bool removeItem(auto_ptr<blieng::Item>);
+    void addItem(std::unique_ptr<blieng::Item>);
+    //bool removeItem(std::unique_ptr<blieng::Item>);
     bool removeItem(const blieng::Item *);
     //const std::vector<blieng::Item *> getItems() const;
     const auto_vector<blieng::Item>* getItems();

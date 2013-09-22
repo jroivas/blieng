@@ -42,7 +42,7 @@ bool Data::initialize(std::string datafilename, const char *key, unsigned int ke
             data_file_path = findDataFile(datafilename);
         }
         if (data_file_path.get()) {
-            datafile = auto_ptr<blieng::DataFile>(new blieng::DataFile(data_file_path->filename().string()));
+            datafile = std::unique_ptr<blieng::DataFile>(new blieng::DataFile(data_file_path->filename().string()));
         }
     }
     bool res = false;
@@ -60,7 +60,7 @@ bool Data::initialize(const char *key, unsigned int key_len)
     return initialize("", key, key_len);
 }
 
-std::auto_ptr<boost::filesystem::path> Data::findDataFile(std::string datafilename)
+std::unique_ptr<boost::filesystem::path> Data::findDataFile(std::string datafilename)
 {
     std::list<std::string> locations;
     locations.push_back("");
@@ -72,7 +72,7 @@ std::auto_ptr<boost::filesystem::path> Data::findDataFile(std::string datafilena
 
     //boost::filesystem::path *my_data_path = new boost::filesystem::path;
 
-    std::auto_ptr<boost::filesystem::path> my_data_path(new boost::filesystem::path);
+    std::unique_ptr<boost::filesystem::path> my_data_path(new boost::filesystem::path);
 
     BOOST_FOREACH(std::string item, locations) {
         *my_data_path.get() = (item + datafilename).c_str();
@@ -84,7 +84,7 @@ std::auto_ptr<boost::filesystem::path> Data::findDataFile(std::string datafilena
     return my_data_path;
 }
 
-std::auto_ptr<boost::filesystem::path> Data::findDataPath()
+std::unique_ptr<boost::filesystem::path> Data::findDataPath()
 {
     std::list<std::string> locations;
     locations.push_back("");
@@ -94,7 +94,7 @@ std::auto_ptr<boost::filesystem::path> Data::findDataPath()
     locations.push_back(".\\");
     locations.push_back("..\\");
 
-    std::auto_ptr<boost::filesystem::path> my_data_path(new boost::filesystem::path);
+    std::unique_ptr<boost::filesystem::path> my_data_path(new boost::filesystem::path);
 
     BOOST_FOREACH(std::string item, locations) {
         *my_data_path.get() = (item + "data").c_str();

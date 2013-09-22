@@ -8,7 +8,7 @@
 #include <boost/random/random_device.hpp>
 #include "datafile.h"
 
-using std::auto_ptr;
+using std::unique_ptr;
 
 namespace blieng
 {
@@ -50,13 +50,13 @@ private:
     std::string findFileFromDataFile(std::string name);
     std::vector<std::string> findFileExtFromDataFile(std::string path, std::string ext);
 
-    std::auto_ptr<boost::filesystem::path> findDataFile(std::string datafilename = "data.dat");
-    std::auto_ptr<boost::filesystem::path> findDataPath();
-    std::auto_ptr<boost::filesystem::path> data_path;
-    auto_ptr<boost::filesystem::path> data_file_path;
+    std::unique_ptr<boost::filesystem::path> findDataFile(std::string datafilename = "data.dat");
+    std::unique_ptr<boost::filesystem::path> findDataPath();
+    std::unique_ptr<boost::filesystem::path> data_path;
+    std::unique_ptr<boost::filesystem::path> data_file_path;
     boost::random::random_device *gen;
 
-    std::auto_ptr<blieng::DataFile> datafile;
+    std::unique_ptr<blieng::DataFile> datafile;
 
     static Data *__data_instance;
 };

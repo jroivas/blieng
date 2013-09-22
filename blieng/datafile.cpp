@@ -119,9 +119,9 @@ bool DataFile::addData(std::string name, std::string data)
 
     //DataFileObject *tmp = new DataFileObject(data.c_str(), data.size() + 1);
 
-    auto_ptr<DataFileObject> tmp(new DataFileObject(data.c_str(), data.size() + 1));
+    std::unique_ptr<DataFileObject> tmp(new DataFileObject(data.c_str(), data.size() + 1));
 
-    _data[name] = tmp;
+    _data[name] = std::move(tmp);
 
     return true;
 }
@@ -131,14 +131,14 @@ bool DataFile::addData(std::string name, char *data, unsigned int len)
     name = unifyName(name);
     if (name == "") return false;
     //DataFileObject *tmp = new DataFileObject(data, len);
-    auto_ptr<DataFileObject> tmp(new DataFileObject(data, len));
+    std::unique_ptr<DataFileObject> tmp(new DataFileObject(data, len));
 
-    _data[name] = tmp;
+    _data[name] = std::move(tmp);
 
     return true;
 }
 
-auto_ptr<blieng::SafeDataPtr> DataFile::obfuscateSimple(const char *data, unsigned int len)
+std::unique_ptr<blieng::SafeDataPtr> DataFile::obfuscateSimple(const char *data, unsigned int len)
 {
     //char *res = (char *)calloc(1, len + 1);
     char *res = new char[len + 1];
@@ -150,7 +150,7 @@ auto_ptr<blieng::SafeDataPtr> DataFile::obfuscateSimple(const char *data, unsign
         ptr++;
         len--;
     }
-    return auto_ptr<blieng::SafeDataPtr>(new blieng::SafeDataPtr(res, len));
+    return std::unique_ptr<blieng::SafeDataPtr>(new blieng::SafeDataPtr(res, len));
 }
 
 bool DataFile::read(const char *key, unsigned int key_len)
@@ -171,7 +171,7 @@ bool DataFile::read(const char *key, unsigned int key_len)
         if (fd.eof()) break;
 
         //char *name = obfuscateSimple(ob_name, namelen);
-        auto_ptr<SafeDataPtr> name = obfuscateSimple(ob_name, namelen);
+        std::unique_ptr<SafeDataPtr> name = obfuscateSimple(ob_name, namelen);
         //fd.write(ob_name->getData(), ob_name->length());
         //free(ob_name);
         delete [] ob_name;
@@ -191,7 +191,7 @@ bool DataFile::read(const char *key, unsigned int key_len)
         if (fd.eof()) break;
 
         //DataFileObject *tmp = new DataFileObject(data, datalen);
-        auto_ptr<DataFileObject> tmp(new DataFileObject(data, datalen));
+        std::unique_ptr<DataFileObject> tmp(new DataFileObject(data, datalen));
         tmp->real_len = datareallen;
 
         //std::string sname = name;
@@ -202,15 +202,15 @@ bool DataFile::read(const char *key, unsigned int key_len)
 
         if (key != NULL && key_len > 0) {
             //DataFileObject *new_tmp = tmp->deobfuscate(key, key_len, sname);
-            auto_ptr<DataFileObject> new_tmp(tmp->deobfuscate(key, key_len, sname));
+            std::unique_ptr<DataFileObject> new_tmp(tmp->deobfuscate(key, key_len, sname));
             if (new_tmp.get()) {
                 // cppcheck-suppress mismatchAllocDealloc
                 //free(tmp);
                 //delete [] tmp;
-                tmp = new_tmp;
+                tmp = std::move(new_tmp);
             }
         }
-        _data[sname] = tmp;
+        _data[sname] = std::move(tmp);
     }
 
     fd.close();
@@ -229,15 +229,15 @@ bool DataFile::write(const char *key, unsigned int key_len)
     auto_map<std::string, DataFileObject>::iterator di = _data.begin();
     while (di != _data.end()) {
         //DataFileObject *tmp = di->val;
-        //auto_ptr<DataFileObject> tmp = *di;
+        //std::unique_ptr<DataFileObject> tmp = *di;
         DataFileObject* tmp = _data[di];
         //const DataFileObject* tmp = (*di)->getValue();
         if (key != NULL && key_len > 0) {
             //DataFileObject *new_tmp = tmp->obfuscate(key, key_len, di->first);
-            auto_ptr<DataFileObject> new_tmp = tmp->obfuscate(key, key_len, (*di)->key);
+            std::unique_ptr<DataFileObject> new_tmp = tmp->obfuscate(key, key_len, (*di)->key);
             if (new_tmp.get()) {
                 //free(tmp);
-                _data[di] = new_tmp;
+                _data[di] = std::move(new_tmp);
             }
         }
 
@@ -245,7 +245,7 @@ bool DataFile::write(const char *key, unsigned int key_len)
         fd.write((char*)&itmp, sizeof(uint32_t));
 
         //char *ob_name = obfuscateSimple(di->first.c_str(), itmp);
-        auto_ptr<SafeDataPtr> ob_name = obfuscateSimple((*di)->key.c_str(), itmp);
+        std::unique_ptr<SafeDataPtr> ob_name = obfuscateSimple((*di)->key.c_str(), itmp);
         fd.write(ob_name->getData(), ob_name->length());
         //free(ob_name);
         //delete [] ob_name;
@@ -276,7 +276,7 @@ blieng::DataFile::DataFileObject::DataFileObject(const char *new_data, unsigned 
 }
 
 //unsigned char *blieng::DataFile::DataFileObject::setupKey(const char *key, unsigned int len, const char *iv, unsigned int iv_len)
-auto_ptr<blieng::SafeDataPtr> blieng::DataFile::DataFileObject::setupKey(const char *key, unsigned int len, const char *iv, unsigned int iv_len)
+std::unique_ptr<blieng::SafeDataPtr> blieng::DataFile::DataFileObject::setupKey(const char *key, unsigned int len, const char *iv, unsigned int iv_len)
 {
     //unsigned char *res = (unsigned char*)calloc(1, __key_size);
     unsigned char *res = new unsigned char[__key_size];
@@ -301,12 +301,12 @@ auto_ptr<blieng::SafeDataPtr> blieng::DataFile::DataFileObject::setupKey(const c
         KEY_INIT_LOOP(res, index, cnt, tmp);
     }
 
-    return auto_ptr<SafeDataPtr>(new SafeDataPtr(res, __key_size));
+    return std::unique_ptr<SafeDataPtr>(new SafeDataPtr(res, __key_size));
     #undef KEY_INIT_LOOP
 }
 
 #include "rijndael-alg-fst.h"
-auto_ptr<blieng::DataFile::DataFileObject> blieng::DataFile::DataFileObject::obfuscate(const char *key, unsigned int key_len, std::string seed)
+std::unique_ptr<blieng::DataFile::DataFileObject> blieng::DataFile::DataFileObject::obfuscate(const char *key, unsigned int key_len, std::string seed)
 {
     unsigned int olen = len/16;
     if (len % 16 != 0) olen++;
@@ -314,14 +314,14 @@ auto_ptr<blieng::DataFile::DataFileObject> blieng::DataFile::DataFileObject::obf
 
     //uint32_t *key_data = (uint32_t*)calloc(sizeof(uint32_t),(MAXNR+1)*4);
     //uint32_t *key_data = new uint32_t[(MAXNR+1)*4];
-    auto_ptr<uint32_t> key_data(new uint32_t[(MAXNR+1)*4]);
+    std::unique_ptr<uint32_t> key_data(new uint32_t[(MAXNR+1)*4]);
 
     /*unsigned char *init_key = setupKey(seed.c_str(), seed.length());
     unsigned char *tmp_key = setupKey(key, key_len, (const char*)init_key, __key_size);
     delete [] init_key;
     */
-    auto_ptr<SafeDataPtr> init_key = setupKey(seed.c_str(), seed.length());
-    auto_ptr<SafeDataPtr> tmp_key = setupKey(key, key_len, (const char*)init_key->getData(), __key_size);
+    std::unique_ptr<SafeDataPtr> init_key = setupKey(seed.c_str(), seed.length());
+    std::unique_ptr<SafeDataPtr> tmp_key = setupKey(key, key_len, (const char*)init_key->getData(), __key_size);
 
     //free(init_key);
     //init_key = NULL;
@@ -334,7 +334,7 @@ auto_ptr<blieng::DataFile::DataFileObject> blieng::DataFile::DataFileObject::obf
         //free(key_data);
         //delete [] key_data;
         //return NULL;
-        return auto_ptr<DataFileObject>();
+        return std::unique_ptr<DataFileObject>();
     }
 
     unsigned char in_block[16];
@@ -378,12 +378,12 @@ auto_ptr<blieng::DataFile::DataFileObject> blieng::DataFile::DataFileObject::obf
     //key_data = NULL;
 
     //blieng::DataFile::DataFileObject *res = new DataFileObject(tmp, olen);
-    auto_ptr<DataFileObject> res(new DataFileObject(tmp, olen));
+    std::unique_ptr<DataFileObject> res(new DataFileObject(tmp, olen));
     res->real_len = len;
     return res;
 }
 
-auto_ptr<blieng::DataFile::DataFileObject> blieng::DataFile::DataFileObject::deobfuscate(const char *key, unsigned int key_len, std::string seed)
+std::unique_ptr<blieng::DataFile::DataFileObject> blieng::DataFile::DataFileObject::deobfuscate(const char *key, unsigned int key_len, std::string seed)
 {
     //uint32_t *key_data = (uint32_t*)calloc(sizeof(uint32_t),(MAXNR+1)*4);
 #if 0
@@ -396,10 +396,10 @@ auto_ptr<blieng::DataFile::DataFileObject> blieng::DataFile::DataFileObject::deo
     init_key = NULL;
 #endif
 
-    auto_ptr<uint32_t> key_data(new uint32_t[(MAXNR+1)*4]);
+    std::unique_ptr<uint32_t> key_data(new uint32_t[(MAXNR+1)*4]);
 
-    auto_ptr<SafeDataPtr> init_key = setupKey(seed.c_str(), seed.length());
-    auto_ptr<SafeDataPtr> tmp_key = setupKey(key, key_len, (const char*)init_key->getData(), __key_size);
+    std::unique_ptr<SafeDataPtr> init_key = setupKey(seed.c_str(), seed.length());
+    std::unique_ptr<SafeDataPtr> tmp_key = setupKey(key, key_len, (const char*)init_key->getData(), __key_size);
 
     int nr = rijndaelKeySetupDec(key_data.get(), (const unsigned char*)tmp_key->getData(), 256);
     //free(tmp_key);
@@ -408,7 +408,7 @@ auto_ptr<blieng::DataFile::DataFileObject> blieng::DataFile::DataFileObject::deo
     if (nr == 0) {
         //free(key_data);
         //delete [] key_data;
-        return auto_ptr<DataFileObject>();
+        return std::unique_ptr<DataFileObject>();
     }
 
     //char *tmp = (char*)calloc(1, real_len);
@@ -447,7 +447,7 @@ auto_ptr<blieng::DataFile::DataFileObject> blieng::DataFile::DataFileObject::deo
     //key_data = NULL;
 
     //blieng::DataFile::DataFileObject *res = new DataFileObject(tmp, real_len);
-    auto_ptr<DataFileObject> res(new DataFileObject(tmp, real_len));
+    std::unique_ptr<DataFileObject> res(new DataFileObject(tmp, real_len));
     res->real_len = real_len;
     return res;
 }

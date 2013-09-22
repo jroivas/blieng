@@ -4,10 +4,8 @@
 #include <string>
 #include <map>
 #include <list>
-#include <memory>
 #include <boost/any.hpp>
-
-using std::auto_ptr;
+#include <boost/shared_ptr.hpp>
 
 namespace blieng
 {

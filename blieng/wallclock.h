@@ -5,7 +5,7 @@
 #include "item.h"
 #include "auto_vector.h"
 
-using std::auto_ptr;
+using std::unique_ptr;
 
 namespace blieng
 {
@@ -15,7 +15,7 @@ class Wallclock
 public:
     Wallclock(Item *time_producer);
     void forward(unsigned long int amount=1);
-    bool addProducer(auto_ptr<Item> item);
+    bool addProducer(std::unique_ptr<Item> item);
 
 private:
     //auto_vector<Item> produceTime(unsigned long int amount);

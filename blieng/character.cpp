@@ -20,14 +20,14 @@ bool Character::isAlive()
     return !getBoolValue("dead");
 }
 
-void Character::addItem(auto_ptr<blieng::Item> item)
+void Character::addItem(std::unique_ptr<blieng::Item> item)
 //void Character::addItem(Item* item)
 {
-    items.push_back(item);
+    items.push_back(std::move(item));
 }
 
 bool Character::removeItem(const blieng::Item* item)
-//bool Character::removeItem(const auto_ptr<blieng::Item> item)
+//bool Character::removeItem(const std::unique_ptr<blieng::Item> item)
 {
     auto_vector<blieng::Item>::iterator ii = items.begin();
     while (ii != items.end()) {

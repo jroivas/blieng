@@ -20,7 +20,7 @@ public:
         auto_lvalue (T * & p) : _p (p) {}
         operator T * () const { return _p; }
         T * operator-> () const { return _p; }
-        auto_lvalue & operator= (std::auto_ptr<T> ap)
+        auto_lvalue & operator= (std::unique_ptr<T> ap)
         {
             delete _p;
             _p = ap.release ();
@@ -35,7 +35,7 @@ public:
     {
         friend class auto_map;
     public:
-        //mappings(KeyType k, std::auto_ptr<T> v) : key(k), val(v) { }
+        //mappings(KeyType k, std::unique_ptr<T> v) : key(k), val(v) { }
         mappings(KeyType k, T* v) : key(k), val(v) { }
         ~mappings() {
             //delete val;
@@ -47,12 +47,12 @@ public:
             return val;
         }
 */
-        std::auto_ptr<T> getValue() {
-            return std::auto_ptr<T>(val);
+        std::unique_ptr<T> getValue() {
+            return std::unique_ptr<T>(val);
         }
 
     protected:
-        //std::auto_ptr<T> val;
+        //std::unique_ptr<T> val;
         T *val;
     };
 

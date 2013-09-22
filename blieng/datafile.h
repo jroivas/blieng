@@ -7,7 +7,7 @@
 #include <vector>
 #include <memory>
 
-using std::auto_ptr;
+using std::unique_ptr;
 
 namespace blieng
 {
@@ -26,15 +26,15 @@ public:
             if (data != NULL) delete data;
         }
 
-        auto_ptr<DataFileObject> obfuscate(const char *key, unsigned int len, std::string seed="");
-        auto_ptr<DataFileObject> deobfuscate(const char *key, unsigned int len, std::string seed="");
+        std::unique_ptr<DataFileObject> obfuscate(const char *key, unsigned int len, std::string seed="");
+        std::unique_ptr<DataFileObject> deobfuscate(const char *key, unsigned int len, std::string seed="");
 
         char *data;
         unsigned int len;
         friend class DataFile;
 
     protected:
-        auto_ptr<blieng::SafeDataPtr> setupKey(const char *key, unsigned int len, const char *iv=NULL, unsigned int iv_len=0);
+        std::unique_ptr<blieng::SafeDataPtr> setupKey(const char *key, unsigned int len, const char *iv=NULL, unsigned int iv_len=0);
         unsigned int real_len;
     };
 
@@ -53,7 +53,7 @@ public:
 
     bool read(const char *key, unsigned int key_len);
     bool write(const char *key, unsigned int key_len);
-    auto_ptr<SafeDataPtr> obfuscateSimple(const char *data, unsigned int len);
+    std::unique_ptr<SafeDataPtr> obfuscateSimple(const char *data, unsigned int len);
 
 private:
     std::string _name;

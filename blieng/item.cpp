@@ -11,11 +11,11 @@ using blieng::ItemBase;
 
 bool Item::ok = false;
 //std::map<std::string, blieng::ItemBase *> Item::item_bases;
-//std::map<std::string, std::auto_ptr<ItemBase> > item_bases;
+//std::map<std::string, std::unique_ptr<ItemBase> > item_bases;
 auto_vector<ItemBase> Item::item_bases;
 
 //typedef std::pair<std::string, ItemBase *> item_bases_t;
-//typedef std::pair<std::string, std::auto_ptr<ItemBase> > item_bases_t;
+//typedef std::pair<std::string, std::unique_ptr<ItemBase> > item_bases_t;
 typedef const ItemBase* item_bases_t;
 typedef std::pair<std::string, double> consume_t;
 
@@ -39,7 +39,7 @@ Item::Item(std::string name) : ItemBase()
     std::cout << "Creating: " << name << "\n";
     if (!item_bases.empty()) {
         const ItemBase *orig = NULL;
-        //std::auto_ptr<ItemBase> orig;
+        //std::unique_ptr<ItemBase> orig;
         BOOST_FOREACH(item_bases_t val, item_bases) {
             if (val->base == name) {
                 orig = val;
@@ -71,7 +71,7 @@ bool Item::isItem(std::string name)
     return false;
 }
 
-bool Item::removeItem(std::auto_ptr<Item> item)
+bool Item::removeItem(std::unique_ptr<Item> item)
 {
     if (!item.get()) return false;
 
@@ -95,7 +95,7 @@ bool Item::removeItem(std::auto_ptr<Item> item)
 }
 
 #if 0
-bool Item::registerItem(std::auto_ptr<Item> &item)
+bool Item::registerItem(std::unique_ptr<Item> &item)
 {
     if (!item.get()) return false;
 
@@ -125,7 +125,7 @@ void Item::getItemBases()
     BOOST_FOREACH(std::string mi, root_val.getMemberNames()) {
         Json::Value item_val = Data::getInstance()->getJsonValue(root_val, mi);
         //ItemBase *item = new ItemBase();
-        std::auto_ptr<ItemBase> item(new ItemBase());
+        std::unique_ptr<ItemBase> item(new ItemBase());
 
         if (item_val.isObject()) {
             item->base = mi;
@@ -185,14 +185,14 @@ void Item::getItemBases()
                     if (!ok) std::cout << keyname << "has unsupported type!\n";
                 }
             }
-            item_bases.push_back(item);
+            item_bases.push_back(std::move(item));
             //item_bases[mi] = item;
         }
     }
     ok = true;
 }
 
-bool Item::consume(std::auto_ptr<Item> another)
+bool Item::consume(std::unique_ptr<Item> another)
 {
     if (!doesConsume(another->base)) return false;
     if (!another->isUsable()) return false;
@@ -209,7 +209,7 @@ bool Item::consume(std::auto_ptr<Item> another)
     return true;
 }
 
-std::auto_ptr<Item> Item::produce(double produce_amount) throw (char *)
+std::unique_ptr<Item> Item::produce(double produce_amount) throw (char *)
 {
     bool can_consume = true;
     BOOST_FOREACH(consume_t val, consumes.get()) {
@@ -220,7 +220,7 @@ std::auto_ptr<Item> Item::produce(double produce_amount) throw (char *)
     std::cout << base << "  " << can_consume << " rai" << produce_amount <<"\n";
     if (!can_consume) throw "Can't consume";
 
-    std::auto_ptr<Item> produced (new Item(base));
+    std::unique_ptr<Item> produced (new Item(base));
     if (!produced.get()) {
         throw "Can't create item!";
         /*std::cout << "Can't create item!\n";
@@ -465,9 +465,9 @@ std::string Item::generateBaseJson()
     return "{\n" + res + "\n}\n";
 }
 
-std::auto_ptr<Item> Item::copy()
+std::unique_ptr<Item> Item::copy()
 {
-    std::auto_ptr<Item> res(new Item());
+    std::unique_ptr<Item> res(new Item());
     res->assignItem(this);
     return res;
 }

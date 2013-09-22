@@ -10,7 +10,7 @@
 #include "bliobject.h"
 #include "auto_vector.h"
 
-using std::auto_ptr;
+using std::unique_ptr;
 
 namespace blieng {
 
@@ -65,19 +65,19 @@ public:
     Item(std::string name);
     virtual ~Item() { }
 
-    std::auto_ptr<Item> copy();
+    std::unique_ptr<Item> copy();
     //Item* copy();
 
     //bool consume(Item *);
-    bool consume(std::auto_ptr<Item>);
-    std::auto_ptr<Item> produce(double produce_amount=1) throw (char *);
+    bool consume(std::unique_ptr<Item>);
+    std::unique_ptr<Item> produce(double produce_amount=1) throw (char *);
     bool isUsable() const { return usable; }
     void setUsable() { usable = true; }
     std::vector<std::string> listItems();
     bool isItem(std::string name);
     //bool removeItem(Item *);
-    bool removeItem(std::auto_ptr<Item> item);
-    //bool registerItem(std::auto_ptr<Item> &item); //XXX
+    bool removeItem(std::unique_ptr<Item> item);
+    //bool registerItem(std::unique_ptr<Item> &item); //XXX
 
     std::string generateBaseJson();
     virtual std::string toString();
@@ -88,7 +88,7 @@ private:
 
     static bool ok;
     //static std::map<std::string, ItemBase *> item_bases;
-    //static std::map<std::string, std::auto_ptr<ItemBase> > item_bases;
+    //static std::map<std::string, std::unique_ptr<ItemBase> > item_bases;
     static auto_vector<ItemBase> item_bases;
     //static std::vector<ItemBase*> item_bases;
 };
