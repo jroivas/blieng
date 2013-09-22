@@ -17,7 +17,7 @@ public:
     Card();
     virtual ~Card();
 
-    virtual void combine(std::unique_ptr<blieng::Card> card);
+    void combine(std::unique_ptr<blieng::Card> card);
     virtual bool remove(size_t index);
     virtual void remove(auto_vector<blieng::Card>::iterator iter);
 

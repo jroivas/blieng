@@ -31,6 +31,8 @@ public:
     bool isJsonKey(Json::Value val, std::string key);
     Json::Value getJsonValue(Json::Value val, std::string key);
 
+    bool fileExists(std::string name);
+
     boost::random::random_device *getGen() { return gen; }
 
     std::string findFile(std::string name);

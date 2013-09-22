@@ -139,11 +139,6 @@ std::unique_ptr<T> auto_vector<T>::pop (typename auto_vector<T>::iterator it)
     _arr.erase (it);
 
     return std::unique_ptr<T> (p);
-    /*
-    assert (it < end ());
-    delete *it;
-    return _arr.erase (it);
-    */
 }
 
 template <class T>

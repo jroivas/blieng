@@ -106,6 +106,11 @@ std::unique_ptr<boost::filesystem::path> Data::findDataPath()
     return my_data_path;
 }
 
+bool Data::fileExists(std::string name)
+{
+    return boost::filesystem::exists(name) && boost::filesystem::is_regular_file(name);
+}
+
 std::string Data::findFileRecursive(const boost::filesystem::path &dir_path, std::string name)
 {
     if (!boost::filesystem::exists(dir_path)) return "";
