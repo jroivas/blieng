@@ -4,7 +4,7 @@ DEPENDPATH += . ..
 INCLUDEPATH += . ..
 
 LIBS += -lcppunit
-QMAKE_CXXFLAGS += -std=c++11
+QMAKE_CXXFLAGS += -std=c++0x
 
 INCLUDEPATH += ../
 
