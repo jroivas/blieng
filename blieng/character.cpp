@@ -20,42 +20,33 @@ bool Character::isAlive()
     return !getBoolValue("dead");
 }
 
-void Character::addItem(std::unique_ptr<blieng::Item> item)
-//void Character::addItem(Item* item)
+unsigned int Character::addItem(std::unique_ptr<blieng::Item> item)
 {
     items.push_back(std::move(item));
 }
 
-bool Character::removeItem(const blieng::Item* item)
-//bool Character::removeItem(const std::unique_ptr<blieng::Item> item)
+bool Character::removeItem(unsigned int index)
 {
-    auto_vector<blieng::Item>::iterator ii = items.begin();
-    while (ii != items.end()) {
-        if (*ii == item) {
-            items.erase(ii);
-            return true;
-        }
-        ++ii;
-    }
-    return false;
+    if ( index >= size() ) return false;
+
+    items.erase(index);
+    return true;
 }
 
-const auto_vector<blieng::Item>* Character::getItems()
-//const std::vector<blieng::Item*> Character::getItems() const
+unsigned int Character::size()
 {
-    return &items;
+    return items.size();
 }
 
-#if 0
-void Character::assignObject(BliObject *another)
+void Character::assignObject(const BliObject *another)
 {
     blieng::BliObject::assignObject(another);
 }
-#endif
 
 void Character::assignObject(Character *another)
 {
     if (another == NULL) return;
+
     blieng::BliObject::assignObject(static_cast<BliObject*>(another));
     
     BOOST_FOREACH(blieng::Item *item, another->items) {
