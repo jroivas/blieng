@@ -23,6 +23,7 @@ bool Character::isAlive()
 unsigned int Character::addItem(std::unique_ptr<blieng::Item> item)
 {
     items.push_back(std::move(item));
+    return items.size();
 }
 
 bool Character::removeItem(unsigned int index)

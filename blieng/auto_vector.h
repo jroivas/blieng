@@ -165,6 +165,7 @@ std::unique_ptr<T> auto_vector<T>::pop (const T * p)
         if (*it == p) {
             res = *it;
             _arr.erase(it);
+            break;
         }
         ++it;
     }
@@ -238,8 +239,8 @@ template <class T>
 void auto_vector<T>::compact ()
 {
     // move null pointers to the end
-    T * null = 0;
-    iterator pos = std::remove (begin (), end (), null);
+    T * a_null = 0;
+    iterator pos = std::remove (begin (), end (), a_null);
     _arr.resize (pos - begin ());
 }
 

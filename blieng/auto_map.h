@@ -70,6 +70,7 @@ public:
     auto_map& operator=(const auto_map& x)
     {
         _data = x._data;
+        return *this;
     }
 
 #if 0

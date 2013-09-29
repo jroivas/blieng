@@ -75,6 +75,7 @@ void Wallclock::produceTier2()
             std::unique_ptr<Item> new_item = item->produce();
             if (new_item.get()) {
                 items.push_back(std::move(new_item)); //FIXME!
+                break;
             } else {
                 ok = false;
             }
@@ -88,6 +89,7 @@ void Wallclock::produceTier2()
             std::unique_ptr<Item> new_item = item->produce();
             if (new_item.get()) {
                 items.push_back(std::move(new_item));
+                break;
             } else {
                 ok = false;
             }
@@ -124,6 +126,7 @@ bool Wallclock::consume()
                 in_need->consume(items.pop(item))) {
                 changed = true;
                 last_ok = true;
+                break;
             }
             if (!last_ok) break;
         }
@@ -150,6 +153,7 @@ bool Wallclock::consume()
             if (in_need.get() && in_need->consume(items.pop(item))) {
                 changed = true;
                 last_ok = true;
+                break;
             }
             if (!last_ok) break;
         }
