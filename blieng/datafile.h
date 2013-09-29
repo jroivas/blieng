@@ -59,7 +59,6 @@ private:
     std::string _name;
     std::string unifyName(std::string name);
 
-    //std::map<std::string, DataFileObject*> _data;
     auto_map<std::string, DataFileObject> _data;
     bool _ok;
 };
