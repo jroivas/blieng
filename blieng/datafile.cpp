@@ -24,6 +24,7 @@ public:
     virtual ~SafeDataPtr() {
         if (data != NULL) delete [] data;
         data = NULL;
+        len = 0;
     }
 
     const char * getData() { return data; }
@@ -91,7 +92,7 @@ std::vector<std::string> blieng::DataFile::listFiles()
     return res;
 }
 
-blieng::DataFile::DataFileObject *DataFile::getObject(std::string name)
+const blieng::DataFile::DataFileObject *DataFile::getObject(std::string name)
 {
     name = unifyName(name);
     if (name == "") return NULL;
@@ -104,7 +105,7 @@ blieng::DataFile::DataFileObject *DataFile::getObject(std::string name)
 
 unsigned int DataFile::getData(std::string name, const char **data)
 {
-    DataFileObject *obj = getObject(name);
+    const DataFileObject *obj = getObject(name);
     if (obj != NULL) {
         if (data != NULL) *data = obj->data;
         return obj->len;
@@ -136,8 +137,12 @@ bool DataFile::addData(std::string name, char *data, unsigned int len)
 
 std::unique_ptr<blieng::SafeDataPtr> DataFile::obfuscateSimple(const char *data, unsigned int len)
 {
+    unsigned int orig_len = len;
+
     std::unique_ptr<char> res(new char[len + 1]);
+    memset(res.get(), 0, len + 1);
     char *tmp = res.get();
+
     const char *ptr = data;
     while (len > 0) {
         *tmp = *ptr ^ 0x7f ^ len;
@@ -145,7 +150,7 @@ std::unique_ptr<blieng::SafeDataPtr> DataFile::obfuscateSimple(const char *data,
         ptr++;
         len--;
     }
-    return std::unique_ptr<blieng::SafeDataPtr>(new blieng::SafeDataPtr(res.get(), len));
+    return std::unique_ptr<blieng::SafeDataPtr>(new blieng::SafeDataPtr(res.get(), orig_len));
 }
 
 bool DataFile::read(const char *key, unsigned int key_len)
@@ -250,6 +255,7 @@ blieng::DataFile::DataFileObject::DataFileObject(const char *new_data, unsigned 
 std::unique_ptr<blieng::SafeDataPtr> blieng::DataFile::DataFileObject::setupKey(const char *key, unsigned int len, const char *iv, unsigned int iv_len)
 {
     std::unique_ptr<unsigned char> res(new unsigned char[__key_size]);
+    memset(res.get(), 0, __key_size);
     unsigned int index = 0;
 
     #define KEY_INIT_LOOP(A_res, A_index, A_cnt, A_tmp) \

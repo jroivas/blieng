@@ -266,7 +266,7 @@ std::vector<std::string> Data::readLinesFromFile(std::string name)
     std::vector<std::string> tmp;
     if (datafile.get()) {
         // XXX
-        blieng::DataFile::DataFileObject *obj = datafile->getObject("data/" + name);
+        const blieng::DataFile::DataFileObject *obj = datafile->getObject("data/" + name);
         if (obj == NULL) obj = datafile->getObject(name);
         if (obj != NULL) {
             unsigned int pos = 0;
@@ -310,7 +310,7 @@ unsigned int Data::readData(std::string name, char **data)
 {
     if (datafile.get()) {
         // FIXME
-        blieng::DataFile::DataFileObject *obj = datafile->getObject("data/" + name);
+        const blieng::DataFile::DataFileObject *obj = datafile->getObject("data/" + name);
         if (obj == NULL) obj = datafile->getObject(name);
         if (obj != NULL) {
             if (data != NULL) *data = obj->data;
@@ -358,7 +358,7 @@ std::string Data::readString(std::string name)
 
     if (datafile.get()) {
         //FIXME
-        blieng::DataFile::DataFileObject *obj = datafile->getObject("data/" + name);
+        const blieng::DataFile::DataFileObject *obj = datafile->getObject("data/" + name);
         if (obj == NULL) obj = datafile->getObject(name);
         if (obj != NULL) {
             res.append(obj->data, obj->len);

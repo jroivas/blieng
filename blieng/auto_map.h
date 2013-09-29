@@ -140,10 +140,13 @@ public:
     iterator find(KeyType i)
     {
         iterator it = _data.begin();
+        std::cout<< "looping\n";
         while (it != _data.end()) {
+            std::cout << (*it)->key << " vs " << i << "\n";
             if ((*it)->key == i) {
                 return it;
             }
+            ++it;
         }
         return it;
     }

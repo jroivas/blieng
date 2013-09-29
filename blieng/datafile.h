@@ -47,7 +47,7 @@ public:
     bool addData(std::string name, std::string data);
     bool addData(std::string name, char *data, unsigned int len);
     unsigned int getData(std::string name, const char **data);
-    DataFileObject *getObject(std::string name);
+    const DataFileObject *getObject(std::string name);
 
     std::vector<std::string> listFiles();
 
