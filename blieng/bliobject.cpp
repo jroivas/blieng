@@ -117,6 +117,12 @@ getConvertNumberValue(UInt, unsigned int, int, double, float)
 getConvertNumberValue(Double, double, float, unsigned int, int)
 getConvertValue(Bool, bool)
 
+std::vector<std::string> BliObject::getListValue(std::string key)
+{
+    boost::any val = getValue(key);
+    return boost::any_cast<std::vector<std::string> >(val);
+}
+
 const std::type_info *BliObject::getValueType(std::string key)
 {
     boost::any val = getValue(key);

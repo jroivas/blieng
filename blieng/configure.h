@@ -15,7 +15,7 @@ class Configure : public blieng::BliObject
 public:
     virtual ~Configure();
 
-    typedef enum { KeyString, KeyDouble, KeyUInt, KeyInt, KeyBool } key_type_t;
+    typedef enum { KeyString, KeyDouble, KeyUInt, KeyInt, KeyBool, KeyStringList } key_type_t;
     static Configure *getInstance();
     static Configure *getInstance(std::string config);
     void load(std::string config_file);

@@ -104,6 +104,17 @@ void Configure::parse()
                 }
                 setValue(data_key, res);
             }
+            else if (val->second == Configure::KeyStringList) {
+                if (realval.isArray()) {
+                    std::vector<std::string> data;
+                    Json::Value::iterator it = realval.begin();
+                    while (it != realval.end()) {
+                        data.push_back((*it).asString());
+                        ++it;
+                    }
+                    setValue(data_key, data);
+                }
+            }
         }
     }
 }
