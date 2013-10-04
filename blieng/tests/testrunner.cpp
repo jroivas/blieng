@@ -5,15 +5,12 @@
 #include <cppunit/extensions/TestFactoryRegistry.h>
 #include <cppunit/ui/text/TestRunner.h>
 
-/*
 #include "point_test.h"
 #include "path_test.h"
 #include "bliobject_test.h"
 #include "character_test.h"
 #include "data_test.h"
-*/
-#include "bliobject_test.h"
-#include "data_test.h"
+#include "auto_vector_test.h"
 
 int main(int argc, char **argv)
 {
