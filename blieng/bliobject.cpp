@@ -17,7 +17,6 @@ BliObject::BliObject()
 
 BliObject::~BliObject()
 {
-    //std::cout << "Delete bliobject " << (long long)this << "\n";
     // Enforce deletion
     while (!values.empty()) {
         values_iter_t data = values.begin();
@@ -59,7 +58,7 @@ boost::any BliObject::getValue(std::string key)
     values_iter_t value_iter = values.find(key);
 
     if (value_iter == values.end()) {
-        std::cout << "Error, key not found: " + key + "\n";
+        std::cerr << "Error, key not found: " + key + "\n";
         throw std::string("Error, key not found: " + key);
     }
 
@@ -76,7 +75,7 @@ Y BliObject::get ## X ## Value(std::string key, Y default_value)\
 {\
     boost::any val = getValue(key);\
     if (val.empty()) {\
-        std::cout << "Error, key not found: " + key + "\n";\
+        std::cerr << "Error, key not found: " + key + "\n";\
         throw "Error, key not found: " + key;\
     }\
     if (val.type() == typeid(Y)) {\
@@ -85,7 +84,7 @@ Y BliObject::get ## X ## Value(std::string key, Y default_value)\
     try {\
         return boost::any_cast<Y>(val);\
     } catch (boost::bad_any_cast &c) {\
-        std::cout << "Error, not a " #X " value at: " + key + "\n";\
+        std::cerr << "Error, not a " #X " value at: " + key + "\n";\
         /*throw "Error, not a " #X " value at: " + key;*/\
         return default_value;\
     }\
@@ -96,7 +95,7 @@ Y BliObject::get ## X ## Value(std::string key, Y default_value)\
 {\
     boost::any val = getValue(key);\
     if (val.empty()) {\
-        std::cout << "Error, key not found: " + key + "\n";\
+        std::cerr << "Error, key not found: " + key + "\n";\
         throw "Error, key not found: " + key;\
     }\
     if (val.type() == typeid(Y)) {\
@@ -106,7 +105,7 @@ Y BliObject::get ## X ## Value(std::string key, Y default_value)\
         if (val.type() == typeid(B)) { return boost::any_cast<B>(val); }\
         if (val.type() == typeid(C)) { return boost::any_cast<C>(val); }\
     }\
-    std::cout << "Error, not a " #X " value at: " + key;\
+    std::cerr << "Error, not a " #X " value at: " + key;\
     /*throw "Error, not a " #X " value at: " + key;*/\
     return default_value;\
 }
@@ -127,7 +126,7 @@ const std::type_info *BliObject::getValueType(std::string key)
 {
     boost::any val = getValue(key);
     if (val.empty()) {
-        std::cout << "Error, key not found: " + key + "\n";
+        std::cerr << "Error, key not found: " + key + "\n";
         throw "Error, key not found: " + key;
     }
     return &val.type();

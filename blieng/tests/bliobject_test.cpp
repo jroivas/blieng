@@ -1,6 +1,9 @@
 #include "bliobject_test.h"
+#include "test_tools.h"
 #include <bliobject.h>
 #include <algorithm>
+#include <string>
+#include <boost/scoped_ptr.hpp>
 
 CPPUNIT_TEST_SUITE_REGISTRATION( BliObjectTest );
 
@@ -42,9 +45,32 @@ void BliObjectTest::getValues()
     CPPUNIT_ASSERT( obj->getBoolValue("test_bool1") );
     CPPUNIT_ASSERT( !obj->getBoolValue("test_bool2") );
 
-    // TODO: Check for output...
-    CPPUNIT_ASSERT( obj->getStringValue("test_int") == "" );
-    CPPUNIT_ASSERT( obj->getBoolValue("test_int") == false );
+    {
+        std::stringstream buffer;
+        boost::scoped_ptr<cerr_redirect> cd(new cerr_redirect(buffer.rdbuf()));
+        CPPUNIT_ASSERT( obj->getStringValue("test_int") == "" );
+        std::string outp = buffer.str();
+
+        CPPUNIT_ASSERT(outp.find("Error, not a String value at: test_int") != std::string::npos);
+    }
+
+    {
+        std::stringstream buffer;
+        boost::scoped_ptr<cerr_redirect> cd(new cerr_redirect(buffer.rdbuf()));
+        CPPUNIT_ASSERT( obj->getBoolValue("test_int") == false );
+        std::string outp = buffer.str();
+
+        CPPUNIT_ASSERT(outp.find("Error, not a Bool value at: test_int") != std::string::npos);
+    }
+
+    {
+        std::stringstream buffer;
+        boost::scoped_ptr<cerr_redirect> cd(new cerr_redirect(buffer.rdbuf()));
+        CPPUNIT_ASSERT_THROW( obj->getValue("test_nothing"), std::string);
+        std::string outp = buffer.str();
+
+        CPPUNIT_ASSERT(outp.find("Error, key not found: test_nothing") != std::string::npos);
+    }
 
     CPPUNIT_ASSERT( *obj->getValueType("test_int") == typeid(int) );
     CPPUNIT_ASSERT( *obj->getValueType("test_uint") == typeid(unsigned int) );
