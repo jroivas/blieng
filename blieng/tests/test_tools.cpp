@@ -450,17 +450,17 @@ int fileno(FILE *stream) throw ()
         else if (stream == stderr) return 2;
         else if (stream == stdin) return 0;
 
+        VALIDATE(stream);
+
         if (MF(stream)->name == "__stdout") return 1;
         else if (MF(stream)->name == "__stderr") return 2;
         else if (MF(stream)->name == "__stdin") return 0;
-
-        VALIDATE(stream);
 
         int num = 0;
         std::vector<MockFile*>::iterator it = mock_ids.begin();
         while (it != mock_ids.end()) {
             if (*it == MF(stream)) return num;
-            if ((*it)->name == MF(stream)->name) return num;
+            //if ((*it)->name == MF(stream)->name) return num;
             ++it;
             ++num;
         }
