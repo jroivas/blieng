@@ -11,8 +11,8 @@ void DataFileTest::read()
     mock_io_start();
 
     blieng::DataFile *obj = new blieng::DataFile("dummy.dat");
-    obj->read(NULL, 0);
-    delete obj;
+    //CPPUNIT_ASSERT( obj->read(NULL, 0) == false );
+    //delete obj;
 
     mock_io_stop();
 }
@@ -24,12 +24,10 @@ void DataFileTest::write()
     blieng::DataFile *obj = new blieng::DataFile("dummy.dat");
     CPPUNIT_ASSERT( obj != NULL );
 
-/*
     obj->addData("meaning", "42");
     obj->write(NULL, 0);
 
-*/
-    delete obj;
+    //delete obj;
     mock_io_stop();
 
 /*
@@ -38,7 +36,14 @@ void DataFileTest::write()
     std::cout << dat[0] << "\n";
 */
     
-    /*std::string dat = mock_get_data("dummy.dat");
+    std::string dat = mock_get_data("dummy.dat");
     std::cout << dat.size() << "\n";
-    */
+    unsigned int a = dat.size();
+    while (a > 0) {
+        std::cout << (int)dat[dat.size() - a] << " ";
+        --a;
+    }
+    std::cout << "\n";
+/*
+*/
 }

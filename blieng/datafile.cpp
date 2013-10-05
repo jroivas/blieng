@@ -4,6 +4,7 @@
 #include <string.h>
 #include <boost/filesystem/fstream.hpp>
 #include <boost/foreach.hpp>
+#include <sys/time.h>
 
 using blieng::DataFile;
 
@@ -47,7 +48,7 @@ DataFile::DataFile(std::string name)
     setName(name);
 }
 
-virtual ~DataFile::DataFile()
+DataFile::~DataFile()
 {
 }
 
