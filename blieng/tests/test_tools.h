@@ -2,6 +2,8 @@
 #define __TEST_TOOLS_H
 
 #include <sstream>
+#include <iostream>
+#include <vector>
 
 class cout_redirect
 {
@@ -20,5 +22,55 @@ public:
 private:
     std::streambuf * old;
 };
+
+void mock_io_start();
+void mock_io_stop();
+void mock_set_file(std::string name, std::string data);
+void mock_remove_file(std::string name);
+bool mock_is_file(std::string name);
+std::string mock_get_data(std::string name);
+std::vector<std::string> mock_list_files();
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+FILE* fopen(const char *path, const char *mode);
+size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream);
+size_t fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream);
+int fseek(FILE *stream, long offset, int whence);
+long ftell(FILE *stream);
+void rewind(FILE *stream);
+int fgetpos(FILE *stream, fpos_t *pos);
+int fsetpos(FILE *stream, const fpos_t *pos);
+int feof(FILE *stream) throw ();
+int fclose(FILE *fp);
+
+//# define __REDIRECT(name, proto, alias) name proto __asm__ (__ASMNAME (#alias))
+#define REDIR(retval, name, proto, extra, alias, aproto) \
+    retval name proto extra;\
+    retval alias proto extra;\
+    retval alias proto { return name aproto; }
+
+#define BITS 64
+//    retval alias proto extra;\ { return name aproto; }
+//REDIR(int, open64, (const char *pathname, int flags, ...), __nonnull ((1)), open, (pathname, flags));
+int open(const char *pathname, int flags, ...) __nonnull ((1));
+int open64(const char *pathname, int flags, ...) __nonnull ((1));
+//int open(const char *pathname, int flags) __nonnull ((1));
+//int open(const char *pathname, int flags, mode_t mode);
+int creat(const char *pathname, mode_t mode);
+int creat64(const char *pathname, mode_t mode);
+int stat(const char *path, struct stat *buf) throw ();
+int fstat(int fd, struct stat *buf) throw ();
+int lstat(const char *path, struct stat *buf) throw ();
+int close(int fd);
+
+ssize_t read(int fd, void *buf, size_t count);
+ssize_t write(int fd, const void *buf, size_t count);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

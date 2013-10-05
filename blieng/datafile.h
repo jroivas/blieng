@@ -40,6 +40,7 @@ public:
 
     DataFile();
     DataFile(std::string name);
+    virtual ~DataFile();
 
     void setName(std::string name);
     bool isValid() const { return _ok; }

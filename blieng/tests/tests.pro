@@ -3,7 +3,7 @@ TARGET = tests
 DEPENDPATH += . ..
 INCLUDEPATH += . ..
 
-LIBS += -lcppunit
+LIBS += -lcppunit -ldl
 QMAKE_CXXFLAGS += -std=c++0x
 
 INCLUDEPATH += ../
@@ -12,7 +12,7 @@ unix {
     CONFIG += link_pkgconfig
     PKGCONFIG += jsoncpp
     LIBS += -L../ -lblieng
-    LIBS += -L/usr/lib -lboost_system -lboost_random -lboost_filesystem
+    LIBS += -L/usr/lib -L/usr/lib -Wl,-Bstatic  -lboost_system -lboost_random -lboost_filesystem -Wl,-Bdynamic
     POST_TARGETDEPS += ../libblieng.a
 }
 
@@ -23,7 +23,9 @@ HEADERS += point_test.h \
            auto_vector_test.h \
            auto_map_test.h \
            data_test.h \
-           character_test.h
+           datafile_test.h \
+           character_test.h \
+           test_tools.h
 SOURCES += point_test.cpp \
            path_test.cpp \
            bliobject_test.cpp \
@@ -31,4 +33,6 @@ SOURCES += point_test.cpp \
            auto_map_test.cpp \
            character_test.cpp \
            data_test.cpp \
-           testrunner.cpp
+           datafile_test.cpp \
+           testrunner.cpp \
+           test_tools.cpp

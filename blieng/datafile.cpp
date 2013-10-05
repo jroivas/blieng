@@ -47,6 +47,10 @@ DataFile::DataFile(std::string name)
     setName(name);
 }
 
+virtual ~DataFile::DataFile()
+{
+}
+
 void DataFile::setName(std::string name)
 {
     _ok = true;
