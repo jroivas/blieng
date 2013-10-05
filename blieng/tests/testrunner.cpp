@@ -11,6 +11,7 @@
 #include "character_test.h"
 #include "data_test.h"
 #include "auto_vector_test.h"
+#include "auto_map_test.h"
 
 int main(int argc, char **argv)
 {

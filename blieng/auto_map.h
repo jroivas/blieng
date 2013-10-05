@@ -38,7 +38,9 @@ public:
         //mappings(KeyType k, std::unique_ptr<T> v) : key(k), val(v) { }
         mappings(KeyType k, T* v) : key(k), val(v) { }
         ~mappings() {
-            //delete val;
+            if (val != NULL) {
+                delete val;
+            }
         }
 
         KeyType key;
@@ -48,7 +50,10 @@ public:
         }
 */
         std::unique_ptr<T> getValue() {
-            return std::unique_ptr<T>(val);
+            std::unique_ptr<T> res(val);
+            val = NULL;
+            return res;
+            //return std::unique_ptr<T>(val);
         }
 
     protected:
@@ -91,7 +96,6 @@ public:
     T const * operator [] (KeyType i) const
     {
         iterator it = _data.begin();
-        std::cout << "RAND\n";
         while (it != _data.end()) {
             if ((*it)->key == i) {
                 return (*it).val;
@@ -137,12 +141,25 @@ public:
         return auto_lvalue((*i)->val);
     }
 
+    std::unique_ptr<T> get(KeyType i)
+    {
+        iterator it = _data.begin();
+        while (it != _data.end()) {
+            if ((*it)->key == i) {
+                T *res = (*it)->val;
+                (*it)->val = NULL;
+                _data.erase(it);
+                return std::unique_ptr<T>(res);
+            }
+            ++it;
+        }
+        return std::unique_ptr<T>(new T());
+    }
+
     iterator find(KeyType i)
     {
         iterator it = _data.begin();
-        std::cout<< "looping\n";
         while (it != _data.end()) {
-            std::cout << (*it)->key << " vs " << i << "\n";
             if ((*it)->key == i) {
                 return it;
             }
@@ -159,6 +176,16 @@ public:
     iterator end()
     {
         return _data.end();
+    }
+
+    bool empty()
+    {
+        return _data.empty();
+    }
+
+    size_t size()
+    {
+        return _data.size();
     }
 
 private:
