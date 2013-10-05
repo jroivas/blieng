@@ -51,19 +51,8 @@ int fsetpos(FILE *stream, const fpos_t *pos);
 int feof(FILE *stream) throw ();
 int fclose(FILE *fp);
 
-//# define __REDIRECT(name, proto, alias) name proto __asm__ (__ASMNAME (#alias))
-#define REDIR(retval, name, proto, extra, alias, aproto) \
-    retval name proto extra;\
-    retval alias proto extra;\
-    retval alias proto { return name aproto; }
-
-#define BITS 64
-//    retval alias proto extra;\ { return name aproto; }
-//REDIR(int, open64, (const char *pathname, int flags, ...), __nonnull ((1)), open, (pathname, flags));
 int open(const char *pathname, int flags, ...) __nonnull ((1));
 int open64(const char *pathname, int flags, ...) __nonnull ((1));
-//int open(const char *pathname, int flags) __nonnull ((1));
-//int open(const char *pathname, int flags, mode_t mode);
 int creat(const char *pathname, mode_t mode);
 int creat64(const char *pathname, mode_t mode);
 int stat(const char *path, struct stat *buf) throw ();
