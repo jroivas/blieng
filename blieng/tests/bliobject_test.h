@@ -5,6 +5,9 @@
 
 class BliObjectTest : public CppUnit::TestFixture
 {
+public:
+    void setUp();
+    void tearDown();
     CPPUNIT_TEST_SUITE( BliObjectTest );
     CPPUNIT_TEST(values);
     CPPUNIT_TEST(getValues);
@@ -13,7 +16,7 @@ class BliObjectTest : public CppUnit::TestFixture
     CPPUNIT_TEST(random);
     CPPUNIT_TEST(incdec);
     CPPUNIT_TEST_SUITE_END();
-public:
+private:
     void values();
     void getValues();
     void toString();

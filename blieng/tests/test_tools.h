@@ -30,6 +30,7 @@ void mock_io_stop();
 void mock_set_file(std::string name, std::string data);
 void mock_remove_file(std::string name);
 bool mock_is_file(std::string name);
+void mock_add_folder(std::string name);
 std::string mock_get_data(std::string name);
 std::vector<std::string> mock_list_files();
 
@@ -46,16 +47,21 @@ long ftell(FILE *stream);
 void rewind(FILE *stream);
 int fgetpos(FILE *stream, fpos_t *pos);
 int fflush(FILE *stream);
+int ferror(FILE *stream) throw ();
+void clearerr(FILE *stream);
 int fileno(FILE *stream) throw ();
 int fsetpos(FILE *stream, const fpos_t *pos);
 int feof(FILE *stream) throw ();
 int fclose(FILE *fp);
+
+int *__errno_location();
 
 int open(const char *pathname, int flags, ...) __nonnull ((1));
 int open64(const char *pathname, int flags, ...) __nonnull ((1));
 int creat(const char *pathname, mode_t mode);
 int creat64(const char *pathname, mode_t mode);
 int stat(const char *path, struct stat *buf) throw ();
+int stat64(const char *path, struct stat64 *buf) throw () __nonnull((1, 2));
 int __xstat(int x, const char *path, struct stat *buf) throw ();
 int __xstat64(int x, const char *path, struct stat64 *buf) throw () __nonnull((2, 3));
 int __lxstat64(int x, const char *path, struct stat64 *buf) throw ();

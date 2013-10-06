@@ -70,8 +70,6 @@ std::unique_ptr<boost::filesystem::path> Data::findDataFile(std::string datafile
     locations.push_back(".\\");
     locations.push_back("..\\");
 
-    //boost::filesystem::path *my_data_path = new boost::filesystem::path;
-
     std::unique_ptr<boost::filesystem::path> my_data_path(new boost::filesystem::path);
 
     BOOST_FOREACH(std::string item, locations) {

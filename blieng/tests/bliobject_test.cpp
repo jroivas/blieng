@@ -4,10 +4,22 @@
 #include <algorithm>
 #include <string>
 #include <boost/scoped_ptr.hpp>
+#include "test_tools.h"
 
 CPPUNIT_TEST_SUITE_REGISTRATION( BliObjectTest );
 
 using blieng::BliObject;
+
+void BliObjectTest::setUp()
+{
+    mock_add_folder("data");
+    mock_io_start();
+}
+
+void BliObjectTest::tearDown()
+{
+    mock_io_stop();
+}
 
 void BliObjectTest::values()
 {

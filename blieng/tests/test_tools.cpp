@@ -4,16 +4,24 @@
 #include <cstdio>
 #include <dlfcn.h>
 #include <boost/assert.hpp>
+#include <boost/foreach.hpp>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
 
+static int __real__errno = 0;
+
+int *__errno_location()
+{
+    return &__real__errno;
+}
+
 class MockFile
 {
 public:
-    MockFile(std::string name) : magic(0x420012), name(name), open(true), mode(""), pos(0), eof(false) {
+    MockFile(std::string name) : magic(0x420012), name(name), open(true), mode(""), pos(0), eof(false), error(0) {
     }
-    MockFile(std::string name, std::string mode) : magic(0x420012), name(name), open(true), mode(mode), pos(0), eof(false) {}
+    MockFile(std::string name, std::string mode) : magic(0x420012), name(name), open(true), mode(mode), pos(0), eof(false), error(0) {}
 
     bool readonly()
     {
@@ -31,6 +39,7 @@ public:
     std::string mode;
     size_t pos;
     bool eof;
+    int error;
 };
 
 #define VALIDATE(X) BOOST_ASSERT(X != NULL); BOOST_ASSERT(((MockFile*)X)->magic == 0x420012); 
@@ -39,6 +48,7 @@ public:
 static bool __mocking_io = false;
 static std::map<std::string, std::string> mock_files;
 static std::vector<MockFile*> mock_ids;
+static std::vector<std::string> mock_folders;
 
 void mock_io_start()
 {
@@ -61,6 +71,19 @@ void mock_io_stop()
 void mock_set_file(std::string name, std::string data)
 {
     mock_files[name] = data;
+}
+
+bool mock_is_folder(std::string name)
+{
+    BOOST_FOREACH(std::string f, mock_folders) {
+        if (f == name) return true;
+    }
+    return false;
+}
+
+void mock_add_folder(std::string name)
+{
+    mock_folders.push_back(name);
 }
 
 void mock_remove_file(std::string name)
@@ -102,6 +125,8 @@ int (*orig_xstat64)(int x, const char *path, struct stat64 *buf) = NULL;
 int (*orig_fstat)(int fd, struct stat *buf) = NULL;
 int (*orig_lstat)(const char *path, struct stat *buf) = NULL;
 int (*orig_fflush)(FILE *stream) = NULL;
+int (*orig_ferror)(FILE *stream) = NULL;
+void (*orig_clearerr)(FILE *stream) = NULL;
 ssize_t (*orig_read)(int fd, void *buf, size_t count) = NULL;
 ssize_t (*orig_write)(int fd, const void *buf, size_t count) = NULL;
 size_t (*orig_fread)(void *ptr, size_t size, size_t nmemb, FILE *stream) = NULL;
@@ -199,7 +224,9 @@ int close(int fd)
 int fstat(int fd, struct stat *buf)
 {
     if (__mocking_io) {
-        return 0;
+        if (fd < 3 || fd >= (int)mock_ids.size()) return 0;
+
+        return __xstat64(0, mock_ids[fd]->name.c_str(), (struct stat64*)buf);
     }
     if (!orig_fstat) orig_fstat = *(int (*)(int, struct stat *))dlsym(RTLD_NEXT, "fstat");
     return orig_fstat(fd, buf);
@@ -217,6 +244,15 @@ int stat(const char *path, struct stat *buf)
     if (!orig_xstat) orig_xstat = *(int (*)(int, const char *, struct stat *))dlsym(RTLD_NEXT, "__xstat");
     return orig_xstat(0, path, buf);
 #endif
+}
+
+int stat64(const char *path, struct stat64 *buf) throw ()
+{
+    if (__mocking_io) {
+        return __xstat64(0, path, buf);
+    }
+    if (!orig_xstat64) orig_xstat64 = *(int (*)(int, const char *, struct stat64 *))dlsym(RTLD_NEXT, "__xstat64");
+    return orig_xstat64(0, path, buf);
 }
 
 int __xstat(int x, const char *path, struct stat *buf) throw ()
@@ -250,22 +286,42 @@ int __xstat(int x, const char *path, struct stat *buf) throw ()
 int __xstat64(int x, const char *path, struct stat64 *buf) throw ()
 {
     if (__mocking_io) {
-        if (mock_is_file(path)) {
+        std::cout << "Statting " << path << ": ";
+        if (mock_is_folder(path)) {
             if (buf) {
                 buf->st_dev = 1;
                 buf->st_ino = 2;
-                buf->st_mode = 0664;
+                buf->st_mode = S_IFDIR | S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH;
+                buf->st_nlink = 1;
+                buf->st_uid = 0;
+                buf->st_gid = 0;
+                buf->st_rdev = 0;
+                buf->st_size = 4096;
+                buf->st_blksize = 512;
+                buf->st_blocks = 4;
+            }
+            std::cout << "got folder\n";
+            return 0;
+        }
+        else if (mock_is_file(path)) {
+            if (buf) {
+                buf->st_dev = 1;
+                buf->st_ino = 2;
+                buf->st_mode = S_IFREG | S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
                 buf->st_nlink = 1;
                 buf->st_uid = 0;
                 buf->st_gid = 0;
                 buf->st_rdev = 0;
                 std::string data = mock_get_data(path);
                 buf->st_size = data.size();
-                buf->st_blksize = 51;
+                buf->st_blksize = 512;
                 buf->st_blocks = data.size() / 512 + 1;
             }
+            std::cout << "got file\n";
             return 0;
         }
+        std::cout << "not found\n";
+        errno = ENOENT;
         return -1;
     }
     if (!orig_xstat64) orig_xstat64 = *(int (*)(int, const char *, struct stat64 *))dlsym(RTLD_NEXT, "__xstat64");
@@ -274,7 +330,7 @@ int __xstat64(int x, const char *path, struct stat64 *buf) throw ()
 
 int statvfs64(const char *path, struct statvfs64 *buf) throw ()
 {
-    return 0;
+    return -1;
 }
 
 int __lxstat64(int x, const char *path, struct stat64 *buf) throw ()
@@ -383,6 +439,44 @@ int fflush(FILE *stream)
 
     if (!orig_fflush) orig_fflush = (int (*)(FILE *stream))dlsym(RTLD_NEXT, "fflush");
     return orig_fflush(stream);
+}
+
+int ferror(FILE *stream) throw ()
+{
+    if (__mocking_io) {
+        if (stream == NULL) return -1;
+        prepare_std();
+
+        if (stream == stdout) return 0;
+        else if (stream == stderr) return 0;
+        else if (stream == stdin) return 0;
+
+        VALIDATE(stream);
+
+        return MF(stream)->error;
+    }
+
+    if (!orig_ferror) orig_ferror = (int (*)(FILE *stream))dlsym(RTLD_NEXT, "ferror");
+    return orig_ferror(stream);
+}
+
+void clearerr(FILE *stream)
+{
+    if (__mocking_io) {
+        if (stream == NULL) return;
+        prepare_std();
+
+        if (stream == stdout) return;
+        else if (stream == stderr) return;
+        else if (stream == stdin) return;
+
+        VALIDATE(stream);
+
+        MF(stream)->error = 0;
+        return;
+    }
+    if (!orig_clearerr) orig_clearerr = (void (*)(FILE *stream))dlsym(RTLD_NEXT, "clearerr");
+    orig_clearerr(stream);
 }
 
 size_t fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream)
