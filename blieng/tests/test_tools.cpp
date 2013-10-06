@@ -155,6 +155,7 @@ void prepare_std()
 
 int real_open(const char *pathname, int flags, mode_t mode)
 {
+    std::cout << "Opening " << pathname << "\n";
     if (__mocking_io) {
         prepare_std();
     
@@ -408,6 +409,19 @@ size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream)
         VALIDATE(stream);
 
         std::string name = MF(stream)->name;
+        if (name == "/dev/urandom" || name == "/dev/random") {
+            ssize_t genrand = size * nmemb;
+            static int val = 123;
+            char *res = (char*)ptr;
+            while (genrand) {
+                *(res++) = (val % 0xFF);
+                val += 999;
+                val ^= 0x7FF7;
+                val %= 0xAFFF;
+                --genrand;
+            }
+            return (size * nmemb);
+        }
         if (!mock_is_file(name)) return 0;
 
         std::string data = mock_get_data(name);
