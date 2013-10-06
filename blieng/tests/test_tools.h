@@ -72,7 +72,7 @@ int fstat(int fd, struct stat *buf) throw () __nonnull((2));
 int fstat64(int fd, struct stat64 *buf) throw () __nonnull((2));
 int lstat(const char *path, struct stat *buf) throw ();
 int close(int fd);
-off_t lseek(int fd, off_t offset, int whence) throw ();
+//off_t lseek(int fd, off_t offset, int whence) throw ();
 
 ssize_t read(int fd, void *buf, size_t count);
 ssize_t write(int fd, const void *buf, size_t count);

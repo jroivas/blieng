@@ -130,3 +130,18 @@ void DataTest::readData()
 
     mock_io_stop();
 }
+
+void DataTest::readJson()
+{
+    mock_set_file("json1", "{\n\"aa\": \"b42\"\n}\n");
+    
+    mock_io_start();
+
+    blieng::Data *obj = blieng::Data::getInstance();
+
+    Json::Value res = obj->readJson("json1");
+
+    CPPUNIT_ASSERT( res.isObject() );
+
+    mock_io_stop();
+}

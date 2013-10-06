@@ -15,6 +15,7 @@ public:
     CPPUNIT_TEST(readLinesEmpty);
     CPPUNIT_TEST(readLinesNoFile);
     CPPUNIT_TEST(readData);
+    CPPUNIT_TEST(readJson);
     CPPUNIT_TEST_SUITE_END();
 private:
     void object();
@@ -24,6 +25,7 @@ private:
     void readLinesEmpty();
     void readLinesNoFile();
     void readData();
+    void readJson();
 };
 
 #endif
