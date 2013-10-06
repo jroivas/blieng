@@ -6,6 +6,7 @@ INCLUDEPATH += .
 CONFIG += staticlib
 #QMAKE_CXXFLAGS += -std=c++11 #In newer compilers
 QMAKE_CXXFLAGS += -std=c++0x
+QMAKE_CXXFLAGS += -g
 
 
 unix {

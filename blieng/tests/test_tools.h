@@ -6,6 +6,7 @@
 #include <vector>
 #include <stdio.h>
 #include <fcntl.h>
+#include <poll.h>
 
 class cout_redirect
 {
@@ -66,12 +67,18 @@ int __xstat(int x, const char *path, struct stat *buf) throw ();
 int __xstat64(int x, const char *path, struct stat64 *buf) throw () __nonnull((2, 3));
 int __lxstat64(int x, const char *path, struct stat64 *buf) throw ();
 int statvfs64(const char *path, struct statvfs64 *buf) throw ();
-int fstat(int fd, struct stat *buf) throw ();
+int fstatvfs64(int fd, struct statvfs64 *buf) throw ();
+int fstat(int fd, struct stat *buf) throw () __nonnull((2));
+int fstat64(int fd, struct stat64 *buf) throw () __nonnull((2));
 int lstat(const char *path, struct stat *buf) throw ();
 int close(int fd);
+off_t lseek(int fd, off_t offset, int whence) throw ();
 
 ssize_t read(int fd, void *buf, size_t count);
 ssize_t write(int fd, const void *buf, size_t count);
+
+int poll(struct pollfd *fds, nfds_t nfds, int timeout);
+int ioctl(int d, unsigned long int request, ...) throw ();
 
 #ifdef __cplusplus
 }

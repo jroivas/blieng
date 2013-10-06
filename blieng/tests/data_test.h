@@ -11,11 +11,19 @@ public:
     CPPUNIT_TEST(object);
     CPPUNIT_TEST(gen);
     CPPUNIT_TEST(readString);
+    CPPUNIT_TEST(readLines);
+    CPPUNIT_TEST(readLinesEmpty);
+    CPPUNIT_TEST(readLinesNoFile);
+    CPPUNIT_TEST(readData);
     CPPUNIT_TEST_SUITE_END();
 private:
     void object();
     void gen();
     void readString();
+    void readLines();
+    void readLinesEmpty();
+    void readLinesNoFile();
+    void readData();
 };
 
 #endif

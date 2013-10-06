@@ -8,6 +8,8 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <stdarg.h>
+#include <sys/ioctl.h>
 
 static int __real__errno = 0;
 
@@ -124,6 +126,7 @@ int (*orig_stat)(const char *path, struct stat *buf) = NULL;
 int (*orig_xstat)(int x, const char *path, struct stat *buf) = NULL;
 int (*orig_xstat64)(int x, const char *path, struct stat64 *buf) = NULL;
 int (*orig_fstat)(int fd, struct stat *buf) = NULL;
+int (*orig_fstat64)(int fd, struct stat64 *buf) = NULL;
 int (*orig_lstat)(const char *path, struct stat *buf) = NULL;
 int (*orig_fflush)(FILE *stream) = NULL;
 int (*orig_ferror)(FILE *stream) = NULL;
@@ -133,6 +136,7 @@ ssize_t (*orig_write)(int fd, const void *buf, size_t count) = NULL;
 size_t (*orig_fread)(void *ptr, size_t size, size_t nmemb, FILE *stream) = NULL;
 size_t (*orig_fwrite)(const void *ptr, size_t size, size_t nmemb, FILE *stream) = NULL;
 int (*orig_fseek)(FILE *stream, long offset, int whence) = NULL;
+int (*orig_lseek)(int, off_t, int) = NULL;
 long (*orig_ftell)(FILE *stream) = NULL;
 int (*orig_feof)(FILE *stream) = NULL;
 int (*orig_fileno)(FILE *stream) = NULL;
@@ -140,6 +144,8 @@ void (*orig_rewind)(FILE *stream) = NULL;
 int (*orig_fgetpos)(FILE *stream, fpos_t *pos) = NULL;
 int (*orig_fsetpos)(FILE *stream, const fpos_t *pos) = NULL;
 int (*orig_fclose)(FILE *fp) = NULL;
+int (*orig_poll)(struct pollfd *, nfds_t, int) = NULL;
+int (*orig_ioctl)(int, int, ...) = NULL;
 
 void prepare_std()
 {
@@ -158,7 +164,6 @@ void prepare_std()
 
 int real_open(const char *pathname, int flags, mode_t mode)
 {
-    std::cout << "Opening " << pathname << "\n";
     if (__mocking_io) {
         prepare_std();
     
@@ -242,6 +247,103 @@ int fstat(int fd, struct stat *buf)
     if (!orig_fstat) orig_fstat = *(int (*)(int, struct stat *))dlsym(RTLD_NEXT, "fstat");
     return orig_fstat(fd, buf);
 }
+int __fstat(int fd, struct stat *buf)
+{
+    return fstat(fd, buf);
+}
+
+int fstat64(int fd, struct stat64 *buf)
+{
+    if (__mocking_io) {
+        if (fd < 3 || fd >= (int)mock_ids.size()) return 0;
+
+        return __xstat64(0, mock_ids[fd]->name.c_str(), buf);
+    }
+    if (!orig_fstat64) orig_fstat64 = *(int (*)(int, struct stat64 *))dlsym(RTLD_NEXT, "fstat64");
+    return orig_fstat64(fd, buf);
+}
+
+int poll(struct pollfd *fds, nfds_t nfds, int timeout)
+{
+    if (__mocking_io) {
+        if (nfds > 0) {
+            unsigned int nn = 0;
+            for (size_t a = 0; a < nfds; a++) {
+                bool got = false;
+                int fd = fds[a].fd;
+                fds[a].revents = 0;
+                if (fd < 0) {
+                }
+                else if (fd < 3) {
+                    if (fd == 0 && (fds[a].events & POLLIN)) {
+                        std::string data = mock_get_data("__stdin");
+
+                        fds[a].revents = 0;
+                        if (!data.empty()) {
+                            fds[a].revents |= POLLIN;
+                            got = true;
+                        }
+                    }
+                    if ((fd == 1 || fd == 2) && (fds[a].events & POLLOUT)) {
+                        fds[a].revents = POLLOUT;
+                        got = true;
+                    }
+                }
+                else if (fd >= mock_ids.size()) {
+                    fds[a].revents = POLLNVAL;
+                    got = true;
+                }
+                else {
+                    MockFile *f = mock_ids[fd];
+                    std::string data = mock_get_data(f->name);
+                    if ((fds[a].events & POLLIN) && (f->pos+1 < data.size())) {
+                        fds[a].revents |= POLLIN;
+                        got = true;
+                    }
+                    if ((fds[a].events & POLLOUT) && f->writeable()) {
+                        fds[a].revents |= POLLOUT;
+                        got = true;
+                    }
+                    if (fds[a].events != 0) {
+                    }
+                }
+                if (got) ++nn;
+            }
+            return nn;
+        }
+        return -1;
+    }
+    if (!orig_poll) orig_poll = *(int (*)(struct pollfd *, nfds_t, int))dlsym(RTLD_NEXT, "poll");
+    return orig_poll(fds, nfds, timeout);
+}
+
+int ioctl(int fd, unsigned long int request, ...) throw ()
+{
+    if (__mocking_io) {
+        if (fd < 3) return 0;
+        else if (fd >= mock_ids.size()) {
+            errno = EBADF;
+            return -1;
+        }
+        if (request == FIONREAD) {
+            MockFile *f = mock_ids[fd];
+            std::string data = mock_get_data(f->name);
+            int cnt = data.size() - f->pos;
+
+            va_list vl;
+            va_start(vl, request);
+            int* val = va_arg(vl, int*);
+            if (val != nullptr) {
+                *val = cnt;
+            }
+            va_end(vl);
+            return 0;
+        }
+        return 0;
+    }
+    if (!orig_ioctl) orig_ioctl = *(int (*)(int, int, ...))dlsym(RTLD_NEXT, "ioctl");
+    return orig_ioctl(fd, request);
+}
 
 int stat(const char *path, struct stat *buf)
 {
@@ -297,7 +399,6 @@ int __xstat(int x, const char *path, struct stat *buf) throw ()
 int __xstat64(int x, const char *path, struct stat64 *buf) throw ()
 {
     if (__mocking_io) {
-        std::cout << "Statting " << path << ": ";
         if (mock_is_folder(path)) {
             if (buf) {
                 buf->st_dev = 1;
@@ -311,7 +412,6 @@ int __xstat64(int x, const char *path, struct stat64 *buf) throw ()
                 buf->st_blksize = 512;
                 buf->st_blocks = 4;
             }
-            std::cout << "got folder\n";
             return 0;
         }
         else if (mock_is_file(path)) {
@@ -328,10 +428,8 @@ int __xstat64(int x, const char *path, struct stat64 *buf) throw ()
                 buf->st_blksize = 512;
                 buf->st_blocks = data.size() / 512 + 1;
             }
-            std::cout << "got file\n";
             return 0;
         }
-        std::cout << "not found\n";
         errno = ENOENT;
         return -1;
     }
@@ -339,10 +437,198 @@ int __xstat64(int x, const char *path, struct stat64 *buf) throw ()
     return orig_xstat64(x, path, buf);
 }
 
+//TODO Implement these as well
+#if 0
+#include <sys/types.h>
+#include <dirent.h>
+
+DIR *opendir(const char *name)
+{
+    errno = ENOENT;
+    return NULL;
+}
+int rmdir(const char *path)
+{
+    errno = ENOENT;
+    return -1;
+}
+int mkdir(const char *path, mode_t mode)
+{
+    errno = ENOENT;
+    return -1;
+}
+long fpathconf(int path, int name)
+{
+    return -1;
+}
+long pathconf(const char *path, int name)
+{
+    return -1;
+}
+
+int symlink(const char *oldpath, const char *newpath)
+{
+    errno = ENOENT;
+    return -1;
+}
+int truncate(const char *path, off_t length)
+{
+    errno = ENOENT;
+    return -1;
+}
+int truncate64(const char *path, off_t length)
+{
+    errno = ENOENT;
+    return -1;
+}
+int unlink(const char *pathname)
+{
+    errno = ENOENT;
+    return -1;
+}
+int readdir_r(DIR *dirp, struct dirent *entry, struct dirent **result)
+{
+    errno = ENOENT;
+    return -1;
+}
+int readdir64_r(DIR *dirp, struct dirent64 *entry, struct dirent64 **result)
+{
+    errno = ENOENT;
+    return -1;
+}
+struct dirent *readdir(DIR *dirp)
+{
+    return NULL;
+}
+struct dirent64 *readdir64(DIR *dirp)
+{
+    return NULL;
+}
+int rename(const char *oldpath, const char *newpath)
+{
+    errno = ENOENT;
+    return -1;
+}
+
+ssize_t readlink(const char *path, char *buf, size_t bufsiz)
+{
+    errno = ENOENT;
+    return NULL;
+}
+int chdir(const char *path)
+{
+    errno = ENOENT;
+    return -1;
+}
+int fchdir(int fd)
+{
+    errno = ENOENT;
+    return -1;
+}
+int chmod(const char *path, mode_t mode)
+{
+    errno = ENOENT;
+    return -1;
+}
+int fchmod(int path, mode_t mode)
+{
+    errno = ENOENT;
+    return -1;
+}
+
+char *getcwd(char *buf, size_t size)
+{
+    if (size < 2 || buf == NULL) return NULL;
+    buf[0] = '/';
+    buf[1] = 0;
+    return buf;
+}
+
+int link(const char *oldpath, const char *newpath)
+{
+    return 0;
+}
+
+int closedir(DIR *dirp)
+{
+    errno = ENOENT;
+    return -1;
+}
+
+DIR *fdopendir(int fd)
+{
+    errno = ENOENT;
+    return NULL;
+}
+
+int fstatat (int fd, const char *file, struct stat *buf, int flag)
+{
+    errno = ENOENT;
+    return -1;
+}
+int __fstatat (int fd, const char *file, struct stat *buf, int flag)
+{
+    errno = ENOENT;
+    return -1;
+}
+int fstatat64 (int fd, const char *file, struct stat *buf, int flag)
+{
+    errno = ENOENT;
+    return -1;
+}
+int __fstatat64 (int fd, const char *file, struct stat *buf, int flag)
+{
+    errno = ENOENT;
+    return -1;
+}
+
+int fstatvfs(const char *path, struct statvfs *buf)
+{
+    errno = ENOENT;
+    return -1;
+}
+int statvfs(const char *path, struct statvfs *buf)
+{
+    errno = ENOENT;
+    return -1;
+}
+int __fstatfs(int path, struct statvfs *buf)
+{
+    errno = ENOENT;
+    return -1;
+}
+int __fstatfs64(int path, struct statvfs64 *buf)
+{
+    errno = ENOENT;
+    return -1;
+}
+int fstatvfs(int path, struct statvfs *buf)
+{
+    errno = ENOENT;
+    return -1;
+}
+
+int __fxstatat (int fd, const char *file, struct stat *buf, int flag)
+{
+    errno = ENOENT;
+    return -1;
+}
+int __fxstatat64 (int fd, const char *file, struct stat *buf, int flag)
+{
+    errno = ENOENT;
+    return -1;
+}
+
 int statvfs64(const char *path, struct statvfs64 *buf) throw ()
 {
     return -1;
 }
+
+int fstatvfs64(int fd, struct statvfs64 *buf) throw ()
+{
+    return -1;
+}
+#endif
 
 int __lxstat64(int x, const char *path, struct stat64 *buf) throw ()
 {
@@ -352,7 +638,7 @@ int __lxstat64(int x, const char *path, struct stat64 *buf) throw ()
 int lstat(const char *path, struct stat *buf)
 {
     if (__mocking_io) {
-        return 0;
+        return stat(path, buf);
     }
     if (!orig_lstat) orig_lstat = *(int (*)(const char *, struct stat *))dlsym(RTLD_NEXT, "lstat");
     return orig_lstat(path, buf);
@@ -509,12 +795,18 @@ size_t fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream)
     if (__mocking_io) {
         if (stream == NULL) return -1;
         prepare_std();
+
         if (stream == stdout) stream = (FILE*)mock_ids[1];
         else if (stream == stderr) stream = (FILE*)mock_ids[2];
         VALIDATE(stream);
 
         std::string name = MF(stream)->name;
         if (!mock_is_file(name) && MF(stream)->readonly()) return 0;
+        if (name == "__stdout" || name == "__stderr") {
+            if (!orig_fwrite) orig_fwrite = (size_t(*)(const void *ptr, size_t size, size_t nmemb, FILE *stream))dlsym(RTLD_NEXT, "fwrite");
+            orig_fwrite(ptr, size, nmemb, name=="__stdout"?stdout:stderr);
+            return size*nmemb;
+        }
 
         std::string data = mock_get_data(name);
         while (data.size() < MF(stream)->pos) {
@@ -551,6 +843,18 @@ int fseek(FILE *stream, long offset, int whence)
     }
     if (!orig_fseek) orig_fseek = (int (*)(FILE *stream, long offset, int whence))dlsym(RTLD_NEXT, "fseek");
     return orig_fseek(stream, offset, whence);
+}
+
+off_t lseek(int fd, off_t offset, int whence)
+{
+    if (__mocking_io) {
+        if (fd < 3) return 0;
+        if (fd >= mock_ids.size()) return -1;
+
+        return fseek((FILE*)mock_ids[fd], offset, whence);
+    }
+    if (!orig_lseek) orig_lseek = (int (*)(int stream, off_t offset, int whence))dlsym(RTLD_NEXT, "lseek");
+    return orig_lseek(fd, offset, whence);
 }
 
 int feof(FILE *stream) throw ()
