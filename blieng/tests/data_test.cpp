@@ -133,7 +133,7 @@ void DataTest::readData()
 
 void DataTest::readJson()
 {
-    mock_set_file("json1", "{\n\"aa\": \"b42\"\n}\n");
+    mock_set_file("json1", "{\"aa\": \"b42\", \"second\": 12, \"third\": [1,2,3]}");
     
     mock_io_start();
 
@@ -142,6 +142,19 @@ void DataTest::readJson()
     Json::Value res = obj->readJson("json1");
 
     CPPUNIT_ASSERT( res.isObject() );
+    CPPUNIT_ASSERT( !res.empty() );
+
+    CPPUNIT_ASSERT( res.isMember("aa") );
+    CPPUNIT_ASSERT( res["aa"].isString() );
+
+    CPPUNIT_ASSERT( res.isMember("second") );
+    CPPUNIT_ASSERT( res["second"].isNumeric() );
+
+    CPPUNIT_ASSERT( res.isMember("third") );
+    CPPUNIT_ASSERT( res["third"].isArray() );
+
+    CPPUNIT_ASSERT( obj->isJsonKey(res, "second") );
+    CPPUNIT_ASSERT( obj->getJsonValue(res, "second").isNumeric() );
 
     mock_io_stop();
 }

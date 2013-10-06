@@ -4,14 +4,18 @@
 #include <boost/filesystem.hpp>
 #include <vector>
 #include <memory>
+#include <map>
 #include <json/reader.h>
 #include <boost/random/random_device.hpp>
 #include "datafile.h"
+#include "auto_vector.h"
 
 using std::unique_ptr;
 
 namespace blieng
 {
+
+class DataBuffer;
 
 class Data
 {
@@ -61,6 +65,7 @@ private:
     std::unique_ptr<blieng::DataFile> datafile;
 
     static Data *__data_instance;
+    auto_vector<DataBuffer> __buffers;
 };
 
 }

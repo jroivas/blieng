@@ -8,6 +8,19 @@ using blieng::Data;
 
 Data *Data::__data_instance = NULL;
 
+class blieng::DataBuffer
+{
+public:
+    DataBuffer(std::string name, char *data, unsigned int len) : name(name), data(data), len(len) {}
+    ~DataBuffer() {
+        delete data;
+    }
+
+    std::string name;
+    char *data;
+    unsigned int len;
+};
+
 Data *Data::getInstance()
 {
     if (__data_instance == NULL) {
@@ -317,6 +330,16 @@ unsigned int Data::readData(std::string name, char **data)
     }
 
     if (!data_path.get()) return 0;
+
+    BOOST_FOREACH(blieng::DataBuffer *buf, __buffers)
+    {
+        if (buf->name == name) {
+            if (data != NULL) {
+                *data = buf->data;
+            }
+            return buf->len;
+        }
+    }
     
     boost::filesystem::path first_path = solveFilePath(name);
     if (boost::filesystem::exists(first_path)) {
@@ -339,7 +362,9 @@ unsigned int Data::readData(std::string name, char **data)
         fd.close();
 
         if (data != NULL) {
-            *data = buffer;
+            unique_ptr<blieng::DataBuffer> tmp(new blieng::DataBuffer(name, buffer, totalsize));
+            __buffers.push_back(std::move(tmp));
+            *data = __buffers.back()->data;
         } else {
             free(buffer);
         }
