@@ -55,6 +55,7 @@ void mock_io_start()
     if (!mock_is_file("__stdin")) mock_set_file("__stdin", "");
     if (!mock_is_file("__stdout")) mock_set_file("__stdout", "");
     if (!mock_is_file("__stderr")) mock_set_file("__stderr", "");
+    if (!mock_is_file("/dev/urandom")) mock_set_file("/dev/urandom", "");
     __mocking_io = true;
 }
 
@@ -147,10 +148,12 @@ void prepare_std()
     mock_ids.push_back(new MockFile("__stdin", "r"));
     mock_ids.push_back(new MockFile("__stdout", "w"));
     mock_ids.push_back(new MockFile("__stderr", "w"));
+    mock_ids.push_back(new MockFile("/dev/urandom", "r"));
 
     if (!mock_is_file("__stdin")) mock_set_file("__stdin", "");
     if (!mock_is_file("__stdout")) mock_set_file("__stdout", "");
     if (!mock_is_file("__stderr")) mock_set_file("__stderr", "");
+    if (!mock_is_file("/dev/urandom")) mock_set_file("/dev/urandom", "");
 }
 
 int real_open(const char *pathname, int flags, mode_t mode)
@@ -165,6 +168,13 @@ int real_open(const char *pathname, int flags, mode_t mode)
         else if (flags & O_TRUNC) amode = "w+";
         else if (flags & O_WRONLY) amode = "w";
         else amode = "w";
+
+        if (!mock_is_file(pathname)) {
+            if (!((flags & O_TRUNC) || (flags & O_CREAT))) {
+                errno = ENOENT;
+                return -1;
+            }
+        }
 
         MockFile *f = new MockFile(pathname, amode);
         mock_ids.push_back(f);
@@ -380,7 +390,8 @@ FILE* fopen(const char *path, const char *mode)
 {
     if (__mocking_io) {
         std::string smode = mode;
-        if (smode == "r" && !mock_is_file(path)) {
+        if ((smode == "r" || smode == "r+") && !mock_is_file(path)) {
+            errno = ENOENT;
             return NULL;
         }
         if (!mock_is_file(path)) {
