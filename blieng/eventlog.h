@@ -25,7 +25,7 @@ public:
     void assign(void *obj);
     void addEvent(boost::any event);
     void *getObject();
-    std::string getName();
+    std::string getName() const;
     void setName(std::string name);
 
     std::vector<std::pair<boost::posix_time::ptime, boost::any> > events;

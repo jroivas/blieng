@@ -21,8 +21,16 @@ void EventLogTest::basic()
     obj->log("brains", 1);
     obj->log("dummy", 59);
     obj->log("brains", 9);
+    obj->log("brains", 999);
 
-    ObjectLog *log = obj->get("dummy");
+    const ObjectLog *log = obj->get("dummy");
+    const ObjectLog *blog = obj->get("brains");
 
-    //CPPUNIT_ASSERT( obj-> );
+    CPPUNIT_ASSERT( log != NULL );
+    CPPUNIT_ASSERT( log->getName() == "dummy" );
+    CPPUNIT_ASSERT( log->events.size() == 2 );
+
+    CPPUNIT_ASSERT( blog != NULL );
+    CPPUNIT_ASSERT( blog->getName() == "brains" );
+    CPPUNIT_ASSERT( blog->events.size() == 3 );
 }

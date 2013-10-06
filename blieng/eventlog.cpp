@@ -22,7 +22,7 @@ void *ObjectLog::getObject()
     return object;
 }
 
-std::string ObjectLog::getName()
+std::string ObjectLog::getName() const
 {
     return name;
 }
