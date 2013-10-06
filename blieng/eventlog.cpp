@@ -9,13 +9,27 @@ ObjectLog::ObjectLog() : BliObject()
     object = NULL;
 }
 
-ObjectLog::ObjectLog(void *obj) : BliObject(), object(obj)
+ObjectLog::ObjectLog(void *obj) : BliObject(), object(obj), name("")
+{
+}
+
+ObjectLog::ObjectLog(std::string name) : BliObject(), object(NULL), name(name)
 {
 }
 
 void *ObjectLog::getObject()
 {
     return object;
+}
+
+std::string ObjectLog::getName()
+{
+    return name;
+}
+
+void ObjectLog::setName(std::string _name)
+{
+    name = _name;
 }
 
 void ObjectLog::assign(void *obj)
@@ -55,12 +69,37 @@ void EventLog::log(void *object, boost::any event)
         }
     }
 
-    ObjectLog *newobject = new ObjectLog(object);
-    events.push_back(newobject);
+    unique_ptr<ObjectLog> newobject(new ObjectLog(object));
     newobject->addEvent(event);
+    events.push_back(std::move(newobject));
 }
 
-ObjectLog *EventLog::get(void *object)
+void EventLog::log(std::string name, boost::any event)
+{
+    BOOST_FOREACH(ObjectLog *log, events) {
+        if (log->getName() == name) {
+            log->addEvent(event);
+            return;
+        }
+    }
+
+    unique_ptr<ObjectLog> newobject(new ObjectLog(name));
+    newobject->addEvent(event);
+    events.push_back(std::move(newobject));
+}
+
+const ObjectLog *EventLog::get(std::string name)
+{
+    BOOST_FOREACH(ObjectLog *log, events) {
+        if (log->getName() == name) {
+            return log;
+        }
+    }
+
+    return NULL;
+}
+
+const ObjectLog *EventLog::get(void *object)
 {
     BOOST_FOREACH(ObjectLog *log, events) {
         if (log->getObject() == object) {
@@ -71,7 +110,9 @@ ObjectLog *EventLog::get(void *object)
     return NULL;
 }
 
+#if 0
 std::vector<ObjectLog *> EventLog::getAll()
 {
     return events;
 }
+#endif

@@ -25,6 +25,7 @@ HEADERS += point_test.h \
            data_test.h \
            datafile_test.h \
            character_test.h \
+           eventlog_test.h \
            test_tools.h
 SOURCES += point_test.cpp \
            path_test.cpp \
@@ -34,5 +35,6 @@ SOURCES += point_test.cpp \
            character_test.cpp \
            data_test.cpp \
            datafile_test.cpp \
+           eventlog_test.cpp \
            testrunner.cpp \
            test_tools.cpp

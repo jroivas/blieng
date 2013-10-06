@@ -158,3 +158,21 @@ void DataTest::readJson()
 
     mock_io_stop();
 }
+
+void DataTest::fileExists()
+{
+    mock_io_start();
+
+    blieng::Data *obj = blieng::Data::getInstance();
+
+    CPPUNIT_ASSERT( !obj->fileExists("dummy") );
+    CPPUNIT_ASSERT( !obj->fileExists("dummy") );
+
+    mock_set_file("dummy", "dum");
+
+    CPPUNIT_ASSERT( obj->fileExists("dummy") );
+
+    //CPPUNIT_ASSERT( obj->findFile("dummy") == "" );
+
+    mock_io_stop();
+}
