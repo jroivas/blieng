@@ -186,7 +186,7 @@ template <class T>
 class DeletePtr
 {
 public:
-    void operator () (T * p)
+    void operator () (T * p) const
     {
         delete p;
     }
@@ -239,7 +239,7 @@ template <class T>
 void auto_vector<T>::compact ()
 {
     // move null pointers to the end
-    T * a_null = 0;
+    T * a_null = nullptr;
     iterator pos = std::remove (begin (), end (), a_null);
     _arr.resize (pos - begin ());
 }

@@ -23,6 +23,8 @@ private:
     //auto_vector<Item> produceTier1();
     //auto_vector<Item> produceTier2(auto_vector<Item> items);
     void produceTier2();
+    void produceTier2Items();
+    void produceTier2Producers();
     void cleanItems();
     void combineItems();
     void produce(unsigned long int amount);

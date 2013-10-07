@@ -114,11 +114,11 @@ void DataTest::readData()
     mock_io_start();
 
     blieng::Data *obj = blieng::Data::getInstance();
-    char *res = NULL;
+    char *res = nullptr;
     unsigned int cnt = obj->readData("datas", &res);
 
     CPPUNIT_ASSERT( cnt > 0 );
-    CPPUNIT_ASSERT( res != NULL );
+    CPPUNIT_ASSERT( res != nullptr );
     CPPUNIT_ASSERT( cnt >= 9 );
 
     CPPUNIT_ASSERT( res[0] == 'H' );

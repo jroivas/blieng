@@ -64,7 +64,7 @@ auto_vector<Item> Wallclock::produceTier1()
 #endif
 
 //auto_vector<Item> Wallclock::produceTier2(auto_vector<Item> items)
-void Wallclock::produceTier2()
+void Wallclock::produceTier2Items()
 {
     // Go thorough the items
     BOOST_FOREACH(Item *item, items) {
@@ -75,12 +75,17 @@ void Wallclock::produceTier2()
             std::unique_ptr<Item> new_item = item->produce();
             if (new_item.get()) {
                 items.push_back(std::move(new_item)); //FIXME!
-                break;
+                return;
+                //break;
             } else {
                 ok = false;
             }
         } while (ok && (--count)>0);
     }
+}
+
+void Wallclock::produceTier2Producers()
+{
     // Go thorough the producers
     BOOST_FOREACH(Item *item, producers) {
         int count = 0x1000;
@@ -95,7 +100,12 @@ void Wallclock::produceTier2()
             }
         } while (ok && (--count)>0);
     }
-    //return items;
+}
+
+void Wallclock::produceTier2()
+{
+    produceTier2Items();
+    produceTier2Producers();
 }
 
 bool Wallclock::consume()

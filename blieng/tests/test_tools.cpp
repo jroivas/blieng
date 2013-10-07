@@ -25,12 +25,12 @@ public:
     }
     MockFile(std::string name, std::string mode) : magic(0x420012), name(name), open(true), mode(mode), pos(0), eof(false), error(0) {}
 
-    bool readonly()
+    bool readonly() const
     {
         return (mode == "r");
     }
 
-    bool writeable()
+    bool writeable() const
     {
         return (mode == "r+" || mode == "w" || mode == "rw" || mode == "w+" || mode == "a" || mode == "a+");
     }
@@ -44,8 +44,8 @@ public:
     int error;
 };
 
-#define VALIDATE(X) BOOST_ASSERT(X != NULL); BOOST_ASSERT(((MockFile*)X)->magic == 0x420012); 
-#define MF(X) ((MockFile*)X)
+#define VALIDATE(X) BOOST_ASSERT(X != NULL); BOOST_ASSERT(reinterpret_cast<MockFile*>(X)->magic == 0x420012); 
+#define MF(X) reinterpret_cast<MockFile*>(X)
 
 static bool __mocking_io = false;
 static std::map<std::string, std::string> mock_files;
@@ -171,8 +171,10 @@ int real_open(const char *pathname, int flags, mode_t mode)
         
         if (flags & O_RDONLY) amode = "r";
         else if (flags & O_TRUNC) amode = "w+";
-        else if (flags & O_WRONLY) amode = "w";
-        else amode = "w";
+        //else if (flags & O_WRONLY) amode = "w";
+        else {
+            amode = "w";
+        }
 
         if (!mock_is_file(pathname)) {
             if (!((flags & O_TRUNC) || (flags & O_CREAT))) {
@@ -289,7 +291,7 @@ int poll(struct pollfd *fds, nfds_t nfds, int timeout)
                         got = true;
                     }
                 }
-                else if (fd >= mock_ids.size()) {
+                else if (fd >= (int)mock_ids.size()) {
                     fds[a].revents = POLLNVAL;
                     got = true;
                 }
@@ -321,7 +323,7 @@ int ioctl(int fd, unsigned long int request, ...) throw ()
 {
     if (__mocking_io) {
         if (fd < 3) return 0;
-        else if (fd >= mock_ids.size()) {
+        else if (fd >= (int)mock_ids.size()) {
             errno = EBADF;
             return -1;
         }
@@ -849,7 +851,7 @@ off_t lseek(int fd, off_t offset, int whence)
 {
     if (__mocking_io) {
         if (fd < 3) return 0;
-        if (fd >= mock_ids.size()) return -1;
+        if (fd >= (int)mock_ids.size()) return -1;
 
         return fseek((FILE*)mock_ids[fd], offset, whence);
     }

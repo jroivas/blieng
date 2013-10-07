@@ -28,9 +28,9 @@ public:
         len = 0;
     }
 
-    const char * getData() { return data; }
-    unsigned int length() { return len; }
-    unsigned int size() { return len; }
+    const char * getData() const { return data; }
+    unsigned int length() const { return len; }
+    unsigned int size() const { return len; }
 
 private:
     char *data;

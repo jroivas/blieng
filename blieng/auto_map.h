@@ -178,12 +178,12 @@ public:
         return _data.end();
     }
 
-    bool empty()
+    bool empty() const
     {
         return _data.empty();
     }
 
-    size_t size()
+    size_t size() const
     {
         return _data.size();
     }

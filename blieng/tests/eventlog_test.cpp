@@ -62,12 +62,4 @@ void EventLogTest::events()
     CPPUNIT_ASSERT( log->toString().find("[cash]") != std::string::npos );
     CPPUNIT_ASSERT( log->toString().find("[cash] 10") != std::string::npos );
     CPPUNIT_ASSERT( log->toString().find("[cash] -3") != std::string::npos );
-
-    obj->log("dummy", 42);
-    obj->log("brains", 1);
-    obj->log("dummy", 59);
-    obj->log("brains", 9);
-    obj->log("brains", 999);
-
-    std::cout << obj->get("dummy")->toString() << "\n";
 }
