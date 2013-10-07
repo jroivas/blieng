@@ -6,10 +6,11 @@
 #include <boost/random/uniform_int_distribution.hpp>
 #include <boost/random/uniform_real_distribution.hpp>
 
-typedef std::pair<std::string, boost::any> values_t;
-typedef std::map<std::string, boost::any>::iterator values_iter_t;
-
 using blieng::BliObject;
+using blieng::BliAny;
+
+typedef std::pair<std::string, BliAny> values_t;
+typedef std::map<std::string, BliAny>::iterator values_iter_t;
 
 BliObject::BliObject()
 {
@@ -53,7 +54,7 @@ double BliObject::getRandomDouble(double limit_low, double limit_max)
     return dist(*Data::getInstance()->getGen());
 }
 
-boost::any BliObject::getValue(std::string key)
+BliAny BliObject::getValue(std::string key)
 {
     values_iter_t value_iter = values.find(key);
 
@@ -65,15 +66,24 @@ boost::any BliObject::getValue(std::string key)
     return value_iter->second;
 }
 
-void BliObject::setValue(std::string key, boost::any value)
+void BliObject::setValue(std::string key, BliAny value)
+//void BliObject::setValue(std::string key, BliAny value)
 {
     values[key] = value;
 }
 
+#if 0
+//void BliObject::setValue(std::string key, BliAny value)
+template<typename T> void BliObject::setValue(std::string key, T value)
+{
+    values[key] = hold_any(value);
+}
+#endif
+
 #define getConvertValue(X, Y) \
 Y BliObject::get ## X ## Value(std::string key, Y default_value)\
 {\
-    boost::any val = getValue(key);\
+    BliAny val = getValue(key);\
     if (val.empty()) {\
         std::cerr << "Error, key not found: " + key + "\n";\
         throw "Error, key not found: " + key;\
@@ -93,7 +103,7 @@ Y BliObject::get ## X ## Value(std::string key, Y default_value)\
 #define getConvertNumberValue(X, Y, A, B, C) \
 Y BliObject::get ## X ## Value(std::string key, Y default_value)\
 {\
-    boost::any val = getValue(key);\
+    BliAny val = getValue(key);\
     if (val.empty()) {\
         std::cerr << "Error, key not found: " + key + "\n";\
         throw "Error, key not found: " + key;\
@@ -118,13 +128,13 @@ getConvertValue(Bool, bool)
 
 std::vector<std::string> BliObject::getListValue(std::string key)
 {
-    boost::any val = getValue(key);
+    BliAny val = getValue(key);
     return boost::any_cast<std::vector<std::string> >(val);
 }
 
 const std::type_info *BliObject::getValueType(std::string key)
 {
-    boost::any val = getValue(key);
+    BliAny val = getValue(key);
     if (val.empty()) {
         std::cerr << "Error, key not found: " + key + "\n";
         throw "Error, key not found: " + key;
@@ -137,7 +147,7 @@ std::string BliObject::toString()
     std::string res = "";
     BOOST_FOREACH(values_t item, values) {
         std::string key = item.first;
-        boost::any val = item.second;
+        BliAny val = item.second;
 
         res += (boost::format("%20s: ") % key).str();
 
@@ -178,7 +188,7 @@ bool BliObject::changeNumberValue(std::string key, int diff)
 {
     if (!isValue(key)) return false;
 
-    boost::any val = getValue(key);
+    BliAny val = getValue(key);
     if (val.type() == typeid(int)) {
         int num = boost::any_cast<int>(val);
         num += diff;

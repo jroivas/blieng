@@ -6,7 +6,7 @@
 #include <vector>
 #include <memory>
 #include <map>
-#include <boost/any.hpp>
+//#include <boost/any.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 
 using std::unique_ptr;
@@ -23,12 +23,14 @@ public:
     virtual ~ObjectLog() {}
     
     void assign(void *obj);
-    void addEvent(boost::any event);
+    void addEvent(BliAny event);
     void *getObject();
     std::string getName() const;
     void setName(std::string name);
 
-    std::vector<std::pair<boost::posix_time::ptime, boost::any> > events;
+    std::vector<std::pair<boost::posix_time::ptime, BliAny> > events;
+
+    std::string toString();
 
 private:
     void *object;
@@ -41,10 +43,11 @@ public:
     static EventLog *getInstance();
     virtual ~EventLog() {}
 
-    void log(void *object, boost::any event);
-    void log(std::string name, boost::any event);
-    const ObjectLog *get(void *object);
-    const ObjectLog *get(std::string name);
+    void log(void *object, BliAny event);
+    void log(std::string name, BliAny event);
+    void logString(std::string name, std::string event);
+    ObjectLog *get(void *object);
+    ObjectLog *get(std::string name);
     
 private:
     EventLog();

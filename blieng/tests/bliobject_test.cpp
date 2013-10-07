@@ -9,6 +9,7 @@
 CPPUNIT_TEST_SUITE_REGISTRATION( BliObjectTest );
 
 using blieng::BliObject;
+using blieng::BliAny;
 
 void BliObjectTest::setUp()
 {
@@ -30,7 +31,7 @@ void BliObjectTest::values()
     obj->setValue("test1", (int)42);
     CPPUNIT_ASSERT( obj->isValue("test1") );
 
-    boost::any res = obj->getValue("test1");
+    blieng::BliAny res = obj->getValue("test1");
     CPPUNIT_ASSERT( !res.empty() );
     CPPUNIT_ASSERT( boost::any_cast<int>(res) == (int)42 );
 
@@ -230,4 +231,27 @@ void BliObjectTest::incdec()
     CPPUNIT_ASSERT( obj->getUIntValue("test1") == 42 );
     CPPUNIT_ASSERT( obj->getIntValue("test2") == -54 );
     CPPUNIT_ASSERT( obj->getDoubleValue("test3") == 8.99 );
+}
+
+void BliObjectTest::bliany()
+{
+    BliAny tmp1((unsigned int)1);
+    BliAny tmp2(2.3);
+    BliAny tmp3(std::string("res"));
+    BliAny tmp4(true);
+    BliAny tmp5(false);
+    BliAny tmp6(-1);
+
+    CPPUNIT_ASSERT( tmp1.asUInt() == 1);
+    CPPUNIT_ASSERT( tmp1.asNumber() == 1);
+    CPPUNIT_ASSERT( tmp2.asDouble() == 2.3);
+    CPPUNIT_ASSERT( tmp2.asNumber() == 2);
+    CPPUNIT_ASSERT( tmp3.asString() == "res");
+    CPPUNIT_ASSERT( tmp4.asBool() );
+    CPPUNIT_ASSERT( !tmp5.asBool() );
+    CPPUNIT_ASSERT( tmp6.asInt() == -1 );
+    CPPUNIT_ASSERT( tmp6.asNumber() == -1 );
+
+    CPPUNIT_ASSERT_THROW( tmp1.asDouble(), std::string );
+    CPPUNIT_ASSERT_THROW( tmp2.asInt(), std::string );
 }

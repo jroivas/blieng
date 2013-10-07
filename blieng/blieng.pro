@@ -12,7 +12,7 @@ QMAKE_CXXFLAGS += -g
 unix {
     CONFIG += link_pkgconfig
     PKGCONFIG += jsoncpp
-    LIBS += -L/usr/lib -lboost_system -lboost_random -lboost_filesystem
+    LIBS += -L/usr/lib -lboost_system -lboost_random -lboost_filesystem -lboost_date_time
 }
 
 # Input
@@ -29,6 +29,7 @@ HEADERS += \
     point.h \
     town.h \
     card.h \
+    bliany.h \
     auto_map.h \
     auto_vector.h \
     rijndael-alg-fst.h \

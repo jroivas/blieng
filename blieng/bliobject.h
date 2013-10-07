@@ -1,11 +1,11 @@
-#ifndef __BLIENG_BLIOBJ
-#define __BLIENG_BLIOBJ
+#ifndef __BLIENG_BLIOBJECT_H
+#define __BLIENG_BLIOBJECT_H
 
 #include <string>
 #include <map>
 #include <list>
-#include <boost/any.hpp>
 #include <boost/shared_ptr.hpp>
+#include "bliany.h"
 
 namespace blieng
 {
@@ -16,14 +16,14 @@ public:
     BliObject();
     virtual ~BliObject();
 
-    virtual void setValue(std::string key, boost::any value);
+    void setValue(std::string key, BliAny value);
     virtual bool isValue(std::string key);
 
     virtual bool increase(std::string key);
     virtual bool decrease(std::string key);
     bool changeNumberValue(std::string key, int diff);
 
-    virtual boost::any getValue(std::string key);
+    virtual BliAny getValue(std::string key);
     virtual std::string getStringValue(std::string key, std::string default_value="");
     virtual bool getBoolValue(std::string key, bool default_value=false);
     virtual int getIntValue(std::string key, int default_value=0);
@@ -43,7 +43,7 @@ public:
     static bool getRandomBoolean();
 
 protected:
-    std::map<std::string, boost::any> values;
+    std::map<std::string, BliAny> values;
 };
 
 }

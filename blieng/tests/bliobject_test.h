@@ -15,6 +15,7 @@ public:
     CPPUNIT_TEST(assign);
     CPPUNIT_TEST(random);
     CPPUNIT_TEST(incdec);
+    CPPUNIT_TEST(bliany);
     CPPUNIT_TEST_SUITE_END();
 private:
     void values();
@@ -23,6 +24,7 @@ private:
     void assign();
     void random();
     void incdec();
+    void bliany();
 };
 
 #endif

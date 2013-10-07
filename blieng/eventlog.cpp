@@ -1,8 +1,10 @@
 #include "eventlog.h"
 #include <boost/foreach.hpp>
+#include <sstream>
 
 using blieng::ObjectLog;
 using blieng::EventLog;
+using blieng::BliAny;
 
 ObjectLog::ObjectLog() : BliObject()
 {
@@ -37,13 +39,42 @@ void ObjectLog::assign(void *obj)
     object = obj;
 }
 
-void ObjectLog::addEvent(boost::any event)
+void ObjectLog::addEvent(BliAny event)
 {
     boost::posix_time::ptime now = boost::posix_time::microsec_clock::universal_time();
-    std::pair<boost::posix_time::ptime, boost::any> data;
+    std::pair<boost::posix_time::ptime, BliAny> data;
     data.first = now;
     data.second = event;
     events.push_back(data);
+}
+
+std::string anyToString(BliAny data)
+{
+    std::ostringstream res;
+    res << data;
+
+    return res.str();
+}
+
+std::string ObjectLog::toString()
+{
+    std::string res = "";
+
+    std::vector<std::pair<boost::posix_time::ptime, BliAny> >::iterator it = events.begin();
+    while (it != events.end()) {
+        res += to_simple_string((*it).first);
+        res += " ";
+        if (name != "") {
+            res += "[";
+            res += name;
+            res += "] ";
+        }
+        res += anyToString((*it).second);
+        res += "\n";
+        ++it;
+    }
+
+    return res;
 }
 
 static EventLog *__static_event_log = NULL;
@@ -60,7 +91,7 @@ EventLog::EventLog()
 {
 }
 
-void EventLog::log(void *object, boost::any event)
+void EventLog::log(void *object, BliAny event)
 {
     BOOST_FOREACH(ObjectLog *log, events) {
         if (log->getObject() == object) {
@@ -74,7 +105,7 @@ void EventLog::log(void *object, boost::any event)
     events.push_back(std::move(newobject));
 }
 
-void EventLog::log(std::string name, boost::any event)
+void EventLog::log(std::string name, BliAny event)
 {
     BOOST_FOREACH(ObjectLog *log, events) {
         if (log->getName() == name) {
@@ -88,7 +119,13 @@ void EventLog::log(std::string name, boost::any event)
     events.push_back(std::move(newobject));
 }
 
-const ObjectLog *EventLog::get(std::string name)
+void EventLog::logString(std::string name, std::string event)
+{
+    BliAny val = event;
+    log(name, val);
+}
+
+ObjectLog *EventLog::get(std::string name)
 {
     BOOST_FOREACH(ObjectLog *log, events) {
         if (log->getName() == name) {
@@ -99,7 +136,7 @@ const ObjectLog *EventLog::get(std::string name)
     return NULL;
 }
 
-const ObjectLog *EventLog::get(void *object)
+ObjectLog *EventLog::get(void *object)
 {
     BOOST_FOREACH(ObjectLog *log, events) {
         if (log->getObject() == object) {
