@@ -89,7 +89,7 @@ void Wallclock::produceTier2Producers()
 {
     // Go thorough the producers
     auto_vector<Item>::iterator it = producers.begin();
-    while (it != items.end()) {
+    while (it != producers.end()) {
         int count = 0x1000;
         bool ok = true;
         do  {
