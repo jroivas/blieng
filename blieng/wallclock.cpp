@@ -67,38 +67,42 @@ auto_vector<Item> Wallclock::produceTier1()
 void Wallclock::produceTier2Items()
 {
     // Go thorough the items
-    BOOST_FOREACH(Item *item, items) {
-        //Item *new_item = NULL;
+    auto_vector<Item>::iterator it = items.begin();
+    while (it != items.end()) {
         int count = 0x1000;
         bool ok = true;
         do  {
-            std::unique_ptr<Item> new_item = item->produce();
+            std::unique_ptr<Item> new_item = (*it)->produce();
             if (new_item.get()) {
-                items.push_back(std::move(new_item)); //FIXME!
-                return;
-                //break;
+                items.push_back(std::move(new_item));
+                it = items.begin();
+                break;
             } else {
                 ok = false;
             }
         } while (ok && (--count)>0);
+        ++it;
     }
 }
 
 void Wallclock::produceTier2Producers()
 {
     // Go thorough the producers
-    BOOST_FOREACH(Item *item, producers) {
+    auto_vector<Item>::iterator it = producers.begin();
+    while (it != items.end()) {
         int count = 0x1000;
         bool ok = true;
         do  {
-            std::unique_ptr<Item> new_item = item->produce();
+            std::unique_ptr<Item> new_item = (*it)->produce();
             if (new_item.get()) {
                 items.push_back(std::move(new_item));
+                it = items.begin();
                 break;
             } else {
                 ok = false;
             }
         } while (ok && (--count)>0);
+        ++it;
     }
 }
 
@@ -111,21 +115,21 @@ void Wallclock::produceTier2()
 bool Wallclock::consume()
 {
     bool changed = false;
-    BOOST_FOREACH(Item *item, items) {
-        while (item->amount>0) {
+    //BOOST_FOREACH(Item *item, items) {
+    auto_vector<Item>::iterator iit = items.begin();
+    while (iit != items.end()) {
+        while ((*iit)->amount>0) {
             bool last_ok = false;
             std::unique_ptr<Item> in_need;
-            //BOOST_FOREACH(const Item *item2, producers) {
             auto_vector<Item>::iterator it = producers.begin();
             while (it != producers.end()) {
-                if (item == *it) continue;
-                if ((*it)->doesConsume(item->base)) {
+                if (*iit == *it) continue;
+                if ((*it)->doesConsume((*iit)->base)) {
                     if (in_need.get()) {
                         in_need = producers.pop(it);
-                        //in_need = item2;
                         it = producers.begin();
                     }
-                    else if (in_need->hasStock(item->base) > (*it)->hasStock(item->base)) {
+                    else if (in_need->hasStock((*iit)->base) > (*it)->hasStock((*iit)->base)) {
                         in_need = producers.pop(it);
                         it = producers.begin();
                     }
@@ -133,40 +137,41 @@ bool Wallclock::consume()
                 ++it;
             }
             if (in_need.get() &&
-                in_need->consume(items.pop(item))) {
+                in_need->consume(items.pop(it))) {
                 changed = true;
                 last_ok = true;
                 break;
             }
             if (!last_ok) break;
         }
+        ++iit;
     }
-    BOOST_FOREACH(Item *item, items) {
-        while (item->amount>0) {
+    iit = items.begin();
+    while (iit != items.end()) {
+        while ((*iit)->amount>0) {
             bool last_ok = false;
             std::unique_ptr<Item> in_need;
             auto_vector<Item>::iterator it = producers.begin();
             while (it != producers.end()) {
-                if (item == *it) continue;
-                if ((*it)->doesConsume(item->base)) {
+                if (*iit == *it) continue;
+                if ((*it)->doesConsume((*iit)->base)) {
                     if (!in_need.get()) {
                         in_need = producers.pop(it);
                         it = producers.begin();
-                        //in_need = item2;
-                    } else if (in_need->hasStock(item->base) > (*it)->hasStock(item->base)) {
-                        //in_need = item2;
+                    } else if (in_need->hasStock((*iit)->base) > (*it)->hasStock((*iit)->base)) {
                         in_need = producers.pop(it);
                         it = producers.begin();
                     }
                 }
             }
-            if (in_need.get() && in_need->consume(items.pop(item))) {
+            if (in_need.get() && in_need->consume(items.pop(iit))) {
                 changed = true;
                 last_ok = true;
                 break;
             }
             if (!last_ok) break;
         }
+        ++iit;
     }
     return changed;
 }
