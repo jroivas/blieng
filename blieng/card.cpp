@@ -6,6 +6,7 @@ using blieng::Card;
 
 Card::Card() : BliObject()
 {
+    genUUID();
 }
 
 Card::~Card()
@@ -49,5 +50,21 @@ void Card::remove(auto_vector<blieng::Card>::iterator iter)
     BOOST_ASSERT( iter < combined.end() );
     if (iter < combined.end()) {
         combined.erase(iter);
+    }
+}
+
+void Card::genUUID()
+{   
+    card_uuid = "";
+    for (unsigned int i=0; i<10; i++) {
+        card_uuid += getRandomInt('A', 'Z');
+    }
+    card_uuid += "-";
+    for (unsigned int i=0; i<10; i++) {
+        card_uuid += getRandomInt('a', 'z');
+    }
+    card_uuid += "-";
+    for (unsigned int i=0; i<10; i++) {
+        card_uuid += getRandomInt('0', '9');
     }
 }

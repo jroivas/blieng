@@ -22,9 +22,14 @@ public:
     virtual void remove(auto_vector<blieng::Card>::iterator iter);
 
     virtual std::string toString() { return ""; }
+    virtual std::string uuid() { return card_uuid; }
 
 protected:
     auto_vector<blieng::Card> combined;
+    void genUUID();
+
+private:
+    std::string card_uuid;
 };
 
 }
