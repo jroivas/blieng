@@ -220,7 +220,7 @@ void Wallclock::produce(unsigned long int amount)
     produceTier2();
 
     // Produce rest of the products, consume
-    int counter = 0x1000;
+    unsigned int counter = 0x1000;
     while (true && (--counter > 0)) {
         if (!consume()) break;
         //items = produceTier2(items);

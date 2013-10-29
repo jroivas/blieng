@@ -245,14 +245,14 @@ void auto_vector<T>::compact ()
 }
 
 template <class T>
-size_t auto_vector<T>::ToIndex (iterator const & it)  
+size_t auto_vector<T>::ToIndex (iterator const & it)
 {
     assert (it - begin () >= 0);
     return static_cast<size_t> (it - begin ());
 }
 
 template <class T>
-size_t auto_vector<T>::ToIndex (reverse_iterator const & rit)  
+size_t auto_vector<T>::ToIndex (reverse_iterator const & rit)
 {
     iterator it = rit.base ();
     --it;
@@ -261,13 +261,13 @@ size_t auto_vector<T>::ToIndex (reverse_iterator const & rit)
 }
 
 template <class T>
-typename auto_vector<T>::iterator auto_vector<T>::ToIter (size_t idx) 
-{ 
-    return begin () + idx;
+typename auto_vector<T>::iterator auto_vector<T>::ToIter (size_t idx)
+{
+    return begin () + static_cast<long>(idx);
 }
 
 template <class T>
-typename auto_vector<T>::reverse_iterator auto_vector<T>::ToRIter (size_t idx) 
+typename auto_vector<T>::reverse_iterator auto_vector<T>::ToRIter (size_t idx)
 {
     ++idx;
     return reverse_iterator (ToIter (idx));
