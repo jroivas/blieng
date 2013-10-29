@@ -10,7 +10,7 @@ namespace blieng
 class Point
 {
 public:
-    Point(bool valid=false) : x(0), y(0), valid(valid) { }
+    Point(bool _valid=false) : x(0), y(0), valid(_valid) { }
     Point(double px, double py) : x(px), y(py), valid(true) { }
     virtual ~Point();
 

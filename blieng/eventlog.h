@@ -21,7 +21,7 @@ public:
     ObjectLog(void *obj);
     ObjectLog(std::string name);
     virtual ~ObjectLog() {}
-    
+
     void assign(void *obj);
     void addEvent(BliAny event);
     void *getObject();
@@ -35,6 +35,7 @@ public:
 private:
     void *object;
     std::string name;
+    std::string anyToString(BliAny data);
 };
 
 class EventLog
@@ -48,7 +49,7 @@ public:
     void logString(std::string name, std::string event);
     ObjectLog *get(void *object);
     ObjectLog *get(std::string name);
-    
+
 private:
     EventLog();
     auto_vector<ObjectLog> events;

@@ -27,7 +27,7 @@ Item::Item() : ItemBase()
 
 void Item::init()
 {
-    life = (long int)(-1);
+    life = static_cast<long int>(-1);
     usable = false;
     getItemBases();
 }
@@ -164,16 +164,16 @@ void Item::getItemBases()
                 }
                 #endif
                 else if (keyname == "consume") {
-                    std::map<std::string, double> consumes;
+                    std::map<std::string, double> _consumes;
                     if (val.isObject()) {
                         BOOST_FOREACH(std::string cmi, val.getMemberNames()) {
                             Json::Value cnt_val = Data::getInstance()->getJsonValue(val, cmi);
                             if (cnt_val.isNumeric()) {
-                                consumes[cmi] = cnt_val.asDouble();
+                                _consumes[cmi] = cnt_val.asDouble();
                             }
                         }
                     }
-                    item->consumes = consumes;
+                    item->consumes = _consumes;
                     ok = true;
                 }
                 if (val.type() == Json::intValue) item->setValue(keyname, val.asInt());
@@ -310,19 +310,19 @@ std::vector<std::string> ItemBase::getConsumes()
 
 bool ItemBase::exhausted()
 {
-    if (life == (long int)-1) return false;
+    if (life == static_cast<long int>(-1)) return false;
 
     if (life == 0) return true;
     return false;
 }
 
-bool ItemBase::age(long int amount)
+bool ItemBase::age(long int _amount)
 {
-    if (amount <= 0) return false;
-    if (life == (long int)-1) return true;
+    if (_amount <= 0) return false;
+    if (life == static_cast<long int>(-1)) return true;
 
-    if (life > amount) {
-        life -= amount;
+    if (life > _amount) {
+        life -= _amount;
         return true;
     }
 
@@ -386,7 +386,7 @@ std::string ItemBase::itemToString() {
     tmp += "base    : " + base.get() + "\n";
     tmp += "type    : " + type.get() + "\n";
     tmp += "usable  : " + std::string((usable?"yes":"no")) + "\n";
-    if (life == (long int)-1) {
+    if (life == static_cast<long int>(-1)) {
         tmp += "life    : inf\n";
     } else {
         tmp += "life    : " + (boost::format("%d") % life).str() + "\n";
@@ -395,7 +395,7 @@ std::string ItemBase::itemToString() {
     tmp += "rarity  : " + (boost::format("%f") % rarity).str() + "\n";
 
     tmp += "consumes: ";
-    
+
     bool first = true;
     BOOST_FOREACH(consume_t val, consumes.get()) {
         if (!first) tmp += ", ";

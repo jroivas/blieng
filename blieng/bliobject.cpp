@@ -67,18 +67,10 @@ BliAny BliObject::getValue(std::string key)
 }
 
 void BliObject::setValue(std::string key, BliAny value)
-//void BliObject::setValue(std::string key, BliAny value)
 {
     values[key] = value;
 }
 
-#if 0
-//void BliObject::setValue(std::string key, BliAny value)
-template<typename T> void BliObject::setValue(std::string key, T value)
-{
-    values[key] = hold_any(value);
-}
-#endif
 
 #define getConvertValue(X, Y) \
 Y BliObject::get ## X ## Value(std::string key, Y default_value)\
@@ -111,9 +103,9 @@ Y BliObject::get ## X ## Value(std::string key, Y default_value)\
     if (val.type() == typeid(Y)) {\
         return boost::any_cast<Y>(val);\
     } else {\
-        if (val.type() == typeid(A)) { return boost::any_cast<A>(val); }\
-        if (val.type() == typeid(B)) { return boost::any_cast<B>(val); }\
-        if (val.type() == typeid(C)) { return boost::any_cast<C>(val); }\
+        if (val.type() == typeid(A)) { return static_cast<Y>(boost::any_cast<A>(val)); }\
+        if (val.type() == typeid(B)) { return static_cast<Y>(boost::any_cast<B>(val)); }\
+        if (val.type() == typeid(C)) { return static_cast<Y>(boost::any_cast<C>(val)); }\
     }\
     std::cerr << "Error, not a " #X " value at: " + key;\
     /*throw "Error, not a " #X " value at: " + key;*/\
@@ -200,7 +192,11 @@ bool BliObject::changeNumberValue(std::string key, int diff)
     }
     else if (val.type() == typeid(unsigned int)) {
         unsigned int num = boost::any_cast<unsigned int>(val);
-        num += diff;
+        if (diff < 0) {
+            num += static_cast<unsigned int>(-1 * diff);
+        } else {
+            num += static_cast<unsigned int>(diff);
+        }
         if (isValue(key + "-max")) {
             unsigned int max = getUIntValue(key + "-max");
             if (num > max) return false;
@@ -209,7 +205,7 @@ bool BliObject::changeNumberValue(std::string key, int diff)
     }
     else if (val.type() == typeid(double)) {
         double num = boost::any_cast<double>(val);
-        num += (double)diff;
+        num += static_cast<double>(diff);
         if (isValue(key + "-max")) {
             double max = getDoubleValue(key + "-max");
             if (num > max) return false;

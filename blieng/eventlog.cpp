@@ -15,7 +15,7 @@ ObjectLog::ObjectLog(void *obj) : BliObject(), object(obj), name("")
 {
 }
 
-ObjectLog::ObjectLog(std::string name) : BliObject(), object(NULL), name(name)
+ObjectLog::ObjectLog(std::string _name) : BliObject(), object(NULL), name(_name)
 {
 }
 
@@ -48,7 +48,7 @@ void ObjectLog::addEvent(BliAny event)
     events.push_back(data);
 }
 
-std::string anyToString(BliAny data)
+std::string ObjectLog::anyToString(BliAny data)
 {
     std::ostringstream res;
     res << data;
@@ -93,9 +93,9 @@ EventLog::EventLog()
 
 void EventLog::log(void *object, BliAny event)
 {
-    BOOST_FOREACH(ObjectLog *log, events) {
-        if (log->getObject() == object) {
-            log->addEvent(event);
+    BOOST_FOREACH(ObjectLog *_log, events) {
+        if (_log->getObject() == object) {
+            _log->addEvent(event);
             return;
         }
     }
@@ -107,9 +107,9 @@ void EventLog::log(void *object, BliAny event)
 
 void EventLog::log(std::string name, BliAny event)
 {
-    BOOST_FOREACH(ObjectLog *log, events) {
-        if (log->getName() == name) {
-            log->addEvent(event);
+    BOOST_FOREACH(ObjectLog *_log, events) {
+        if (_log->getName() == name) {
+            _log->addEvent(event);
             return;
         }
     }
@@ -127,9 +127,9 @@ void EventLog::logString(std::string name, std::string event)
 
 ObjectLog *EventLog::get(std::string name)
 {
-    BOOST_FOREACH(ObjectLog *log, events) {
-        if (log->getName() == name) {
-            return log;
+    BOOST_FOREACH(ObjectLog *_log, events) {
+        if (_log->getName() == name) {
+            return _log;
         }
     }
 
@@ -138,9 +138,9 @@ ObjectLog *EventLog::get(std::string name)
 
 ObjectLog *EventLog::get(void *object)
 {
-    BOOST_FOREACH(ObjectLog *log, events) {
-        if (log->getObject() == object) {
-            return log;
+    BOOST_FOREACH(ObjectLog *_log, events) {
+        if (_log->getObject() == object) {
+            return _log;
         }
     }
 

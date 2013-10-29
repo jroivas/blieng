@@ -6,7 +6,7 @@ using blieng::Town;
 Town::Town() : BliObject(), name(""), size(0)
 {
     pos = blieng::Point(0, 0);
-    setValue("population", (unsigned int)0);
+    setValue("population", static_cast<unsigned int>(0));
 }
 
 void Town::updatePopulation()

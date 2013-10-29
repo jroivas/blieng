@@ -14,11 +14,11 @@
 #include <algorithm>
 
 //---------------------------------
-// Dynamic array of owned pointers. 
+// Dynamic array of owned pointers.
 // Ownership transfer semantics.
 //---------------------------------
 
-template <class T> 
+template <class T>
 class auto_vector
 {
 public:
@@ -112,9 +112,9 @@ private:
 };
 
 template <class T>
-auto_vector<T>::auto_vector (size_t capacity)
+auto_vector<T>::auto_vector (size_t _capacity)
 {
-    _arr.reserve (capacity);
+    _arr.reserve (_capacity);
 }
 
 template <class T>

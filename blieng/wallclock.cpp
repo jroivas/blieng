@@ -4,7 +4,7 @@
 using blieng::Wallclock;
 using blieng::Item;
 
-Wallclock::Wallclock(Item *time_producer) : time_producer(time_producer)
+Wallclock::Wallclock(Item *_time_producer) : time_producer(_time_producer)
 {
     // Start at zero
     wall_time = 0;
@@ -27,7 +27,6 @@ bool Wallclock::addProducer(std::unique_ptr<Item> item)
 
 void Wallclock::produceTime(unsigned long int amount)
 {
-    //auto_vector<Item> items; 
     BOOST_FOREACH(Item *item, producers) {
         if (time_producer != NULL) {
             std::unique_ptr<Item> time = time_producer->produce(amount);
@@ -39,7 +38,7 @@ void Wallclock::produceTime(unsigned long int amount)
                 item->consume(std::move(time));
             }
         }
-        item->age(amount);
+        item->age(static_cast<long int>(amount));
     }
 }
 
@@ -227,7 +226,7 @@ void Wallclock::produce(unsigned long int amount)
         //items = produceTier2(items);
         produceTier2();
     }
-    
+
     Wallclock::combineItems();
     Wallclock::cleanItems();
     std::cout << "Produced: \n";

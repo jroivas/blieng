@@ -23,7 +23,7 @@ Configure::~Configure()
 Configure *Configure::getInstance()
 {
     if (__static_configure == NULL) {
-        __static_configure = new Configure(); 
+        __static_configure = new Configure();
     }
     return __static_configure;
 }
@@ -31,15 +31,15 @@ Configure *Configure::getInstance()
 Configure *Configure::getInstance(std::string config)
 {
     if (__static_configure == NULL) {
-        __static_configure = new Configure(); 
+        __static_configure = new Configure();
         __static_configure->load(config);
     }
     return __static_configure;
 }
 
-void Configure::load(std::string config_file)
+void Configure::load(std::string _config_file)
 {
-    std::string fname = Data::getInstance()->findFile(config_file);
+    std::string fname = Data::getInstance()->findFile(_config_file);
     if (fname != "") {
         data_json = Data::getInstance()->readJson(fname);
         parse();

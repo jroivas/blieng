@@ -3,6 +3,7 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/foreach.hpp>
 #include <sstream>
+#include <algorithm>
 
 using blieng::Data;
 
@@ -11,7 +12,7 @@ Data *Data::__data_instance = NULL;
 class blieng::DataBuffer
 {
 public:
-    DataBuffer(std::string name, char *data, unsigned int len) : name(name), data(data), len(len) {}
+    DataBuffer(std::string _name, char *_data, unsigned int _len) : name(_name), data(_data), len(_len) {}
     ~DataBuffer() {
         delete data;
     }
@@ -340,21 +341,28 @@ unsigned int Data::readData(std::string name, char **data)
             return buf->len;
         }
     }
-    
+
     boost::filesystem::path first_path = solveFilePath(name);
     if (boost::filesystem::exists(first_path)) {
         boost::filesystem::ifstream fd(first_path, std::ifstream::binary);
 
         #define BUFSIZE 1024
-        char *buffer = (char*)malloc(BUFSIZE);
+        char *buffer = new char[BUFSIZE];
         char *tmp = buffer;
         unsigned int totalsize = 0;
         while (!fd.eof() && fd.good()) {
             if (fd.rdbuf()->in_avail() <= 0) break;
             int cnt = fd.readsome(tmp, BUFSIZE);
             if (cnt > 0) {
-                totalsize += cnt;
-                buffer = (char*)realloc(buffer, totalsize + BUFSIZE);
+                //buffer = (char*)realloc(buffer, totalsize + BUFSIZE);
+                unsigned int cursize = totalsize;
+                totalsize += static_cast<unsigned int>(cnt);
+
+                char *new_buffer = new char[totalsize + BUFSIZE];
+                memcpy(new_buffer, buffer, cursize);
+                delete [] buffer;
+                buffer = new_buffer;
+
                 tmp = buffer + totalsize;
             }
         }
@@ -362,11 +370,11 @@ unsigned int Data::readData(std::string name, char **data)
         fd.close();
 
         if (data != NULL) {
-            unique_ptr<blieng::DataBuffer> tmp(new blieng::DataBuffer(name, buffer, totalsize));
-            __buffers.push_back(std::move(tmp));
+            unique_ptr<blieng::DataBuffer> tmp_ptr(new blieng::DataBuffer(name, buffer, totalsize));
+            __buffers.push_back(std::move(tmp_ptr));
             *data = __buffers.back()->data;
         } else {
-            free(buffer);
+            delete [] buffer;
         }
 
         return totalsize;
@@ -390,7 +398,7 @@ std::string Data::readString(std::string name)
     }
 
     if (!data_path.get()) return res;
-    
+
     boost::filesystem::path first_path = solveFilePath(name);
     if (boost::filesystem::exists(first_path)) {
         boost::filesystem::ifstream fd(first_path, std::ifstream::binary);
