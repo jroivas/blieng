@@ -405,7 +405,7 @@ std::string Data::readString(std::string name)
         while (!fd.eof()) {
             char tmp[256];
             fd.read(tmp, 255);
-            unsigned int cnt = fd.gcount();
+            unsigned int cnt = static_cast<unsigned int>(fd.gcount());
             res.append(tmp, cnt);
         }
         fd.close();
