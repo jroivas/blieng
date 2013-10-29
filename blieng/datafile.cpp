@@ -171,7 +171,7 @@ bool DataFile::read(const char *key, unsigned int key_len)
         if (fd.eof()) break;
 
         std::unique_ptr<char> ob_name(new char[namelen+1]);
-        fd.read(ob_name.get(), namelen);
+        fd.read(ob_name.get(), static_cast<int>(namelen));
         if (fd.eof()) break;
 
         std::unique_ptr<SafeDataPtr> name = obfuscateSimple(ob_name.get(), namelen);
@@ -187,7 +187,7 @@ bool DataFile::read(const char *key, unsigned int key_len)
         if (fd.eof()) break;
 
         std::unique_ptr<char> data(new char[datalen]);
-        fd.read(data.get(), datalen);
+        fd.read(data.get(), static_cast<int>(datalen));
         if (fd.eof()) break;
 
         std::unique_ptr<DataFileObject> tmp(new DataFileObject(data.get(), datalen));
@@ -232,7 +232,7 @@ bool DataFile::write(const char *key, unsigned int key_len)
         fd.write(reinterpret_cast<char*>(&itmp), sizeof(uint32_t));
 
         std::unique_ptr<SafeDataPtr> ob_name = obfuscateSimple((*di)->key.c_str(), itmp);
-        fd.write(ob_name->getData(), ob_name->length());
+        fd.write(ob_name->getData(), static_cast<int>(ob_name->length()));
 
         itmp = tmp->len;
         fd.write(reinterpret_cast<char*>(&itmp), sizeof(uint32_t));
@@ -240,7 +240,7 @@ bool DataFile::write(const char *key, unsigned int key_len)
         itmp = tmp->real_len;
         fd.write(reinterpret_cast<char*>(&itmp), sizeof(uint32_t));
 
-        fd.write(tmp->data, tmp->len);
+        fd.write(tmp->data, static_cast<int>(tmp->len));
         fd.flush();
         ++di;
     }
