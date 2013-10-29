@@ -59,9 +59,9 @@ public:
     }
     // array access
     T const * operator [] (size_t i) const { return _arr [i]; }
-    auto_lvalue operator [] (size_t i) 
-    { 
-        return auto_lvalue (_arr [i]); 
+    auto_lvalue operator [] (size_t i)
+    {
+        return auto_lvalue (_arr [i]);
     }
     void assign (size_t i, std::unique_ptr<T> p);
     void assign_direct (size_t i, T * p);

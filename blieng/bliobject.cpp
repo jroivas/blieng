@@ -193,7 +193,7 @@ bool BliObject::changeNumberValue(std::string key, int diff)
     else if (val.type() == typeid(unsigned int)) {
         unsigned int num = boost::any_cast<unsigned int>(val);
         if (diff < 0) {
-            num += static_cast<unsigned int>(-1 * diff);
+            num -= static_cast<unsigned int>(-1 * diff);
         } else {
             num += static_cast<unsigned int>(diff);
         }

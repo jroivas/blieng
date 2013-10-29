@@ -255,7 +255,7 @@ bool Data::saveMapJSON(std::string name, std::string json)
     maps_path /= clean_name + ".json";
     boost::filesystem::ofstream fd(maps_path, std::ios_base::out | std::ios_base::trunc | std::ofstream::binary);
     if (!fd.is_open()) return false;
-    
+
     fd << json;
     fd.close();
 
@@ -300,7 +300,7 @@ std::vector<std::string> Data::readLinesFromFile(std::string name)
     }
 
     if (!data_path.get()) return tmp;
-    
+
     boost::filesystem::path first_path = solveFilePath(name);
     if (boost::filesystem::exists(first_path)) {
         boost::filesystem::ifstream fd(first_path);
@@ -347,21 +347,24 @@ unsigned int Data::readData(std::string name, char **data)
         boost::filesystem::ifstream fd(first_path, std::ifstream::binary);
 
         #define BUFSIZE 1024
-        char *buffer = new char[BUFSIZE];
+        //char *buffer = new char[BUFSIZE];
+        char *buffer = static_cast<char*>(malloc(sizeof(char) * BUFSIZE));
         char *tmp = buffer;
         unsigned int totalsize = 0;
         while (!fd.eof() && fd.good()) {
             if (fd.rdbuf()->in_avail() <= 0) break;
             int cnt = fd.readsome(tmp, BUFSIZE);
             if (cnt > 0) {
-                //buffer = (char*)realloc(buffer, totalsize + BUFSIZE);
-                unsigned int cursize = totalsize;
+                buffer = static_cast<char*>(realloc(buffer, totalsize + BUFSIZE));
+
+                //unsigned int cursize = totalsize;
                 totalsize += static_cast<unsigned int>(cnt);
 
-                char *new_buffer = new char[totalsize + BUFSIZE];
-                memcpy(new_buffer, buffer, cursize);
-                delete [] buffer;
-                buffer = new_buffer;
+                //char *new_buffer = new char[totalsize + BUFSIZE];
+                //memcpy(new_buffer, buffer, cursize);
+                //delete [] buffer;
+
+                //buffer = new_buffer;
 
                 tmp = buffer + totalsize;
             }
@@ -374,7 +377,8 @@ unsigned int Data::readData(std::string name, char **data)
             __buffers.push_back(std::move(tmp_ptr));
             *data = __buffers.back()->data;
         } else {
-            delete [] buffer;
+            //delete [] buffer;
+            free(buffer);
         }
 
         return totalsize;

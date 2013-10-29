@@ -129,12 +129,13 @@ void DataTest::readData()
     CPPUNIT_ASSERT( res[8] == 'D' );
 
     mock_io_stop();
+    fprintf(stderr, "DATA: >>>%s<<<\n", res);
 }
 
 void DataTest::readJson()
 {
     mock_set_file("json1", "{\"aa\": \"b42\", \"second\": 12, \"third\": [1,2,3]}");
-    
+
     mock_io_start();
 
     blieng::Data *obj = blieng::Data::getInstance();
