@@ -347,28 +347,19 @@ unsigned int Data::readData(std::string name, char **data)
         boost::filesystem::ifstream fd(first_path, std::ifstream::binary);
 
         #define BUFSIZE 1024
-        //char *buffer = new char[BUFSIZE];
-        //char *buffer = static_cast<char*>(malloc(sizeof(char) * BUFSIZE));
-        char *buffer = (char*)malloc(BUFSIZE);
+        char *buffer = new char[BUFSIZE];
         char *tmp = buffer;
         unsigned int totalsize = 0;
         while (!fd.eof() && fd.good()) {
             if (fd.rdbuf()->in_avail() <= 0) break;
             int cnt = fd.readsome(tmp, BUFSIZE);
             if (cnt > 0) {
-                //buffer = static_cast<char*>(realloc(buffer, totalsize + BUFSIZE));
-                //unsigned int cursize = totalsize;
-                totalsize += cnt;
-                buffer = (char*)(realloc(buffer, totalsize + BUFSIZE));
+                totalsize += static_cast<unsigned int>(cnt);
 
-                //unsigned int cursize = totalsize;
-                //totalsize += static_cast<unsigned int>(cnt);
-
-                //char *new_buffer = new char[totalsize + BUFSIZE];
-                //memcpy(new_buffer, buffer, cursize);
-                //delete [] buffer;
-
-                //buffer = new_buffer;
+                char *new_buffer = new char[totalsize + BUFSIZE];
+                memcpy(new_buffer, buffer, totalsize);
+                delete [] buffer;
+                buffer = new_buffer;
 
                 tmp = buffer + totalsize;
             }
@@ -381,8 +372,7 @@ unsigned int Data::readData(std::string name, char **data)
             __buffers.push_back(std::move(tmp_ptr));
             *data = __buffers.back()->data;
         } else {
-            //delete [] buffer;
-            free(buffer);
+            delete [] buffer;
         }
 
         return totalsize;
