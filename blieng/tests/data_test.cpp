@@ -129,7 +129,6 @@ void DataTest::readData()
     CPPUNIT_ASSERT( res[8] == 'D' );
 
     mock_io_stop();
-    fprintf(stderr, "DATA: >>>%s<<<\n", res);
 }
 
 void DataTest::readJson()
