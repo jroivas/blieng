@@ -54,7 +54,7 @@ void Card::remove(auto_vector<blieng::Card>::iterator iter)
 }
 
 void Card::genUUID()
-{   
+{
     card_uuid = "";
     for (unsigned int i=0; i<10; i++) {
         card_uuid += getRandomInt('A', 'Z');

@@ -11,6 +11,7 @@ using blieng::BliAny;
 
 typedef std::pair<std::string, BliAny> values_t;
 typedef std::map<std::string, BliAny>::iterator values_iter_t;
+typedef std::map<std::string, BliAny>::const_iterator values_const_iter_t;
 
 BliObject::BliObject()
 {
@@ -54,9 +55,9 @@ double BliObject::getRandomDouble(double limit_low, double limit_max)
     return dist(*Data::getInstance()->getGen());
 }
 
-BliAny BliObject::getValue(std::string key)
+BliAny BliObject::getValue(std::string key) const
 {
-    values_iter_t value_iter = values.find(key);
+    values_const_iter_t value_iter = values.find(key);
 
     if (value_iter == values.end()) {
         std::cerr << "Error, key not found: " + key + "\n";
@@ -73,7 +74,7 @@ void BliObject::setValue(std::string key, BliAny value)
 
 
 #define getConvertValue(X, Y) \
-Y BliObject::get ## X ## Value(std::string key, Y default_value)\
+Y BliObject::get ## X ## Value(std::string key, Y default_value) const\
 {\
     BliAny val = getValue(key);\
     if (val.empty()) {\
@@ -93,7 +94,7 @@ Y BliObject::get ## X ## Value(std::string key, Y default_value)\
 }
 
 #define getConvertNumberValue(X, Y, A, B, C) \
-Y BliObject::get ## X ## Value(std::string key, Y default_value)\
+Y BliObject::get ## X ## Value(std::string key, Y default_value) const\
 {\
     BliAny val = getValue(key);\
     if (val.empty()) {\

@@ -100,7 +100,7 @@ public:
 
     // iterator/index conversion
     size_t ToIndex (iterator const & it);
-    size_t ToIndex (reverse_iterator const & rit); 
+    size_t ToIndex (reverse_iterator const & rit);
     iterator ToIter (size_t idx);
     reverse_iterator ToRIter (size_t idx);
 
