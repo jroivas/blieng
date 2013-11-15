@@ -6,7 +6,7 @@ if [ -d "tools/build" ] ; then
 fi
 url="$1"
 if [ "x$url" == "x" ] ; then
-	url="git@blistud.io:/opt/git/build-tools.git"
+	url="git@blistud.com:/opt/git/build-tools.git"
 fi
 git clone "$url" tools/build
 if [ ! -d "tools/build" ] ; then
