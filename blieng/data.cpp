@@ -56,7 +56,8 @@ bool Data::initialize(std::string datafilename, const char *key, unsigned int ke
             data_file_path = findDataFile(datafilename);
         }
         if (data_file_path.get()) {
-            datafile = std::unique_ptr<blieng::DataFile>(new blieng::DataFile(data_file_path->filename().string()));
+            //datafile = std::unique_ptr<blieng::DataFile>(new blieng::DataFile(data_file_path->filename().string()));
+            datafile = std::unique_ptr<blieng::DataFile>(new blieng::DataFile(data_file_path->string()));
         }
     }
     bool res = false;
@@ -101,7 +102,7 @@ std::unique_ptr<boost::filesystem::path> Data::findDataPath()
     std::list<std::string> locations;
     locations.push_back("");
     locations.push_back("./");
-    locations.push_back("/usr/share/zombiebli/");
+    if (!game_location.empty()) locations.push_back(game_location);
     locations.push_back("../");
     locations.push_back(".\\");
     locations.push_back("..\\");
@@ -276,8 +277,26 @@ boost::filesystem::path Data::solveFilePath(std::string name)
 std::vector<std::string> Data::readLinesFromFile(std::string name)
 {
     std::vector<std::string> tmp;
+
+    if (data_path.get()) {
+        boost::filesystem::path first_path = solveFilePath(name);
+        if (boost::filesystem::exists(first_path)) {
+            boost::filesystem::ifstream fd(first_path);
+            while (!fd.eof()) {
+                std::string line;
+                std::getline(fd, line);
+                boost::algorithm::trim(line);
+                if (line.length() > 0) {
+                    tmp.push_back(line);
+                }
+            }
+            fd.close();
+            return tmp;
+        }
+    }
+
     if (datafile.get()) {
-        // XXX
+        // FIXME: Hardcoded "data" path
         const blieng::DataFile::DataFileObject *obj = datafile->getObject("data/" + name);
         if (obj == NULL) obj = datafile->getObject(name);
         if (obj != NULL) {
@@ -299,39 +318,11 @@ std::vector<std::string> Data::readLinesFromFile(std::string name)
         }
     }
 
-    if (!data_path.get()) return tmp;
-
-    boost::filesystem::path first_path = solveFilePath(name);
-    if (boost::filesystem::exists(first_path)) {
-        boost::filesystem::ifstream fd(first_path);
-        while (!fd.eof()) {
-            std::string line;
-            std::getline(fd, line);
-            boost::algorithm::trim(line);
-            if (line.length() > 0) {
-                tmp.push_back(line);
-            }
-        }
-        fd.close();
-    }
-
     return tmp;
 }
 
-unsigned int Data::readData(std::string name, char **data)
+unsigned int Data::readDataFromDataPath(std::string name, char **data)
 {
-    if (datafile.get()) {
-        // FIXME
-        const blieng::DataFile::DataFileObject *obj = datafile->getObject("data/" + name);
-        if (obj == NULL) obj = datafile->getObject(name);
-        if (obj != NULL) {
-            if (data != NULL) *data = obj->data;
-            return obj->len;
-        }
-    }
-
-    if (!data_path.get()) return 0;
-
     BOOST_FOREACH(blieng::DataBuffer *buf, __buffers)
     {
         if (buf->name == name) {
@@ -381,9 +372,44 @@ unsigned int Data::readData(std::string name, char **data)
     return 0;
 }
 
+unsigned int Data::readData(std::string name, char **data)
+{
+    if (data_path.get()) {
+        unsigned int res = readDataFromDataPath(name, data);
+        if (res > 0) return res;
+    }
+
+    if (datafile.get()) {
+        // FIXME: Hardcoded data path
+        const blieng::DataFile::DataFileObject *obj = datafile->getObject("data/" + name);
+        if (obj == NULL) obj = datafile->getObject(name);
+        if (obj != NULL) {
+            if (data != NULL) *data = obj->data;
+            return obj->len;
+        }
+    }
+
+    return 0;
+}
+
 std::string Data::readString(std::string name)
 {
     std::string res = "";
+
+    if (data_path.get()) {
+        boost::filesystem::path first_path = solveFilePath(name);
+        if (boost::filesystem::exists(first_path)) {
+            boost::filesystem::ifstream fd(first_path, std::ifstream::binary);
+            while (!fd.eof()) {
+                char tmp[256];
+                fd.read(tmp, 255);
+                unsigned int cnt = static_cast<unsigned int>(fd.gcount());
+                res.append(tmp, cnt);
+            }
+            fd.close();
+            return res;
+        }
+    }
 
     if (datafile.get()) {
         //FIXME
@@ -395,19 +421,6 @@ std::string Data::readString(std::string name)
         }
     }
 
-    if (!data_path.get()) return res;
-
-    boost::filesystem::path first_path = solveFilePath(name);
-    if (boost::filesystem::exists(first_path)) {
-        boost::filesystem::ifstream fd(first_path, std::ifstream::binary);
-        while (!fd.eof()) {
-            char tmp[256];
-            fd.read(tmp, 255);
-            unsigned int cnt = static_cast<unsigned int>(fd.gcount());
-            res.append(tmp, cnt);
-        }
-        fd.close();
-    }
 
     return res;
 }

@@ -52,6 +52,8 @@ public:
 private:
     Data();
 
+    unsigned int readDataFromDataPath(std::string name, char **data);
+
     std::string findFileRecursive(const boost::filesystem::path &dir_path, std::string name);
     boost::filesystem::path solveFilePath(std::string name);
 
