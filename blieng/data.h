@@ -47,6 +47,8 @@ public:
 
     bool saveMapJSON(std::string name, std::string json);
 
+    void setGameLocation(std::string location) { game_location = location; }
+
 private:
     Data();
 
@@ -66,6 +68,8 @@ private:
 
     static Data *__data_instance;
     auto_vector<DataBuffer> __buffers;
+
+    std::string game_location;
 };
 
 }

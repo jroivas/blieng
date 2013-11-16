@@ -79,7 +79,7 @@ std::unique_ptr<boost::filesystem::path> Data::findDataFile(std::string datafile
     std::list<std::string> locations;
     locations.push_back("");
     locations.push_back("./");
-    locations.push_back("/usr/share/zombiebli/");
+    if (!game_location.empty()) locations.push_back(game_location);
     locations.push_back("../");
     locations.push_back(".\\");
     locations.push_back("..\\");
