@@ -5,7 +5,7 @@
 
 using blieng::Configure;
 
-static Configure *__static_configure = NULL;
+static Configure *__static_configure = nullptr;
 typedef std::pair<std::string, Configure::key_type_t> key_values_t;
 
 Configure::Configure() : BliObject()
@@ -17,12 +17,12 @@ Configure::~Configure()
     keys.erase(keys.begin(), keys.end());
     opt_keys.erase(opt_keys.begin(), opt_keys.end());
 
-    __static_configure = NULL;
+    __static_configure = nullptr;
 }
 
 Configure *Configure::getInstance()
 {
-    if (__static_configure == NULL) {
+    if (__static_configure == nullptr) {
         __static_configure = new Configure();
     }
     return __static_configure;
@@ -30,7 +30,7 @@ Configure *Configure::getInstance()
 
 Configure *Configure::getInstance(std::string config)
 {
-    if (__static_configure == NULL) {
+    if (__static_configure == nullptr) {
         __static_configure = new Configure();
         __static_configure->load(config);
     }

@@ -7,7 +7,7 @@
 
 using blieng::Data;
 
-Data *Data::__data_instance = NULL;
+Data *Data::__data_instance = nullptr;
 
 class blieng::DataBuffer
 {
@@ -24,7 +24,7 @@ public:
 
 Data *Data::getInstance()
 {
-    if (__data_instance == NULL) {
+    if (__data_instance == nullptr) {
         __data_instance = new Data();
     }
     return __data_instance;
@@ -34,17 +34,16 @@ Data::Data()
 {
     gen = new boost::random::random_device();
     data_path = findDataPath();
-    //datafile = NULL;
 
-    initialize("", NULL, 0);
+    initialize("", nullptr, 0);
 }
 
 Data::~Data()
 {
-    if (gen != NULL) {
+    if (gen != nullptr) {
         delete gen;
     }
-    __data_instance = NULL;
+    __data_instance = nullptr;
 }
 
 bool Data::initialize(std::string datafilename, const char *key, unsigned int key_len)
@@ -298,8 +297,8 @@ std::vector<std::string> Data::readLinesFromFile(std::string name)
     if (datafile.get()) {
         // FIXME: Hardcoded "data" path
         const blieng::DataFile::DataFileObject *obj = datafile->getObject("data/" + name);
-        if (obj == NULL) obj = datafile->getObject(name);
-        if (obj != NULL) {
+        if (obj == nullptr) obj = datafile->getObject(name);
+        if (obj != nullptr) {
             unsigned int pos = 0;
             std::string line;
             while (pos < obj->len) {
@@ -326,7 +325,7 @@ unsigned int Data::readDataFromDataPath(std::string name, char **data)
     BOOST_FOREACH(blieng::DataBuffer *buf, __buffers)
     {
         if (buf->name == name) {
-            if (data != NULL) {
+            if (data != nullptr) {
                 *data = buf->data;
             }
             return buf->len;
@@ -358,7 +357,7 @@ unsigned int Data::readDataFromDataPath(std::string name, char **data)
         #undef BUFSIZE
         fd.close();
 
-        if (data != NULL) {
+        if (data != nullptr) {
             unique_ptr<blieng::DataBuffer> tmp_ptr(new blieng::DataBuffer(name, buffer, totalsize));
             __buffers.push_back(std::move(tmp_ptr));
             *data = __buffers.back()->data;
@@ -382,9 +381,9 @@ unsigned int Data::readData(std::string name, char **data)
     if (datafile.get()) {
         // FIXME: Hardcoded data path
         const blieng::DataFile::DataFileObject *obj = datafile->getObject("data/" + name);
-        if (obj == NULL) obj = datafile->getObject(name);
-        if (obj != NULL) {
-            if (data != NULL) *data = obj->data;
+        if (obj == nullptr) obj = datafile->getObject(name);
+        if (obj != nullptr) {
+            if (data != nullptr) *data = obj->data;
             return obj->len;
         }
     }
@@ -414,8 +413,8 @@ std::string Data::readString(std::string name)
     if (datafile.get()) {
         //FIXME
         const blieng::DataFile::DataFileObject *obj = datafile->getObject("data/" + name);
-        if (obj == NULL) obj = datafile->getObject(name);
-        if (obj != NULL) {
+        if (obj == nullptr) obj = datafile->getObject(name);
+        if (obj != nullptr) {
             res.append(obj->data, obj->len);
             return res;
         }

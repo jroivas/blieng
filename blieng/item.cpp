@@ -34,14 +34,14 @@ Item::Item(std::string name) : ItemBase()
     usable = false;
     std::cout << "Creating: " << name << "\n";
     if (!item_bases.empty()) {
-        const ItemBase *orig = NULL;
+        const ItemBase *orig = nullptr;
         //std::unique_ptr<ItemBase> orig;
         BOOST_FOREACH(item_bases_t val, item_bases) {
             if (val->base == name) {
                 orig = val;
             }
         }
-        if (orig != NULL) {
+        if (orig != nullptr) {
             assignItem(orig);
         } else {
             base = name;
@@ -232,7 +232,7 @@ std::unique_ptr<Item> Item::produce(double produce_amount) throw (char *)
 
 void ItemBase::assignItem(const ItemBase* parent)
 {
-    if (parent == NULL) return;
+    if (parent == nullptr) return;
 
     base = parent->base;
     type = parent->type;
@@ -345,7 +345,7 @@ double ItemBase::consumeCount(std::string name)
 
 bool ItemBase::update(ItemBase *another)
 {
-    if (another == NULL) return false;
+    if (another == nullptr) return false;
     if (another->base != base) return false;
     if (another->life != life) return false;
 

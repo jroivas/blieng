@@ -38,7 +38,7 @@ public:
         //mappings(KeyType k, std::unique_ptr<T> v) : key(k), val(v) { }
         mappings(KeyType k, T* v) : key(k), val(v) { }
         ~mappings() {
-            if (val != NULL) {
+            if (val != nullptr) {
                 delete val;
             }
         }
@@ -51,7 +51,7 @@ public:
 */
         std::unique_ptr<T> getValue() {
             std::unique_ptr<T> res(val);
-            val = NULL;
+            val = nullptr;
             return res;
             //return std::unique_ptr<T>(val);
         }
@@ -139,7 +139,7 @@ public:
         while (it != _data.end()) {
             if ((*it)->key == i) {
                 T *res = (*it)->val;
-                (*it)->val = NULL;
+                (*it)->val = nullptr;
                 _data.erase(it);
                 return std::unique_ptr<T>(res);
             }

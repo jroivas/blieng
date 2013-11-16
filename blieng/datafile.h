@@ -20,10 +20,10 @@ public:
     class DataFileObject
     {
     public:
-        DataFileObject() : data(NULL), len(0), real_len(0) {}
+        DataFileObject() : data(nullptr), len(0), real_len(0) {}
         DataFileObject(const char *new_data, unsigned int new_len);
         ~DataFileObject() {
-            if (data != NULL) delete data;
+            if (data != nullptr) delete data;
         }
 
         std::unique_ptr<DataFileObject> obfuscate(const char *key, unsigned int len, std::string seed="");
@@ -34,7 +34,7 @@ public:
         friend class DataFile;
 
     protected:
-        std::unique_ptr<blieng::SafeDataPtr> setupKey(const char *key, unsigned int len, const char *iv=NULL, unsigned int iv_len=0);
+        std::unique_ptr<blieng::SafeDataPtr> setupKey(const char *key, unsigned int len, const char *iv=nullptr, unsigned int iv_len=0);
         unsigned int real_len;
     };
 

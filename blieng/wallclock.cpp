@@ -28,7 +28,7 @@ bool Wallclock::addProducer(std::unique_ptr<Item> item)
 void Wallclock::produceTime(unsigned long int amount)
 {
     BOOST_FOREACH(Item *item, producers) {
-        if (time_producer != NULL) {
+        if (time_producer != nullptr) {
             std::unique_ptr<Item> time = time_producer->produce(amount);
             if (!time.get()) {
                 std::cout << "Can't create time\n";

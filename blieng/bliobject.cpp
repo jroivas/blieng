@@ -28,7 +28,7 @@ BliObject::~BliObject()
 
 void BliObject::assignObject(const BliObject *another)
 {
-    if (another == NULL) return;
+    if (another == nullptr) return;
 
     BOOST_FOREACH(values_t val, another->values) {
         values[val.first] = val.second;

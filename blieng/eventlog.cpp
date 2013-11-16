@@ -8,14 +8,14 @@ using blieng::BliAny;
 
 ObjectLog::ObjectLog() : BliObject()
 {
-    object = NULL;
+    object = nullptr;
 }
 
 ObjectLog::ObjectLog(void *obj) : BliObject(), object(obj), name("")
 {
 }
 
-ObjectLog::ObjectLog(std::string _name) : BliObject(), object(NULL), name(_name)
+ObjectLog::ObjectLog(std::string _name) : BliObject(), object(nullptr), name(_name)
 {
 }
 
@@ -77,11 +77,11 @@ std::string ObjectLog::toString() const
     return res;
 }
 
-static EventLog *__static_event_log = NULL;
+static EventLog *__static_event_log = nullptr;
 
 EventLog *EventLog::getInstance()
 {
-    if (__static_event_log == NULL) {
+    if (__static_event_log == nullptr) {
         __static_event_log = new EventLog();
     }
     return __static_event_log;
@@ -133,7 +133,7 @@ ObjectLog *EventLog::get(std::string name)
         }
     }
 
-    return NULL;
+    return nullptr;
 }
 
 ObjectLog *EventLog::get(void *object)
@@ -144,7 +144,7 @@ ObjectLog *EventLog::get(void *object)
         }
     }
 
-    return NULL;
+    return nullptr;
 }
 
 #if 0

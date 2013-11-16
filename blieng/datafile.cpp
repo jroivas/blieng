@@ -23,8 +23,8 @@ public:
         memcpy(data, reinterpret_cast<char*>(_data), len);
     }
     virtual ~SafeDataPtr() {
-        if (data != NULL) delete [] data;
-        data = NULL;
+        if (data != nullptr) delete [] data;
+        data = nullptr;
         len = 0;
     }
 
@@ -50,6 +50,11 @@ DataFile::DataFile(std::string name)
 
 DataFile::~DataFile()
 {
+    auto it = _data.begin();
+    while (it != _data.end()) {
+        unique_ptr<DataFileObject> tmp = (*it)->getValue();
+        tmp.release();
+    }
 }
 
 void DataFile::setName(std::string name)
@@ -100,19 +105,19 @@ std::vector<std::string> blieng::DataFile::listFiles()
 const blieng::DataFile::DataFileObject *DataFile::getObject(std::string name)
 {
     name = unifyName(name);
-    if (name == "") return NULL;
+    if (name == "") return nullptr;
 
     auto di = _data.find(name);
     if (di != _data.end()) return _data[di];
 
-    return NULL;
+    return nullptr;
 }
 
 unsigned int DataFile::getData(std::string name, const char **data)
 {
     const DataFileObject *obj = getObject(name);
-    if (obj != NULL) {
-        if (data != NULL) *data = obj->data;
+    if (obj != nullptr) {
+        if (data != nullptr) *data = obj->data;
         return obj->len;
     }
     return 0;
@@ -144,7 +149,7 @@ std::unique_ptr<blieng::SafeDataPtr> DataFile::obfuscateSimple(const char *data,
 {
     unsigned int orig_len = len;
 
-    std::unique_ptr<char> res(new char[len + 1]);
+    std::unique_ptr<char[]> res(new char[len + 1]);
     memset(res.get(), 0, len + 1);
     char *tmp = res.get();
 
@@ -169,14 +174,16 @@ bool DataFile::read(const char *key, unsigned int key_len)
         uint32_t namelen;
         fd.read(reinterpret_cast<char*>(&namelen), sizeof(uint32_t));
         if (fd.eof()) break;
+        BOOST_ASSERT(namelen > 0);
+        BOOST_ASSERT(namelen < 0x2ff);
 
-        std::unique_ptr<char> ob_name(new char[namelen+1]);
+        std::unique_ptr<char[]> ob_name(new char[namelen+1]);
         fd.read(ob_name.get(), static_cast<int>(namelen));
         if (fd.eof()) break;
 
-        std::unique_ptr<SafeDataPtr> name = obfuscateSimple(ob_name.get(), namelen);
+        auto name = obfuscateSimple(ob_name.get(), namelen);
 
-        ob_name = NULL;
+        ob_name = nullptr;
 
         uint32_t datalen;
         fd.read(reinterpret_cast<char*>(&datalen), sizeof(uint32_t));
@@ -186,7 +193,7 @@ bool DataFile::read(const char *key, unsigned int key_len)
         fd.read(reinterpret_cast<char*>(&datareallen), sizeof(uint32_t));
         if (fd.eof()) break;
 
-        std::unique_ptr<char> data(new char[datalen]);
+        std::unique_ptr<char[]> data(new char[datalen]);
         fd.read(data.get(), static_cast<int>(datalen));
         if (fd.eof()) break;
 
@@ -196,7 +203,7 @@ bool DataFile::read(const char *key, unsigned int key_len)
         std::string sname;
         sname.append(name->getData(), name->length());
 
-        if (key != NULL && key_len > 0) {
+        if (key != nullptr && key_len > 0) {
             std::unique_ptr<DataFileObject> new_tmp(tmp->deobfuscate(key, key_len, sname));
             if (new_tmp.get()) {
                 tmp = std::move(new_tmp);
@@ -220,7 +227,7 @@ bool DataFile::write(const char *key, unsigned int key_len)
     auto di = _data.cbegin();
     while (di != _data.cend()) {
         DataFileObject* tmp = _data[di];
-        if (key != NULL && key_len > 0) {
+        if (key != nullptr && key_len > 0) {
             std::unique_ptr<DataFileObject> new_tmp = tmp->obfuscate(key, key_len, (*di)->key);
             if (new_tmp.get()) {
                 _data[di] = std::move(new_tmp);
@@ -231,7 +238,7 @@ bool DataFile::write(const char *key, unsigned int key_len)
         uint32_t itmp = (*di)->key.length();
         fd.write(reinterpret_cast<char*>(&itmp), sizeof(uint32_t));
 
-        std::unique_ptr<SafeDataPtr> ob_name = obfuscateSimple((*di)->key.c_str(), itmp);
+        auto ob_name = obfuscateSimple((*di)->key.c_str(), itmp);
         fd.write(ob_name->getData(), static_cast<int>(ob_name->length()));
 
         itmp = tmp->len;
@@ -259,7 +266,7 @@ blieng::DataFile::DataFileObject::DataFileObject(const char *new_data, unsigned 
 
 std::unique_ptr<blieng::SafeDataPtr> blieng::DataFile::DataFileObject::setupKey(const char *key, unsigned int key_len, const char *iv, unsigned int iv_len)
 {
-    std::unique_ptr<unsigned char> res(new unsigned char[__key_size]);
+    std::unique_ptr<unsigned char[]> res(new unsigned char[__key_size]);
     memset(res.get(), 0, __key_size);
     unsigned int index = 0;
 
@@ -270,13 +277,13 @@ std::unique_ptr<blieng::SafeDataPtr> blieng::DataFile::DataFileObject::setupKey(
             A_cnt--;\
         }
 
-    if (iv != NULL && iv_len > 0) {
+    if (iv != nullptr && iv_len > 0) {
         const char *tmp = iv;
         unsigned int cnt = iv_len;
         KEY_INIT_LOOP(res.get(), index, cnt, tmp);
     }
 
-    if (key != NULL && key_len > 0) {
+    if (key != nullptr && key_len > 0) {
         const char *tmp = key;
         unsigned int cnt = key_len;
         KEY_INIT_LOOP(res.get(), index, cnt, tmp);
@@ -293,7 +300,7 @@ std::unique_ptr<blieng::DataFile::DataFileObject> blieng::DataFile::DataFileObje
     if (len % 16 != 0) olen++;
     olen *= 16;
 
-    std::unique_ptr<uint32_t> key_data(new uint32_t[(MAXNR+1)*4]);
+    std::unique_ptr<uint32_t[]> key_data(new uint32_t[(MAXNR+1)*4]);
 
     std::unique_ptr<SafeDataPtr> init_key = setupKey(seed.c_str(), seed.length());
     std::unique_ptr<SafeDataPtr> tmp_key = setupKey(key, key_len, const_cast<const char*>(init_key->getData()), __key_size);
@@ -312,7 +319,7 @@ std::unique_ptr<blieng::DataFile::DataFileObject> blieng::DataFile::DataFileObje
     unsigned int ocnt = olen;
 
     char *pos = data;
-    std::unique_ptr<char> tmp(new char[olen]);
+    std::unique_ptr<char[]> tmp(new char[olen]);
     char *opos = tmp.get();
     unsigned int blocknum = 0;
     while (cnt > 0) {
@@ -346,7 +353,7 @@ std::unique_ptr<blieng::DataFile::DataFileObject> blieng::DataFile::DataFileObje
 
 std::unique_ptr<blieng::DataFile::DataFileObject> blieng::DataFile::DataFileObject::deobfuscate(const char *key, unsigned int key_len, std::string seed)
 {
-    std::unique_ptr<uint32_t> key_data(new uint32_t[(MAXNR+1)*4]);
+    std::unique_ptr<uint32_t[]> key_data(new uint32_t[(MAXNR+1)*4]);
 
     std::unique_ptr<SafeDataPtr> init_key = setupKey(seed.c_str(), seed.length());
     std::unique_ptr<SafeDataPtr> tmp_key = setupKey(key, key_len, const_cast<const char*>(init_key->getData()), __key_size);
@@ -356,7 +363,7 @@ std::unique_ptr<blieng::DataFile::DataFileObject> blieng::DataFile::DataFileObje
         return std::unique_ptr<DataFileObject>();
     }
 
-    std::unique_ptr<char> tmp(new char[real_len]);
+    std::unique_ptr<char[]> tmp(new char[real_len]);
     unsigned char in_block[16];
     unsigned char out_block[16];
     unsigned char iv[16] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};

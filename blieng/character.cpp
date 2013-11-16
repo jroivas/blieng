@@ -46,7 +46,7 @@ void Character::assignObject(const BliObject *another)
 
 void Character::assignObject(Character *another)
 {
-    if (another == NULL) return;
+    if (another == nullptr) return;
 
     blieng::BliObject::assignObject(static_cast<BliObject*>(another));
 
