@@ -2,6 +2,8 @@
 #include "data.h"
 #include <boost/foreach.hpp>
 #include <boost/filesystem/path.hpp>
+#include <cstdio>
+#include <sstream>
 
 using blieng::Maps;
 
@@ -21,19 +23,13 @@ void Maps::loadMap(std::string name)
     }
 }
 
-#include <cstdio>
-#include <sstream>
-
 bool Maps::saveMap(std::string name)
 {
     std::string json = "";
 
     boost::filesystem::path my_image = boost::filesystem::path(solved_map_image_file);
-    //FIXME: No real checks because of datafile
-    //if (boost::filesystem::is_regular_file(boost::filesystem::status(my_image))) {
     std::string imagefile = my_image.filename().string();
-    //}
-    
+
     json += "{\n";
     json += "    \"image\": \"" + imagefile + "\",\n";
 
@@ -122,12 +118,12 @@ void Maps::addTown(blieng::Town *town)
 
 bool Maps::removeTown(blieng::Town *town)
 {
-    std::vector<blieng::Town*>::iterator ti = towns.begin();
+    auto ti = towns.begin();
     while (ti != towns.end()) {
         if (*ti == town) {
             towns.erase(ti);
             return true;
-        } 
+        }
         ++ti;
     }
     return false;
@@ -141,7 +137,7 @@ void Maps::addPath(blieng::Path path)
 
 blieng::Path Maps::updatePath(blieng::Path path, blieng::Point point)
 {
-    std::vector<blieng::Path>::iterator pi = paths.begin();
+    auto pi = paths.begin();
     while (pi != paths.end()) {
         if (*pi == path) {
             paths.erase(pi);
@@ -157,7 +153,7 @@ blieng::Path Maps::updatePath(blieng::Path path, blieng::Point point)
 
 blieng::Path Maps::updatePath(blieng::Path path, int index, blieng::Point point)
 {
-    std::vector<blieng::Path>::iterator pi = paths.begin();
+    auto pi = paths.begin();
     while (pi != paths.end()) {
         if (*pi == path) {
             paths.erase(pi);
@@ -185,7 +181,7 @@ void Maps::parseMap()
             std::cout << " = " <<  map_image_file << "\n";
         }
         else if (mi == "towns" and item_val.isArray()) {
-            Json::Value::iterator it = item_val.begin();
+            auto it = item_val.begin();
             while (it != item_val.end()) {
                 if ((*it).isObject()) {
                     Town *town = new Town();
@@ -224,13 +220,13 @@ void Maps::parseMap()
             }
         }
         else if (mi == "paths" and item_val.isArray()) {
-            Json::Value::iterator it = item_val.begin();
+            auto it = item_val.begin();
             while (it != item_val.end()) {
                 if ((*it).isArray()) {
                     blieng::Path path;
                     bool ok = false;
 
-                    Json::Value::iterator point_it = (*it).begin();
+                    auto point_it = (*it).begin();
                     while (point_it != (*it).end()) {
                         if ((*point_it).isArray()) {
                             if ((*point_it).size() >= 2) {

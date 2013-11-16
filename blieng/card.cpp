@@ -32,7 +32,7 @@ bool Card::remove(size_t index)
 {
     size_t cnt = 0;
 
-    std::vector<blieng::Card *>::iterator it = combined.begin();
+    auto it = combined.begin();
     while (it != combined.end()) {
         if (cnt == index) {
             combined.erase(it);

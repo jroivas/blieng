@@ -56,7 +56,7 @@ void Town::addItem(Item *item)
 
 bool Town::removeItem(Item *item)
 {
-    std::vector<Item *>::iterator iter = items.begin();
+    auto iter = items.begin();
     while (iter != items.end()) {
         if (*iter == item) {
             items.erase(iter);
@@ -80,7 +80,7 @@ void Town::addCharacter(Character *chr)
 
 bool Town::removeCharacter(Character *chr)
 {
-    std::vector<Character *>::iterator iter = characters.begin();
+    auto iter = characters.begin();
     while (iter != characters.end()) {
         if (*iter == chr) {
             characters.erase(iter);
@@ -98,7 +98,7 @@ std::vector<blieng::Character *> Town::getCharacters()
     return characters;
 }
 
-std::string Town::toString()
+std::string Town::toString() const
 {
     std::string res = blieng::BliObject::toString();
 

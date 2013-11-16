@@ -66,7 +66,7 @@ auto_vector<Item> Wallclock::produceTier1()
 void Wallclock::produceTier2Items()
 {
     // Go thorough the items
-    auto_vector<Item>::iterator it = items.begin();
+    auto it = items.begin();
     while (it != items.end()) {
         int count = 0x1000;
         bool ok = true;
@@ -87,7 +87,7 @@ void Wallclock::produceTier2Items()
 void Wallclock::produceTier2Producers()
 {
     // Go thorough the producers
-    auto_vector<Item>::iterator it = producers.begin();
+    auto it = producers.begin();
     while (it != producers.end()) {
         int count = 0x1000;
         bool ok = true;
@@ -114,13 +114,12 @@ void Wallclock::produceTier2()
 bool Wallclock::consume()
 {
     bool changed = false;
-    //BOOST_FOREACH(Item *item, items) {
-    auto_vector<Item>::iterator iit = items.begin();
+    auto iit = items.begin();
     while (iit != items.end()) {
         while ((*iit)->amount>0) {
             bool last_ok = false;
             std::unique_ptr<Item> in_need;
-            auto_vector<Item>::iterator it = producers.begin();
+            auto it = producers.begin();
             while (it != producers.end()) {
                 if (*iit == *it) continue;
                 if ((*it)->doesConsume((*iit)->base)) {
@@ -150,7 +149,7 @@ bool Wallclock::consume()
         while ((*iit)->amount>0) {
             bool last_ok = false;
             std::unique_ptr<Item> in_need;
-            auto_vector<Item>::iterator it = producers.begin();
+            auto it = producers.begin();
             while (it != producers.end()) {
                 if (*iit == *it) continue;
                 if ((*it)->doesConsume((*iit)->base)) {

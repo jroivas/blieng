@@ -57,7 +57,7 @@ void Path::updatePointAt(int index, Point new_point)
 
 void Path::updatePoint(Point point, Point new_point)
 {
-    std::vector<Point>::iterator pi = points.begin();
+    auto pi = points.begin();
     while (pi != points.end()) {
         if ((*pi) == point) {
             (*pi).update(new_point);
@@ -171,9 +171,9 @@ bool Path::operator==(const Path &other) const
     size_t psize = points.size();
     if (other.points.size() != psize) return false;
 
-    std::vector<blieng::Point>::const_iterator a = points.begin();
-    std::vector<blieng::Point>::const_iterator b = other.points.begin();
-    while (a != points.end()) {
+    auto a = points.cbegin();
+    auto b = other.points.begin();
+    while (a != points.cend()) {
         if (*a != *b) return false;
         ++a;
         ++b;

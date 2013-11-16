@@ -48,7 +48,7 @@ void ObjectLog::addEvent(BliAny event)
     events.push_back(data);
 }
 
-std::string ObjectLog::anyToString(BliAny data)
+std::string ObjectLog::anyToString(BliAny data) const
 {
     std::ostringstream res;
     res << data;
@@ -56,12 +56,12 @@ std::string ObjectLog::anyToString(BliAny data)
     return res.str();
 }
 
-std::string ObjectLog::toString()
+std::string ObjectLog::toString() const
 {
     std::string res = "";
 
-    std::vector<std::pair<boost::posix_time::ptime, BliAny> >::iterator it = events.begin();
-    while (it != events.end()) {
+    auto it = events.cbegin();
+    while (it != events.cend()) {
         res += to_simple_string((*it).first);
         res += " ";
         if (name != "") {

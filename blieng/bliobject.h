@@ -31,7 +31,7 @@ public:
     virtual double getDoubleValue(std::string key, double default_value=0.0) const;
     virtual std::vector<std::string> getListValue(std::string key);
 
-    virtual std::string toString();
+    virtual std::string toString() const;
     const std::type_info *getValueType(std::string key);
 
     virtual std::list<std::string> getKeys();

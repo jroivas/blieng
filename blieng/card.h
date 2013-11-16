@@ -21,8 +21,8 @@ public:
     virtual bool remove(size_t index);
     virtual void remove(auto_vector<blieng::Card>::iterator iter);
 
-    virtual std::string toString() { return ""; }
-    virtual std::string uuid() { return card_uuid; }
+    virtual std::string toString() const { return ""; }
+    virtual std::string uuid() const { return card_uuid; }
 
 protected:
     auto_vector<blieng::Card> combined;

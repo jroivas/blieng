@@ -10,7 +10,7 @@ Point::~Point()
     y = 0;
 }
 
-std::string Point::toString()
+std::string Point::toString() const
 {
     return (boost::format("%f,%f") % x % y).str();
 }

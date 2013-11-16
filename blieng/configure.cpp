@@ -72,7 +72,7 @@ void Configure::parse()
     if (!data_json.isObject()) return;
 
     BOOST_FOREACH(std::string data_key, data_json.getMemberNames()) {
-        std::map<std::string, key_type_t>::iterator val = keys.find(data_key);
+        auto val = keys.find(data_key);
         if (val == keys.end()) val = opt_keys.find(data_key);
 
         if (val != keys.end() || val != opt_keys.end()) {
@@ -107,7 +107,7 @@ void Configure::parse()
             else if (val->second == Configure::KeyStringList) {
                 if (realval.isArray()) {
                     std::vector<std::string> data;
-                    Json::Value::iterator it = realval.begin();
+                    auto it = realval.begin();
                     while (it != realval.end()) {
                         data.push_back((*it).asString());
                         ++it;

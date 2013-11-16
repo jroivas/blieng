@@ -10,12 +10,8 @@ using blieng::Item;
 using blieng::ItemBase;
 
 bool Item::ok = false;
-//std::map<std::string, blieng::ItemBase *> Item::item_bases;
-//std::map<std::string, std::unique_ptr<ItemBase> > item_bases;
 auto_vector<ItemBase> Item::item_bases;
 
-//typedef std::pair<std::string, ItemBase *> item_bases_t;
-//typedef std::pair<std::string, std::unique_ptr<ItemBase> > item_bases_t;
 typedef const ItemBase* item_bases_t;
 typedef std::pair<std::string, double> consume_t;
 
@@ -75,21 +71,13 @@ bool Item::removeItem(std::unique_ptr<Item> item)
 {
     if (!item.get()) return false;
 
-    auto_vector<ItemBase>::iterator it = item_bases.begin();
+    auto it = item_bases.begin();
     while (it != item_bases.end()) {
         if (item->base == (*it)->base) {
             item_bases.erase(it);
             return true;
         }
     }
-/*
-    BOOST_FOREACH(item_bases_t val, item_bases) {
-        if (item->base == val->base) {
-            item_bases.erase(val);
-            return true;
-        }
-    }
-*/
 
     return false;
 }
@@ -381,7 +369,8 @@ void ItemBase::setupStock()
     }
 }
 
-std::string ItemBase::itemToString() {
+std::string ItemBase::itemToString() const
+{
     std::string tmp = "";
     tmp += "base    : " + base.get() + "\n";
     tmp += "type    : " + type.get() + "\n";
@@ -416,7 +405,7 @@ std::string ItemBase::itemToString() {
     return tmp;
 }
 
-std::string Item::toString()
+std::string Item::toString() const
 {
     return blieng::BliObject::toString() + itemToString();
 }

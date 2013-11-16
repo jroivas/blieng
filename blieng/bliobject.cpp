@@ -135,7 +135,7 @@ const std::type_info *BliObject::getValueType(std::string key)
     return &val.type();
 }
 
-std::string BliObject::toString()
+std::string BliObject::toString() const
 {
     std::string res = "";
     BOOST_FOREACH(values_t item, values) {

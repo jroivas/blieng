@@ -41,7 +41,7 @@ public:
     void setConsume(std::map<std::string, double> new_consumes);
     void clearConsume();
 
-    std::string itemToString();
+    std::string itemToString() const;
     void assignItem(const ItemBase *parent);
     bool equals(ItemBase *another);
     void setupStock();
@@ -80,7 +80,7 @@ public:
     //bool registerItem(std::unique_ptr<Item> &item); //XXX
 
     std::string generateBaseJson();
-    virtual std::string toString();
+    virtual std::string toString() const;
 
 private:
     void init();

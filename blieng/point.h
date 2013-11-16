@@ -19,7 +19,7 @@ public:
 
     void update(Point another);
 
-    std::string toString();
+    std::string toString() const;
     bool operator==(const Point &other) const;
     bool operator!=(const Point &other) const;
 

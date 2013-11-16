@@ -63,9 +63,9 @@ std::string DataFile::unifyName(std::string name)
     std::string tmp = "";
 
     bool got_letter = false;
-    std::string::iterator ni = name.begin();
+    auto ni = name.cbegin();
     char back = 0;
-    while (ni != name.end()) {
+    while (ni != name.cend()) {
         if (*ni == '\n' || *ni == '\r' || *ni == 0 || *ni == '!' || *ni == '|') {
             // Blacklist
         } else {
@@ -89,7 +89,7 @@ std::string DataFile::unifyName(std::string name)
 std::vector<std::string> blieng::DataFile::listFiles()
 {
     std::vector<std::string> res;
-    
+
     BOOST_FOREACH(datafile_item_t val, _data) {
         res.push_back(val->key);
     }
@@ -102,7 +102,7 @@ const blieng::DataFile::DataFileObject *DataFile::getObject(std::string name)
     name = unifyName(name);
     if (name == "") return NULL;
 
-    auto_map<std::string, DataFileObject>::iterator di = _data.find(name);
+    auto di = _data.find(name);
     if (di != _data.end()) return _data[di];
 
     return NULL;
@@ -217,8 +217,8 @@ bool DataFile::write(const char *key, unsigned int key_len)
     boost::filesystem::ofstream fd(_name, std::ios_base::out | std::ios_base::trunc | std::ofstream::binary);
     if (!fd.is_open()) return false;
 
-    auto_map<std::string, DataFileObject>::iterator di = _data.begin();
-    while (di != _data.end()) {
+    auto di = _data.cbegin();
+    while (di != _data.cend()) {
         DataFileObject* tmp = _data[di];
         if (key != NULL && key_len > 0) {
             std::unique_ptr<DataFileObject> new_tmp = tmp->obfuscate(key, key_len, (*di)->key);

@@ -57,13 +57,11 @@ public:
         }
 
     protected:
-        //std::unique_ptr<T> val;
         T *val;
     };
 
-    //typedef typename std::vector<std::pair<KeyType, T*> >::iterator iterator;
     typedef typename std::vector<mappings*>::iterator iterator;
-    typedef typename std::vector<mappings*>::iterator const_iterator;
+    typedef typename std::vector<mappings*>::const_iterator const_iterator;
     typedef mappings* iterator_value;
 
 public:
@@ -87,7 +85,7 @@ public:
                 return *((*it).val->get());
             }
             ++it;
-        } 
+        }
         throw "Key not found";
     }
 
@@ -105,37 +103,31 @@ public:
             }
             */
             ++it;
-        } 
+        }
         throw "Key not found";
     }
 #endif
-    
-    auto_lvalue operator [] (KeyType i) 
-    //T& operator [] (KeyType i) 
-    { 
-        //typename auto_vector<std::pair<const KeyType, T> >::iterator it = _data.begin();
+
+    auto_lvalue operator [] (KeyType i)
+    {
         iterator it = _data.begin();
         while (it != _data.end()) {
             if ((*it)->key == i) {
                 return auto_lvalue((*it)->val);
             }
-            /*if ((*it).first == i) {
-                return auto_lvalue((*it).second);
-                //return (*it).second;
-            }
-            */
             ++it;
-        } 
-        //it = _data.insert(it, std::make_pair(i, T()));
+        }
         it = _data.insert(it, new mappings(i, new T()));
-        //throw "Key not found";
-        //return auto_lvalue (_data[i]); 
-        //return auto_lvalue ((*it).second); 
-        return auto_lvalue ((*it)->val); 
-        //return (*it).second; 
+        return auto_lvalue ((*it)->val);
     }
 
-    auto_lvalue operator [] (iterator i) 
+    auto_lvalue operator [] (iterator i)
+    {
+        BOOST_ASSERT( i < _data.end() );
+        return auto_lvalue((*i)->val);
+    }
+
+    auto_lvalue operator [] (const_iterator i)
     {
         BOOST_ASSERT( i < _data.end() );
         return auto_lvalue((*i)->val);
@@ -178,6 +170,16 @@ public:
         return _data.end();
     }
 
+    const_iterator cbegin()
+    {
+        return _data.cbegin();
+    }
+
+    const_iterator cend()
+    {
+        return _data.cend();
+    }
+
     bool empty() const
     {
         return _data.empty();
@@ -189,7 +191,6 @@ public:
     }
 
 private:
-    //std::vector<std::pair<KeyType, T*> > _data;
     std::vector<mappings*> _data;
 };
 

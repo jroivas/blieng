@@ -30,12 +30,12 @@ public:
 
     std::vector<std::pair<boost::posix_time::ptime, BliAny> > events;
 
-    std::string toString();
+    std::string toString() const;
 
 private:
     void *object;
     std::string name;
-    std::string anyToString(BliAny data);
+    std::string anyToString(BliAny data) const;
 };
 
 class EventLog

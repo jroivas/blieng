@@ -17,7 +17,7 @@ class Town : public BliObject
 public:
     Town();
     virtual ~Town() {}
-    
+
     void setName(std::string town_name);
     const std::string getName() const { return name; }
     void setSize(unsigned int town_size);
@@ -39,7 +39,7 @@ public:
     bool removeCharacter(Character *chr);
     std::vector<Character *> getCharacters();
 
-    virtual std::string toString();
+    virtual std::string toString() const;
 
     void updatePopulation();
     unsigned int getPopulation();

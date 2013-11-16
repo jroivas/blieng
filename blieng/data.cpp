@@ -130,7 +130,7 @@ std::string Data::findFileRecursive(const boost::filesystem::path &dir_path, std
 
     boost::filesystem::directory_iterator end_iter;
     boost::filesystem::directory_iterator dir_iter(dir_path);
-    
+
     for (;dir_iter != end_iter; dir_iter++) {
         if (boost::filesystem::is_directory(dir_iter->status())) {
             std::string res = findFileRecursive(dir_iter->path(), name);
@@ -189,7 +189,7 @@ std::vector<std::string> Data::findFileExtRecursive(std::vector<std::string> map
 
     boost::filesystem::directory_iterator end_iter;
     boost::filesystem::directory_iterator dir_iter(dir_path);
-    
+
     for (;dir_iter != end_iter; dir_iter++) {
         if (boost::filesystem::is_directory(dir_iter->status())) {
             mapfiles = findFileExtRecursive(mapfiles, dir_iter->path(), ext);
@@ -236,8 +236,8 @@ bool Data::saveMapJSON(std::string name, std::string json)
     }
 
     std::string clean_name = "";
-    std::string::iterator si = name.begin();
-    while (si != name.end()) {
+    auto si = name.cbegin();
+    while (si != name.cend()) {
         if (std::isalnum(*si) || *si == '_' || *si == '-') {
             clean_name += *si;
         }
