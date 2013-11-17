@@ -50,11 +50,6 @@ DataFile::DataFile(std::string name)
 
 DataFile::~DataFile()
 {
-    auto it = _data.begin();
-    while (it != _data.end()) {
-        unique_ptr<DataFileObject> tmp = (*it)->getValue();
-        tmp.release();
-    }
 }
 
 void DataFile::setName(std::string name)
