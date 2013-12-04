@@ -292,6 +292,16 @@ typedef struct _json_value
             return (type == json_integer || type == json_double);
         }
 
+        inline bool isDouble () const
+        {
+            return (type == json_double);
+        }
+
+        inline bool isIntegral () const
+        {
+            return (type == json_integer);
+        }
+
         inline bool isMember (std::string key) const
         {
             if (type != json_object) return false;
