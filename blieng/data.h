@@ -5,7 +5,7 @@
 #include <vector>
 #include <memory>
 #include <map>
-#include <json/reader.h>
+#include "json.h"
 #include <boost/random/random_device.hpp>
 #include "datafile.h"
 #include "auto_vector.h"
@@ -30,10 +30,10 @@ public:
     std::vector<std::string> readLinesFromFile(std::string name);
     unsigned int readData(std::string name, char **data);
 
-    Json::Value readJson(std::string name);
-    std::vector<std::string> getJsonKeys(Json::Value val);
-    bool isJsonKey(Json::Value val, std::string key);
-    Json::Value getJsonValue(Json::Value val, std::string key);
+    json_value *readJson(std::string name);
+    std::vector<std::string> getJsonKeys(const json_value *val) const;
+    bool isJsonKey(json_value *val, std::string key);
+    const json_value *getJsonValue(const json_value *val, std::string key) const;
 
     bool fileExists(std::string name);
 

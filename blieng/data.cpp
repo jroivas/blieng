@@ -424,40 +424,49 @@ std::string Data::readString(std::string name)
     return res;
 }
 
-Json::Value Data::readJson(std::string name)
+json_value *Data::readJson(std::string name)
 {
     std::string datas = Data::getInstance()->readString(name);
 
-    Json::Reader reader;
-    Json::Value val;
     bool parse_ok;
-    parse_ok = reader.parse(datas, val);
-    if (!parse_ok) {
-        std::cout << "Parse error while parsing '" << name << "':" << reader.getFormatedErrorMessages() << "!\n";
+    json_value *val = json_parse(datas.c_str(), datas.length());
+    if (val == nullptr) {
+        //std::cout << "Parse error while parsing '" << name << "':" << reader.getFormatedErrorMessages() << "!\n";
+        std::cout << "Parse error while parsing '" << name << "'!\n";
         throw "JSON parse error";
     }
     return val;
 }
 
-std::vector<std::string> Data::getJsonKeys(Json::Value val)
+std::vector<std::string> Data::getJsonKeys(const json_value *val) const
 {
-    return val.getMemberNames();
+#if 0
+    std::vector<std::string> res;
+    auto it = val->u.object.begin();
+    while (it != val->u.object.end()) {
+        res.push_back((*it)->name);
+        ++it;
+    }
+    return res;
+#endif
+    BOOST_ASSERT( val != nullptr );
+    return val->getMemberNames();
 }
 
-bool Data::isJsonKey(Json::Value val, std::string key)
+bool Data::isJsonKey(json_value *val, std::string key)
 {
-    if (val.isObject()) {
-        return val.isMember(key);
+    if (val->isObject()) {
+        return val->isMember(key);
     }
     return false;
 }
 
-Json::Value Data::getJsonValue(Json::Value val, std::string key)
+const json_value *Data::getJsonValue(const json_value *val, std::string key) const
 {
-    if (val.isObject()) {
-        if (val.isMember(key)) {
-            Json::Value res;
-            return val.get(key, res);
+    if (val->isObject()) {
+        if (val->isMember(key)) {
+            const json_value *res = val->getMember(key);
+            if (res != nullptr) return res;
         }
     }
     return val;

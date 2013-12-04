@@ -6,7 +6,7 @@
 #include "character.h"
 #include "town.h"
 #include "path.h"
-#include <json/reader.h>
+#include "json.h"
 #include <vector>
 
 namespace blieng
@@ -42,7 +42,7 @@ private:
 
     std::string map_name;
     std::string map_file;
-    Json::Value map_json;
+    json_value *map_json;
 
     std::string map_image_file;
     std::string solved_map_image_file;

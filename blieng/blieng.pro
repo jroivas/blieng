@@ -13,8 +13,8 @@ QMAKE_CXXFLAGS += -Wall -Werror -pedantic -Wextra -Wcast-align -Wcast-qual -Wcto
 
 
 unix {
-    CONFIG += link_pkgconfig
-    PKGCONFIG += jsoncpp
+    #CONFIG += link_pkgconfig
+    #PKGCONFIG += jsoncpp
     #LIBS += -L/usr/lib -lboost_system -lboost_random -lboost_filesystem -lboost_date_time
     LIBS += -L/usr/lib -L/usr/lib -Wl,-Bstatic  -lboost_system -lboost_random -lboost_filesystem -lboost_date_time -Wl,-Bdynamic
 }
@@ -37,6 +37,7 @@ HEADERS += \
     auto_map.h \
     auto_vector.h \
     rijndael-alg-fst.h \
+    json.h \
     wallclock.h
 SOURCES += \
     bliobject.cpp \
@@ -52,4 +53,5 @@ SOURCES += \
     town.cpp \
     card.cpp \
     rijndael-alg-fst.c \
+    json.c \
     wallclock.cpp

@@ -69,33 +69,33 @@ bool Configure::validate()
 
 void Configure::parse()
 {
-    if (!data_json.isObject()) return;
+    if (!data_json->isObject()) return;
 
-    BOOST_FOREACH(std::string data_key, data_json.getMemberNames()) {
+    BOOST_FOREACH(std::string data_key, data_json->getMemberNames()) {
         auto val = keys.find(data_key);
         if (val == keys.end()) val = opt_keys.find(data_key);
 
         if (val != keys.end() || val != opt_keys.end()) {
-            Json::Value realval = Data::getInstance()->getJsonValue(data_json, data_key);
+            const json_value* realval = Data::getInstance()->getJsonValue(data_json, data_key);
             if (val->second == Configure::KeyString) {
-                if (realval.isString()) setValue(data_key, realval.asString());
+                if (realval->isString()) setValue(data_key, realval->asString());
             }
             else if (val->second == Configure::KeyDouble) {
-                if (realval.isNumeric()) setValue(data_key, realval.asDouble());
+                if (realval->isNumeric()) setValue(data_key, realval->asDouble());
             }
             else if (val->second == Configure::KeyUInt) {
-                if (realval.isNumeric()) setValue(data_key, realval.asUInt());
+                if (realval->isNumeric()) setValue(data_key, realval->asUInt());
             }
             else if (val->second == Configure::KeyInt) {
-                if (realval.isNumeric()) setValue(data_key, realval.asInt());
+                if (realval->isNumeric()) setValue(data_key, realval->asInt());
             }
             else if (val->second == Configure::KeyBool) {
                 bool res = false;
 
-                if (realval.isNumeric()) {
-                    if (realval.asInt() == 1) res = true;
-                } else if (realval.isString()) {
-                    std::string sval = realval.asString();
+                if (realval->isNumeric()) {
+                    if (realval->asInt() == 1) res = true;
+                } else if (realval->isString()) {
+                    std::string sval = realval->asString();
                     boost::algorithm::to_lower(sval);
                     if (sval == "yes" || sval == "on" ||
                         sval == "true" || sval == "y") {
@@ -105,11 +105,11 @@ void Configure::parse()
                 setValue(data_key, res);
             }
             else if (val->second == Configure::KeyStringList) {
-                if (realval.isArray()) {
+                if (realval->isArray()) {
                     std::vector<std::string> data;
-                    auto it = realval.begin();
-                    while (it != realval.end()) {
-                        data.push_back((*it).asString());
+                    auto it = realval->u.array.begin();
+                    while (it != realval->u.array.end()) {
+                        data.push_back((*it)->asString());
                         ++it;
                     }
                     setValue(data_key, data);

@@ -5,7 +5,7 @@
 #include <iostream>
 #include <vector>
 #include <map>
-#include <json/reader.h>
+#include "json.h"
 
 namespace blieng
 {
@@ -30,7 +30,7 @@ private:
     void parse();
 
     std::string config_file;
-    Json::Value data_json;
+    json_value *data_json;
     std::map<std::string, key_type_t> keys;
     std::map<std::string, key_type_t> opt_keys;
 };

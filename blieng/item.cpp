@@ -5,6 +5,7 @@
 #include "configure.h"
 #include <string>
 #include <memory>
+#include "json.h"
 
 using blieng::Item;
 using blieng::ItemBase;
@@ -105,70 +106,61 @@ void Item::getItemBases()
     if (!Configure::getInstance()->isValue("itemfile")) return;
 
     std::string items_file = Configure::getInstance()->getStringValue("itemfile");
-    Json::Value root_val = Data::getInstance()->readJson(items_file); //FIXME
-    if (!root_val.isObject()) return;
+    json_value *root_val = Data::getInstance()->readJson(items_file); //FIXME
+    if (!root_val->isObject()) return;
 
     /* Go thorough items */
     //TODO Refactor
-    BOOST_FOREACH(std::string mi, root_val.getMemberNames()) {
-        Json::Value item_val = Data::getInstance()->getJsonValue(root_val, mi);
+    BOOST_FOREACH(std::string mi, root_val->getMemberNames()) {
+        const json_value *item_val = Data::getInstance()->getJsonValue(root_val, mi);
         //ItemBase *item = new ItemBase();
         std::unique_ptr<ItemBase> item(new ItemBase());
 
-        if (item_val.isObject()) {
+        if (item_val->isObject()) {
             item->base = mi;
             std::vector<std::string> item_names = Data::getInstance()->getJsonKeys(item_val);
             BOOST_FOREACH(std::string keyname, item_names) {
 
-                Json::Value val = Data::getInstance()->getJsonValue(item_val, keyname);
+                const json_value *val = Data::getInstance()->getJsonValue(item_val, keyname);
                 bool ok = false;
                 if (keyname == "type") {
-                    if (val.isString()) item->type = val.asString();
+                    if (val->isString()) item->type = val->asString();
                     ok = true;
                 }
                 else if (keyname == "image") {
-                    if (val.isString()) item->image = val.asString();
+                    if (val->isString()) item->image = val->asString();
                     ok = true;
                 }
                 else if (keyname == "rarity") {
-                    if (val.isNumeric()) {
-                        item->rarity = val.asDouble();
+                    if (val->isNumeric()) {
+                        item->rarity = val->asDouble();
                         ok = true;
                     }
                 }
                 else if (keyname == "life") {
-                    if (val.isNumeric()) {
-                        item->life = val.asInt();
+                    if (val->isNumeric()) {
+                        item->life = val->asInt();
                         ok = true;
                     }
                 }
-                //TODO XXX
-                #if 0
-                else if (keyname == "life") {
-                    if (val.isNumeric()) {
-                        item->amount = val.asDouble();
-                        ok = true;
-                    }
-                }
-                #endif
                 else if (keyname == "consume") {
                     std::map<std::string, double> _consumes;
-                    if (val.isObject()) {
-                        BOOST_FOREACH(std::string cmi, val.getMemberNames()) {
-                            Json::Value cnt_val = Data::getInstance()->getJsonValue(val, cmi);
-                            if (cnt_val.isNumeric()) {
-                                _consumes[cmi] = cnt_val.asDouble();
+                    if (val->isObject()) {
+                        BOOST_FOREACH(std::string cmi, val->getMemberNames()) {
+                            const json_value *cnt_val = Data::getInstance()->getJsonValue(val, cmi);
+                            if (cnt_val->isNumeric()) {
+                                _consumes[cmi] = cnt_val->asDouble();
                             }
                         }
                     }
                     item->consumes = _consumes;
                     ok = true;
                 }
-                if (val.type() == Json::intValue) item->setValue(keyname, val.asInt());
-                else if (val.type() == Json::uintValue) item->setValue(keyname, val.asUInt());
-                else if (val.type() == Json::realValue) item->setValue(keyname, val.asDouble());
-                else if (val.type() == Json::stringValue) item->setValue(keyname, val.asString());
-                else if (val.type() == Json::booleanValue) item->setValue(keyname, val.asBool());
+                if (val->type == json_integer) item->setValue(keyname, val->asInt());
+                //else if (val->type == json_integer) item->setValue(keyname, val.asUInt());
+                else if (val->type == json_double) item->setValue(keyname, val->asDouble());
+                else if (val->type == json_string) item->setValue(keyname, val->asString());
+                else if (val->type == json_boolean) item->setValue(keyname, val->asBool());
                 else { //TODO unsupported
                     if (!ok) std::cout << keyname << "has unsupported type!\n";
                 }

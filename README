@@ -27,3 +27,9 @@ Optimised ANSI C code for the Rijndael cipher
   Vincent Rijmen <vincent.rijmen@esat.kuleuven.ac.be>
   Antoon Bosselaers <antoon.bosselaers@esat.kuleuven.ac.be>
   Paulo Barreto <paulo.barreto@terra.com.br>
+
+json.h/json.c
+  BSD alike
+
+  Copyright (C) 2012, 2013 James McLaughlin et al.
+  https://github.com/udp/json-parser
