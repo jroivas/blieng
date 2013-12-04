@@ -156,8 +156,8 @@ void Item::getItemBases()
                     item->consumes = _consumes;
                     ok = true;
                 }
-                if (val->type == json_integer) item->setValue(keyname, val->asInt());
-                //else if (val->type == json_integer) item->setValue(keyname, val.asUInt());
+                if (val->type == json_uinteger) item->setValue(keyname, val->asUInt());
+                else if (val->type == json_integer) item->setValue(keyname, val->asInt());
                 else if (val->type == json_double) item->setValue(keyname, val->asDouble());
                 else if (val->type == json_string) item->setValue(keyname, val->asString());
                 else if (val->type == json_boolean) item->setValue(keyname, val->asBool());

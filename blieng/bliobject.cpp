@@ -93,7 +93,7 @@ Y BliObject::get ## X ## Value(std::string key, Y default_value) const\
     }\
 }
 
-#define getConvertNumberValue(X, Y, A, B, C) \
+#define getConvertNumberValue(X, Y, A, B, C, D, E) \
 Y BliObject::get ## X ## Value(std::string key, Y default_value) const\
 {\
     BliAny val = getValue(key);\
@@ -107,16 +107,18 @@ Y BliObject::get ## X ## Value(std::string key, Y default_value) const\
         if (val.type() == typeid(A)) { return static_cast<Y>(boost::any_cast<A>(val)); }\
         if (val.type() == typeid(B)) { return static_cast<Y>(boost::any_cast<B>(val)); }\
         if (val.type() == typeid(C)) { return static_cast<Y>(boost::any_cast<C>(val)); }\
+        if (val.type() == typeid(D)) { return static_cast<Y>(boost::any_cast<D>(val)); }\
+        if (val.type() == typeid(E)) { return static_cast<Y>(boost::any_cast<E>(val)); }\
     }\
-    std::cerr << "Error, not a " #X " value at: " + key;\
+    std::cerr << "Error, not a " #X " value at: " + key + "\n";\
     /*throw "Error, not a " #X " value at: " + key;*/\
     return default_value;\
 }
 
 getConvertValue(String, std::string)
-getConvertNumberValue(Int, int, unsigned int, double, float)
-getConvertNumberValue(UInt, unsigned int, int, double, float)
-getConvertNumberValue(Double, double, float, unsigned int, int)
+getConvertNumberValue(Int, int, unsigned int, long, unsigned long, double, float)
+getConvertNumberValue(UInt, unsigned int, unsigned long, long, int, double, float)
+getConvertNumberValue(Double, double, float, unsigned long, long, unsigned int, int)
 getConvertValue(Bool, bool)
 
 std::vector<std::string> BliObject::getListValue(std::string key)

@@ -263,7 +263,7 @@ json_value * json_parse_ex (json_settings * settings,
       for (i = json ;; ++ i)
       {
          json_char b = (i == end ? 0 : *i);
-         
+
          if (flags & flag_done)
          {
             if (!b)
@@ -513,7 +513,7 @@ json_value * json_parse_ex (json_settings * settings,
 
                         if (isdigit (b) || b == '-')
                         {
-                           if (!new_value (&state, &top, &root, &alloc, json_integer))
+                           if (!new_value (&state, &top, &root, &alloc, json_uinteger))
                               goto e_alloc_failure;
 
                            if (!state.first_pass)
@@ -563,7 +563,7 @@ json_value * json_parse_ex (json_settings * settings,
             switch (top->type)
             {
             case json_object:
-               
+
                switch (b)
                {
                   whitespace:
@@ -583,7 +583,7 @@ json_value * json_parse_ex (json_settings * settings,
                      string_length = 0;
 
                      break;
-                  
+
                   case '}':
 
                      flags = (flags & ~ flag_need_comma) | flag_next;
@@ -605,6 +605,7 @@ json_value * json_parse_ex (json_settings * settings,
 
                break;
 
+            case json_uinteger:
             case json_integer:
             case json_double:
 
@@ -612,7 +613,7 @@ json_value * json_parse_ex (json_settings * settings,
                {
                   ++ num_digits;
 
-                  if (top->type == json_integer || flags & flag_num_e)
+                  if (top->type == json_integer || top->type == json_uinteger || flags & flag_num_e)
                   {
                      if (! (flags & flag_num_e))
                      {
@@ -646,12 +647,13 @@ json_value * json_parse_ex (json_settings * settings,
                      flags |= flag_num_e_got_sign;
 
                      if (b == '-')
+                        top->type = json_integer;
                         flags |= flag_num_e_negative;
 
                      continue;
                   }
                }
-               else if (b == '.' && top->type == json_integer)
+               else if (b == '.' && (top->type == json_integer || top->type == json_uinteger))
                {
                   if (!num_digits)
                   {  sprintf (error, "%d:%d: Expected digit before `.`", cur_line, e_off);
@@ -681,7 +683,7 @@ json_value * json_parse_ex (json_settings * settings,
                   {
                      flags |= flag_num_e;
 
-                     if (top->type == json_integer)
+                     if (top->type == json_integer || top->type == json_uinteger)
                      {
                         top->type = json_double;
                         top->u.dbl = (double) top->u.integer;
@@ -705,10 +707,12 @@ json_value * json_parse_ex (json_settings * settings,
 
                if (flags & flag_num_negative)
                {
-                  if (top->type == json_integer)
+                  if (top->type == json_integer || top->type == json_uinteger) {
                      top->u.integer = - top->u.integer;
-                  else
+                     top->type = json_integer;
+                  } else {
                      top->u.dbl = - top->u.dbl;
+                  }
                }
 
                flags |= flag_next | flag_reproc;

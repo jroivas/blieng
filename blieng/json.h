@@ -81,6 +81,7 @@ typedef enum
    json_object,
    json_array,
    json_integer,
+   json_uinteger,
    json_double,
    json_string,
    json_boolean,
@@ -223,6 +224,7 @@ typedef struct _json_value
         {
             switch (type)
             {
+               case json_uinteger:
                case json_integer:
                   return u.integer;
 
@@ -234,9 +236,20 @@ typedef struct _json_value
             };
         }
 
-        inline json_int_t asUInt () const
+        inline json_uint_t asUInt () const
         {
-            return (json_uint_t)asInt();
+            switch (type)
+            {
+               case json_uinteger:
+               case json_integer:
+                  return (json_uint_t)u.integer;
+
+               case json_double:
+                  return (json_uint_t) u.dbl;
+
+               default:
+                  return 0;
+            };
         }
 
         inline bool asBool() const
@@ -257,6 +270,7 @@ typedef struct _json_value
            switch (type)
            {
               case json_integer:
+              case json_uinteger:
                  return (double) u.integer;
 
               case json_double:
@@ -289,7 +303,7 @@ typedef struct _json_value
 
         inline bool isNumeric () const
         {
-            return (type == json_integer || type == json_double);
+            return (type == json_integer || type == json_uinteger || type == json_double);
         }
 
         inline bool isDouble () const
@@ -299,7 +313,7 @@ typedef struct _json_value
 
         inline bool isIntegral () const
         {
-            return (type == json_integer);
+            return (type == json_integer || type == json_uinteger);
         }
 
         inline bool isMember (std::string key) const
