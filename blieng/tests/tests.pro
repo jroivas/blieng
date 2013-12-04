@@ -11,8 +11,6 @@ QMAKE_CXXFLAGS += -g
 INCLUDEPATH += ../
 
 unix {
-    CONFIG += link_pkgconfig
-    PKGCONFIG += jsoncpp
     LIBS += -L../ -lblieng
     LIBS += -L/usr/lib -L/usr/lib -Wl,-Bstatic  -lboost_system -lboost_random -lboost_filesystem -lboost_date_time -Wl,-Bdynamic
     POST_TARGETDEPS += ../libblieng.a

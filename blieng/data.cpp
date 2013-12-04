@@ -428,7 +428,6 @@ json_value *Data::readJson(std::string name)
 {
     std::string datas = Data::getInstance()->readString(name);
 
-    bool parse_ok;
     json_value *val = json_parse(datas.c_str(), datas.length());
     if (val == nullptr) {
         //std::cout << "Parse error while parsing '" << name << "':" << reader.getFormatedErrorMessages() << "!\n";

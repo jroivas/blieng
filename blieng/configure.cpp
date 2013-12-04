@@ -107,11 +107,17 @@ void Configure::parse()
             else if (val->second == Configure::KeyStringList) {
                 if (realval->isArray()) {
                     std::vector<std::string> data;
+#if 0 //Only in C++11
                     auto it = realval->u.array.begin();
                     while (it != realval->u.array.end()) {
                         data.push_back((*it)->asString());
                         ++it;
                     }
+#else
+                    for (unsigned int i=0; i<realval->u.array.length; ++i) {
+                        data.push_back(realval->u.array.values[i]->asString());
+                    }
+#endif
                     setValue(data_key, data);
                 }
             }

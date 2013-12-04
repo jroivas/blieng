@@ -114,7 +114,7 @@ typedef struct _json_value
       {
          unsigned int length;
 
-         struct
+         struct __values
          {
             json_char * name;
             struct _json_value * value;
@@ -127,6 +127,39 @@ typedef struct _json_value
          }
          decltype(values) end () const
          {  return values + length;
+         }
+         #elif defined(__cplusplus)
+         class iterator{
+         public:
+            iterator(struct __values *ptr, unsigned int pos=0) : _ptr(ptr), _pos(pos) {}
+
+            iterator operator++() {
+                _pos++;
+                return *this;
+            }
+            bool operator==(const iterator &cmp) {
+                return (cmp._pos == _pos);
+            }
+            bool operator!=(const iterator &cmp) {
+                return (cmp._pos != _pos);
+            }
+            struct __values operator*() {
+                return _ptr[_pos];
+            }
+
+         private:
+            struct __values *_ptr;
+            unsigned int _pos;
+         };
+         iterator begin () const
+         {
+            iterator tmp(values);
+            return tmp;
+         }
+         iterator end () const
+         {
+            iterator tmp(values, length);
+            return tmp;
          }
          #endif
 
@@ -143,6 +176,39 @@ typedef struct _json_value
          }
          decltype(values) end () const
          {  return values + length;
+         }
+         #elif defined(__cplusplus)
+         class iterator{
+         public:
+            iterator(struct _json_value **ptr, unsigned int pos=0) : _ptr(ptr), _pos(pos) {}
+
+            iterator operator++() {
+                _pos++;
+                return *this;
+            }
+            bool operator==(const iterator &cmp) {
+                return (cmp._pos == _pos);
+            }
+            bool operator!=(const iterator &cmp) {
+                return (cmp._pos != _pos);
+            }
+            struct _json_value *operator*() {
+                return _ptr[_pos];
+            }
+
+         private:
+            struct _json_value **_ptr;
+            unsigned int _pos;
+         };
+         iterator begin () const
+         {
+            iterator tmp(values);
+            return tmp;
+         }
+         iterator end () const
+         {
+            iterator tmp(values, length);
+            return tmp;
          }
          #endif
 
