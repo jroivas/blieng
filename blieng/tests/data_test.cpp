@@ -139,22 +139,24 @@ void DataTest::readJson()
 
     blieng::Data *obj = blieng::Data::getInstance();
 
-    Json::Value res = obj->readJson("json1");
+    json_value *res = obj->readJson("json1");
 
-    CPPUNIT_ASSERT( res.isObject() );
-    CPPUNIT_ASSERT( !res.empty() );
+    CPPUNIT_ASSERT( res != nullptr );
 
-    CPPUNIT_ASSERT( res.isMember("aa") );
-    CPPUNIT_ASSERT( res["aa"].isString() );
+    CPPUNIT_ASSERT( res->isObject() );
+    //CPPUNIT_ASSERT( !res->empty() );
 
-    CPPUNIT_ASSERT( res.isMember("second") );
-    CPPUNIT_ASSERT( res["second"].isNumeric() );
+    CPPUNIT_ASSERT( res->isMember("aa") );
+    CPPUNIT_ASSERT( (*res)["aa"].isString() );
 
-    CPPUNIT_ASSERT( res.isMember("third") );
-    CPPUNIT_ASSERT( res["third"].isArray() );
+    CPPUNIT_ASSERT( res->isMember("second") );
+    CPPUNIT_ASSERT( (*res)["second"].isNumeric() );
+
+    CPPUNIT_ASSERT( res->isMember("third") );
+    CPPUNIT_ASSERT( (*res)["third"].isArray() );
 
     CPPUNIT_ASSERT( obj->isJsonKey(res, "second") );
-    CPPUNIT_ASSERT( obj->getJsonValue(res, "second").isNumeric() );
+    CPPUNIT_ASSERT( obj->getJsonValue(res, "second")->isNumeric() );
 
     mock_io_stop();
 }
