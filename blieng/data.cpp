@@ -76,6 +76,11 @@ bool Data::initialize(const char *key, unsigned int key_len)
 
 std::unique_ptr<boost::filesystem::path> Data::findDataFile(std::string datafilename)
 {
+#ifdef Q_OS_ANDROID
+    std::unique_ptr<boost::filesystem::path> my_data_path(new boost::filesystem::path);
+    *my_data_path.get() = "assets/data/data.dat";
+    return my_data_path;
+#else
     std::list<std::string> locations;
     locations.push_back("");
     locations.push_back("./");
@@ -92,8 +97,10 @@ std::unique_ptr<boost::filesystem::path> Data::findDataFile(std::string datafile
             return my_data_path;
         }
     }
+
     my_data_path.reset();
     return my_data_path;
+#endif
 }
 
 std::unique_ptr<boost::filesystem::path> Data::findDataPath()

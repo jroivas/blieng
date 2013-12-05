@@ -158,45 +158,137 @@ std::unique_ptr<blieng::SafeDataPtr> DataFile::obfuscateSimple(const char *data,
     return std::unique_ptr<blieng::SafeDataPtr>(new blieng::SafeDataPtr(res.get(), orig_len));
 }
 
+#ifdef Q_OS_ANDROID
+#include <QtCore>
+#endif
 bool DataFile::read(const char *key, unsigned int key_len)
 {
     if (!_ok) return false;
 
+#ifdef Q_OS_ANDROID
+#if 0
+    AAssetManager* mgr = AAssetManager_fromJava(env, assetManager);
+    AAssetDir* assetDir = AAssetManager_openDir(mgr, "data");
+    const char* filename = nullptr;
+    AAsset* asset = nullptr;
+    while ((filename = AAssetDir_getNextFileName(assetDir)) != NULL) {
+        if (std::string(filename).rfind("data.data") == std::string::npos) continue;
+
+        asset = AAssetManager_open(mgr, filename, AASSET_MODE_RANDOM);
+        /*char buf[BUFSIZ];
+        int nb_read = 0;
+        while ((nb_read = AAsset_read(asset, buf, BUFSIZ)) > 0) {
+            fwrite(buf, nb_read, 1, out);
+        }
+        AAsset_close(asset);
+        */
+        break;
+    }
+    if (asset == nullptr) {
+        AAssetDir_close(assetDir);
+        return false;
+    }
+#else
+    QFile asset_file("assets:/data/data.dat");
+    if (!asset_file.open(QIODevice::ReadOnly)) {
+        return false;
+    }
+#endif
+#else
     boost::filesystem::ifstream fd(_name, std::ios_base::in | std::ofstream::binary);
     if (!fd.is_open()) return false;
+#endif
 
+#ifdef Q_OS_ANDROID
+    int nb_read = 0;
+#if 0
+    while (true) {
+#else
+    while (!asset_file.atEnd()) {
+#endif
+#else
     while (!fd.eof()) {
-        uint32_t namelen;
+#endif
+        uint32_t namelen = 0;
+#ifdef Q_OS_ANDROID
+#if 0
+        nb_read = AAsset_read(asset, reinterpret_cast<char*>(&namelen), sizeof(uint32_t));
+#else
+        nb_read = asset_file.read(reinterpret_cast<char*>(&namelen), sizeof(uint32_t));
+#endif
+        if (nb_read == 0) break;
+#else
         fd.read(reinterpret_cast<char*>(&namelen), sizeof(uint32_t));
         if (fd.eof()) break;
+#endif
+        qDebug() << "namelen" << namelen;
         BOOST_ASSERT(namelen > 0);
         BOOST_ASSERT(namelen < 0x2ff);
 
         std::unique_ptr<char[]> ob_name(new char[namelen+1]);
+#ifdef Q_OS_ANDROID
+#if 0
+        nb_read = AAsset_read(asset, ob_name.get(), static_cast<int>(namelen));
+#else
+        nb_read = asset_file.read(ob_name.get(), static_cast<int>(namelen));
+#endif
+        if (nb_read == 0) break;
+#else
         fd.read(ob_name.get(), static_cast<int>(namelen));
         if (fd.eof()) break;
+#endif
 
         auto name = obfuscateSimple(ob_name.get(), namelen);
 
-        ob_name = nullptr;
+        //ob_name = nullptr;
 
-        uint32_t datalen;
+        uint32_t datalen = 0;
+#ifdef Q_OS_ANDROID
+#if 0
+        nb_read = AAsset_read(asset, reinterpret_cast<char*>(&datalen), sizeof(uint32_t));
+#else
+        nb_read = asset_file.read(reinterpret_cast<char*>(&datalen), sizeof(uint32_t));
+#endif
+        if (nb_read == 0) break;
+#else
         fd.read(reinterpret_cast<char*>(&datalen), sizeof(uint32_t));
         if (fd.eof()) break;
+#endif
+        qDebug() << "datalen" << datalen;
 
-        uint32_t datareallen;
+        uint32_t datareallen = 0;
+#ifdef Q_OS_ANDROID
+#if 0
+        nb_read = AAsset_read(asset, reinterpret_cast<char*>(&datareallen), sizeof(uint32_t));
+#else
+        nb_read = asset_file.read(reinterpret_cast<char*>(&datareallen), sizeof(uint32_t));
+#endif
+        if (nb_read == 0) break;
+#else
         fd.read(reinterpret_cast<char*>(&datareallen), sizeof(uint32_t));
         if (fd.eof()) break;
+#endif
+        qDebug() << "datareallen" << datareallen;
 
         std::unique_ptr<char[]> data(new char[datalen]);
+#ifdef Q_OS_ANDROID
+#if 0
+        nb_read = AAsset_read(asset, data.get(), static_cast<int>(datalen));
+#else
+        nb_read = asset_file.read(data.get(), static_cast<int>(datalen));
+#endif
+        if (nb_read == 0) break;
+#else
         fd.read(data.get(), static_cast<int>(datalen));
         if (fd.eof()) break;
+#endif
 
         std::unique_ptr<DataFileObject> tmp(new DataFileObject(data.get(), datalen));
         tmp->real_len = datareallen;
 
         std::string sname;
         sname.append(name->getData(), name->length());
+        qDebug() << "sname" << sname.c_str();
 
         if (key != nullptr && key_len > 0) {
             std::unique_ptr<DataFileObject> new_tmp(tmp->deobfuscate(key, key_len, sname));
@@ -207,7 +299,15 @@ bool DataFile::read(const char *key, unsigned int key_len)
         _data[sname] = std::move(tmp);
     }
 
+#ifdef Q_OS_ANDROID
+#if 0
+    AAsset_close(asset);
+    AAssetDir_close(assetDir);
+#endif
+    asset_file.close();
+#else
     fd.close();
+#endif
 
     return true;
 }

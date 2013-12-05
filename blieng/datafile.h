@@ -6,6 +6,9 @@
 #include "auto_map.h"
 #include <vector>
 #include <memory>
+#ifdef Q_OS_ANDROID
+#include <android/asset_manager.h>
+#endif
 
 using std::unique_ptr;
 
