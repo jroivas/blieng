@@ -29,6 +29,8 @@ public:
         CAST_TO(unsigned int, obj, o)
         CAST_TO(long, obj, o)
         CAST_TO(unsigned long, obj, o)
+        CAST_TO(int64_t, obj, o)
+        CAST_TO(int64_t, obj, o)
         CAST_TO(float, obj, o)
         CAST_TO(double, obj, o)
         CAST_TO(char, obj, o)
