@@ -166,34 +166,10 @@ bool DataFile::read(const char *key, unsigned int key_len)
     if (!_ok) return false;
 
 #ifdef Q_OS_ANDROID
-#if 0
-    AAssetManager* mgr = AAssetManager_fromJava(env, assetManager);
-    AAssetDir* assetDir = AAssetManager_openDir(mgr, "data");
-    const char* filename = nullptr;
-    AAsset* asset = nullptr;
-    while ((filename = AAssetDir_getNextFileName(assetDir)) != NULL) {
-        if (std::string(filename).rfind("data.data") == std::string::npos) continue;
-
-        asset = AAssetManager_open(mgr, filename, AASSET_MODE_RANDOM);
-        /*char buf[BUFSIZ];
-        int nb_read = 0;
-        while ((nb_read = AAsset_read(asset, buf, BUFSIZ)) > 0) {
-            fwrite(buf, nb_read, 1, out);
-        }
-        AAsset_close(asset);
-        */
-        break;
-    }
-    if (asset == nullptr) {
-        AAssetDir_close(assetDir);
-        return false;
-    }
-#else
     QFile asset_file("assets:/data/data.dat");
     if (!asset_file.open(QIODevice::ReadOnly)) {
         return false;
     }
-#endif
 #else
     boost::filesystem::ifstream fd(_name, std::ios_base::in | std::ofstream::binary);
     if (!fd.is_open()) return false;
@@ -201,37 +177,24 @@ bool DataFile::read(const char *key, unsigned int key_len)
 
 #ifdef Q_OS_ANDROID
     int nb_read = 0;
-#if 0
-    while (true) {
-#else
     while (!asset_file.atEnd()) {
-#endif
 #else
     while (!fd.eof()) {
 #endif
         uint32_t namelen = 0;
 #ifdef Q_OS_ANDROID
-#if 0
-        nb_read = AAsset_read(asset, reinterpret_cast<char*>(&namelen), sizeof(uint32_t));
-#else
         nb_read = asset_file.read(reinterpret_cast<char*>(&namelen), sizeof(uint32_t));
-#endif
         if (nb_read == 0) break;
 #else
         fd.read(reinterpret_cast<char*>(&namelen), sizeof(uint32_t));
         if (fd.eof()) break;
 #endif
-        qDebug() << "namelen" << namelen;
         BOOST_ASSERT(namelen > 0);
         BOOST_ASSERT(namelen < 0x2ff);
 
         std::unique_ptr<char[]> ob_name(new char[namelen+1]);
 #ifdef Q_OS_ANDROID
-#if 0
-        nb_read = AAsset_read(asset, ob_name.get(), static_cast<int>(namelen));
-#else
         nb_read = asset_file.read(ob_name.get(), static_cast<int>(namelen));
-#endif
         if (nb_read == 0) break;
 #else
         fd.read(ob_name.get(), static_cast<int>(namelen));
@@ -244,39 +207,25 @@ bool DataFile::read(const char *key, unsigned int key_len)
 
         uint32_t datalen = 0;
 #ifdef Q_OS_ANDROID
-#if 0
-        nb_read = AAsset_read(asset, reinterpret_cast<char*>(&datalen), sizeof(uint32_t));
-#else
         nb_read = asset_file.read(reinterpret_cast<char*>(&datalen), sizeof(uint32_t));
-#endif
         if (nb_read == 0) break;
 #else
         fd.read(reinterpret_cast<char*>(&datalen), sizeof(uint32_t));
         if (fd.eof()) break;
 #endif
-        qDebug() << "datalen" << datalen;
 
         uint32_t datareallen = 0;
 #ifdef Q_OS_ANDROID
-#if 0
-        nb_read = AAsset_read(asset, reinterpret_cast<char*>(&datareallen), sizeof(uint32_t));
-#else
         nb_read = asset_file.read(reinterpret_cast<char*>(&datareallen), sizeof(uint32_t));
-#endif
         if (nb_read == 0) break;
 #else
         fd.read(reinterpret_cast<char*>(&datareallen), sizeof(uint32_t));
         if (fd.eof()) break;
 #endif
-        qDebug() << "datareallen" << datareallen;
 
         std::unique_ptr<char[]> data(new char[datalen]);
 #ifdef Q_OS_ANDROID
-#if 0
-        nb_read = AAsset_read(asset, data.get(), static_cast<int>(datalen));
-#else
         nb_read = asset_file.read(data.get(), static_cast<int>(datalen));
-#endif
         if (nb_read == 0) break;
 #else
         fd.read(data.get(), static_cast<int>(datalen));
@@ -288,7 +237,6 @@ bool DataFile::read(const char *key, unsigned int key_len)
 
         std::string sname;
         sname.append(name->getData(), name->length());
-        qDebug() << "sname" << sname.c_str();
 
         if (key != nullptr && key_len > 0) {
             std::unique_ptr<DataFileObject> new_tmp(tmp->deobfuscate(key, key_len, sname));
@@ -300,10 +248,6 @@ bool DataFile::read(const char *key, unsigned int key_len)
     }
 
 #ifdef Q_OS_ANDROID
-#if 0
-    AAsset_close(asset);
-    AAssetDir_close(assetDir);
-#endif
     asset_file.close();
 #else
     fd.close();
@@ -315,6 +259,9 @@ bool DataFile::read(const char *key, unsigned int key_len)
 bool DataFile::write(const char *key, unsigned int key_len)
 {
     if (!_ok) return false;
+#ifdef Q_OS_ANDROID
+    return false;
+#endif
 
     boost::filesystem::ofstream fd(_name, std::ios_base::out | std::ios_base::trunc | std::ofstream::binary);
     if (!fd.is_open()) return false;
@@ -356,7 +303,7 @@ bool DataFile::write(const char *key, unsigned int key_len)
 blieng::DataFile::DataFileObject::DataFileObject(const char *new_data, unsigned int new_len) : len(new_len), real_len(new_len)
 {
     data = new char[len];
-    memcpy(data, new_data, len);
+    memmove(data, new_data, len);
 }
 
 std::unique_ptr<blieng::SafeDataPtr> blieng::DataFile::DataFileObject::setupKey(const char *key, unsigned int key_len, const char *iv, unsigned int iv_len)
@@ -365,7 +312,7 @@ std::unique_ptr<blieng::SafeDataPtr> blieng::DataFile::DataFileObject::setupKey(
     memset(res.get(), 0, __key_size);
     unsigned int index = 0;
 
-    #define KEY_INIT_LOOP(A_res, A_index, A_cnt, A_tmp) \
+    #define KEY_INIT_LOOP(A_res, A_index, A_cnt, A_tmp)\
         while (A_cnt > 0) {\
             A_res[A_index++] ^= *(A_tmp++);\
             A_index %= (__key_size-1);\
@@ -391,7 +338,7 @@ std::unique_ptr<blieng::SafeDataPtr> blieng::DataFile::DataFileObject::setupKey(
 #include "rijndael-alg-fst.h"
 std::unique_ptr<blieng::DataFile::DataFileObject> blieng::DataFile::DataFileObject::obfuscate(const char *key, unsigned int key_len, std::string seed)
 {
-    unsigned int olen = len/16;
+    unsigned int olen = len / 16;
     if (len % 16 != 0) olen++;
     olen *= 16;
 
@@ -408,7 +355,7 @@ std::unique_ptr<blieng::DataFile::DataFileObject> blieng::DataFile::DataFileObje
     unsigned char in_block[16];
     unsigned char out_block[16];
     unsigned char iv[16] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    memcpy(iv, key, key_len>16?16:key_len);
+    memmove(iv, key, key_len>16?16:key_len);
 
     unsigned int cnt = len;
     unsigned int ocnt = olen;
@@ -437,7 +384,7 @@ std::unique_ptr<blieng::DataFile::DataFileObject> blieng::DataFile::DataFileObje
                 ocnt--;
             }
         }
-        memcpy(iv, out_block, 16);
+        memmove(iv, out_block, 16);
         blocknum++;
     }
 
@@ -462,7 +409,7 @@ std::unique_ptr<blieng::DataFile::DataFileObject> blieng::DataFile::DataFileObje
     unsigned char in_block[16];
     unsigned char out_block[16];
     unsigned char iv[16] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    memcpy(iv, key, key_len>16?16:key_len);
+    memmove(iv, key, key_len>16?16:key_len);
 
     unsigned int cnt = len;
     unsigned int ocnt = real_len;
@@ -486,7 +433,7 @@ std::unique_ptr<blieng::DataFile::DataFileObject> blieng::DataFile::DataFileObje
                 ocnt--;
             }
         }
-        memcpy(iv, in_block, 16);
+        memmove(iv, in_block, 16);
     }
 
     std::unique_ptr<DataFileObject> res(new DataFileObject(tmp.get(), real_len));

@@ -24,6 +24,9 @@ android {
         LIBS += ../boost/lib/
         QT += core
         QMAKE_CXXFLAGS += -DQ_OS_ANDROID
+        CONFIG += rtti
+        CONFIG += exceptions
+        QMAKE_CXXFLAGS += -fexceptions -frtti
 }
 
 

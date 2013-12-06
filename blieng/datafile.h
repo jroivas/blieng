@@ -2,7 +2,6 @@
 #define __BLIENG_DATA_FILE_H
 
 #include <iostream>
-//#include <map>
 #include "auto_map.h"
 #include <vector>
 #include <memory>

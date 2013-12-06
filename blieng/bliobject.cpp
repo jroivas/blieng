@@ -93,6 +93,20 @@ Y BliObject::get ## X ## Value(std::string key, Y default_value) const\
     }\
 }
 
+#ifdef Q_OS_ANDROID
+#include <QDebug>
+void doDebug(std::string s)
+{
+    qDebug() << s.c_str();
+}
+#else
+void doDebug(std::string s)
+{
+    std::cerr << s << "\n";
+}
+#endif
+#include <sstream>
+
 #define getConvertNumberValue(X, Y, A, B, C, D, E) \
 Y BliObject::get ## X ## Value(std::string key, Y default_value) const\
 {\
@@ -110,7 +124,9 @@ Y BliObject::get ## X ## Value(std::string key, Y default_value) const\
         if (val.type() == typeid(D)) { return static_cast<Y>(boost::any_cast<D>(val)); }\
         if (val.type() == typeid(E)) { return static_cast<Y>(boost::any_cast<E>(val)); }\
     }\
-    std::cerr << "Error, not a " #X " value at: " + key + "\n";\
+    std::ostringstream m;\
+    m << val;\
+    doDebug("Error, not a " #X " value at: " + key + ", val: " + m.str());\
     /*throw "Error, not a " #X " value at: " + key;*/\
     return default_value;\
 }

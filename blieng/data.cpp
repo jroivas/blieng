@@ -55,7 +55,6 @@ bool Data::initialize(std::string datafilename, const char *key, unsigned int ke
             data_file_path = findDataFile(datafilename);
         }
         if (data_file_path.get()) {
-            //datafile = std::unique_ptr<blieng::DataFile>(new blieng::DataFile(data_file_path->filename().string()));
             datafile = std::unique_ptr<blieng::DataFile>(new blieng::DataFile(data_file_path->string()));
         }
     }
@@ -437,7 +436,6 @@ json_value *Data::readJson(std::string name)
 
     json_value *val = json_parse(datas.c_str(), datas.length());
     if (val == nullptr) {
-        //std::cout << "Parse error while parsing '" << name << "':" << reader.getFormatedErrorMessages() << "!\n";
         std::cout << "Parse error while parsing '" << name << "'!\n";
         throw "JSON parse error";
     }
@@ -446,15 +444,6 @@ json_value *Data::readJson(std::string name)
 
 std::vector<std::string> Data::getJsonKeys(const json_value *val) const
 {
-#if 0
-    std::vector<std::string> res;
-    auto it = val->u.object.begin();
-    while (it != val->u.object.end()) {
-        res.push_back((*it)->name);
-        ++it;
-    }
-    return res;
-#endif
     BOOST_ASSERT( val != nullptr );
     return val->getMemberNames();
 }
