@@ -1,4 +1,5 @@
 #include "character_test.h"
+#include "test_tools.h"
 #include <character.h>
 #include <bliobject.h>
 #include <item.h>
@@ -25,8 +26,12 @@ void CharacterTest::alive_kill()
 
 void CharacterTest::items()
 {
-    unique_ptr<blieng::Item> tmp(new blieng::Item());
-    unique_ptr<blieng::Item> tmp2(new blieng::Item());
+    mock_io_start();
+    shared_ptr<blieng::Data> _data(new blieng::Data());
+    shared_ptr<blieng::Configure> _config(new blieng::Configure(_data));
+
+    unique_ptr<blieng::Item> tmp(new blieng::Item(_config, _data));
+    unique_ptr<blieng::Item> tmp2(new blieng::Item(_config, _data));
 
     unique_ptr<Character> obj(new Character());
 
@@ -99,12 +104,17 @@ void CharacterTest::items()
     }
     CPPUNIT_ASSERT( !found );
 #endif
+    mock_io_stop();
 }
 
 void CharacterTest::assign()
 {
-    unique_ptr<blieng::Item> tmp(new blieng::Item());
-    unique_ptr<blieng::Item> tmp2(new blieng::Item());
+    mock_io_start();
+    shared_ptr<blieng::Data> _data(new blieng::Data());
+    shared_ptr<blieng::Configure> _config(new blieng::Configure(_data));
+
+    unique_ptr<blieng::Item> tmp(new blieng::Item(_config, _data));
+    unique_ptr<blieng::Item> tmp2(new blieng::Item(_config, _data));
 
     tmp->setValue("name", std::string("item1"));
     tmp2->setValue("name", std::string("item2"));
@@ -169,6 +179,7 @@ void CharacterTest::assign()
     }
     CPPUNIT_ASSERT( found );
 #endif
+    mock_io_stop();
 }
 
 void CharacterTest::assign_object()

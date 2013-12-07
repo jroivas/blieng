@@ -1,5 +1,4 @@
 #include "configure.h"
-#include "data.h"
 #include <boost/foreach.hpp>
 #include <boost/algorithm/string.hpp>
 
@@ -8,7 +7,7 @@ using blieng::Configure;
 static Configure *__static_configure = nullptr;
 typedef std::pair<std::string, Configure::key_type_t> key_values_t;
 
-Configure::Configure() : BliObject()
+Configure::Configure(shared_ptr<blieng::Data> _data) : BliObject(), data(_data)
 {
 }
 
@@ -20,28 +19,11 @@ Configure::~Configure()
     __static_configure = nullptr;
 }
 
-Configure *Configure::getInstance()
-{
-    if (__static_configure == nullptr) {
-        __static_configure = new Configure();
-    }
-    return __static_configure;
-}
-
-Configure *Configure::getInstance(std::string config)
-{
-    if (__static_configure == nullptr) {
-        __static_configure = new Configure();
-        __static_configure->load(config);
-    }
-    return __static_configure;
-}
-
 void Configure::load(std::string _config_file)
 {
-    std::string fname = Data::getInstance()->findFile(_config_file);
+    std::string fname = data->findFile(_config_file);
     if (fname != "") {
-        data_json = Data::getInstance()->readJson(fname);
+        data_json = data->readJson(fname);
         parse();
     }
 }
@@ -76,7 +58,7 @@ void Configure::parse()
         if (val == keys.end()) val = opt_keys.find(data_key);
 
         if (val != keys.end() || val != opt_keys.end()) {
-            const json_value* realval = Data::getInstance()->getJsonValue(data_json, data_key);
+            const json_value* realval = data->getJsonValue(data_json, data_key);
             if (val->second == Configure::KeyString) {
                 if (realval->isString()) setValue(data_key, realval->asString());
             }

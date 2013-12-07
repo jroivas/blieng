@@ -22,17 +22,8 @@ public:
     unsigned int len;
 };
 
-Data *Data::getInstance()
-{
-    if (__data_instance == nullptr) {
-        __data_instance = new Data();
-    }
-    return __data_instance;
-}
-
 Data::Data()
 {
-    gen = new boost::random::random_device();
     data_path = findDataPath();
 
     initialize("", nullptr, 0);
@@ -40,9 +31,6 @@ Data::Data()
 
 Data::~Data()
 {
-    if (gen != nullptr) {
-        delete gen;
-    }
     __data_instance = nullptr;
 }
 
@@ -432,7 +420,7 @@ std::string Data::readString(std::string name)
 
 json_value *Data::readJson(std::string name)
 {
-    std::string datas = Data::getInstance()->readString(name);
+    std::string datas = readString(name);
 
     json_value *val = json_parse(datas.c_str(), datas.length());
     if (val == nullptr) {

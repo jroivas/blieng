@@ -3,6 +3,7 @@
 #include <iostream>
 #include <boost/format.hpp>
 #include <boost/foreach.hpp>
+#include <boost/random/random_device.hpp>
 #include <boost/random/uniform_int_distribution.hpp>
 #include <boost/random/uniform_real_distribution.hpp>
 
@@ -45,14 +46,18 @@ bool BliObject::isValue(std::string key)
 
 int BliObject::getRandomInt(int limit_low, int limit_max)
 {
+    boost::random::random_device gen;
     boost::random::uniform_int_distribution<> dist(limit_low, limit_max);
-    return dist(*Data::getInstance()->getGen());
+    int res = dist(gen);
+    return res;
 }
 
 double BliObject::getRandomDouble(double limit_low, double limit_max)
 {
+    boost::random::random_device gen;
     boost::random::uniform_real_distribution<> dist(limit_low, limit_max);
-    return dist(*Data::getInstance()->getGen());
+    double res = dist(gen);
+    return res;
 }
 
 BliAny BliObject::getValue(std::string key) const

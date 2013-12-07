@@ -41,6 +41,7 @@ private:
 class EventLog
 {
 public:
+    //FIXME: Get rid of singleton...
     static EventLog *getInstance();
     virtual ~EventLog() {}
 

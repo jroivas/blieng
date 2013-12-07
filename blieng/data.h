@@ -6,9 +6,16 @@
 #include <memory>
 #include <map>
 #include "json.h"
-#include <boost/random/random_device.hpp>
 #include "datafile.h"
 #include "auto_vector.h"
+
+#if defined(__cplusplus) && __cplusplus >= 201103L
+#include <memory>
+using namespace std;
+#else
+#include <boost/smart_ptr/shared_ptr.hpp>
+using namespace boost;
+#endif
 
 using std::unique_ptr;
 
@@ -20,8 +27,8 @@ class DataBuffer;
 class Data
 {
 public:
+    Data();
     virtual ~Data();
-    static Data *getInstance();
 
     bool initialize(const char *key, unsigned int key_len);
     bool initialize(std::string datafilename, const char*, unsigned int);
@@ -37,8 +44,6 @@ public:
 
     bool fileExists(std::string name);
 
-    boost::random::random_device *getGen() { return gen; }
-
     std::string findFile(std::string name);
     std::string formatString(std::string replace_string, unsigned int num);
 
@@ -50,8 +55,6 @@ public:
     void setGameLocation(std::string location) { game_location = location; }
 
 private:
-    Data();
-
     unsigned int readDataFromDataPath(std::string name, char **data);
 
     std::string findFileRecursive(const boost::filesystem::path &dir_path, std::string name);
@@ -64,7 +67,6 @@ private:
     std::unique_ptr<boost::filesystem::path> findDataPath();
     std::unique_ptr<boost::filesystem::path> data_path;
     std::unique_ptr<boost::filesystem::path> data_file_path;
-    boost::random::random_device *gen;
 
     std::unique_ptr<blieng::DataFile> datafile;
 

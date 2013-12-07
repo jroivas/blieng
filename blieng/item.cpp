@@ -1,8 +1,6 @@
 #include "item.h"
 #include <boost/random/uniform_int_distribution.hpp>
 #include <boost/foreach.hpp>
-#include "data.h"
-#include "configure.h"
 #include <string>
 #include <memory>
 #include "json.h"
@@ -16,7 +14,7 @@ auto_vector<ItemBase> Item::item_bases;
 typedef const ItemBase* item_bases_t;
 typedef std::pair<std::string, double> consume_t;
 
-Item::Item() : ItemBase()
+Item::Item(shared_ptr<blieng::Configure> _configure, shared_ptr<blieng::Data> _data) : ItemBase(), config(_configure), data(_data)
 {
     init();
     return;
@@ -103,25 +101,25 @@ bool Item::registerItem(std::unique_ptr<Item> &item)
 void Item::getItemBases()
 {
     if (ok) return;
-    if (!Configure::getInstance()->isValue("itemfile")) return;
+    if (!config->isValue("itemfile")) return;
 
-    std::string items_file = Configure::getInstance()->getStringValue("itemfile");
-    json_value *root_val = Data::getInstance()->readJson(items_file); //FIXME
+    std::string items_file = config->getStringValue("itemfile");
+    json_value *root_val = data->readJson(items_file); //FIXME
     if (!root_val->isObject()) return;
 
     /* Go thorough items */
     //TODO Refactor
     BOOST_FOREACH(std::string mi, root_val->getMemberNames()) {
-        const json_value *item_val = Data::getInstance()->getJsonValue(root_val, mi);
+        const json_value *item_val = data->getJsonValue(root_val, mi);
         //ItemBase *item = new ItemBase();
         std::unique_ptr<ItemBase> item(new ItemBase());
 
         if (item_val->isObject()) {
             item->base = mi;
-            std::vector<std::string> item_names = Data::getInstance()->getJsonKeys(item_val);
+            std::vector<std::string> item_names = data->getJsonKeys(item_val);
             BOOST_FOREACH(std::string keyname, item_names) {
 
-                const json_value *val = Data::getInstance()->getJsonValue(item_val, keyname);
+                const json_value *val = data->getJsonValue(item_val, keyname);
                 bool ok = false;
                 if (keyname == "type") {
                     if (val->isString()) item->type = val->asString();
@@ -147,7 +145,7 @@ void Item::getItemBases()
                     std::map<std::string, double> _consumes;
                     if (val->isObject()) {
                         BOOST_FOREACH(std::string cmi, val->getMemberNames()) {
-                            const json_value *cnt_val = Data::getInstance()->getJsonValue(val, cmi);
+                            const json_value *cnt_val = data->getJsonValue(val, cmi);
                             if (cnt_val->isNumeric()) {
                                 _consumes[cmi] = cnt_val->asDouble();
                             }
@@ -448,7 +446,7 @@ std::string Item::generateBaseJson()
 
 std::unique_ptr<Item> Item::copy()
 {
-    std::unique_ptr<Item> res(new Item());
+    std::unique_ptr<Item> res(new Item(config, data));
     res->assignItem(this);
     return res;
 }

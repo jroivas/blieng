@@ -7,7 +7,7 @@
 
 using blieng::Maps;
 
-Maps::Maps(std::string mapname)
+Maps::Maps(shared_ptr<blieng::Data> _data, std::string mapname) : data(_data)
 {
     loadMap(mapname);
 }
@@ -15,10 +15,10 @@ Maps::Maps(std::string mapname)
 void Maps::loadMap(std::string name)
 {
     map_name = name;
-    map_file = Data::getInstance()->findFile(name + ".json");
+    map_file = data->findFile(name + ".json");
     if (map_file != "") {
         std::cout << map_file << "\n";
-        map_json = Data::getInstance()->readJson(map_file);
+        map_json = data->readJson(map_file);
         parseMap();
     }
 }
@@ -87,7 +87,7 @@ bool Maps::saveMap(std::string name)
 
     printf("%s\n", json.c_str());
 
-    return Data::getInstance()->saveMapJSON(name, json);
+    return data->saveMapJSON(name, json);
 }
 
 std::string Maps::getMapName()
@@ -105,7 +105,7 @@ std::string Maps::getSolvedMapImageFile()
 {
     if (map_image_file == "") return "";
     if (solved_map_image_file == "") {
-        solved_map_image_file = blieng::Data::getInstance()->findFile(map_image_file);
+        solved_map_image_file = data->findFile(map_image_file);
     }
 
     return solved_map_image_file;
@@ -174,7 +174,7 @@ void Maps::parseMap()
     /* Go thorough items */
     //TODO Refactor
     BOOST_FOREACH(std::string mi, map_json->getMemberNames()) {
-        const json_value *item_val = Data::getInstance()->getJsonValue(map_json, mi);
+        const json_value *item_val = data->getJsonValue(map_json, mi);
         //std::cout <<  mi << "\n";
         if (mi == "image" and item_val->isString()) {
             map_image_file = item_val->asString();
@@ -186,7 +186,7 @@ void Maps::parseMap()
                 if ((*it)->isObject()) {
                     Town *town = new Town();
                     BOOST_FOREACH(std::string town_item, (*it)->getMemberNames()) {
-                        const json_value *town_val = Data::getInstance()->getJsonValue(*it, town_item);
+                        const json_value *town_val = data->getJsonValue(*it, town_item);
                         if (town_item == "name" and town_val->isString()) {
                                 town->setName(town_val->asString());
                         }

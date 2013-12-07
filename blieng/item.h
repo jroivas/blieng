@@ -9,6 +9,17 @@
 #include <boost/flyweight.hpp>
 #include "bliobject.h"
 #include "auto_vector.h"
+#include "configure.h"
+#include "data.h"
+
+#if defined(__cplusplus) && __cplusplus >= 201103L
+#include <memory>
+using namespace std;
+#else
+#include <boost/smart_ptr/shared_ptr.hpp>
+using namespace boost;
+#endif
+
 
 using std::unique_ptr;
 
@@ -61,7 +72,7 @@ public:
 class Item : public ItemBase
 {
 public:
-    Item();
+    Item(shared_ptr<blieng::Configure> configure, shared_ptr<blieng::Data> data);
     Item(std::string name);
     virtual ~Item() { }
 
@@ -87,10 +98,9 @@ private:
     void getItemBases();
 
     static bool ok;
-    //static std::map<std::string, ItemBase *> item_bases;
-    //static std::map<std::string, std::unique_ptr<ItemBase> > item_bases;
     static auto_vector<ItemBase> item_bases;
-    //static std::vector<ItemBase*> item_bases;
+    shared_ptr<blieng::Configure> config;
+    shared_ptr<blieng::Data> data;
 };
 
 }

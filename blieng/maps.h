@@ -15,7 +15,7 @@ namespace blieng
 class Maps : public BliObject
 {
 public:
-    Maps(std::string mapname);
+    Maps(shared_ptr<blieng::Data> data, std::string mapname);
 
     std::string getMapName();
 
@@ -43,6 +43,8 @@ private:
     std::string map_name;
     std::string map_file;
     json_value *map_json;
+
+    shared_ptr<blieng::Data> data;
 
     std::string map_image_file;
     std::string solved_map_image_file;
