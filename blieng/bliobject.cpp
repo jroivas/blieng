@@ -13,6 +13,7 @@ using blieng::BliAny;
 typedef std::pair<std::string, BliAny> values_t;
 typedef std::map<std::string, BliAny>::iterator values_iter_t;
 typedef std::map<std::string, BliAny>::const_iterator values_const_iter_t;
+void doDebug(std::string s);
 
 BliObject::BliObject()
 {

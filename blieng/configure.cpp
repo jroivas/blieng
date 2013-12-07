@@ -88,19 +88,19 @@ void Configure::parse()
             }
             else if (val->second == Configure::KeyStringList) {
                 if (realval->isArray()) {
-                    std::vector<std::string> data;
-#if 0 //Only in C++11
+                    std::vector<std::string> list_data;
+#if 1
                     auto it = realval->u.array.begin();
                     while (it != realval->u.array.end()) {
-                        data.push_back((*it)->asString());
+                        list_data.push_back((*it)->asString());
                         ++it;
                     }
 #else
                     for (unsigned int i=0; i<realval->u.array.length; ++i) {
-                        data.push_back(realval->u.array.values[i]->asString());
+                        list_data.push_back(realval->u.array.values[i]->asString());
                     }
 #endif
-                    setValue(data_key, data);
+                    setValue(data_key, list_data);
                 }
             }
         }
