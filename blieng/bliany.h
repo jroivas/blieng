@@ -53,7 +53,7 @@ public:
         if (this->type() == typeid(X)) {\
             return boost::any_cast<X>(*this);\
         }\
-        doDebug("Error, invalid value, can't convert to " # Y); \
+        /*doDebug("Error, invalid value, can't convert to " # Y); */\
         throw std::string("Error, invalid value, can't convert to " # Y); \
     }
 
