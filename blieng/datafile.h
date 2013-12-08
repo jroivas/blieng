@@ -22,16 +22,21 @@ public:
     class DataFileObject
     {
     public:
-        DataFileObject() : data(nullptr), len(0), real_len(0) {}
+        DataFileObject() : dataptr(nullptr), len(0), real_len(0) {}
         DataFileObject(const char *new_data, unsigned int new_len);
         ~DataFileObject() {
-            if (data != nullptr) delete data;
+            if (dataptr != nullptr) delete dataptr;
         }
 
         std::unique_ptr<DataFileObject> obfuscate(const char *key, unsigned int len, std::string seed="");
         std::unique_ptr<DataFileObject> deobfuscate(const char *key, unsigned int len, std::string seed="");
 
-        char *data;
+        inline unsigned int length() const { return len; }
+        char *get() { return dataptr; }
+        char *get() const { return dataptr; }
+
+    protected:
+        char *dataptr;
         unsigned int len;
         friend class DataFile;
 

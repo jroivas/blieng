@@ -15,25 +15,25 @@ class blieng::SafeDataPtr
 {
 public:
     SafeDataPtr(char _data[], unsigned int _len) : len(_len) {
-        data = new char[len];
-        memmove(data, _data, len);
+        dataptr = new char[len];
+        memmove(dataptr, _data, len);
     }
     SafeDataPtr(unsigned char _data[], unsigned int _len) : len(_len) {
-        data = new char[len];
-        memmove(data, reinterpret_cast<char*>(_data), len);
+        dataptr = new char[len];
+        memmove(dataptr, reinterpret_cast<char*>(_data), len);
     }
     virtual ~SafeDataPtr() {
-        if (data != nullptr) delete [] data;
-        data = nullptr;
+        if (dataptr != nullptr) delete [] dataptr;
+        dataptr = nullptr;
         len = 0;
     }
 
-    const char * getData() const { return data; }
+    const char * getData() const { return dataptr; }
     unsigned int length() const { return len; }
     unsigned int size() const { return len; }
 
 private:
-    char *data;
+    char *dataptr;
     unsigned int len;
 };
 
@@ -112,8 +112,8 @@ unsigned int DataFile::getData(std::string name, const char **data)
 {
     const DataFileObject *obj = getObject(name);
     if (obj != nullptr) {
-        if (data != nullptr) *data = obj->data;
-        return obj->len;
+        if (data != nullptr) *data = obj->get();
+        return obj->length();
     }
     return 0;
 }
@@ -176,13 +176,13 @@ bool DataFile::read(const char *key, unsigned int key_len)
 #endif
 
 #ifdef Q_OS_ANDROID
-    int nb_read = 0;
     while (!asset_file.atEnd()) {
 #else
     while (!fd.eof()) {
 #endif
         uint32_t namelen = 0;
 #ifdef Q_OS_ANDROID
+        int nb_read = 0;
         nb_read = asset_file.read(reinterpret_cast<char*>(&namelen), sizeof(uint32_t));
         if (nb_read == 0) break;
 #else
@@ -289,7 +289,7 @@ bool DataFile::write(const char *key, unsigned int key_len)
         itmp = tmp->real_len;
         fd.write(reinterpret_cast<char*>(&itmp), sizeof(uint32_t));
 
-        fd.write(tmp->data, static_cast<int>(tmp->len));
+        fd.write(tmp->get(), static_cast<int>(tmp->length()));
         fd.flush();
         ++di;
     }
@@ -302,8 +302,8 @@ bool DataFile::write(const char *key, unsigned int key_len)
 
 blieng::DataFile::DataFileObject::DataFileObject(const char *new_data, unsigned int new_len) : len(new_len), real_len(new_len)
 {
-    data = new char[len];
-    memmove(data, new_data, len);
+    dataptr = new char[len];
+    memmove(dataptr, new_data, len);
 }
 
 std::unique_ptr<blieng::SafeDataPtr> blieng::DataFile::DataFileObject::setupKey(const char *key, unsigned int key_len, const char *iv, unsigned int iv_len)
@@ -360,7 +360,7 @@ std::unique_ptr<blieng::DataFile::DataFileObject> blieng::DataFile::DataFileObje
     unsigned int cnt = len;
     unsigned int ocnt = olen;
 
-    char *pos = data;
+    char *pos = dataptr;
     std::unique_ptr<char[]> tmp(new char[olen]);
     char *opos = tmp.get();
     unsigned int blocknum = 0;
@@ -413,7 +413,7 @@ std::unique_ptr<blieng::DataFile::DataFileObject> blieng::DataFile::DataFileObje
 
     unsigned int cnt = len;
     unsigned int ocnt = real_len;
-    char *pos = data;
+    char *pos = dataptr;
     char *opos = tmp.get();
     while (cnt > 0) {
         for (int i=0; i < 16; i++) {

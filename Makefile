@@ -56,7 +56,7 @@ win-dist:
 	cd dist && zip -r $(PRODUCT)-$(VERS)-win.zip $(PRODUCT)-$(VERS)-win
 
 cppcheck:
-	cppcheck --enable=all --inconclusive --inline-suppr --xml-version=2 blieng 2> cppcheck_report_blieng.xml
+	cppcheck --enable=all --inconclusive --inline-suppr --check-config --xml-version=2 blieng 2> cppcheck_report_blieng.xml
 
 test:
 	cd blieng/tests && "$(topdir)"/tools/build/qmake.sh linux

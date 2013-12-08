@@ -339,12 +339,12 @@ std::vector<std::string> Data::readLinesFromFile(std::string name)
         if (obj != nullptr) {
             unsigned int pos = 0;
             std::string line;
-            while (pos < obj->len) {
-                if (obj->data[pos] == '\n') {
+            while (pos < obj->length()) {
+                if (obj->get()[pos] == '\n') {
                     tmp.push_back(line);
                     line = "";
                 } else {
-                    line += obj->data[pos];
+                    line += obj->get()[pos];
                 }
                 pos++;
             }
@@ -425,8 +425,8 @@ unsigned int Data::readData(std::string name, char **data)
         const blieng::DataFile::DataFileObject *obj = datafile->getObject("data/" + name);
         if (obj == nullptr) obj = datafile->getObject(name);
         if (obj != nullptr) {
-            if (data != nullptr) *data = obj->data;
-            return obj->len;
+            if (data != nullptr) *data = obj->get();
+            return obj->length();
         }
     }
 
@@ -459,7 +459,7 @@ std::string Data::readString(std::string name)
         const blieng::DataFile::DataFileObject *obj = datafile->getObject("data/" + name);
         if (obj == nullptr) obj = datafile->getObject(name);
         if (obj != nullptr) {
-            res.append(obj->data, obj->len);
+            res.append(obj->get(), obj->length());
             return res;
         }
     }
@@ -468,7 +468,7 @@ std::string Data::readString(std::string name)
     return res;
 }
 
-json_value *Data::readJson(const std::string name)
+json_value *Data::readJson(const std::string &name)
 {
     std::string datas = readString(name);
 

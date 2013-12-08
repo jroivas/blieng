@@ -142,13 +142,13 @@ typedef struct _json_value
                 _pos++;
                 return *this;
             }
-            bool operator==(const iterator &cmp) {
+            bool operator==(const iterator &cmp) const {
                 return (cmp._pos == _pos);
             }
-            bool operator!=(const iterator &cmp) {
+            bool operator!=(const iterator &cmp) const {
                 return (cmp._pos != _pos);
             }
-            struct __values operator*() {
+            struct __values operator*() const {
                 return _ptr[_pos];
             }
 
@@ -191,10 +191,10 @@ typedef struct _json_value
                 _pos++;
                 return *this;
             }
-            bool operator==(const iterator &cmp) {
+            bool operator==(const iterator &cmp) const {
                 return (cmp._pos == _pos);
             }
-            bool operator!=(const iterator &cmp) {
+            bool operator!=(const iterator &cmp) const {
                 return (cmp._pos != _pos);
             }
             struct _json_value *operator*() {

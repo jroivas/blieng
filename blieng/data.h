@@ -37,7 +37,7 @@ public:
     std::vector<std::string> readLinesFromFile(std::string name);
     unsigned int readData(std::string name, char **data);
 
-    json_value *readJson(const std::string name);
+    json_value *readJson(const std::string &name);
     std::vector<std::string> getJsonKeys(const json_value *val) const;
     bool isJsonKey(json_value *val, std::string key);
     const json_value *getJsonValue(const json_value *val, std::string key) const;

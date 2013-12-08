@@ -106,10 +106,10 @@ static int new_value
    (json_state * state, json_value ** top, json_value ** root, json_value ** alloc, json_type type)
 {
    json_value * value;
-   int values_size;
 
    if (!state->first_pass)
    {
+      int values_size;
       value = *top = *alloc;
       *alloc = (*alloc)->_reserved.next_alloc;
 
@@ -410,7 +410,7 @@ json_value * json_parse_ex (json_settings * settings,
 
                   if (top->type == json_array)
                      flags = (flags & ~ (flag_need_comma | flag_seek_value)) | flag_next;
-                  else if (!state.settings.settings & json_relaxed_commas)
+                  else if (!(state.settings.settings & json_relaxed_commas))
                   {  sprintf (error, "%d:%d: Unexpected ]", cur_line, e_off);
                      goto e_failed;
                   }
@@ -571,7 +571,7 @@ json_value * json_parse_ex (json_settings * settings,
 
                   case '"':
 
-                     if (flags & flag_need_comma && (!state.settings.settings & json_relaxed_commas))
+                     if ((flags & flag_need_comma) && (!(state.settings.settings & json_relaxed_commas)))
                      {
                         sprintf (error, "%d:%d: Expected , before \"", cur_line, e_off);
                         goto e_failed;

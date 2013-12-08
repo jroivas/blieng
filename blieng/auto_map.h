@@ -170,12 +170,12 @@ public:
         return _data.end();
     }
 
-    const_iterator cbegin()
+    const_iterator cbegin() const
     {
         return _data.cbegin();
     }
 
-    const_iterator cend()
+    const_iterator cend() const
     {
         return _data.cend();
     }
