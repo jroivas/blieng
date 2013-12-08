@@ -1,4 +1,5 @@
 #include "data.h"
+#include "bliany.h"
 #include <boost/filesystem/fstream.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/foreach.hpp>
@@ -10,8 +11,6 @@
 #endif
 
 using blieng::Data;
-
-void doDebug(std::string s);
 
 class blieng::DataBuffer
 {

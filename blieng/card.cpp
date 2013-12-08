@@ -14,6 +14,7 @@ Card::~Card()
     while (!combined.empty()) {
         combined.erase(combined.begin());
     }
+    card_uuid = "";
 }
 
 void Card::combine(std::unique_ptr<blieng::Card> card)
