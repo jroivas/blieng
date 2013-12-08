@@ -233,7 +233,7 @@ json_value * json_parse_ex (json_settings * settings,
    error[0] = '\0';
    end = (json + length);
 
-   memcpy (&state.settings, settings, sizeof (json_settings));
+   memmove (&state.settings, settings, sizeof (json_settings));
 
    if (!state.settings.mem_alloc)
       state.settings.mem_alloc = default_alloc;

@@ -1,10 +1,13 @@
 #include "configure.h"
 #include <boost/foreach.hpp>
 #include <boost/algorithm/string.hpp>
+#ifdef DATA_MUTEX_LOCK
+#include <boost/thread/locks.hpp>
+#include <boost/thread/lock_guard.hpp>
+#endif
 
 using blieng::Configure;
 
-static Configure *__static_configure = nullptr;
 typedef std::pair<std::string, Configure::key_type_t> key_values_t;
 
 Configure::Configure(shared_ptr<blieng::Data> _data) : BliObject(), data(_data)
@@ -13,10 +16,11 @@ Configure::Configure(shared_ptr<blieng::Data> _data) : BliObject(), data(_data)
 
 Configure::~Configure()
 {
+#ifdef DATA_MUTEX_LOCK
+    boost::lock_guard<boost::mutex> keylock(key_mutex);
+#endif
     keys.erase(keys.begin(), keys.end());
     opt_keys.erase(opt_keys.begin(), opt_keys.end());
-
-    __static_configure = nullptr;
 }
 
 void Configure::load(std::string _config_file)
@@ -30,16 +34,25 @@ void Configure::load(std::string _config_file)
 
 void Configure::addKey(std::string val, key_type_t key_type)
 {
+#ifdef DATA_MUTEX_LOCK
+    boost::lock_guard<boost::mutex> keylock(key_mutex);
+#endif
     keys[val] = key_type;
 }
 
 void Configure::addOptionalKey(std::string val, key_type_t key_type)
 {
+#ifdef DATA_MUTEX_LOCK
+    boost::lock_guard<boost::mutex> keylock(key_mutex);
+#endif
     opt_keys[val] = key_type;
 }
 
 bool Configure::validate()
 {
+#ifdef DATA_MUTEX_LOCK
+    boost::lock_guard<boost::mutex> keylock(key_mutex);
+#endif
     BOOST_FOREACH(key_values_t key, keys) {
         if (!isValue(key.first)) {
             std::cout << key.first << ": NOT FOUND\n";
@@ -53,11 +66,16 @@ void Configure::parse()
 {
     if (!data_json->isObject()) return;
 
-    BOOST_FOREACH(std::string data_key, data_json->getMemberNames()) {
+#ifdef DATA_MUTEX_LOCK
+    boost::lock_guard<boost::mutex> keylock(key_mutex);
+#endif
+
+    BOOST_FOREACH(const std::string data_key, data_json->getMemberNames()) {
         auto val = keys.find(data_key);
+        auto val2 = opt_keys.find(data_key);
         if (val == keys.end()) val = opt_keys.find(data_key);
 
-        if (val != keys.end() || val != opt_keys.end()) {
+        if (val != keys.end() || val2 != opt_keys.end()) {
             const json_value* realval = data->getJsonValue(data_json, data_key);
             if (val->second == Configure::KeyString) {
                 if (realval->isString()) setValue(data_key, realval->asString());

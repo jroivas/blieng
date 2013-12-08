@@ -7,6 +7,7 @@
 #include <vector>
 #include <map>
 #include "json.h"
+//#include <boost/thread/mutex.hpp>
 
 #if defined(__cplusplus) && __cplusplus >= 201103L
 #include <memory>
@@ -41,6 +42,7 @@ private:
     std::map<std::string, key_type_t> keys;
     std::map<std::string, key_type_t> opt_keys;
 
+    //boost::mutex key_mutex;
     shared_ptr<blieng::Data> data;
 };
 

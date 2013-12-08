@@ -77,18 +77,14 @@ public:
     virtual ~Item() { }
 
     std::unique_ptr<Item> copy();
-    //Item* copy();
 
-    //bool consume(Item *);
     bool consume(std::unique_ptr<Item>);
     std::unique_ptr<Item> produce(double produce_amount=1) throw (char *);
     bool isUsable() const { return usable; }
     void setUsable() { usable = true; }
     std::vector<std::string> listItems();
     bool isItem(std::string name);
-    //bool removeItem(Item *);
     bool removeItem(std::unique_ptr<Item> item);
-    //bool registerItem(std::unique_ptr<Item> &item); //XXX
 
     std::string generateBaseJson();
     virtual std::string toString() const;

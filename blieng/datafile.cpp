@@ -16,11 +16,11 @@ class blieng::SafeDataPtr
 public:
     SafeDataPtr(char _data[], unsigned int _len) : len(_len) {
         data = new char[len];
-        memcpy(data, _data, len);
+        memmove(data, _data, len);
     }
     SafeDataPtr(unsigned char _data[], unsigned int _len) : len(_len) {
         data = new char[len];
-        memcpy(data, reinterpret_cast<char*>(_data), len);
+        memmove(data, reinterpret_cast<char*>(_data), len);
     }
     virtual ~SafeDataPtr() {
         if (data != nullptr) delete [] data;

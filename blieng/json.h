@@ -274,7 +274,7 @@ typedef struct _json_value
             };
          }
 
-         inline std::string asString () const
+         inline const std::string asString () const
          {
             switch (type)
             {

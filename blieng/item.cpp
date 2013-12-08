@@ -1,9 +1,9 @@
 #include "item.h"
 #include <boost/random/uniform_int_distribution.hpp>
-#include <boost/foreach.hpp>
 #include <string>
 #include <memory>
 #include "json.h"
+#include <boost/foreach.hpp>
 
 using blieng::Item;
 using blieng::ItemBase;

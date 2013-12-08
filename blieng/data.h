@@ -37,7 +37,7 @@ public:
     std::vector<std::string> readLinesFromFile(std::string name);
     unsigned int readData(std::string name, char **data);
 
-    json_value *readJson(std::string name);
+    json_value *readJson(const std::string name);
     std::vector<std::string> getJsonKeys(const json_value *val) const;
     bool isJsonKey(json_value *val, std::string key);
     const json_value *getJsonValue(const json_value *val, std::string key) const;
@@ -45,14 +45,14 @@ public:
     bool fileExists(std::string name);
 
     std::string findFile(std::string name);
-    std::string formatString(std::string replace_string, unsigned int num);
+    std::string formatString(std::string replace_string, unsigned int num) const;
 
     std::vector<std::string> findFileExtRecursive(std::vector<std::string> mapfiles, const boost::filesystem::path &dir_path, std::string ext);
     std::vector<std::string> listMaps();
 
     bool saveMapJSON(std::string name, std::string json);
 
-    void setGameLocation(std::string location) { game_location = location; }
+    inline void setGameLocation(std::string location) { game_location = location; }
 
 private:
     unsigned int readDataFromDataPath(std::string name, char **data);
@@ -70,7 +70,6 @@ private:
 
     std::unique_ptr<blieng::DataFile> datafile;
 
-    static Data *__data_instance;
     auto_vector<DataBuffer> __buffers;
 
     std::string game_location;

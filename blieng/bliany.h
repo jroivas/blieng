@@ -3,6 +3,9 @@
 
 #include <boost/any.hpp>
 
+// This is defined in bliobject.cpp
+void doDebug(std::string s);
+
 namespace blieng
 {
 
@@ -45,13 +48,12 @@ public:
         return o;
     }
     #undef CAST_TO
-
     #define AS_VALUE(Y, X)\
     X as ## Y() {\
         if (this->type() == typeid(X)) {\
             return boost::any_cast<X>(*this);\
         }\
-        /*std::cerr << "Error, invalid value, can't convert to " # Y;*/\
+        doDebug("Error, invalid value, can't convert to " # Y); \
         throw std::string("Error, invalid value, can't convert to " # Y); \
     }
 
@@ -74,7 +76,7 @@ public:
         if (this->type() == typeid(unsigned long)) return static_cast<long>(boost::any_cast<unsigned long>(*this));
         if (this->type() == typeid(float)) return boost::any_cast<float>(*this);
         if (this->type() == typeid(double)) return boost::any_cast<double>(*this);
-        //std::cerr << "Error, invalid value, can't convert to a number\n";
+        doDebug("Error, invalid value, can't convert to a number");
         throw "Error, invalid value, can't convert to a number";
     }
 };

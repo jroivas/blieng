@@ -1,11 +1,27 @@
 #include "bliobject.h"
 #include "data.h"
 #include <iostream>
+#include <sstream>
 #include <boost/format.hpp>
 #include <boost/foreach.hpp>
-#include <boost/random/random_device.hpp>
 #include <boost/random/uniform_int_distribution.hpp>
 #include <boost/random/uniform_real_distribution.hpp>
+
+#ifdef Q_OS_ANDROID_DUMMY
+#define PSEUDO_RANDOM
+#define DATA_MUTEX_LOCK
+#endif
+
+#ifdef DATA_MUTEX_LOCK
+#include <boost/thread/locks.hpp>
+#include <boost/thread/lock_guard.hpp>
+#endif
+
+#ifdef PSEUDO_RANDOM
+#include <boost/random/mersenne_twister.hpp>
+#else
+#include <boost/random/random_device.hpp>
+#endif
 
 using blieng::BliObject;
 using blieng::BliAny;
@@ -14,6 +30,19 @@ typedef std::pair<std::string, BliAny> values_t;
 typedef std::map<std::string, BliAny>::iterator values_iter_t;
 typedef std::map<std::string, BliAny>::const_iterator values_const_iter_t;
 void doDebug(std::string s);
+
+#ifdef Q_OS_ANDROID
+#include <QDebug>
+void doDebug(std::string s)
+{
+    qDebug() << s.c_str();
+}
+#else
+void doDebug(std::string s)
+{
+    std::cerr << s << "\n";
+}
+#endif
 
 BliObject::BliObject()
 {
@@ -32,6 +61,9 @@ void BliObject::assignObject(const BliObject *another)
 {
     if (another == nullptr) return;
 
+#ifdef DATA_MUTEX_LOCK
+    boost::lock_guard<boost::mutex> keylock(value_mutex);
+#endif
     BOOST_FOREACH(values_t val, another->values) {
         values[val.first] = val.second;
     }
@@ -39,6 +71,9 @@ void BliObject::assignObject(const BliObject *another)
 
 bool BliObject::isValue(std::string key)
 {
+#ifdef DATA_MUTEX_LOCK
+    boost::lock_guard<boost::mutex> keylock(value_mutex);
+#endif
     values_iter_t value_iter = values.find(key);
 
     if (value_iter == values.end()) return false;
@@ -47,7 +82,11 @@ bool BliObject::isValue(std::string key)
 
 int BliObject::getRandomInt(int limit_low, int limit_max)
 {
+#ifdef PSEUDO_RANDOM
+    boost::random::mt19937 gen;
+#else
     boost::random::random_device gen;
+#endif
     boost::random::uniform_int_distribution<> dist(limit_low, limit_max);
     int res = dist(gen);
     return res;
@@ -55,7 +94,11 @@ int BliObject::getRandomInt(int limit_low, int limit_max)
 
 double BliObject::getRandomDouble(double limit_low, double limit_max)
 {
+#ifdef PSEUDO_RANDOM
+    boost::random::mt19937 gen;
+#else
     boost::random::random_device gen;
+#endif
     boost::random::uniform_real_distribution<> dist(limit_low, limit_max);
     double res = dist(gen);
     return res;
@@ -63,10 +106,13 @@ double BliObject::getRandomDouble(double limit_low, double limit_max)
 
 BliAny BliObject::getValue(std::string key) const
 {
+#ifdef DATA_MUTEX_LOCK
+    boost::lock_guard<boost::mutex> keylock(value_mutex);
+#endif
     values_const_iter_t value_iter = values.find(key);
 
     if (value_iter == values.end()) {
-        std::cerr << "Error, key not found: " + key + "\n";
+        doDebug("Error, key not found: " + key);
         throw std::string("Error, key not found: " + key);
     }
 
@@ -75,16 +121,18 @@ BliAny BliObject::getValue(std::string key) const
 
 void BliObject::setValue(std::string key, BliAny value)
 {
+#ifdef DATA_MUTEX_LOCK
+    boost::lock_guard<boost::mutex> keylock(value_mutex);
+#endif
     values[key] = value;
 }
-
 
 #define getConvertValue(X, Y) \
 Y BliObject::get ## X ## Value(std::string key, Y default_value) const\
 {\
     BliAny val = getValue(key);\
     if (val.empty()) {\
-        std::cerr << "Error, key not found: " + key + "\n";\
+        doDebug("Error, key not found: " + key);\
         throw "Error, key not found: " + key;\
     }\
     if (val.type() == typeid(Y)) {\
@@ -93,32 +141,18 @@ Y BliObject::get ## X ## Value(std::string key, Y default_value) const\
     try {\
         return boost::any_cast<Y>(val);\
     } catch (boost::bad_any_cast &c) {\
-        std::cerr << "Error, not a " #X " value at: " + key + "\n";\
+        doDebug("Error, not a " #X " value at: " + key);\
         /*throw "Error, not a " #X " value at: " + key;*/\
         return default_value;\
     }\
 }
-
-#ifdef Q_OS_ANDROID
-#include <QDebug>
-void doDebug(std::string s)
-{
-    qDebug() << s.c_str();
-}
-#else
-void doDebug(std::string s)
-{
-    std::cerr << s << "\n";
-}
-#endif
-#include <sstream>
 
 #define getConvertNumberValue(X, Y, A, B, C, D, E) \
 Y BliObject::get ## X ## Value(std::string key, Y default_value) const\
 {\
     BliAny val = getValue(key);\
     if (val.empty()) {\
-        std::cerr << "Error, key not found: " + key + "\n";\
+        doDebug("Error, key not found: " + key);\
         throw "Error, key not found: " + key;\
     }\
     if (val.type() == typeid(Y)) {\
@@ -153,7 +187,7 @@ const std::type_info *BliObject::getValueType(std::string key)
 {
     BliAny val = getValue(key);
     if (val.empty()) {
-        std::cerr << "Error, key not found: " + key + "\n";
+        doDebug("Error, key not found: " + key);
         throw "Error, key not found: " + key;
     }
     return &val.type();
@@ -162,6 +196,9 @@ const std::type_info *BliObject::getValueType(std::string key)
 std::string BliObject::toString() const
 {
     std::string res = "";
+#ifdef DATA_MUTEX_LOCK
+    boost::lock_guard<boost::mutex> keylock(value_mutex);
+#endif
     BOOST_FOREACH(values_t item, values) {
         std::string key = item.first;
         BliAny val = item.second;
@@ -195,6 +232,9 @@ std::string BliObject::toString() const
 std::list<std::string> BliObject::getKeys()
 {
     std::list<std::string> res;
+#ifdef DATA_MUTEX_LOCK
+    boost::lock_guard<boost::mutex> keylock(value_mutex);
+#endif
     BOOST_FOREACH(values_t val, values) {
         res.push_back(val.first);
     }

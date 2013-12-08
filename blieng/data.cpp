@@ -4,10 +4,14 @@
 #include <boost/foreach.hpp>
 #include <sstream>
 #include <algorithm>
+//#include <libgen.h>
+#ifdef Q_OS_ANDROID
+#include <QDebug>
+#endif
 
 using blieng::Data;
 
-Data *Data::__data_instance = nullptr;
+void doDebug(std::string s);
 
 class blieng::DataBuffer
 {
@@ -31,7 +35,6 @@ Data::Data()
 
 Data::~Data()
 {
-    __data_instance = nullptr;
 }
 
 bool Data::initialize(std::string datafilename, const char *key, unsigned int key_len)
@@ -50,9 +53,11 @@ bool Data::initialize(std::string datafilename, const char *key, unsigned int ke
     if (datafile.get()) {
         res = datafile->read(key, key_len);
     }
+#ifndef Q_OS_ANDROID
     if (!res && data_path.get()) {
         res = true;
     }
+#endif
     return res;
 }
 
@@ -102,23 +107,30 @@ std::unique_ptr<boost::filesystem::path> Data::findDataPath()
 
     std::unique_ptr<boost::filesystem::path> my_data_path(new boost::filesystem::path);
 
+#ifndef Q_OS_ANDROID
     BOOST_FOREACH(std::string item, locations) {
         *my_data_path.get() = (item + "data").c_str();
         if (boost::filesystem::exists(*my_data_path.get()) && boost::filesystem::is_directory(*my_data_path.get())) {
             return my_data_path;
         }
     }
+#endif
     my_data_path.reset();
     return my_data_path;
 }
 
 bool Data::fileExists(std::string name)
 {
+#ifdef Q_OS_ANDROID
+    return false;
+#else
     return boost::filesystem::exists(name) && boost::filesystem::is_regular_file(name);
+#endif
 }
 
 std::string Data::findFileRecursive(const boost::filesystem::path &dir_path, std::string name)
 {
+#ifndef Q_OS_ANDROID
     if (!boost::filesystem::exists(dir_path)) return "";
 
     boost::filesystem::directory_iterator end_iter;
@@ -132,6 +144,7 @@ std::string Data::findFileRecursive(const boost::filesystem::path &dir_path, std
             return dir_iter->path().string();
         }
     }
+#endif
     return "";
 }
 
@@ -147,6 +160,19 @@ std::string Data::findFileFromDataFile(std::string name)
         if (handle.filename() == name) {
             return fname;
         }
+#if 0
+        char *tmp = new char[fname.length() + 1];
+        memmove(tmp, fname.c_str(), fname.length() + 1);
+        char *bname = basename(tmp);
+        bool ok = false;
+        if (bname == name) ok = true;
+        delete []tmp;
+
+        if (ok) {
+
+            return fname;
+        }
+#endif
     }
     return "";
 }
@@ -158,7 +184,9 @@ std::string Data::findFile(std::string name)
         if (res != "") return res;
     }
 
+#ifndef Q_OS_ANDROID
     if (!data_path.get()) return "";
+#endif
     return findFileRecursive(*data_path, name);
 }
 
@@ -178,6 +206,7 @@ std::vector<std::string> Data::findFileExtFromDataFile(std::string path, std::st
 
 std::vector<std::string> Data::findFileExtRecursive(std::vector<std::string> mapfiles, const boost::filesystem::path &dir_path, std::string ext)
 {
+#ifndef Q_OS_ANDROID
     if (!boost::filesystem::exists(dir_path)) return mapfiles;
 
     boost::filesystem::directory_iterator end_iter;
@@ -190,6 +219,7 @@ std::vector<std::string> Data::findFileExtRecursive(std::vector<std::string> map
             mapfiles.push_back(dir_iter->path().filename().string());
         }
     }
+#endif
     return mapfiles;
 }
 
@@ -202,6 +232,7 @@ std::vector<std::string> Data::listMaps()
         if (!res.empty()) return res;
     }
 
+#ifndef Q_OS_ANDROID
     if (!boost::filesystem::exists(*data_path)) return mapfiles;
 
     boost::filesystem::path maps_path = *data_path;
@@ -210,10 +241,16 @@ std::vector<std::string> Data::listMaps()
     if (!boost::filesystem::exists(maps_path)) return mapfiles;
 
     return findFileExtRecursive(mapfiles, maps_path, ".json");
+#else
+    return mapfiles;
+#endif
 }
 
 bool Data::saveMapJSON(std::string name, std::string json)
 {
+#ifdef Q_OS_ANDROID
+    return false;
+#else
     // TODO Do we need data file support here? Probably not..
     if (!data_path.get()) {
         std::cerr << "Data path not found, please create it in order to save maps" << "\n";
@@ -254,10 +291,15 @@ bool Data::saveMapJSON(std::string name, std::string json)
     fd.close();
 
     return true;
+#endif
 }
 
 boost::filesystem::path Data::solveFilePath(std::string name)
 {
+#ifdef Q_OS_ANDROID
+    boost::filesystem::path p;
+    return p;
+#else
     boost::filesystem::path first_path = *data_path;
     boost::filesystem::path second_path = boost::filesystem::path(name.c_str());
     first_path /= name.c_str();
@@ -265,12 +307,14 @@ boost::filesystem::path Data::solveFilePath(std::string name)
         first_path = second_path;
     }
     return first_path;
+#endif
 }
 
 std::vector<std::string> Data::readLinesFromFile(std::string name)
 {
     std::vector<std::string> tmp;
 
+#ifndef Q_OS_ANDROID
     if (data_path.get()) {
         boost::filesystem::path first_path = solveFilePath(name);
         if (boost::filesystem::exists(first_path)) {
@@ -287,6 +331,7 @@ std::vector<std::string> Data::readLinesFromFile(std::string name)
             return tmp;
         }
     }
+#endif
 
     if (datafile.get()) {
         // FIXME: Hardcoded "data" path
@@ -316,6 +361,7 @@ std::vector<std::string> Data::readLinesFromFile(std::string name)
 
 unsigned int Data::readDataFromDataPath(std::string name, char **data)
 {
+#ifndef Q_OS_ANDROID
     BOOST_FOREACH(blieng::DataBuffer *buf, __buffers)
     {
         if (buf->name == name) {
@@ -341,7 +387,7 @@ unsigned int Data::readDataFromDataPath(std::string name, char **data)
                 totalsize += static_cast<unsigned int>(cnt);
 
                 char *new_buffer = new char[totalsize + BUFSIZE];
-                memcpy(new_buffer, buffer, totalsize);
+                memmove(new_buffer, buffer, totalsize);
                 delete [] buffer;
                 buffer = new_buffer;
 
@@ -361,16 +407,19 @@ unsigned int Data::readDataFromDataPath(std::string name, char **data)
 
         return totalsize;
     }
+#endif
 
     return 0;
 }
 
 unsigned int Data::readData(std::string name, char **data)
 {
+#ifndef Q_OS_ANDROID
     if (data_path.get()) {
         unsigned int res = readDataFromDataPath(name, data);
         if (res > 0) return res;
     }
+#endif
 
     if (datafile.get()) {
         // FIXME: Hardcoded data path
@@ -389,6 +438,7 @@ std::string Data::readString(std::string name)
 {
     std::string res = "";
 
+#ifndef Q_OS_ANDROID
     if (data_path.get()) {
         boost::filesystem::path first_path = solveFilePath(name);
         if (boost::filesystem::exists(first_path)) {
@@ -403,6 +453,7 @@ std::string Data::readString(std::string name)
             return res;
         }
     }
+#endif
 
     if (datafile.get()) {
         //FIXME
@@ -418,13 +469,13 @@ std::string Data::readString(std::string name)
     return res;
 }
 
-json_value *Data::readJson(std::string name)
+json_value *Data::readJson(const std::string name)
 {
     std::string datas = readString(name);
 
     json_value *val = json_parse(datas.c_str(), datas.length());
     if (val == nullptr) {
-        std::cout << "Parse error while parsing '" << name << "'!\n";
+        doDebug("Parse error while parsing '" + name + "'!");
         throw "JSON parse error";
     }
     return val;
@@ -455,7 +506,7 @@ const json_value *Data::getJsonValue(const json_value *val, std::string key) con
     return val;
 }
 
-std::string Data::formatString(std::string replace_string, unsigned int num)
+std::string Data::formatString(std::string replace_string, unsigned int num) const
 {
     std::ostringstream stream;
     stream << num;
