@@ -24,7 +24,7 @@ void AutoMapTest::access()
     CPPUNIT_ASSERT( data.size() == 0 );
 
     data["ten"] = std::move(tmp1);
-    
+
     CPPUNIT_ASSERT( !data.empty() );
     CPPUNIT_ASSERT( data.size() == 1 );
     CPPUNIT_ASSERT( tmp1 == nullptr );

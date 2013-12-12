@@ -6,6 +6,7 @@
 #include <boost/foreach.hpp>
 #include <boost/random/uniform_int_distribution.hpp>
 #include <boost/random/uniform_real_distribution.hpp>
+#include <boost/lexical_cast.hpp>
 
 #ifdef Q_OS_ANDROID_DUMMY
 #define PSEUDO_RANDOM
@@ -180,6 +181,21 @@ std::vector<std::string> BliObject::getListValue(std::string key)
 {
     BliAny val = getValue(key);
     return boost::any_cast<std::vector<std::string> >(val);
+}
+
+std::vector<int> BliObject::getIntValues(std::string key)
+{
+    BliAny val = getValue(key);
+    return boost::any_cast<std::vector<int> >(val);
+#if 0
+    std::vector<std::string> vals = getListValue(key);
+    std::vector<int> res;
+
+    BOOST_FOREACH(std::string val, vals) {
+        res.push_back(boost::lexical_cast<int>(val));
+    }
+    return res;
+#endif
 }
 
 const std::type_info *BliObject::getValueType(std::string key)

@@ -23,12 +23,11 @@ namespace blieng
 class Configure : public blieng::BliObject
 {
 public:
-    //Configure();
     Configure(shared_ptr<blieng::Data> data);
     virtual ~Configure();
 
-    typedef enum { KeyString, KeyDouble, KeyUInt, KeyInt, KeyBool, KeyStringList } key_type_t;
-    void load(std::string config_file);
+    typedef enum { KeyString, KeyDouble, KeyUInt, KeyInt, KeyBool, KeyStringList, KeyIntList } key_type_t;
+    bool load(std::string config_file);
 
     void addKey(std::string val, key_type_t keytype);
     void addOptionalKey(std::string val, key_type_t keytype);

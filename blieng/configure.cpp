@@ -23,13 +23,15 @@ Configure::~Configure()
     opt_keys.erase(opt_keys.begin(), opt_keys.end());
 }
 
-void Configure::load(std::string _config_file)
+bool Configure::load(std::string _config_file)
 {
     std::string fname = data->findFile(_config_file);
     if (fname != "") {
         data_json = data->readJson(fname);
         parse();
+        return true;
     }
+    return false;
 }
 
 void Configure::addKey(std::string val, key_type_t key_type)
@@ -118,6 +120,19 @@ void Configure::parse()
                         list_data.push_back(realval->u.array.values[i]->asString());
                     }
 #endif
+                    setValue(data_key, list_data);
+                }
+            }
+            else if (val->second == Configure::KeyIntList) {
+                if (realval->isArray()) {
+                    std::vector<int> list_data;
+
+                    auto it = realval->u.array.begin();
+                    while (it != realval->u.array.end()) {
+                        list_data.push_back((*it)->asInt());
+                        ++it;
+                    }
+
                     setValue(data_key, list_data);
                 }
             }
