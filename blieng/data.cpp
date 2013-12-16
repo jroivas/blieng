@@ -6,7 +6,7 @@
 #include <sstream>
 #include <algorithm>
 //#include <libgen.h>
-#ifdef Q_OS_ANDROID
+#ifdef ANDROID
 #include <QDebug>
 #endif
 
@@ -52,7 +52,7 @@ bool Data::initialize(std::string datafilename, const char *key, unsigned int ke
     if (datafile.get()) {
         res = datafile->read(key, key_len);
     }
-#ifndef Q_OS_ANDROID
+#ifndef ANDROID
     if (!res && data_path.get()) {
         res = true;
     }
@@ -67,7 +67,7 @@ bool Data::initialize(const char *key, unsigned int key_len)
 
 std::unique_ptr<boost::filesystem::path> Data::findDataFile(std::string datafilename)
 {
-#ifdef Q_OS_ANDROID
+#ifdef ANDROID
     std::unique_ptr<boost::filesystem::path> my_data_path(new boost::filesystem::path);
     *my_data_path.get() = "assets/data/data.dat";
     return my_data_path;
@@ -106,7 +106,7 @@ std::unique_ptr<boost::filesystem::path> Data::findDataPath()
 
     std::unique_ptr<boost::filesystem::path> my_data_path(new boost::filesystem::path);
 
-#ifndef Q_OS_ANDROID
+#ifndef ANDROID
     BOOST_FOREACH(std::string item, locations) {
         *my_data_path.get() = (item + "data").c_str();
         if (boost::filesystem::exists(*my_data_path.get()) && boost::filesystem::is_directory(*my_data_path.get())) {
@@ -120,7 +120,7 @@ std::unique_ptr<boost::filesystem::path> Data::findDataPath()
 
 bool Data::fileExists(std::string name)
 {
-#ifdef Q_OS_ANDROID
+#ifdef ANDROID
     return false;
 #else
     return boost::filesystem::exists(name) && boost::filesystem::is_regular_file(name);
@@ -129,7 +129,7 @@ bool Data::fileExists(std::string name)
 
 std::string Data::findFileRecursive(const boost::filesystem::path &dir_path, std::string name)
 {
-#ifndef Q_OS_ANDROID
+#ifndef ANDROID
     if (!boost::filesystem::exists(dir_path)) return "";
 
     boost::filesystem::directory_iterator end_iter;
@@ -183,7 +183,7 @@ std::string Data::findFile(std::string name)
         if (res != "") return res;
     }
 
-#ifndef Q_OS_ANDROID
+#ifndef ANDROID
     if (!data_path.get()) return "";
 #endif
     return findFileRecursive(*data_path, name);
@@ -205,7 +205,7 @@ std::vector<std::string> Data::findFileExtFromDataFile(std::string path, std::st
 
 std::vector<std::string> Data::findFileExtRecursive(std::vector<std::string> mapfiles, const boost::filesystem::path &dir_path, std::string ext)
 {
-#ifndef Q_OS_ANDROID
+#ifndef ANDROID
     if (!boost::filesystem::exists(dir_path)) return mapfiles;
 
     boost::filesystem::directory_iterator end_iter;
@@ -231,7 +231,7 @@ std::vector<std::string> Data::listMaps()
         if (!res.empty()) return res;
     }
 
-#ifndef Q_OS_ANDROID
+#ifndef ANDROID
     if (!boost::filesystem::exists(*data_path)) return mapfiles;
 
     boost::filesystem::path maps_path = *data_path;
@@ -247,7 +247,7 @@ std::vector<std::string> Data::listMaps()
 
 bool Data::saveMapJSON(std::string name, std::string json)
 {
-#ifdef Q_OS_ANDROID
+#ifdef ANDROID
     return false;
 #else
     // TODO Do we need data file support here? Probably not..
@@ -295,7 +295,7 @@ bool Data::saveMapJSON(std::string name, std::string json)
 
 boost::filesystem::path Data::solveFilePath(std::string name)
 {
-#ifdef Q_OS_ANDROID
+#ifdef ANDROID
     boost::filesystem::path p;
     return p;
 #else
@@ -313,7 +313,7 @@ std::vector<std::string> Data::readLinesFromFile(std::string name)
 {
     std::vector<std::string> tmp;
 
-#ifndef Q_OS_ANDROID
+#ifndef ANDROID
     if (data_path.get()) {
         boost::filesystem::path first_path = solveFilePath(name);
         if (boost::filesystem::exists(first_path)) {
@@ -360,7 +360,7 @@ std::vector<std::string> Data::readLinesFromFile(std::string name)
 
 unsigned int Data::readDataFromDataPath(std::string name, char **data)
 {
-#ifndef Q_OS_ANDROID
+#ifndef ANDROID
     BOOST_FOREACH(blieng::DataBuffer *buf, __buffers)
     {
         if (buf->name == name) {
@@ -413,7 +413,7 @@ unsigned int Data::readDataFromDataPath(std::string name, char **data)
 
 unsigned int Data::readData(std::string name, char **data)
 {
-#ifndef Q_OS_ANDROID
+#ifndef ANDROID
     if (data_path.get()) {
         unsigned int res = readDataFromDataPath(name, data);
         if (res > 0) return res;
@@ -437,7 +437,7 @@ std::string Data::readString(std::string name)
 {
     std::string res = "";
 
-#ifndef Q_OS_ANDROID
+#ifndef ANDROID
     if (data_path.get()) {
         boost::filesystem::path first_path = solveFilePath(name);
         if (boost::filesystem::exists(first_path)) {

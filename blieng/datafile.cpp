@@ -158,14 +158,14 @@ std::unique_ptr<blieng::SafeDataPtr> DataFile::obfuscateSimple(const char *data,
     return std::unique_ptr<blieng::SafeDataPtr>(new blieng::SafeDataPtr(res.get(), orig_len));
 }
 
-#ifdef Q_OS_ANDROID
+#ifdef ANDROID
 #include <QtCore>
 #endif
 bool DataFile::read(const char *key, unsigned int key_len)
 {
     if (!_ok) return false;
 
-#ifdef Q_OS_ANDROID
+#ifdef ANDROID
     QFile asset_file("assets:/data/data.dat");
     if (!asset_file.open(QIODevice::ReadOnly)) {
         return false;
@@ -175,13 +175,13 @@ bool DataFile::read(const char *key, unsigned int key_len)
     if (!fd.is_open()) return false;
 #endif
 
-#ifdef Q_OS_ANDROID
+#ifdef ANDROID
     while (!asset_file.atEnd()) {
 #else
     while (!fd.eof()) {
 #endif
         uint32_t namelen = 0;
-#ifdef Q_OS_ANDROID
+#ifdef ANDROID
         int nb_read = 0;
         nb_read = asset_file.read(reinterpret_cast<char*>(&namelen), sizeof(uint32_t));
         if (nb_read == 0) break;
@@ -193,7 +193,7 @@ bool DataFile::read(const char *key, unsigned int key_len)
         BOOST_ASSERT(namelen < 0x2ff);
 
         std::unique_ptr<char[]> ob_name(new char[namelen+1]);
-#ifdef Q_OS_ANDROID
+#ifdef ANDROID
         nb_read = asset_file.read(ob_name.get(), static_cast<int>(namelen));
         if (nb_read == 0) break;
 #else
@@ -206,7 +206,7 @@ bool DataFile::read(const char *key, unsigned int key_len)
         //ob_name = nullptr;
 
         uint32_t datalen = 0;
-#ifdef Q_OS_ANDROID
+#ifdef ANDROID
         nb_read = asset_file.read(reinterpret_cast<char*>(&datalen), sizeof(uint32_t));
         if (nb_read == 0) break;
 #else
@@ -215,7 +215,7 @@ bool DataFile::read(const char *key, unsigned int key_len)
 #endif
 
         uint32_t datareallen = 0;
-#ifdef Q_OS_ANDROID
+#ifdef ANDROID
         nb_read = asset_file.read(reinterpret_cast<char*>(&datareallen), sizeof(uint32_t));
         if (nb_read == 0) break;
 #else
@@ -224,7 +224,7 @@ bool DataFile::read(const char *key, unsigned int key_len)
 #endif
 
         std::unique_ptr<char[]> data(new char[datalen]);
-#ifdef Q_OS_ANDROID
+#ifdef ANDROID
         nb_read = asset_file.read(data.get(), static_cast<int>(datalen));
         if (nb_read == 0) break;
 #else
@@ -247,7 +247,7 @@ bool DataFile::read(const char *key, unsigned int key_len)
         _data[sname] = std::move(tmp);
     }
 
-#ifdef Q_OS_ANDROID
+#ifdef ANDROID
     asset_file.close();
 #else
     fd.close();
@@ -259,7 +259,7 @@ bool DataFile::read(const char *key, unsigned int key_len)
 bool DataFile::write(const char *key, unsigned int key_len)
 {
     if (!_ok) return false;
-#ifdef Q_OS_ANDROID
+#ifdef ANDROID
     return false;
 #endif
 

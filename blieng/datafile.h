@@ -5,7 +5,7 @@
 #include "auto_map.h"
 #include <vector>
 #include <memory>
-#ifdef Q_OS_ANDROID
+#ifdef ANDROID
 #include <android/asset_manager.h>
 #endif
 

@@ -8,7 +8,7 @@
 #include <boost/random/uniform_real_distribution.hpp>
 #include <boost/lexical_cast.hpp>
 
-#ifdef Q_OS_ANDROID_DUMMY
+#ifdef ANDROID_DUMMY
 #define PSEUDO_RANDOM
 #define DATA_MUTEX_LOCK
 #endif
@@ -31,7 +31,7 @@ typedef std::pair<std::string, BliAny> values_t;
 typedef std::map<std::string, BliAny>::iterator values_iter_t;
 typedef std::map<std::string, BliAny>::const_iterator values_const_iter_t;
 
-#ifdef Q_OS_ANDROID
+#ifdef ANDROID
 #include <QDebug>
 void doDebug(std::string s)
 {

@@ -19,7 +19,6 @@ android {
         QT += core
         CONFIG += rtti
         CONFIG += exceptions
-        QMAKE_CXXFLAGS += -DQ_OS_ANDROID
         QMAKE_CXXFLAGS += -fexceptions -frtti
 }
 

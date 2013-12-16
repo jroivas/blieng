@@ -38,7 +38,7 @@
 #ifndef json_int_t
    #ifndef _MSC_VER
       #include <inttypes.h>
-#ifdef Q_OS_ANDROID
+#ifdef ANDROID
       #define json_int_t long
       #define json_uint_t unsigned long
 #else
