@@ -1,70 +1,59 @@
-cores := $(shell cat /proc/cpuinfo | grep -i 'processor' | wc -l)
-coreflags = -j$(cores)
-#coreflags = -j2
-topdir := $(shell pwd)
-VERS=etp4
-PRODUCT="blieng"
+topdir ?= $(shell pwd)
 
-native: linux
+PRODUCT = blieng
+REL ?= etp5
 
-all: linux win translations
+DEBUG ?= release
+TRACK ?= dev
+BITS ?= $(shell uname -m|sed -e 's/x86_64/64bit/' -e 's/x86/32bit/')
+TARGET ?= linux-$(BITS)
+
+ifeq ($(TARGET),win)
+BUILDDIR ?= win
+DISTEXT ?= zip
+DISTCMD ?= zip -qr
+else
+BUILDDIR ?= linux-$(BITS)
+DISTEXT ?= tar.gz
+DISTCMD ?= tar czf
+endif
+
+OUT ?= $(PRODUCT)-$(REL)-$(TARGET)
+
+all: prepare | $(BUILDDIR)/$(PRODUCT)/lib$(PRODUCT).a
+	@echo Done build for $(TARGET)
 
 prepare:
 	./tools/fetch_build.sh
 
-linux: prepare linux-blieng
+.PHONY: all prepare dist build-$(TARGET) test
 
-linux-prep:
-	@./tools/build/clean.sh linux
-	@echo "linux" > build.last
+build-$(TARGET):
+	@mkdir -p "$(BUILDDIR)/$(PRODUCT)"
+	cd "$(BUILDDIR)/$(PRODUCT)" && "$(topdir)"/tools/build/qmake.sh $(TARGET) "$(topdir)/$(PRODUCT)"
+	"$(topdir)"/tools/build/make.sh $(TARGET) -C "$(BUILDDIR)/$(PRODUCT)"
 
-linux-blieng: linux-prep
-	cd blieng && "$(topdir)"/tools/build/qmake.sh linux
-	 "$(topdir)"/tools/build/make.sh linux -C blieng $(coreflags)
+$(BUILDDIR)/$(PRODUCT)/lib$(PRODUCT).a: build-$(TARGET)
+	@if [ -f "$(BUILDDIR)/$(PRODUCT)/$(DEBUG)/lib$(PRODUCT).a" ] ; then cp -f "$(BUILDDIR)/$(PRODUCT)/$(DEBUG)/lib$(PRODUCT).a" "$(BUILDDIR)/$(PRODUCT)/lib$(PRODUCT).a" ; fi
 
-linux-dist:
-	mkdir -p dist/$(PRODUCT)-$(VERS)-linux
-	mkdir -p dist/$(PRODUCT)-$(VERS)-linux/include
-	cp README dist/$(PRODUCT)-$(VERS)-linux/README
-	cp -f blieng/libblieng.a dist/$(PRODUCT)-$(VERS)-linux/
-	cp -f blieng/*.h dist/$(PRODUCT)-$(VERS)-linux/include/
-	cd dist && tar czf $(PRODUCT)-$(VERS)-linux.tar.gz $(PRODUCT)-$(VERS)-linux
+test: $(BUILDDIR)/$(PRODUCT)/lib$(PRODUCT).a
+	@mkdir -p "$(BUILDDIR)/test"
+	cd "$(BUILDDIR)/test" && "$(topdir)"/tools/build/qmake.sh $(TARGET) "$(topdir)/test"
+	make -C "$(BUILDDIR)/test"
 
-win: prepare
-	"$(topdir)"/tools/build/build.sh win-build
+dist:
+	rm -rf dist/$(OUT)
+	mkdir -p dist/$(OUT)
+	mkdir -p dist/$(OUT)/include
+	cp "$(BUILDDIR)/$(PRODUCT)/lib$(PRODUCT).a" dist/$(OUT)
+	cp $(PRODUCT)/*.h dist/$(OUT)/include
+	cd dist && $(DISTCMD) $(OUT).$(DISTEXT) $(OUT)
 
-win-prep:
-	@./tools/build/clean.sh win
-	@echo "win" > build.last
-
-win-build: win-blieng
-
-win-blieng: win-prep
-	cd blieng && "$(topdir)"/tools/build/qmake.sh win
-	"$(topdir)"/tools/build/make.sh win -C blieng $(coreflags)
-
-win-dist:
-	mkdir -p dist/$(PRODUCT)-$(VERS)-win
-	#mkdir -p dist/$(PRODUCT)-$(VERS)-win/debug
-	#mkdir -p dist/$(PRODUCT)-$(VERS)-win/release
-	mkdir -p dist/$(PRODUCT)-$(VERS)-win/include
-	cp README dist/$(PRODUCT)-$(VERS)-win/README
-	#cp -f blieng/debug/libblieng.a dist/$(PRODUCT)-$(VERS)-win/debug/
-	#cp -f blieng/release/libblieng.a dist/$(PRODUCT)-$(VERS)-win/release/
-	cp -f blieng/release/libblieng.a dist/$(PRODUCT)-$(VERS)-win/
-	cp -f blieng/*.h dist/$(PRODUCT)-$(VERS)-win/include/
-	cd dist && zip -r $(PRODUCT)-$(VERS)-win.zip $(PRODUCT)-$(VERS)-win
-
-cppcheck:
-	cppcheck --enable=all -I. -Iblieng --inconclusive --inline-suppr --check-config --xml-version=2 blieng 2> cppcheck_report_blieng.xml
-
-test:
-	cd blieng/tests && "$(topdir)"/tools/build/qmake.sh linux
-	"$(topdir)"/tools/build/make.sh linux -C blieng/tests
-	blieng/tests/tests 2> test_result.xml
 
 clean:
-	make -C blieng clean
+	@echo Cleaning...
+	if [ -d "$(BUILDDIR)/$(PRODUCT)" ] ; then make -C "$(BUILDDIR)/$(PRODUCT)" clean ; fi
+	if [ -d "$(BUILDDIR)/test" ] ; then make -C "$(BUILDDIR)/test" clean ; fi
 
-dist-clean:
-	rm -rf dist
+cppcheck:
+	cppcheck --enable=all -I. -I$(PRODUCT) --inconclusive --inline-suppr --check-config --xml-version=2 $(PRODUCT) 2> cppcheck_report_$(PRODUCT).xml

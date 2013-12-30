@@ -21,6 +21,9 @@ android {
         CONFIG += exceptions
         QMAKE_CXXFLAGS += -fexceptions -frtti
 }
+windows {
+        QMAKE_CXXFLAGS += -fpermissive
+}
 
 
 # Input
