@@ -65,4 +65,4 @@ cppcheck:
 	cppcheck --enable=all -I. -I$(PRODUCT) --inconclusive --inline-suppr --check-config --xml-version=2 $(PRODUCT) 2> cppcheck_report_$(PRODUCT).xml
 
 upload: dist
-	./tools/build/binrep_upload.sh dist/$(PROJECT)*.$(DISTEXT) $(PROJECT) $(BITS) $(TRACK)
+	./tools/build/binrep_upload.sh dist/$(PRODUCT)*.$(DISTEXT) $(PRODUCT) $(BITS) $(TRACK)
