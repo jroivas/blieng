@@ -10,17 +10,24 @@ TARGET ?= linux-$(BITS)
 
 ifeq ($(TARGET),win)
 BUILDDIR ?= win
+BITS = win32
 DISTEXT ?= zip
 DISTCMD ?= zip -qr
+UNDISTCMD ?= unzip -q -o
+UNDISTDIR ?= -d
+UNDISTEXTRA =
 else
 BUILDDIR ?= linux-$(BITS)
 DISTEXT ?= tar.gz
 DISTCMD ?= tar czf
+UNDISTCMD ?= tar xzf
+UNDISTDIR ?= -C
+UNDISTEXTRA ?= --strip-components=1
 endif
 
 OUT ?= $(PRODUCT)-$(REL)-$(TARGET)
 
-all: prepare | $(BUILDDIR)/$(PRODUCT)/lib$(PRODUCT).a
+all: $(BUILDDIR)/$(PRODUCT)/lib$(PRODUCT).a
 	@echo Done build for $(TARGET)
 
 prepare:
@@ -28,7 +35,7 @@ prepare:
 
 .PHONY: all prepare dist build-$(TARGET) test
 
-build-$(TARGET):
+build-$(TARGET): prepare
 	@mkdir -p "$(BUILDDIR)/$(PRODUCT)"
 	cd "$(BUILDDIR)/$(PRODUCT)" && "$(topdir)"/tools/build/qmake.sh $(TARGET) "$(topdir)/$(PRODUCT)"
 	"$(topdir)"/tools/build/make.sh $(TARGET) -C "$(BUILDDIR)/$(PRODUCT)"
@@ -49,7 +56,6 @@ dist:
 	cp $(PRODUCT)/*.h dist/$(OUT)/include
 	cd dist && $(DISTCMD) $(OUT).$(DISTEXT) $(OUT)
 
-
 clean:
 	@echo Cleaning...
 	if [ -d "$(BUILDDIR)/$(PRODUCT)" ] ; then make -C "$(BUILDDIR)/$(PRODUCT)" clean ; fi
@@ -57,3 +63,6 @@ clean:
 
 cppcheck:
 	cppcheck --enable=all -I. -I$(PRODUCT) --inconclusive --inline-suppr --check-config --xml-version=2 $(PRODUCT) 2> cppcheck_report_$(PRODUCT).xml
+
+upload: dist
+	./tools/build/binrep_upload.sh dist/$(PROJECT)*.$(DISTEXT) $(PROJECT) $(BITS) $(TRACK)
