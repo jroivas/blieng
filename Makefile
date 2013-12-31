@@ -5,7 +5,7 @@ REL ?= etp5
 
 DEBUG ?= release
 TRACK ?= dev
-BITS ?= $(shell uname -m|sed -e 's/x86_64/64bit/' -e 's/x86/32bit/')
+BITS ?= $(shell uname -m|sed -e 's/x86_64/64bit/'-e 's/x86/32bit/' -e 's/i.86/32bit/')
 TARGET ?= linux-$(BITS)
 
 ifeq ($(TARGET),win)
