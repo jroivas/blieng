@@ -37,8 +37,8 @@ public:
     bool saveMap(std::string name);
 
 private:
-    void loadMap(std::string name);
-    void parseMap();
+    bool loadMap(std::string name);
+    bool parseMap();
 
     std::string map_name;
     std::string map_file;

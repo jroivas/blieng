@@ -9,18 +9,25 @@ using blieng::Maps;
 
 Maps::Maps(shared_ptr<blieng::Data> _data, std::string mapname) : data(_data)
 {
-    loadMap(mapname);
+    if (!loadMap(mapname)) {
+        std::cout << "ERROR: Can't find map: " << mapname << "\n";
+    }
 }
 
-void Maps::loadMap(std::string name)
+bool Maps::loadMap(std::string name)
 {
+    if (data.get() == nullptr) {
+        // Not initialized properly
+        return false;
+    }
     map_name = name;
     map_file = data->findFile(name + ".json");
     if (map_file != "") {
         std::cout << map_file << "\n";
         map_json = data->readJson(map_file);
-        parseMap();
+        return parseMap();
     }
+    return false;
 }
 
 bool Maps::saveMap(std::string name)
@@ -167,9 +174,9 @@ blieng::Path Maps::updatePath(blieng::Path path, int index, blieng::Point point)
     return path;
 }
 
-void Maps::parseMap()
+bool Maps::parseMap()
 {
-    if (!map_json->isObject()) return;
+    if (!map_json->isObject()) return false;
 
     /* Go thorough items */
     //TODO Refactor
@@ -230,10 +237,10 @@ void Maps::parseMap()
                     while (point_it != (*it)->u.array.end()) {
                         if ((*point_it)->isArray()) {
                             if ((*point_it)->u.array.length >= 2) {
-                                json_value pt1 =(*point_it)[0];
-                                json_value pt2 =(*point_it)[1];
-                                if (pt1.isNumeric() && pt2.isNumeric()) {
-                                    blieng::Point pt(pt1.asDouble(), pt2.asDouble());
+                                json_value *pt1 =(*point_it)->u.array.values[0];
+                                json_value *pt2 =(*point_it)->u.array.values[1];
+                                if (pt1->isNumeric() && pt2->isNumeric()) {
+                                    blieng::Point pt(pt1->asDouble(), pt2->asDouble());
                                     path.addPoint(pt);
                                     ok = true;
                                 }
@@ -252,4 +259,5 @@ void Maps::parseMap()
             }
         }
     }
+    return true;
 }
