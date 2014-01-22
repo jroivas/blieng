@@ -44,9 +44,10 @@ $(BUILDDIR)/$(PRODUCT)/lib$(PRODUCT).a: build-$(TARGET)
 	@if [ -f "$(BUILDDIR)/$(PRODUCT)/$(DEBUG)/lib$(PRODUCT).a" ] ; then cp -f "$(BUILDDIR)/$(PRODUCT)/$(DEBUG)/lib$(PRODUCT).a" "$(BUILDDIR)/$(PRODUCT)/lib$(PRODUCT).a" ; fi
 
 test: $(BUILDDIR)/$(PRODUCT)/lib$(PRODUCT).a
-	@mkdir -p "$(BUILDDIR)/test"
-	cd "$(BUILDDIR)/test" && "$(topdir)"/tools/build/qmake.sh $(TARGET) "$(topdir)/test"
-	make -C "$(BUILDDIR)/test"
+	@mkdir -p "$(BUILDDIR)/blieng/tests"
+	cd "$(BUILDDIR)/blieng/tests" && "$(topdir)"/tools/build/qmake.sh $(TARGET) "$(topdir)/blieng/tests"
+	make -C "$(BUILDDIR)/blieng/tests"
+	"$(BUILDDIR)/blieng/tests/tests" 2> test_result.xml
 
 dist:
 	rm -rf dist/$(OUT)
