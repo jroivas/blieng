@@ -37,6 +37,7 @@ public:
     const std::type_info *getValueType(std::string key);
 
     virtual std::list<std::string> getKeys();
+    inline unsigned int size() { return values.size(); }
 
     void assignObject(const BliObject *another);
 

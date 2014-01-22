@@ -61,7 +61,7 @@ clean:
 	if [ -d "$(BUILDDIR)/$(PRODUCT)" ] ; then make -C "$(BUILDDIR)/$(PRODUCT)" clean ; fi
 	if [ -d "$(BUILDDIR)/test" ] ; then make -C "$(BUILDDIR)/test" clean ; fi
 
-cppcheck:
+check:
 	cppcheck --enable=all -I. -I$(PRODUCT) --inconclusive --inline-suppr --check-config --xml-version=2 $(PRODUCT) 2> cppcheck_report_$(PRODUCT).xml
 
 upload: dist
