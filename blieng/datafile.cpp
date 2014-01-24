@@ -43,7 +43,7 @@ DataFile::DataFile()
     _ok = false;
 }
 
-DataFile::DataFile(std::string name)
+DataFile::DataFile(const std::string &name)
 {
     setName(name);
 }
@@ -52,13 +52,13 @@ DataFile::~DataFile()
 {
 }
 
-void DataFile::setName(std::string name)
+void DataFile::setName(const std::string &name)
 {
     _ok = true;
     _name = name;
 }
 
-std::string DataFile::unifyName(std::string name)
+std::string DataFile::unifyName(const std::string &name)
 {
     std::string tmp = "";
 
@@ -97,18 +97,18 @@ std::vector<std::string> blieng::DataFile::listFiles()
     return res;
 }
 
-const blieng::DataFile::DataFileObject *DataFile::getObject(std::string name)
+const blieng::DataFile::DataFileObject *DataFile::getObject(const std::string &name)
 {
-    name = unifyName(name);
-    if (name == "") return nullptr;
+    std::string uname = unifyName(name);
+    if (uname == "") return nullptr;
 
-    auto di = _data.find(name);
+    auto di = _data.find(uname);
     if (di != _data.end()) return _data[di];
 
     return nullptr;
 }
 
-unsigned int DataFile::getData(std::string name, const char **data)
+unsigned int DataFile::getData(const std::string &name, const char **data)
 {
     const DataFileObject *obj = getObject(name);
     if (obj != nullptr) {
@@ -118,24 +118,24 @@ unsigned int DataFile::getData(std::string name, const char **data)
     return 0;
 }
 
-bool DataFile::addData(std::string name, std::string data)
+bool DataFile::addData(const std::string &name, const std::string &data)
 {
-    name = unifyName(name);
-    if (name == "") return false;
+    std::string uname = unifyName(name);
+    if (uname == "") return false;
 
     std::unique_ptr<DataFileObject> tmp(new DataFileObject(data.c_str(), data.size() + 1));
-    _data[name] = std::move(tmp);
+    _data[uname] = std::move(tmp);
 
     return true;
 }
 
-bool DataFile::addData(std::string name, char *data, unsigned int len)
+bool DataFile::addData(const std::string &name, char *data, unsigned int len)
 {
-    name = unifyName(name);
-    if (name == "") return false;
+    std::string uname = unifyName(name);
+    if (uname == "") return false;
 
     std::unique_ptr<DataFileObject> tmp(new DataFileObject(data, len));
-    _data[name] = std::move(tmp);
+    _data[uname] = std::move(tmp);
 
     return true;
 }
@@ -336,7 +336,7 @@ std::unique_ptr<blieng::SafeDataPtr> blieng::DataFile::DataFileObject::setupKey(
 }
 
 #include "rijndael-alg-fst.h"
-std::unique_ptr<blieng::DataFile::DataFileObject> blieng::DataFile::DataFileObject::obfuscate(const char *key, unsigned int key_len, std::string seed)
+std::unique_ptr<blieng::DataFile::DataFileObject> blieng::DataFile::DataFileObject::obfuscate(const char *key, unsigned int key_len, const std::string &seed)
 {
     unsigned int olen = len / 16;
     if (len % 16 != 0) olen++;
@@ -393,7 +393,7 @@ std::unique_ptr<blieng::DataFile::DataFileObject> blieng::DataFile::DataFileObje
     return res;
 }
 
-std::unique_ptr<blieng::DataFile::DataFileObject> blieng::DataFile::DataFileObject::deobfuscate(const char *key, unsigned int key_len, std::string seed)
+std::unique_ptr<blieng::DataFile::DataFileObject> blieng::DataFile::DataFileObject::deobfuscate(const char *key, unsigned int key_len, const std::string &seed)
 {
     std::unique_ptr<uint32_t[]> key_data(new uint32_t[(MAXNR+1)*4]);
 

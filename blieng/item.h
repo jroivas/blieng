@@ -51,27 +51,27 @@ public:
     boost::flyweight<std::map<std::string, double> > consumes;
     std::map<std::string, double> stocks;
 
-    bool doesConsume(std::string) const;
-    double consumeCount(std::string name);
+    bool doesConsume(const std::string &) const;
+    double consumeCount(const std::string &name);
     std::vector<std::string> getConsumes();
-    void updateConsume(std::string name, double count);
-    void removeConsume(std::string name);
+    void updateConsume(const std::string &name, double count);
+    void removeConsume(const std::string &name);
     void setConsume(std::map<std::string, double> new_consumes);
     void clearConsume();
 
     std::string itemToString() const;
     void assignItem(const ItemBase *parent);
-    bool equals(ItemBase *another);
+    bool equals(ItemBase *another) const;
     void setupStock();
 
-    bool hasStock();
-    double hasStock(std::string name);
+    bool hasStock() const;
+    double hasStock(const std::string &name) const;
 
     bool update(ItemBase *another);
     bool age(long int amount);
-    bool exhausted();
+    bool exhausted() const;
 
-    std::string generateJson(std::string indent="") const;
+    std::string generateJson(const std::string &indent="") const;
 };
 
 /* Item object itself, may contain item specific stuff
@@ -80,7 +80,7 @@ class Item : public ItemBase
 {
 public:
     Item(shared_ptr<blieng::Configure> configure, shared_ptr<blieng::Data> data);
-    Item(std::string name);
+    Item(const std::string &name);
     virtual ~Item() { }
 
     std::unique_ptr<Item> copy();
@@ -89,8 +89,8 @@ public:
     std::unique_ptr<Item> produce(double produce_amount=1) throw (char *);
     bool isUsable() const { return usable; }
     void setUsable() { usable = true; }
-    std::vector<std::string> listItems();
-    bool isItem(std::string name);
+    std::vector<std::string> listItems() const;
+    bool isItem(const std::string &name) const;
     bool removeItem(std::unique_ptr<Item> item);
 
     std::string generateBaseJson();

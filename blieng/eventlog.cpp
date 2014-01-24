@@ -15,7 +15,7 @@ ObjectLog::ObjectLog(void *obj) : BliObject(), object(obj), name("")
 {
 }
 
-ObjectLog::ObjectLog(std::string _name) : BliObject(), object(nullptr), name(_name)
+ObjectLog::ObjectLog(const std::string &_name) : BliObject(), object(nullptr), name(_name)
 {
 }
 
@@ -29,7 +29,7 @@ std::string ObjectLog::getName() const
     return name;
 }
 
-void ObjectLog::setName(std::string _name)
+void ObjectLog::setName(const std::string &_name)
 {
     name = _name;
 }
@@ -105,7 +105,7 @@ void EventLog::log(void *object, BliAny event)
     events.push_back(std::move(newobject));
 }
 
-void EventLog::log(std::string name, BliAny event)
+void EventLog::log(const std::string &name, BliAny event)
 {
     BOOST_FOREACH(ObjectLog *_log, events) {
         if (_log->getName() == name) {
@@ -119,13 +119,13 @@ void EventLog::log(std::string name, BliAny event)
     events.push_back(std::move(newobject));
 }
 
-void EventLog::logString(std::string name, std::string event)
+void EventLog::logString(const std::string &name, const std::string &event)
 {
     BliAny val = event;
     log(name, val);
 }
 
-ObjectLog *EventLog::get(std::string name)
+ObjectLog *EventLog::get(const std::string &name)
 {
     BOOST_FOREACH(ObjectLog *_log, events) {
         if (_log->getName() == name) {

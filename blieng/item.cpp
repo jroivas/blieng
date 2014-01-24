@@ -27,7 +27,7 @@ void Item::init()
     getItemBases();
 }
 
-Item::Item(std::string name) : ItemBase()
+Item::Item(const std::string &name) : ItemBase()
 {
     init();
     usable = false;
@@ -49,7 +49,7 @@ Item::Item(std::string name) : ItemBase()
     std::cout << "Got: " << base << "\n";
 }
 
-std::vector<std::string> Item::listItems()
+std::vector<std::string> Item::listItems() const
 {
     std::vector<std::string> tmp;
     BOOST_FOREACH(item_bases_t val, item_bases) {
@@ -58,7 +58,7 @@ std::vector<std::string> Item::listItems()
     return tmp;
 }
 
-bool Item::isItem(std::string name)
+bool Item::isItem(const std::string &name) const
 {
     BOOST_FOREACH(item_bases_t val, item_bases) {
         if (val->base == name) return true;
@@ -235,12 +235,12 @@ void ItemBase::assignItem(const ItemBase* parent)
     assignObject(parent);
 }
 
-bool ItemBase::equals(ItemBase *another)
+bool ItemBase::equals(ItemBase *another) const
 {
     return (base == another->base && type == another->type && rarity == another->rarity);
 }
 
-bool ItemBase::doesConsume(std::string name) const
+bool ItemBase::doesConsume(const std::string &name) const
 {
     BOOST_FOREACH(consume_t val, consumes.get()) {
         if (val.first == name) return true;
@@ -248,14 +248,14 @@ bool ItemBase::doesConsume(std::string name) const
     return false;
 }
 
-void ItemBase::updateConsume(std::string name, double count)
+void ItemBase::updateConsume(const std::string &name, double count)
 {
     std::map<std::string, double> new_consumes = consumes.get();
     new_consumes[name] = count;
     consumes = new_consumes;
 }
 
-void ItemBase::removeConsume(std::string name)
+void ItemBase::removeConsume(const std::string &name)
 {
     std::map<std::string, double> new_consumes;
     BOOST_FOREACH(consume_t val, consumes.get()) {
@@ -286,7 +286,7 @@ std::vector<std::string> ItemBase::getConsumes()
     return res;
 }
 
-bool ItemBase::exhausted()
+bool ItemBase::exhausted() const
 {
     if (life == static_cast<long int>(-1)) return false;
 
@@ -309,7 +309,7 @@ bool ItemBase::age(long int _amount)
     return false;
 }
 
-bool ItemBase::hasStock()
+bool ItemBase::hasStock() const
 {
     BOOST_FOREACH(consume_t val, stocks) {
         if (val.second > 0) return true;
@@ -317,7 +317,7 @@ bool ItemBase::hasStock()
     return false;
 }
 
-double ItemBase::hasStock(std::string name)
+double ItemBase::hasStock(const std::string &name) const
 {
     BOOST_FOREACH(consume_t val, stocks) {
         if (val.first == name) return val.second;
@@ -325,7 +325,7 @@ double ItemBase::hasStock(std::string name)
     return 0;
 }
 
-double ItemBase::consumeCount(std::string name)
+double ItemBase::consumeCount(const std::string &name)
 {
     BOOST_FOREACH(consume_t val, consumes.get()) {
         if (val.first == name) return val.second;
@@ -400,7 +400,7 @@ std::string Item::toString() const
     return blieng::BliObject::toString() + itemToString();
 }
 
-std::string ItemBase::generateJson(std::string indent) const
+std::string ItemBase::generateJson(const std::string &indent) const
 {
     std::list<std::string> res;
     if (type != "") res.push_back("\"type\": \"" + type.get() + "\"");

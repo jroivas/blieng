@@ -28,12 +28,12 @@ typedef std::map<std::string, BliAny>::const_iterator values_const_iter_t;
 
 #ifdef ANDROID
 #include <QDebug>
-void doDebug(std::string s)
+void doDebug(const std::string &s)
 {
     qDebug() << s.c_str();
 }
 #else
-void doDebug(std::string s)
+void doDebug(const std::string &s)
 {
     std::cerr << s << "\n";
 }
@@ -64,7 +64,7 @@ void BliObject::assignObject(const BliObject *another)
     }
 }
 
-bool BliObject::isValue(std::string key)
+bool BliObject::isValue(const std::string &key)
 {
 #ifdef DATA_MUTEX_LOCK
     boost::lock_guard<boost::mutex> keylock(value_mutex);
@@ -99,7 +99,7 @@ double BliObject::getRandomDouble(double limit_low, double limit_max)
     return res;
 }
 
-BliAny BliObject::getValue(std::string key) const
+BliAny BliObject::getValue(const std::string &key) const
 {
 #ifdef DATA_MUTEX_LOCK
     boost::lock_guard<boost::mutex> keylock(value_mutex);
@@ -114,7 +114,7 @@ BliAny BliObject::getValue(std::string key) const
     return value_iter->second;
 }
 
-void BliObject::setValue(std::string key, BliAny value)
+void BliObject::setValue(const std::string &key, BliAny value)
 {
 #ifdef DATA_MUTEX_LOCK
     boost::lock_guard<boost::mutex> keylock(value_mutex);
@@ -123,7 +123,7 @@ void BliObject::setValue(std::string key, BliAny value)
 }
 
 #define getConvertValue(X, Y) \
-Y BliObject::get ## X ## Value(std::string key, Y default_value) const\
+Y BliObject::get ## X ## Value(const std::string &key, const Y &default_value) const\
 {\
     BliAny val = getValue(key);\
     if (val.empty()) {\
@@ -143,7 +143,7 @@ Y BliObject::get ## X ## Value(std::string key, Y default_value) const\
 }
 
 #define getConvertNumberValue(X, Y, A, B, C, D, E) \
-Y BliObject::get ## X ## Value(std::string key, Y default_value) const\
+Y BliObject::get ## X ## Value(const std::string &key, Y default_value) const\
 {\
     BliAny val = getValue(key);\
     if (val.empty()) {\
@@ -172,28 +172,19 @@ getConvertNumberValue(UInt, unsigned int, unsigned long, long, int, double, floa
 getConvertNumberValue(Double, double, float, unsigned long, long, unsigned int, int)
 getConvertValue(Bool, bool)
 
-std::vector<std::string> BliObject::getListValue(std::string key)
+std::vector<std::string> BliObject::getListValue(const std::string &key)
 {
     BliAny val = getValue(key);
     return boost::any_cast<std::vector<std::string> >(val);
 }
 
-std::vector<int> BliObject::getIntValues(std::string key)
+std::vector<int> BliObject::getIntValues(const std::string &key)
 {
     BliAny val = getValue(key);
     return boost::any_cast<std::vector<int> >(val);
-#if 0
-    std::vector<std::string> vals = getListValue(key);
-    std::vector<int> res;
-
-    BOOST_FOREACH(std::string val, vals) {
-        res.push_back(boost::lexical_cast<int>(val));
-    }
-    return res;
-#endif
 }
 
-const std::type_info *BliObject::getValueType(std::string key)
+const std::type_info *BliObject::getValueType(const std::string &key)
 {
     BliAny val = getValue(key);
     if (val.empty()) {
@@ -251,7 +242,7 @@ std::list<std::string> BliObject::getKeys()
     return res;
 }
 
-bool BliObject::changeNumberValue(std::string key, int diff)
+bool BliObject::changeNumberValue(const std::string &key, int diff)
 {
     if (!isValue(key)) return false;
 
@@ -293,12 +284,12 @@ bool BliObject::changeNumberValue(std::string key, int diff)
     return true;
 }
 
-bool BliObject::increase(std::string key)
+bool BliObject::increase(const std::string &key)
 {
     return changeNumberValue(key, 1);
 }
 
-bool BliObject::decrease(std::string key)
+bool BliObject::decrease(const std::string &key)
 {
     return changeNumberValue(key, -1);
 }

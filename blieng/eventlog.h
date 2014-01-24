@@ -19,14 +19,14 @@ class ObjectLog : public BliObject
 public:
     ObjectLog();
     ObjectLog(void *obj);
-    ObjectLog(std::string name);
+    ObjectLog(const std::string &name);
     virtual ~ObjectLog() {}
 
     void assign(void *obj);
     void addEvent(BliAny event);
     void *getObject();
     std::string getName() const;
-    void setName(std::string name);
+    void setName(const std::string &name);
 
     std::vector<std::pair<boost::posix_time::ptime, BliAny> > events;
 
@@ -46,10 +46,10 @@ public:
     virtual ~EventLog() {}
 
     void log(void *object, BliAny event);
-    void log(std::string name, BliAny event);
-    void logString(std::string name, std::string event);
+    void log(const std::string &name, BliAny event);
+    void logString(const std::string &name, const std::string &event);
     ObjectLog *get(void *object);
-    ObjectLog *get(std::string name);
+    ObjectLog *get(const std::string &name);
 
 private:
     EventLog();

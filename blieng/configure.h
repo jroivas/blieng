@@ -34,10 +34,10 @@ public:
     virtual ~Configure();
 
     typedef enum { KeyString, KeyDouble, KeyUInt, KeyInt, KeyBool, KeyStringList, KeyIntList } key_type_t;
-    bool load(std::string config_file);
+    bool load(const std::string &config_file);
 
-    void addKey(std::string val, key_type_t keytype);
-    void addOptionalKey(std::string val, key_type_t keytype);
+    void addKey(const std::string &val, key_type_t keytype);
+    void addOptionalKey(const std::string &val, key_type_t keytype);
     bool validate();
 
 private:

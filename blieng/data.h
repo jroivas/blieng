@@ -38,39 +38,39 @@ public:
     virtual ~Data();
 
     bool initialize(const char *key, unsigned int key_len);
-    bool initialize(std::string datafilename, const char*, unsigned int);
+    bool initialize(const std::string &datafilename, const char*, unsigned int);
 
-    std::string readString(std::string name);
-    std::vector<std::string> readLinesFromFile(std::string name);
-    unsigned int readData(std::string name, char **data);
+    std::string readString(const std::string &name) const;
+    std::vector<std::string> readLinesFromFile(const std::string &name) const;
+    unsigned int readData(const std::string &name, char **data);
 
     json_value *readJson(const std::string &name);
     std::vector<std::string> getJsonKeys(const json_value *val) const;
-    bool isJsonKey(json_value *val, std::string key);
-    const json_value *getJsonValue(const json_value *val, std::string key) const;
+    bool isJsonKey(json_value *val, const std::string &key) const;
+    const json_value *getJsonValue(const json_value *val, const std::string &key) const;
 
-    bool fileExists(std::string name);
+    bool fileExists(const std::string &name) const;
 
-    std::string findFile(std::string name);
-    std::string formatString(std::string replace_string, unsigned int num) const;
+    std::string findFile(const std::string &name) const;
+    std::string formatString(const std::string &replace_string, unsigned int num) const;
 
-    std::vector<std::string> findFileExtRecursive(std::vector<std::string> mapfiles, const boost::filesystem::path &dir_path, std::string ext);
+    std::vector<std::string> findFileExtRecursive(std::vector<std::string> mapfiles, const boost::filesystem::path &dir_path, const std::string &ext) const;
     std::vector<std::string> listMaps();
 
-    bool saveMapJSON(std::string name, std::string json);
+    bool saveMapJSON(const std::string &name, const std::string &json);
 
-    inline void setGameLocation(std::string location) { game_location = location; }
+    inline void setGameLocation(const std::string &location) { game_location = location; }
 
 private:
-    unsigned int readDataFromDataPath(std::string name, char **data);
+    unsigned int readDataFromDataPath(const std::string &name, char **data);
 
-    std::string findFileRecursive(const boost::filesystem::path &dir_path, std::string name);
-    boost::filesystem::path solveFilePath(std::string name);
+    std::string findFileRecursive(const boost::filesystem::path &dir_path, const std::string &name) const;
+    boost::filesystem::path solveFilePath(const std::string &name) const;
 
-    std::string findFileFromDataFile(std::string name);
-    std::vector<std::string> findFileExtFromDataFile(std::string path, std::string ext);
+    std::string findFileFromDataFile(const std::string &name) const;
+    std::vector<std::string> findFileExtFromDataFile(const std::string &path, const std::string &ext) const;
 
-    std::unique_ptr<boost::filesystem::path> findDataFile(std::string datafilename = "data.dat");
+    std::unique_ptr<boost::filesystem::path> findDataFile(const std::string &datafilename = "data.dat");
     std::unique_ptr<boost::filesystem::path> findDataPath();
     std::unique_ptr<boost::filesystem::path> data_path;
     std::unique_ptr<boost::filesystem::path> data_file_path;

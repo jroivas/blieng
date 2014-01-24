@@ -11,7 +11,7 @@ using blieng::Data;
 class blieng::DataBuffer
 {
 public:
-    DataBuffer(std::string _name, char *_data, unsigned int _len) : name(_name), data(_data), len(_len) {}
+    DataBuffer(const std::string &_name, char *_data, unsigned int _len) : name(_name), data(_data), len(_len) {}
     ~DataBuffer() {
         delete data;
     }
@@ -32,7 +32,7 @@ Data::~Data()
 {
 }
 
-bool Data::initialize(std::string datafilename, const char *key, unsigned int key_len)
+bool Data::initialize(const std::string &datafilename, const char *key, unsigned int key_len)
 {
     if (!datafile.get() || datafilename != "") {
         if (datafilename == "") {
@@ -61,7 +61,7 @@ bool Data::initialize(const char *key, unsigned int key_len)
     return initialize("", key, key_len);
 }
 
-std::unique_ptr<boost::filesystem::path> Data::findDataFile(std::string datafilename)
+std::unique_ptr<boost::filesystem::path> Data::findDataFile(const std::string &datafilename)
 {
 #ifdef ANDROID
     std::unique_ptr<boost::filesystem::path> my_data_path(new boost::filesystem::path);
@@ -114,7 +114,7 @@ std::unique_ptr<boost::filesystem::path> Data::findDataPath()
     return my_data_path;
 }
 
-bool Data::fileExists(std::string name)
+bool Data::fileExists(const std::string &name) const
 {
 #ifdef ANDROID
     return false;
@@ -123,7 +123,7 @@ bool Data::fileExists(std::string name)
 #endif
 }
 
-std::string Data::findFileRecursive(const boost::filesystem::path &dir_path, std::string name)
+std::string Data::findFileRecursive(const boost::filesystem::path &dir_path, const std::string &name) const
 {
 #ifndef ANDROID
     if (!boost::filesystem::exists(dir_path)) return "";
@@ -143,7 +143,7 @@ std::string Data::findFileRecursive(const boost::filesystem::path &dir_path, std
     return "";
 }
 
-std::string Data::findFileFromDataFile(std::string name)
+std::string Data::findFileFromDataFile(const std::string &name) const
 {
     BOOST_FOREACH(std::string fname, datafile->listFiles()) {
         if (fname == name) {
@@ -159,7 +159,7 @@ std::string Data::findFileFromDataFile(std::string name)
     return "";
 }
 
-std::string Data::findFile(std::string name)
+std::string Data::findFile(const std::string &name) const
 {
     if (datafile.get()) {
         std::string res = findFileFromDataFile(name);
@@ -172,7 +172,7 @@ std::string Data::findFile(std::string name)
     return findFileRecursive(*data_path, name);
 }
 
-std::vector<std::string> Data::findFileExtFromDataFile(std::string path, std::string ext)
+std::vector<std::string> Data::findFileExtFromDataFile(const std::string &path, const std::string &ext) const
 {
     std::vector<std::string> res;
     BOOST_FOREACH(std::string fname, datafile->listFiles()) {
@@ -186,7 +186,7 @@ std::vector<std::string> Data::findFileExtFromDataFile(std::string path, std::st
     return res;
 }
 
-std::vector<std::string> Data::findFileExtRecursive(std::vector<std::string> mapfiles, const boost::filesystem::path &dir_path, std::string ext)
+std::vector<std::string> Data::findFileExtRecursive(std::vector<std::string> mapfiles, const boost::filesystem::path &dir_path, const std::string &ext) const
 {
 #ifndef ANDROID
     if (!boost::filesystem::exists(dir_path)) return mapfiles;
@@ -228,7 +228,7 @@ std::vector<std::string> Data::listMaps()
 #endif
 }
 
-bool Data::saveMapJSON(std::string name, std::string json)
+bool Data::saveMapJSON(const std::string &name, const std::string &json)
 {
 #ifdef ANDROID
     return false;
@@ -276,7 +276,7 @@ bool Data::saveMapJSON(std::string name, std::string json)
 #endif
 }
 
-boost::filesystem::path Data::solveFilePath(std::string name)
+boost::filesystem::path Data::solveFilePath(const std::string &name) const
 {
 #ifdef ANDROID
     boost::filesystem::path p;
@@ -292,7 +292,7 @@ boost::filesystem::path Data::solveFilePath(std::string name)
 #endif
 }
 
-std::vector<std::string> Data::readLinesFromFile(std::string name)
+std::vector<std::string> Data::readLinesFromFile(const std::string &name) const
 {
     std::vector<std::string> tmp;
 
@@ -341,7 +341,7 @@ std::vector<std::string> Data::readLinesFromFile(std::string name)
     return tmp;
 }
 
-unsigned int Data::readDataFromDataPath(std::string name, char **data)
+unsigned int Data::readDataFromDataPath(const std::string &name, char **data)
 {
 #ifndef ANDROID
     BOOST_FOREACH(blieng::DataBuffer *buf, __buffers)
@@ -394,7 +394,7 @@ unsigned int Data::readDataFromDataPath(std::string name, char **data)
     return 0;
 }
 
-unsigned int Data::readData(std::string name, char **data)
+unsigned int Data::readData(const std::string &name, char **data)
 {
 #ifndef ANDROID
     if (data_path.get()) {
@@ -416,7 +416,7 @@ unsigned int Data::readData(std::string name, char **data)
     return 0;
 }
 
-std::string Data::readString(std::string name)
+std::string Data::readString(const std::string &name) const
 {
     std::string res = "";
 
@@ -469,7 +469,7 @@ std::vector<std::string> Data::getJsonKeys(const json_value *val) const
     return val->getMemberNames();
 }
 
-bool Data::isJsonKey(json_value *val, std::string key)
+bool Data::isJsonKey(json_value *val, const std::string &key) const
 {
     if (val->isObject()) {
         return val->isMember(key);
@@ -477,7 +477,7 @@ bool Data::isJsonKey(json_value *val, std::string key)
     return false;
 }
 
-const json_value *Data::getJsonValue(const json_value *val, std::string key) const
+const json_value *Data::getJsonValue(const json_value *val, const std::string &key) const
 {
     if (val->isObject()) {
         if (val->isMember(key)) {
@@ -488,7 +488,7 @@ const json_value *Data::getJsonValue(const json_value *val, std::string key) con
     return val;
 }
 
-std::string Data::formatString(std::string replace_string, unsigned int num) const
+std::string Data::formatString(const std::string &replace_string, unsigned int num) const
 {
     std::ostringstream stream;
     stream << num;

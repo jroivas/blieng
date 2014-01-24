@@ -15,24 +15,24 @@ public:
     BliObject();
     virtual ~BliObject();
 
-    void setValue(std::string key, BliAny value);
-    virtual bool isValue(std::string key);
+    void setValue(const std::string &key, BliAny value);
+    virtual bool isValue(const std::string &key);
 
-    virtual bool increase(std::string key);
-    virtual bool decrease(std::string key);
-    bool changeNumberValue(std::string key, int diff);
+    virtual bool increase(const std::string &key);
+    virtual bool decrease(const std::string &key);
+    bool changeNumberValue(const std::string &key, int diff);
 
-    virtual BliAny getValue(std::string key) const;
-    virtual std::string getStringValue(std::string key, std::string default_value="") const;
-    virtual bool getBoolValue(std::string key, bool default_value=false) const;
-    virtual int getIntValue(std::string key, int default_value=0) const;
-    virtual unsigned int getUIntValue(std::string key, unsigned int default_value=0) const;
-    virtual double getDoubleValue(std::string key, double default_value=0.0) const;
-    virtual std::vector<std::string> getListValue(std::string key);
-    virtual std::vector<int> getIntValues(std::string key);
+    virtual BliAny getValue(const std::string &key) const;
+    virtual std::string getStringValue(const std::string &key, const std::string &default_value="") const;
+    virtual bool getBoolValue(const std::string &key, const bool &default_value=false) const;
+    virtual int getIntValue(const std::string &key, int default_value=0) const;
+    virtual unsigned int getUIntValue(const std::string &key, unsigned int default_value=0) const;
+    virtual double getDoubleValue(const std::string &key, double default_value=0.0) const;
+    virtual std::vector<std::string> getListValue(const std::string &key);
+    virtual std::vector<int> getIntValues(const std::string &key);
 
     virtual std::string toString() const;
-    const std::type_info *getValueType(std::string key);
+    const std::type_info *getValueType(const std::string &key);
 
     virtual std::list<std::string> getKeys();
     inline unsigned int size() { return values.size(); }

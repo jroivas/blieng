@@ -28,8 +28,8 @@ public:
             if (dataptr != nullptr) delete dataptr;
         }
 
-        std::unique_ptr<DataFileObject> obfuscate(const char *key, unsigned int len, std::string seed="");
-        std::unique_ptr<DataFileObject> deobfuscate(const char *key, unsigned int len, std::string seed="");
+        std::unique_ptr<DataFileObject> obfuscate(const char *key, unsigned int len, const std::string &seed="");
+        std::unique_ptr<DataFileObject> deobfuscate(const char *key, unsigned int len, const std::string &seed="");
 
         inline unsigned int length() const { return len; }
         char *get() { return dataptr; }
@@ -46,16 +46,16 @@ public:
     };
 
     DataFile();
-    DataFile(std::string name);
+    DataFile(const std::string &name);
     virtual ~DataFile();
 
-    void setName(std::string name);
+    void setName(const std::string &name);
     bool isValid() const { return _ok; }
 
-    bool addData(std::string name, std::string data);
-    bool addData(std::string name, char *data, unsigned int len);
-    unsigned int getData(std::string name, const char **data);
-    const DataFileObject *getObject(std::string name);
+    bool addData(const std::string &name, const std::string &data);
+    bool addData(const std::string &name, char *data, unsigned int len);
+    unsigned int getData(const std::string &name, const char **data);
+    const DataFileObject *getObject(const std::string &name);
 
     std::vector<std::string> listFiles();
 
@@ -65,7 +65,7 @@ public:
 
 private:
     std::string _name;
-    std::string unifyName(std::string name);
+    std::string unifyName(const std::string &name);
 
     auto_map<std::string, DataFileObject> _data;
     bool _ok;

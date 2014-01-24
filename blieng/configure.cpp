@@ -23,7 +23,7 @@ Configure::~Configure()
     opt_keys.erase(opt_keys.begin(), opt_keys.end());
 }
 
-bool Configure::load(std::string _config_file)
+bool Configure::load(const std::string &_config_file)
 {
     std::string fname = data->findFile(_config_file);
     if (fname != "") {
@@ -34,7 +34,7 @@ bool Configure::load(std::string _config_file)
     return false;
 }
 
-void Configure::addKey(std::string val, key_type_t key_type)
+void Configure::addKey(const std::string &val, key_type_t key_type)
 {
 #ifdef DATA_MUTEX_LOCK
     boost::lock_guard<boost::mutex> keylock(key_mutex);
@@ -42,7 +42,7 @@ void Configure::addKey(std::string val, key_type_t key_type)
     keys[val] = key_type;
 }
 
-void Configure::addOptionalKey(std::string val, key_type_t key_type)
+void Configure::addOptionalKey(const std::string &val, key_type_t key_type)
 {
 #ifdef DATA_MUTEX_LOCK
     boost::lock_guard<boost::mutex> keylock(key_mutex);

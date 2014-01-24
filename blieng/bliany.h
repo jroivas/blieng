@@ -5,7 +5,7 @@
 #include <boost/any.hpp>
 
 // This is defined in bliobject.cpp
-void doDebug(std::string s);
+void doDebug(const std::string &s);
 
 namespace blieng
 {
