@@ -5,10 +5,6 @@
 #include <boost/foreach.hpp>
 #include <sstream>
 #include <algorithm>
-//#include <libgen.h>
-#ifdef ANDROID
-#include <QDebug>
-#endif
 
 using blieng::Data;
 
@@ -159,19 +155,6 @@ std::string Data::findFileFromDataFile(std::string name)
         if (handle.filename() == name) {
             return fname;
         }
-#if 0
-        char *tmp = new char[fname.length() + 1];
-        memmove(tmp, fname.c_str(), fname.length() + 1);
-        char *bname = basename(tmp);
-        bool ok = false;
-        if (bname == name) ok = true;
-        delete []tmp;
-
-        if (ok) {
-
-            return fname;
-        }
-#endif
     }
     return "";
 }
