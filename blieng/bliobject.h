@@ -5,7 +5,6 @@
 #include <map>
 #include <list>
 #include <boost/shared_ptr.hpp>
-//#include <boost/thread/mutex.hpp>
 #include "bliany.h"
 
 namespace blieng
@@ -47,7 +46,6 @@ public:
 
 protected:
     std::map<std::string, BliAny> values;
-    //boost::mutex value_mutex;
 };
 
 }

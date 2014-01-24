@@ -8,11 +8,6 @@
 #include <boost/random/uniform_real_distribution.hpp>
 #include <boost/lexical_cast.hpp>
 
-#ifdef ANDROID_DUMMY
-#define PSEUDO_RANDOM
-#define DATA_MUTEX_LOCK
-#endif
-
 #ifdef DATA_MUTEX_LOCK
 #include <boost/thread/locks.hpp>
 #include <boost/thread/lock_guard.hpp>
