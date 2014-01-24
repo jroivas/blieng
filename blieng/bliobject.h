@@ -4,7 +4,6 @@
 #include <string>
 #include <map>
 #include <list>
-#include <boost/shared_ptr.hpp>
 #include "bliany.h"
 
 namespace blieng

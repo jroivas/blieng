@@ -13,8 +13,15 @@
 #include <memory>
 using namespace std;
 #else
+
+#if defined(__cplusplus) && __cplusplus < 201103L
+#include <tr1/memory>
+using namespace std;
+#else
 #include <boost/smart_ptr/shared_ptr.hpp>
 using namespace boost;
+#endif
+
 #endif
 
 using std::unique_ptr;

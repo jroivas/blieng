@@ -1,6 +1,7 @@
 #ifndef __BLIENG_BLIANY_H
 #define __BLIENG_BLIANY_H
 
+#include <ostream>
 #include <boost/any.hpp>
 
 // This is defined in bliobject.cpp
@@ -53,7 +54,7 @@ public:
         if (this->type() == typeid(X)) {\
             return boost::any_cast<X>(*this);\
         }\
-        /*doDebug("Error, invalid value, can't convert to " # Y); */\
+        /*doDebug("Error, invalid value, can't convert to " # Y);*/ \
         throw std::string("Error, invalid value, can't convert to " # Y); \
     }
 

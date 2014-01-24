@@ -1,5 +1,7 @@
 *.o
 *.a
+*.swp
+*.old
 */Makefile*
 */*/Makefile*
 *.Debug

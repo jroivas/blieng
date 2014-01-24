@@ -7,7 +7,6 @@
 #include "bliobject.h"
 #include "item.h"
 #include "auto_vector.h"
-#include <boost/shared_ptr.hpp>
 #include <memory>
 
 namespace blieng

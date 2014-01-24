@@ -80,7 +80,6 @@ void PointTest::traverse()
     blieng::Point b(100,200);
     blieng::Point c(300,2000);
 
-    
     CPPUNIT_ASSERT (a.traverse(b, 0, 10) == a);
     CPPUNIT_ASSERT (a.traverse(b, -10, 10) == a);
     CPPUNIT_ASSERT (a.traverse(b, 10, 10) == b);
