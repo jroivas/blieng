@@ -18,6 +18,7 @@ bool Maps::loadMap(std::string name)
 {
     if (data.get() == nullptr) {
         // Not initialized properly
+        // TODO throw error?
         return false;
     }
     map_name = name;
@@ -37,6 +38,7 @@ bool Maps::saveMap(std::string name)
     boost::filesystem::path my_image = boost::filesystem::path(solved_map_image_file);
     std::string imagefile = my_image.filename().string();
 
+    //FIXME This needs a rewrite
     json += "{\n";
     json += "    \"image\": \"" + imagefile + "\",\n";
 
@@ -182,7 +184,6 @@ bool Maps::parseMap()
     //TODO Refactor
     BOOST_FOREACH(std::string mi, map_json->getMemberNames()) {
         const json_value *item_val = data->getJsonValue(map_json, mi);
-        //std::cout <<  mi << "\n";
         if (mi == "image" and item_val->isString()) {
             map_image_file = item_val->asString();
             std::cout << " = " <<  map_image_file << "\n";
@@ -249,9 +250,6 @@ bool Maps::parseMap()
                         ++point_it;
                     }
                     if (ok) {
-                        /*paths.push_back(path);
-                        rev_paths.push_back(path.reversed());
-                        */
                         addPath(path);
                     }
                 }
