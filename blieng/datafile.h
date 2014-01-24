@@ -65,7 +65,7 @@ public:
 
 private:
     std::string _name;
-    std::string unifyName(const std::string &name);
+    std::string unifyName(const std::string &name) const;
 
     auto_map<std::string, DataFileObject> _data;
     bool _ok;

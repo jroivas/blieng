@@ -18,7 +18,7 @@ public:
     Town();
     virtual ~Town() {}
 
-    void setName(std::string town_name);
+    void setName(const std::string &town_name);
     const std::string getName() const { return name; }
     void setSize(unsigned int town_size);
     unsigned int getSize() const { return size; }
@@ -37,14 +37,14 @@ public:
 
     void addCharacter(Character *chr);
     bool removeCharacter(Character *chr);
-    std::vector<Character *> getCharacters();
+    std::vector<Character *> getCharacters() const;
 
     virtual std::string toString() const;
 
     void updatePopulation();
-    unsigned int getPopulation();
-    unsigned int getCharacterClassCnt(std::string character_class);
-    std::vector<blieng::Character *> getCharacterClass(std::string character_class);
+    unsigned int getPopulation() const;
+    unsigned int getCharacterClassCnt(const std::string &character_class);
+    std::vector<blieng::Character *> getCharacterClass(const std::string &character_class);
 
     void convertToZombies(double rate);
 

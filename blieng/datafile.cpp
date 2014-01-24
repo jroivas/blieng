@@ -58,7 +58,7 @@ void DataFile::setName(const std::string &name)
     _name = name;
 }
 
-std::string DataFile::unifyName(const std::string &name)
+std::string DataFile::unifyName(const std::string &name) const
 {
     std::string tmp = "";
 

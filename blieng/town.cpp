@@ -18,12 +18,12 @@ void Town::updatePopulation()
     setValue("population", pop);
 }
 
-unsigned int Town::getPopulation()
+unsigned int Town::getPopulation() const
 {
     return getUIntValue("population");
 }
 
-void Town::setName(std::string town_name)
+void Town::setName(const std::string &town_name)
 {
     name = town_name;
 }
@@ -93,7 +93,7 @@ bool Town::removeCharacter(Character *chr)
     return false;
 }
 
-std::vector<blieng::Character *> Town::getCharacters()
+std::vector<blieng::Character *> Town::getCharacters() const
 {
     return characters;
 }
@@ -110,7 +110,7 @@ std::string Town::toString() const
     return res;
 }
 
-unsigned int Town::getCharacterClassCnt(std::string character_class)
+unsigned int Town::getCharacterClassCnt(const std::string &character_class)
 {
     unsigned int zombies = 0;
     BOOST_FOREACH(Character *ch, characters) {
@@ -123,7 +123,7 @@ unsigned int Town::getCharacterClassCnt(std::string character_class)
     return zombies;
 }
 
-std::vector<blieng::Character *> Town::getCharacterClass(std::string character_class)
+std::vector<blieng::Character *> Town::getCharacterClass(const std::string &character_class)
 {
     std::vector<Character *> zombies; 
     BOOST_FOREACH(Character *ch, characters) {

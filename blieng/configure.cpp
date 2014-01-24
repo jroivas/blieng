@@ -50,7 +50,7 @@ void Configure::addOptionalKey(const std::string &val, key_type_t key_type)
     opt_keys[val] = key_type;
 }
 
-bool Configure::validate()
+bool Configure::validate() const
 {
 #ifdef DATA_MUTEX_LOCK
     boost::lock_guard<boost::mutex> keylock(key_mutex);

@@ -7,14 +7,14 @@
 
 using blieng::Maps;
 
-Maps::Maps(shared_ptr<blieng::Data> _data, std::string mapname) : data(_data)
+Maps::Maps(shared_ptr<blieng::Data> _data, const std::string &mapname) : data(_data)
 {
     if (!loadMap(mapname)) {
         std::cout << "ERROR: Can't find map: " << mapname << "\n";
     }
 }
 
-bool Maps::loadMap(std::string name)
+bool Maps::loadMap(const std::string &name)
 {
     if (data.get() == nullptr) {
         // Not initialized properly
@@ -31,7 +31,7 @@ bool Maps::loadMap(std::string name)
     return false;
 }
 
-bool Maps::saveMap(std::string name)
+bool Maps::saveMap(const std::string &name)
 {
     std::string json = "";
 
@@ -99,12 +99,12 @@ bool Maps::saveMap(std::string name)
     return data->saveMapJSON(name, json);
 }
 
-std::string Maps::getMapName()
+std::string Maps::getMapName() const
 {
     return map_name;
 }
 
-void Maps::setBackgroundImage(std::string filename)
+void Maps::setBackgroundImage(const std::string &filename)
 {
     map_image_file = filename;
     solved_map_image_file = filename;

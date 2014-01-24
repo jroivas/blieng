@@ -16,7 +16,7 @@ public:
     virtual ~BliObject();
 
     void setValue(const std::string &key, BliAny value);
-    virtual bool isValue(const std::string &key);
+    virtual bool isValue(const std::string &key) const;
 
     virtual bool increase(const std::string &key);
     virtual bool decrease(const std::string &key);
@@ -32,7 +32,7 @@ public:
     virtual std::vector<int> getIntValues(const std::string &key);
 
     virtual std::string toString() const;
-    const std::type_info *getValueType(const std::string &key);
+    const std::type_info *getValueType(const std::string &key) const;
 
     virtual std::list<std::string> getKeys();
     inline unsigned int size() { return values.size(); }

@@ -387,7 +387,7 @@ typedef struct _json_value
             return (type == json_integer || type == json_uinteger);
         }
 
-        inline bool isMember (std::string key) const
+        inline bool isMember (const std::string &key) const
         {
             if (type != json_object) return false;
 
@@ -399,7 +399,7 @@ typedef struct _json_value
             return false;
         }
 
-        inline const struct _json_value *getMember (std::string key) const
+        inline const struct _json_value *getMember (const std::string &key) const
         {
             if (type != json_object) return nullptr;
 

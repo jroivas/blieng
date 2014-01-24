@@ -14,7 +14,7 @@ bool Character::kill()
     return true;
 }
 
-bool Character::isAlive()
+bool Character::isAlive() const
 {
     if (!isValue("dead")) return true;
     return !getBoolValue("dead");
@@ -34,7 +34,7 @@ bool Character::removeItem(unsigned int index)
     return true;
 }
 
-unsigned int Character::size()
+unsigned int Character::size() const
 {
     return items.size();
 }

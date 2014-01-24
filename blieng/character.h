@@ -18,11 +18,11 @@ public:
     Character();
 
     bool kill();
-    bool isAlive();
+    bool isAlive() const;
 
     unsigned int addItem(std::unique_ptr<blieng::Item>);
     bool removeItem(unsigned int index);
-    unsigned int size();
+    unsigned int size() const;
 
     void assignObject(const blieng::BliObject *another);
     void assignObject(Character *another);

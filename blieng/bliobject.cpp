@@ -64,12 +64,12 @@ void BliObject::assignObject(const BliObject *another)
     }
 }
 
-bool BliObject::isValue(const std::string &key)
+bool BliObject::isValue(const std::string &key) const
 {
 #ifdef DATA_MUTEX_LOCK
     boost::lock_guard<boost::mutex> keylock(value_mutex);
 #endif
-    values_iter_t value_iter = values.find(key);
+    values_const_iter_t value_iter = values.find(key);
 
     if (value_iter == values.end()) return false;
     return true;
@@ -184,7 +184,7 @@ std::vector<int> BliObject::getIntValues(const std::string &key)
     return boost::any_cast<std::vector<int> >(val);
 }
 
-const std::type_info *BliObject::getValueType(const std::string &key)
+const std::type_info *BliObject::getValueType(const std::string &key) const
 {
     BliAny val = getValue(key);
     if (val.empty()) {

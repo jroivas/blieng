@@ -38,7 +38,7 @@ public:
 
     void addKey(const std::string &val, key_type_t keytype);
     void addOptionalKey(const std::string &val, key_type_t keytype);
-    bool validate();
+    bool validate() const;
 
 private:
     void parse();

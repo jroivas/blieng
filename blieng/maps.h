@@ -15,9 +15,9 @@ namespace blieng
 class Maps : public BliObject
 {
 public:
-    Maps(shared_ptr<blieng::Data> data, std::string mapname);
+    Maps(shared_ptr<blieng::Data> data, const std::string &mapname);
 
-    std::string getMapName();
+    std::string getMapName() const;
 
     std::string getMapImageFile() const { return map_image_file; }
     std::string getSolvedMapImageFile();
@@ -25,7 +25,7 @@ public:
     std::vector<blieng::Path> getPaths() const { return paths; }
     std::vector<blieng::Path> getRevPaths() const { return rev_paths; }
 
-    void setBackgroundImage(std::string filename);
+    void setBackgroundImage(const std::string &filename);
 
     void addTown(blieng::Town *town);
     void addPath(blieng::Path path);
@@ -34,10 +34,10 @@ public:
     blieng::Path updatePath(blieng::Path path, int index, blieng::Point point);
     blieng::Path updatePath(blieng::Path path, blieng::Point point);
 
-    bool saveMap(std::string name);
+    bool saveMap(const std::string &name);
 
 private:
-    bool loadMap(std::string name);
+    bool loadMap(const std::string &name);
     bool parseMap();
 
     std::string map_name;
