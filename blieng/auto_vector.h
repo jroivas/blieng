@@ -174,7 +174,7 @@ std::unique_ptr<T> auto_vector<T>::pop (const T * p)
 }
 
 template <class T>
-inline std::unique_ptr<T> auto_vector<T>::pop_back () 
+inline std::unique_ptr<T> auto_vector<T>::pop_back ()
 {
     assert (size () != 0);
     T * p = _arr.back ();

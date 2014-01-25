@@ -125,7 +125,7 @@ unsigned int Town::getCharacterClassCnt(const std::string &character_class)
 
 std::vector<blieng::Character *> Town::getCharacterClass(const std::string &character_class)
 {
-    std::vector<Character *> zombies; 
+    std::vector<Character *> zombies;
     BOOST_FOREACH(Character *ch, characters) {
         if (ch->isValue("class") && ch->getStringValue("class") == character_class) {
             zombies.push_back(ch);

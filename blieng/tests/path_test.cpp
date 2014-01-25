@@ -90,7 +90,6 @@ void PathTest::copy()
     a.addPoint(blieng::Point(3,4));
     a.addPoint(blieng::Point(5,6));
     CPPUNIT_ASSERT(a != b);
-    
 
     b = a.copy();
     CPPUNIT_ASSERT(a == b);
