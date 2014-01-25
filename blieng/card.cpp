@@ -46,7 +46,7 @@ bool Card::remove(size_t index)
     return false;
 }
 
-void Card::remove(auto_vector<blieng::Card>::iterator iter)
+void Card::remove(auto_vector<blieng::Card>::iterator &iter)
 {
     BOOST_ASSERT( iter < combined.end() );
     if (iter < combined.end()) {
