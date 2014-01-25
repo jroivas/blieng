@@ -1,10 +1,14 @@
 #ifndef __BLIENG_BLIOBJECT_H
 #define __BLIENG_BLIOBJECT_H
 
+#include "config.h"
 #include <string>
 #include <map>
 #include <list>
 #include "bliany.h"
+#ifdef DATA_MUTEX_LOCK
+#include <boost/thread/mutex.hpp>
+#endif
 
 namespace blieng
 {
@@ -45,6 +49,11 @@ public:
 
 protected:
     std::map<std::string, BliAny> values;
+
+#ifdef DATA_MUTEX_LOCK
+private:
+    boost::mutex value_mutex;
+#endif
 };
 
 }

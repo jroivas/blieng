@@ -52,14 +52,27 @@ void Configure::addOptionalKey(const std::string &val, key_type_t key_type)
 
 bool Configure::validate() const
 {
-#ifdef DATA_MUTEX_LOCK
-    boost::lock_guard<boost::mutex> keylock(key_mutex);
-#endif
     BOOST_FOREACH(key_values_t key, keys) {
         if (!isValue(key.first)) {
             std::cout << key.first << ": NOT FOUND\n";
             return false;
         }
+    }
+    return true;
+}
+
+bool Configure::validateValues()
+{
+    BOOST_FOREACH(key_values_t key, keys) {
+        if (!isValue(key.first)) return false;
+
+        if (key.second == Configure::KeyString) getStringValue(key.first);
+        else if (key.second == Configure::KeyDouble) getDoubleValue(key.first);
+        else if (key.second == Configure::KeyInt) getIntValue(key.first);
+        else if (key.second == Configure::KeyUInt) getUIntValue(key.first);
+        else if (key.second == Configure::KeyBool) getBoolValue(key.first);
+        else if (key.second == Configure::KeyStringList) getListValue(key.first);
+        else if (key.second == Configure::KeyIntList) getIntValues(key.first);
     }
     return true;
 }

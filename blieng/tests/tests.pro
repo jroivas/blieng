@@ -29,6 +29,7 @@ HEADERS += point_test.h \
            item_test.h \
            bliany_test.h \
            card_test.h \
+           configure_test.h \
            test_tools.h
 SOURCES += point_test.cpp \
            path_test.cpp \
@@ -42,5 +43,6 @@ SOURCES += point_test.cpp \
            item_test.cpp \
            bliany_test.cpp \
            card_test.cpp \
+           configure_test.cpp \
            testrunner.cpp \
            test_tools.cpp

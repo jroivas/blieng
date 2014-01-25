@@ -1,13 +1,14 @@
 #ifndef __BLIENG_CONFIGURE_H
 #define __BLIENG_CONFIGURE_H
 
+#include "config.h"
 #include "bliobject.h"
 #include "data.h"
 #include <iostream>
 #include <vector>
 #include <map>
 #include "json.h"
-//#include <boost/thread/mutex.hpp>
+#include <boost/thread/mutex.hpp>
 
 #if defined(__cplusplus) && __cplusplus >= 201103L
 #include <memory>
@@ -39,6 +40,7 @@ public:
     void addKey(const std::string &val, key_type_t keytype);
     void addOptionalKey(const std::string &val, key_type_t keytype);
     bool validate() const;
+    bool validateValues();
 
 private:
     void parse();
@@ -48,7 +50,7 @@ private:
     std::map<std::string, key_type_t> keys;
     std::map<std::string, key_type_t> opt_keys;
 
-    //boost::mutex key_mutex;
+    boost::mutex key_mutex;
     shared_ptr<blieng::Data> data;
 };
 

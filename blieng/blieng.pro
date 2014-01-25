@@ -28,6 +28,7 @@ windows {
 
 # Input
 HEADERS += \
+    config.h \
     bliobject.h \
     character.h \
     configure.h \

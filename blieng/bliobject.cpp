@@ -66,9 +66,6 @@ void BliObject::assignObject(const BliObject *another)
 
 bool BliObject::isValue(const std::string &key) const
 {
-#ifdef DATA_MUTEX_LOCK
-    boost::lock_guard<boost::mutex> keylock(value_mutex);
-#endif
     values_const_iter_t value_iter = values.find(key);
 
     if (value_iter == values.end()) return false;
@@ -101,9 +98,6 @@ double BliObject::getRandomDouble(double limit_low, double limit_max)
 
 BliAny BliObject::getValue(const std::string &key) const
 {
-#ifdef DATA_MUTEX_LOCK
-    boost::lock_guard<boost::mutex> keylock(value_mutex);
-#endif
     values_const_iter_t value_iter = values.find(key);
 
     if (value_iter == values.end()) {
@@ -175,13 +169,23 @@ getConvertValue(Bool, bool)
 std::vector<std::string> BliObject::getListValue(const std::string &key)
 {
     BliAny val = getValue(key);
-    return boost::any_cast<std::vector<std::string> >(val);
+    try {
+        return boost::any_cast<std::vector<std::string> >(val);
+    }
+    catch (boost::bad_any_cast &c) {
+        throw std::string("Not string list at " + key);
+    }
 }
 
 std::vector<int> BliObject::getIntValues(const std::string &key)
 {
     BliAny val = getValue(key);
-    return boost::any_cast<std::vector<int> >(val);
+    try {
+        return boost::any_cast<std::vector<int> >(val);
+    }
+    catch (boost::bad_any_cast &c) {
+        throw std::string("Not int list at " + key);
+    }
 }
 
 const std::type_info *BliObject::getValueType(const std::string &key) const
@@ -197,9 +201,6 @@ const std::type_info *BliObject::getValueType(const std::string &key) const
 std::string BliObject::toString() const
 {
     std::string res = "";
-#ifdef DATA_MUTEX_LOCK
-    boost::lock_guard<boost::mutex> keylock(value_mutex);
-#endif
     BOOST_FOREACH(values_t item, values) {
         std::string key = item.first;
         BliAny val = item.second;

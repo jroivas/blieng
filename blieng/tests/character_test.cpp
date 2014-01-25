@@ -55,55 +55,11 @@ void CharacterTest::items()
 
     CPPUNIT_ASSERT( !obj->removeItem(0) );
     CPPUNIT_ASSERT( obj->size() == 0);
-#if 0
-    CPPUNIT_ASSERT( obj->removeItem(tmp2.get()) );
-    CPPUNIT_ASSERT( obj->getItems()->size() == 1);
-
-    CPPUNIT_ASSERT( !obj->removeItem(tmp2.get()) );
-    CPPUNIT_ASSERT( obj->getItems()->size() == 1);
-
-    CPPUNIT_ASSERT( obj->removeItem(tmp.get()) );
-    CPPUNIT_ASSERT( obj->getItems()->size() == 0);
-
-    CPPUNIT_ASSERT( !obj->removeItem(tmp.get()) );
-    CPPUNIT_ASSERT( obj->getItems()->size() == 0);
-#endif
 
     obj->addItem(std::move(tmp));
     obj->addItem(std::move(tmp2));
     CPPUNIT_ASSERT( obj->size() == 2);
 
-#if 0
-    bool found = false;
-    const auto_vector<blieng::Item> *items = obj->getItems();
-
-    auto_vector<blieng::Item>::const_iterator ii = items->begin();
-    while (ii != items->end()) {
-        if (*ii == tmp2.get()) found = true;
-        ++ii;
-    }
-    CPPUNIT_ASSERT( found );
-
-    found = false;
-    ii = items->begin();
-    while (ii != items->end()) {
-        if (*ii == tmp.get()) found = true;
-        ++ii;
-    }
-    CPPUNIT_ASSERT( found );
-
-    //CPPUNIT_ASSERT( obj->removeItem(tmp.get()) );
-    CPPUNIT_ASSERT( obj->removeItem(0) );
-
-    found = false;
-    items = obj->getItems();
-    ii = items->begin();
-    while (ii != items->end()) {
-        if (*ii == tmp.get()) found = true;
-        ++ii;
-    }
-    CPPUNIT_ASSERT( !found );
-#endif
     mock_io_stop();
 }
 
@@ -132,53 +88,6 @@ void CharacterTest::assign()
 
     CPPUNIT_ASSERT( obj->size() == 2);
 
-#if 0
-    std::vector<blieng::Item*> items = obj2->getItems();
-    std::vector<blieng::Item*>::iterator ii = items.begin();
-    bool found = false;
-    blieng::Item *tmp3 = NULL;
-    while (ii != items.end()) {
-        if ((*ii)->getStringValue("name") == "item1") {
-            found = true;
-            tmp3 = (*ii);
-        }
-        ++ii;
-    }
-    CPPUNIT_ASSERT( found );
-
-    ii = items.begin();
-    found = false;
-    while (ii != items.end()) {
-        if ((*ii)->getStringValue("name") == "item2") found = true;
-        ++ii;
-    }
-    CPPUNIT_ASSERT( found );
-
-    CPPUNIT_ASSERT( tmp3 != tmp );
-    CPPUNIT_ASSERT( tmp->getStringValue("name") == "item1" );
-    CPPUNIT_ASSERT( tmp3->getStringValue("name") == "item1" );
-
-    tmp3->setValue("name", std::string("item3") );
-
-    CPPUNIT_ASSERT( tmp->getStringValue("name") == "item1" );
-    CPPUNIT_ASSERT( tmp3->getStringValue("name") == "item3" );
-
-    ii = items.begin();
-    found = false;
-    while (ii != items.end()) {
-        if ((*ii)->getStringValue("name") == "item1") found = true;
-        ++ii;
-    }
-    CPPUNIT_ASSERT( !found );
-
-    ii = items.begin();
-    found = false;
-    while (ii != items.end()) {
-        if ((*ii)->getStringValue("name") == "item3") found = true;
-        ++ii;
-    }
-    CPPUNIT_ASSERT( found );
-#endif
     mock_io_stop();
 }
 
