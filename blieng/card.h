@@ -24,6 +24,8 @@ public:
     virtual std::string toString() const { return ""; }
     virtual std::string uuid() const { return card_uuid; }
 
+    virtual unsigned int size() const { return combined.size(); }
+
 protected:
     auto_vector<blieng::Card> combined;
     void genUUID();
