@@ -9,11 +9,22 @@ using std::unique_ptr;
 
 CPPUNIT_TEST_SUITE_REGISTRATION( ConfigureTest );
 
+void ConfigureTest::setUp()
+{
+    mock_add_folder("data");
+    mock_io_start();
+}
+
+void ConfigureTest::tearDown()
+{
+    mock_io_stop();
+}
+
 void ConfigureTest::basic()
 {
     shared_ptr<blieng::Data> data(new blieng::Data());
 
-    blieng::Configure *obj = new blieng::Configure(data);
+    shared_ptr<blieng::Configure> obj(new blieng::Configure(data));
 
     obj->addKey("key1", blieng::Configure::KeyString);
     obj->addKey("key2", blieng::Configure::KeyUInt);
@@ -39,4 +50,64 @@ void ConfigureTest::basic()
 
     CPPUNIT_ASSERT( obj->validate() );
     CPPUNIT_ASSERT( obj->validateValues() );
+}
+
+void ConfigureTest::json()
+{
+    std::string origdata = "{ \"strkey\": \"strval\", \"intkey\": 42, \"doublekey\": 3.14, \"test\": [1, 2, 4] }";
+    mock_set_file("data/data.json", origdata);
+
+    shared_ptr<blieng::Data> data(new blieng::Data());
+    shared_ptr<blieng::Configure> obj(new blieng::Configure(data));
+
+    obj->addKey("strkey", blieng::Configure::KeyString);
+    obj->addKey("intkey", blieng::Configure::KeyUInt);
+    obj->addKey("doublekey", blieng::Configure::KeyDouble);
+    obj->addKey("test", blieng::Configure::KeyIntList);
+
+    CPPUNIT_ASSERT( obj->load("data.json") );
+    CPPUNIT_ASSERT( obj->validate() );
+    CPPUNIT_ASSERT( obj->validateValues() );
+
+    CPPUNIT_ASSERT_EQUAL( obj->getStringValue("strkey"), std::string("strval") );
+    CPPUNIT_ASSERT_EQUAL( obj->getIntValue("intkey"), 42 );
+    CPPUNIT_ASSERT_EQUAL( obj->getDoubleValue("doublekey"), (double)3.14 );
+
+    std::vector<int> ilist = obj->getIntValues("test");
+
+    CPPUNIT_ASSERT(ilist.size() == 3);
+    CPPUNIT_ASSERT_EQUAL(ilist[0], 1);
+    CPPUNIT_ASSERT_EQUAL(ilist[1], 2);
+    CPPUNIT_ASSERT_EQUAL(ilist[2], 4);
+
+}
+
+void ConfigureTest::optional()
+{
+    std::string origdata = "{ \"strkey\": \"strval\", \"intkey\": 42 }";
+    std::string origdata2 = "{ \"strkey\": \"strval\", \"intkey\": 42, \"extra\": 123 }";
+    mock_set_file("data/data.json", origdata);
+    mock_set_file("data/data2.json", origdata2);
+
+    shared_ptr<blieng::Data> data(new blieng::Data());
+    shared_ptr<blieng::Configure> obj(new blieng::Configure(data));
+
+    obj->addKey("strkey", blieng::Configure::KeyString);
+    obj->addKey("intkey", blieng::Configure::KeyUInt);
+    obj->addOptionalKey("extra", blieng::Configure::KeyUInt);
+
+    CPPUNIT_ASSERT( obj->load("data.json") );
+    CPPUNIT_ASSERT( obj->validate() );
+    CPPUNIT_ASSERT( obj->validateValues() );
+
+    CPPUNIT_ASSERT_EQUAL( obj->getStringValue("strkey"), std::string("strval") );
+    CPPUNIT_ASSERT_EQUAL( obj->getIntValue("intkey"), 42 );
+    CPPUNIT_ASSERT( !obj->isValue("extra") );
+
+    CPPUNIT_ASSERT( obj->load("data2.json") );
+
+    CPPUNIT_ASSERT_EQUAL( obj->getStringValue("strkey"), std::string("strval") );
+    CPPUNIT_ASSERT_EQUAL( obj->getIntValue("intkey"), 42 );
+    CPPUNIT_ASSERT( obj->isValue("extra") );
+    CPPUNIT_ASSERT_EQUAL( obj->getIntValue("extra"), 123 );
 }

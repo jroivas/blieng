@@ -5,11 +5,18 @@
 
 class ConfigureTest : public CppUnit::TestFixture
 {
+public:
+    void setUp();
+    void tearDown();
     CPPUNIT_TEST_SUITE(ConfigureTest);
     CPPUNIT_TEST(basic);
+    CPPUNIT_TEST(json);
+    CPPUNIT_TEST(optional);
     CPPUNIT_TEST_SUITE_END();
-public:
+private:
     void basic();
+    void json();
+    void optional();
 };
 
 #endif

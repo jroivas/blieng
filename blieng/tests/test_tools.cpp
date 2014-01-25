@@ -9,7 +9,10 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <stdarg.h>
+#include <dirent.h>
 #include <sys/ioctl.h>
+#include <boost/algorithm/string/predicate.hpp>
+#include <boost/lexical_cast.hpp>
 
 static int __real__errno = 0;
 
@@ -21,9 +24,8 @@ int *__errno_location()
 class MockFile
 {
 public:
-    MockFile(std::string name) : magic(0x420012), name(name), open(true), mode(""), pos(0), eof(false), error(0) {
-    }
-    MockFile(std::string name, std::string mode) : magic(0x420012), name(name), open(true), mode(mode), pos(0), eof(false), error(0) {}
+    MockFile(const std::string &name) : magic(0x420012), name(name), open(true), mode(""), pos(0), eof(false), error(0) {}
+    MockFile(const std::string &name, const std::string &mode) : magic(0x420012), name(name), open(true), mode(mode), pos(0), eof(false), error(0) {}
 
     bool readonly() const
     {
@@ -44,8 +46,20 @@ public:
     int error;
 };
 
-#define VALIDATE(X) BOOST_ASSERT(X != NULL); BOOST_ASSERT(reinterpret_cast<MockFile*>(X)->magic == 0x420012); 
+class MockDir
+{
+public:
+    MockDir(const std::string &path) : magic(0x420015), name(path), entry(0) {}
+
+    unsigned int magic;
+    std::string name;
+    unsigned int entry;
+};
+
+#define VALIDATE(X) BOOST_ASSERT(X != NULL); BOOST_ASSERT(reinterpret_cast<MockFile*>(X)->magic == 0x420012);
+#define VALIDATE_DIR(X) BOOST_ASSERT(X != NULL); BOOST_ASSERT(reinterpret_cast<MockDir*>(X)->magic == 0x420015);
 #define MF(X) reinterpret_cast<MockFile*>(X)
+#define MD(X) reinterpret_cast<MockDir*>(X)
 
 static bool __mocking_io = false;
 static std::map<std::string, std::string> mock_files;
@@ -121,6 +135,13 @@ std::vector<std::string> mock_list_files()
 
 FILE* (*orig_fopen)(const char *path, const char *mode) = NULL;
 int (*orig_open)(const char *path, int flags, ...) = NULL;
+int (*orig_openat)(int dirfd, const char *pathname, int flags, ...) = NULL;
+long (*orig_pathconf)(char*,int) = NULL;
+long (*orig_fpathconf)(int fd, int name) = NULL;
+DIR* (*orig_opendir)(const char *name) = NULL;
+struct dirent *(*orig_readdir)(DIR *dirp) = NULL;
+int (*orig_readdir_r)(DIR *dirp, struct dirent *entry, struct dirent **result) = NULL;
+int (*orig_closedir)(DIR *dirp) = NULL;
 int (*orig_close)(int fd) = NULL;
 int (*orig_stat)(const char *path, struct stat *buf) = NULL;
 int (*orig_xstat)(int x, const char *path, struct stat *buf) = NULL;
@@ -166,9 +187,9 @@ int real_open(const char *pathname, int flags, mode_t mode)
 {
     if (__mocking_io) {
         prepare_std();
-    
+
         std::string amode = "";
-        
+
         if (flags & O_RDONLY) amode = "r";
         else if (flags & O_TRUNC) amode = "w+";
         //else if (flags & O_WRONLY) amode = "w";
@@ -189,7 +210,7 @@ int real_open(const char *pathname, int flags, mode_t mode)
         if (!mock_is_file(pathname)) {
             mock_set_file(pathname, "");
         }
-        
+
         return mock_ids.size() - 1;
     }
     if (!orig_open) orig_open = *(int (*)(const char *path, int flags, ...))dlsym(RTLD_NEXT, "open");
@@ -372,29 +393,6 @@ int stat64(const char *path, struct stat64 *buf) throw ()
 
 int __xstat(int x, const char *path, struct stat *buf) throw ()
 {
-#if 0
-    if (__mocking_io) {
-        if (mock_is_file(path)) {
-            if (buf) {
-                buf->st_dev = 1;
-                buf->st_ino = 2;
-                buf->st_mode = 0664;
-                buf->st_nlink = 1;
-                buf->st_uid = 0;
-                buf->st_gid = 0;
-                buf->st_rdev = 0;
-                std::string data = mock_get_data(path);
-                buf->st_size = data.size();
-                buf->st_blksize = 51;
-                buf->st_blocks = data.size() / 512 + 1;
-            }
-            return 0;
-        }
-        return -1;
-    }
-    if (!orig_xstat) orig_xstat = *(int (*)(int, const char *, struct stat *))dlsym(RTLD_NEXT, "__xstat");
-    return orig_xstat(x, path, buf);
-#endif
     return __xstat64(x, path, (struct stat64*)buf);
 }
 
@@ -551,11 +549,13 @@ int link(const char *oldpath, const char *newpath)
     return 0;
 }
 
+#if 0
 int closedir(DIR *dirp)
 {
     errno = ENOENT;
     return -1;
 }
+#endif
 
 DIR *fdopendir(int fd)
 {
@@ -685,7 +685,7 @@ FILE* fopen(const char *path, const char *mode)
         if (!mock_is_file(path)) {
             mock_set_file(path, "");
         }
-    
+
         MockFile *f = new MockFile(path, mode);
         mock_ids.push_back(f);
         return (FILE*)f;
@@ -893,7 +893,7 @@ int fileno(FILE *stream) throw ()
             mock_ids.push_back(MF(stream));
             if (!mock_is_file(MF(stream)->name)) {
                 mock_set_file(MF(stream)->name, "");
-            }        
+            }
             return mock_ids.size() - 1;
         }
 
@@ -967,4 +967,169 @@ int fclose(FILE *fp)
     return orig_fclose(fp);
 }
 
+
+//int openat(int dirfd, const char *pathname, int flags, ...)
+#if 0
+int openat(int dirfd, const char *pathname, int flags)
+{
+#if 0
+    mode_t mode;
+    va_list vl;
+    va_start(vl, flags);
+    mode = va_arg(vl, mode_t);
+    va_end(vl);
+#endif
+
+    if (__mocking_io) {
+        if (dirfd < 3) return 0;
+        //if (dirfd >= (int)mock_ids.size()) return -1;
+
+        std::string prefix = "";
+
+        //FIXME, directory fd support
+        if (dirfd != AT_FDCWD) {
+            prefix = "";
+        }
+
+        std::map<std::string, std::string>::iterator it = mock_files.begin();
+        while (it != mock_files.end()) {
+            try {
+                if (boost::starts_with(it->first, pathname)) {
+                    if ((flags & O_DIRECTORY) > 0) return 999;
+                }
+            } catch (boost::bad_lexical_cast) {
+            }
+            ++it;
+        }
+        //return -ENOENT;
+        return 666;
+    }
+    if (!orig_openat) orig_openat = (int (*)(int dirfd, const char*pathname, int, ...))dlsym(RTLD_NEXT, "openat");
+    return orig_openat(dirfd, pathname, flags);
+}
+#endif
+
+long fpathconf(int fd, int name)
+{
+    if (__mocking_io) {
+        errno = 0;
+        return -1;
+    }
+
+    if (!orig_fpathconf) orig_fpathconf = (long (*)(int,int))dlsym(RTLD_NEXT, "fpathconf");
+    return orig_fpathconf(fd, name);
+}
+
+long pathconf(char *path, int name)
+{
+    if (__mocking_io) {
+        errno = 0;
+        return -1;
+    }
+
+    if (!orig_pathconf) orig_pathconf = (long (*)(char*,int))dlsym(RTLD_NEXT, "pathconf");
+    return orig_pathconf(path, name);
+}
+
+DIR *opendir(const char *name)
+{
+    if (__mocking_io) {
+        std::string fname = name;
+        BOOST_FOREACH(std::string f, mock_folders) {
+            if (f == fname) {
+                return (DIR*)new MockDir(fname);
+            }
+        }
+        errno = ENOENT;
+        return NULL;
+    }
+    if (!orig_opendir) orig_opendir = (DIR* (*)(const char*))dlsym(RTLD_NEXT, "opendir");
+    return orig_opendir(name);
+}
+
+struct dirent *readdir(DIR *dirp)
+{
+    if (__mocking_io) {
+        struct dirent res;
+        struct dirent *res2 = NULL;
+        int val = readdir_r(dirp, &res, &res2);
+        if (val == 0) return res2;
+        else {
+            errno = ENOENT;
+            return NULL;
+        }
+
+        errno = 0;
+        return NULL;
+    }
+    if (!orig_readdir) orig_readdir = (struct dirent* (*)(DIR*))dlsym(RTLD_NEXT, "readdir");
+    return orig_readdir(dirp);
+}
+
+int readdir_r(DIR *dirp, struct dirent *entry, struct dirent **result)
+{
+    if (__mocking_io) {
+        VALIDATE_DIR(dirp);
+
+        unsigned int cnt = 0;
+
+        auto it = mock_files.begin();
+        while (it != mock_files.end()) {
+            if (boost::starts_with(it->first, MD(dirp)->name)) {
+                if (MD(dirp)->entry == cnt) {
+                    ++(MD(dirp)->entry);
+
+                    if (entry != NULL) {
+                        strncpy(entry->d_name, it->first.substr(MD(dirp)->name.length()).c_str(), 255);
+                        entry->d_name[255] = 0;
+                        entry->d_ino = 999;
+                        entry->d_type = DT_REG;
+                        entry->d_reclen = 0;
+                        entry->d_off = 0;
+                    }
+
+                    if (result != NULL) *result = entry;
+                    return 0;
+                }
+                //if ((flags & O_DIRECTORY) > 0) return 999;
+                ++cnt;
+            }
+            ++it;
+        }
+
+        if (result != NULL) {
+            *result = NULL;
+        }
+        if (cnt>0) return 0;
+        return -ENOENT;
+    }
+    if (!orig_readdir_r) orig_readdir_r = (int (*)(DIR*,struct dirent*, struct dirent**))dlsym(RTLD_NEXT, "readdir_r");
+    return orig_readdir_r(dirp, entry, result);
+}
+
+int readdir64_r(DIR *dirp, struct dirent64 *entry, struct dirent64 **result)
+{
+    return readdir_r(dirp, (struct dirent*)entry, (struct dirent**)result);
+}
+
+struct dirent64 *readdir64(DIR *dirp)
+{
+    return (struct dirent64*)readdir(dirp);
+}
+
+int closedir(DIR *dirp)
+{
+    if (__mocking_io) {
+        VALIDATE_DIR(dirp);
+
+        delete MD(dirp);
+        return 0;
+    }
+    if (!orig_closedir) orig_closedir = (int (*)(DIR*))dlsym(RTLD_NEXT, "closedir");
+    return orig_closedir(dirp);
+}
+
 #undef MF
+#undef MD
+#undef VALIDATE
+#undef VALIDATE_DIR

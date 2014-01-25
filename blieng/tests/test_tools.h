@@ -80,6 +80,8 @@ ssize_t write(int fd, const void *buf, size_t count);
 int poll(struct pollfd *fds, nfds_t nfds, int timeout);
 int ioctl(int d, unsigned long int request, ...) throw ();
 
+int openat(int dirfd, const char *pathname, int flags, ...);
+
 #ifdef __cplusplus
 }
 #endif
