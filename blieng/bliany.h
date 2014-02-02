@@ -77,7 +77,7 @@ public:
         if (this->type() == typeid(unsigned long)) return static_cast<long>(boost::any_cast<unsigned long>(*this));
         if (this->type() == typeid(float)) return boost::any_cast<float>(*this);
         if (this->type() == typeid(double)) return boost::any_cast<double>(*this);
-        doDebug("Error, invalid value, can't convert to a number");
+        //doDebug("Error, invalid value, can't convert to a number");
         throw std::string("Error, invalid value, can't convert to a number");
     }
 };

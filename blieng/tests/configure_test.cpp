@@ -69,9 +69,9 @@ void ConfigureTest::json()
     CPPUNIT_ASSERT( obj->validate() );
     CPPUNIT_ASSERT( obj->validateValues() );
 
-    CPPUNIT_ASSERT_EQUAL( obj->getStringValue("strkey"), std::string("strval") );
-    CPPUNIT_ASSERT_EQUAL( obj->getIntValue("intkey"), 42 );
-    CPPUNIT_ASSERT_EQUAL( obj->getDoubleValue("doublekey"), (double)3.14 );
+    CPPUNIT_ASSERT_EQUAL( std::string("strval"), obj->getStringValue("strkey") );
+    CPPUNIT_ASSERT_EQUAL( 42, obj->getIntValue("intkey"));
+    CPPUNIT_ASSERT_EQUAL( (double)3.14, obj->getDoubleValue("doublekey") );
 
     std::vector<int> ilist = obj->getIntValues("test");
 
@@ -100,8 +100,8 @@ void ConfigureTest::optional()
     CPPUNIT_ASSERT( obj->validate() );
     CPPUNIT_ASSERT( obj->validateValues() );
 
-    CPPUNIT_ASSERT_EQUAL( obj->getStringValue("strkey"), std::string("strval") );
-    CPPUNIT_ASSERT_EQUAL( obj->getIntValue("intkey"), 42 );
+    CPPUNIT_ASSERT_EQUAL( std::string("strval"), obj->getStringValue("strkey") );
+    CPPUNIT_ASSERT_EQUAL( 42, obj->getIntValue("intkey") );
     CPPUNIT_ASSERT( !obj->isValue("extra") );
 
     CPPUNIT_ASSERT( obj->load("data2.json") );

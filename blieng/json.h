@@ -38,16 +38,11 @@
 #ifndef json_int_t
    #ifndef _MSC_VER
       #include <inttypes.h>
-#ifdef ANDROID
       #define json_int_t long
       #define json_uint_t unsigned long
-#else
-      #define json_int_t int64_t
-      #define json_uint_t uint64_t
-#endif
    #else
-      #define json_int_t __int64
-      #define json_uint_t __uint64
+      #define json_int_t long
+      #define json_uint_t unsigned long
    #endif
 #endif
 

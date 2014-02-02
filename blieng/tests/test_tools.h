@@ -7,6 +7,16 @@
 #include <stdio.h>
 #include <fcntl.h>
 #include <poll.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <dirent.h>
+
+#include <unistd.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <memory.h>
+#include <stddef.h>
 
 class cout_redirect
 {
@@ -28,11 +38,11 @@ private:
 
 void mock_io_start();
 void mock_io_stop();
-void mock_set_file(std::string name, std::string data);
-void mock_remove_file(std::string name);
-bool mock_is_file(std::string name);
-void mock_add_folder(std::string name);
-std::string mock_get_data(std::string name);
+void mock_set_file(const std::string &name, const std::string &data);
+void mock_remove_file(const std::string &name);
+bool mock_is_file(const std::string &name);
+void mock_add_folder(const std::string &name);
+const std::string mock_get_data(const std::string &name);
 std::vector<std::string> mock_list_files();
 
 #ifdef __cplusplus
@@ -49,13 +59,13 @@ void rewind(FILE *stream);
 int fgetpos(FILE *stream, fpos_t *pos);
 int fflush(FILE *stream);
 int ferror(FILE *stream) throw ();
-void clearerr(FILE *stream);
+void clearerr(FILE *stream) throw();
 int fileno(FILE *stream) throw ();
 int fsetpos(FILE *stream, const fpos_t *pos);
 int feof(FILE *stream) throw ();
 int fclose(FILE *fp);
 
-int *__errno_location();
+int *__errno_location() __THROW __attribute__ ((__const__));
 
 int open(const char *pathname, int flags, ...) __nonnull ((1));
 int open64(const char *pathname, int flags, ...) __nonnull ((1));
@@ -72,7 +82,6 @@ int fstat(int fd, struct stat *buf) throw () __nonnull((2));
 int fstat64(int fd, struct stat64 *buf) throw () __nonnull((2));
 int lstat(const char *path, struct stat *buf) throw ();
 int close(int fd);
-//off_t lseek(int fd, off_t offset, int whence) throw ();
 
 ssize_t read(int fd, void *buf, size_t count);
 ssize_t write(int fd, const void *buf, size_t count);
@@ -81,6 +90,20 @@ int poll(struct pollfd *fds, nfds_t nfds, int timeout);
 int ioctl(int d, unsigned long int request, ...) throw ();
 
 int openat(int dirfd, const char *pathname, int flags, ...);
+
+long fpathconf(int fd, int name) throw();
+long pathconf(const char *path, int name) throw ();
+DIR *opendir(const char *name);
+int readdir_r(DIR *dirp, struct dirent *entry, struct dirent **result) __nonnull ((1, 2, 3));
+int readdir64_r(DIR *dirp, struct dirent64 *entry, struct dirent64 **result) __nonnull ((1, 2, 3));
+struct dirent *readdir(DIR *dirp);
+struct dirent64 *readdir64(DIR *dirp);
+struct dirent *readdir(DIR *dirp);
+int closedir(DIR *dirp) __nonnull ((1));
+
+int __fstat(int fd, struct stat *buf) throw ();
+int __lxstat(int x, const char *path, struct stat *buf) throw ();
+off_t lseek(int fd, off_t offset, int whence) throw();
 
 #ifdef __cplusplus
 }

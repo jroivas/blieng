@@ -13,10 +13,22 @@
 #include <sys/ioctl.h>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/lexical_cast.hpp>
+#include <errno.h>
+#include <error.h>
+
+/*
+#include <boost/thread/mutex.hpp>
+#include <boost/thread/locks.hpp>
+#include <boost/thread/lock_guard.hpp>
+static boost::mutex __mutex;
+static boost::mutex __data_mutex;
+static boost::mutex __fold_mutex;
+static boost::mutex __mockid_mutex;
+*/
 
 static int __real__errno = 0;
 
-int *__errno_location()
+int *__errno_location() __THROW
 {
     return &__real__errno;
 }
@@ -85,45 +97,56 @@ void mock_io_stop()
     if (!a.empty()) std::cerr << a << std::endl;
 }
 
-void mock_set_file(std::string name, std::string data)
+void mock_set_file(const std::string &name, const std::string &data)
 {
-    mock_files[name] = data;
+    //boost::lock_guard<boost::mutex> keylock(__data_mutex);
+    //mock_files[name] = data.c_str();
+    std::string tmp_copy(data.data(), data.size());
+
+    mock_files[name] = tmp_copy;
 }
 
-bool mock_is_folder(std::string name)
+bool mock_is_folder(const std::string &name)
 {
+    //boost::lock_guard<boost::mutex> keylock(__fold_mutex);
     BOOST_FOREACH(std::string f, mock_folders) {
         if (f == name) return true;
     }
     return false;
 }
 
-void mock_add_folder(std::string name)
+void mock_add_folder(const std::string &name)
 {
+    //boost::lock_guard<boost::mutex> keylock(__fold_mutex);
     mock_folders.push_back(name);
+    mock_folders.push_back(name+"/.");
 }
 
-void mock_remove_file(std::string name)
+void mock_remove_file(const std::string &name)
 {
+    //boost::lock_guard<boost::mutex> keylock(__data_mutex);
     std::map<std::string, std::string>::iterator it = mock_files.find(name);
     if (it != mock_files.end()) {
         mock_files.erase(it);
     }
 }
 
-bool mock_is_file(std::string name)
+bool mock_is_file(const std::string &name)
 {
+    //boost::lock_guard<boost::mutex> keylock(__data_mutex);
     return (mock_files.find(name) != mock_files.end());
 }
 
-std::string mock_get_data(std::string name)
+const std::string mock_get_data(const std::string &name)
 {
     BOOST_ASSERT( mock_is_file(name) );
+    //boost::lock_guard<boost::mutex> keylock(__data_mutex);
     return mock_files[name];
 }
 
 std::vector<std::string> mock_list_files()
 {
+    //boost::lock_guard<boost::mutex> keylock(__data_mutex);
     std::vector<std::string> res;
     std::map<std::string, std::string>::iterator it = mock_files.begin();
     while (it != mock_files.begin()) {
@@ -140,7 +163,7 @@ long (*orig_pathconf)(char*,int) = NULL;
 long (*orig_fpathconf)(int fd, int name) = NULL;
 DIR* (*orig_opendir)(const char *name) = NULL;
 struct dirent *(*orig_readdir)(DIR *dirp) = NULL;
-int (*orig_readdir_r)(DIR *dirp, struct dirent *entry, struct dirent **result) = NULL;
+int (*orig_readdir_r)(DIR *dirp, struct dirent64 *entry, struct dirent64 **result) = NULL;
 int (*orig_closedir)(DIR *dirp) = NULL;
 int (*orig_close)(int fd) = NULL;
 int (*orig_stat)(const char *path, struct stat *buf) = NULL;
@@ -186,6 +209,7 @@ void prepare_std()
 int real_open(const char *pathname, int flags, mode_t mode)
 {
     if (__mocking_io) {
+    	//boost::lock_guard<boost::mutex> keylock(__mockid_mutex);
         prepare_std();
 
         std::string amode = "";
@@ -249,6 +273,7 @@ int close(int fd)
     if (__mocking_io) {
         if (fd < 3) return 0;
 
+    	//boost::lock_guard<boost::mutex> keylock(__mockid_mutex);
         if (mock_ids.size() <= (unsigned int)fd) return -1;
 
         mock_ids[fd]->open = false;
@@ -260,24 +285,26 @@ int close(int fd)
     return orig_close(fd);
 }
 
-int fstat(int fd, struct stat *buf)
+int fstat(int fd, struct stat *buf) throw ()
 {
     if (__mocking_io) {
+    	//boost::lock_guard<boost::mutex> keylock(__mockid_mutex);
         if (fd < 3 || fd >= (int)mock_ids.size()) return 0;
 
-        return __xstat64(0, mock_ids[fd]->name.c_str(), (struct stat64*)buf);
+        return __xstat(0, mock_ids[fd]->name.c_str(), (struct stat*)buf);
     }
     if (!orig_fstat) orig_fstat = *(int (*)(int, struct stat *))dlsym(RTLD_NEXT, "fstat");
     return orig_fstat(fd, buf);
 }
-int __fstat(int fd, struct stat *buf)
+int __fstat(int fd, struct stat *buf) throw ()
 {
     return fstat(fd, buf);
 }
 
-int fstat64(int fd, struct stat64 *buf)
+int fstat64(int fd, struct stat64 *buf) throw ()
 {
     if (__mocking_io) {
+    	//boost::lock_guard<boost::mutex> keylock(__mockid_mutex);
         if (fd < 3 || fd >= (int)mock_ids.size()) return 0;
 
         return __xstat64(0, mock_ids[fd]->name.c_str(), buf);
@@ -289,6 +316,7 @@ int fstat64(int fd, struct stat64 *buf)
 int poll(struct pollfd *fds, nfds_t nfds, int timeout)
 {
     if (__mocking_io) {
+    	//boost::lock_guard<boost::mutex> keylock(__mockid_mutex);
         if (nfds > 0) {
             unsigned int nn = 0;
             for (size_t a = 0; a < nfds; a++) {
@@ -343,6 +371,7 @@ int poll(struct pollfd *fds, nfds_t nfds, int timeout)
 int ioctl(int fd, unsigned long int request, ...) throw ()
 {
     if (__mocking_io) {
+    	//boost::lock_guard<boost::mutex> keylock(__mockid_mutex);
         if (fd < 3) return 0;
         else if (fd >= (int)mock_ids.size()) {
             errno = EBADF;
@@ -368,41 +397,29 @@ int ioctl(int fd, unsigned long int request, ...) throw ()
     return orig_ioctl(fd, request);
 }
 
-int stat(const char *path, struct stat *buf)
+int stat(const char *path, struct stat *buf) throw ()
 {
-    if (__mocking_io) {
-        return __xstat(0, path, buf);
-    }
-#if 0
-    if (!orig_stat) orig_stat = *(int (*)(const char *, struct stat *))dlsym(RTLD_NEXT, "stat");
-    return orig_stat(path, buf);
-#else
-    if (!orig_xstat) orig_xstat = *(int (*)(int, const char *, struct stat *))dlsym(RTLD_NEXT, "__xstat");
-    return orig_xstat(0, path, buf);
-#endif
+    return __xstat(0, path, buf);
 }
 
 int stat64(const char *path, struct stat64 *buf) throw ()
 {
-    if (__mocking_io) {
-        return __xstat64(0, path, buf);
-    }
-    if (!orig_xstat64) orig_xstat64 = *(int (*)(int, const char *, struct stat64 *))dlsym(RTLD_NEXT, "__xstat64");
-    return orig_xstat64(0, path, buf);
+    return __xstat64(0, path, buf);
 }
 
 int __xstat(int x, const char *path, struct stat *buf) throw ()
 {
-    return __xstat64(x, path, (struct stat64*)buf);
+   return __xstat64(x, path, (struct stat64 *)buf);
 }
 
 int __xstat64(int x, const char *path, struct stat64 *buf) throw ()
 {
     if (__mocking_io) {
+	//boost::lock_guard<boost::mutex> keylock(__mutex);
         if (mock_is_folder(path)) {
             if (buf) {
                 buf->st_dev = 1;
-                buf->st_ino = 2;
+                buf->st_ino = 800 + strlen(path);
                 buf->st_mode = S_IFDIR | S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH;
                 buf->st_nlink = 1;
                 buf->st_uid = 0;
@@ -417,16 +434,16 @@ int __xstat64(int x, const char *path, struct stat64 *buf) throw ()
         else if (mock_is_file(path)) {
             if (buf) {
                 buf->st_dev = 1;
-                buf->st_ino = 2;
+                buf->st_ino = 1000 + strlen(path);
                 buf->st_mode = S_IFREG | S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
                 buf->st_nlink = 1;
                 buf->st_uid = 0;
                 buf->st_gid = 0;
                 buf->st_rdev = 0;
-                std::string data = mock_get_data(path);
-                buf->st_size = data.size();
+                const std::string file_data = mock_get_data(path);
+                buf->st_size = file_data.length();
                 buf->st_blksize = 512;
-                buf->st_blocks = data.size() / 512 + 1;
+                buf->st_blocks = buf->st_size / 512 + 1;
             }
             return 0;
         }
@@ -442,11 +459,6 @@ int __xstat64(int x, const char *path, struct stat64 *buf) throw ()
 #include <sys/types.h>
 #include <dirent.h>
 
-DIR *opendir(const char *name)
-{
-    errno = ENOENT;
-    return NULL;
-}
 int rmdir(const char *path)
 {
     errno = ENOENT;
@@ -455,14 +467,6 @@ int rmdir(const char *path)
 int mkdir(const char *path, mode_t mode)
 {
     errno = ENOENT;
-    return -1;
-}
-long fpathconf(int path, int name)
-{
-    return -1;
-}
-long pathconf(const char *path, int name)
-{
     return -1;
 }
 
@@ -485,24 +489,6 @@ int unlink(const char *pathname)
 {
     errno = ENOENT;
     return -1;
-}
-int readdir_r(DIR *dirp, struct dirent *entry, struct dirent **result)
-{
-    errno = ENOENT;
-    return -1;
-}
-int readdir64_r(DIR *dirp, struct dirent64 *entry, struct dirent64 **result)
-{
-    errno = ENOENT;
-    return -1;
-}
-struct dirent *readdir(DIR *dirp)
-{
-    return NULL;
-}
-struct dirent64 *readdir64(DIR *dirp)
-{
-    return NULL;
 }
 int rename(const char *oldpath, const char *newpath)
 {
@@ -548,14 +534,6 @@ int link(const char *oldpath, const char *newpath)
 {
     return 0;
 }
-
-#if 0
-int closedir(DIR *dirp)
-{
-    errno = ENOENT;
-    return -1;
-}
-#endif
 
 DIR *fdopendir(int fd)
 {
@@ -637,7 +615,13 @@ int __lxstat64(int x, const char *path, struct stat64 *buf) throw ()
     return __xstat64(x, path, buf);
 }
 
-int lstat(const char *path, struct stat *buf)
+int __lxstat(int x, const char *path, struct stat *buf) throw ()
+{
+    return __xstat(x, path, buf);
+}
+
+
+int lstat(const char *path, struct stat *buf) throw ()
 {
     if (__mocking_io) {
         return stat(path, buf);
@@ -677,6 +661,7 @@ ssize_t write(int fd, const void *buf, size_t count)
 FILE* fopen(const char *path, const char *mode)
 {
     if (__mocking_io) {
+    	//boost::lock_guard<boost::mutex> keylock(__mockid_mutex);
         std::string smode = mode;
         if ((smode == "r" || smode == "r+") && !mock_is_file(path)) {
             errno = ENOENT;
@@ -703,6 +688,7 @@ FILE* fopen64(const char *path, const char *mode)
 size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream)
 {
     if (__mocking_io) {
+    	//boost::lock_guard<boost::mutex> keylock(__mockid_mutex);
         if (stream == NULL) return -1;
         if (stream == stdin) stream = (FILE*)mock_ids[0];
         VALIDATE(stream);
@@ -773,7 +759,7 @@ int ferror(FILE *stream) throw ()
     return orig_ferror(stream);
 }
 
-void clearerr(FILE *stream)
+void clearerr(FILE *stream) throw()
 {
     if (__mocking_io) {
         if (stream == NULL) return;
@@ -795,6 +781,7 @@ void clearerr(FILE *stream)
 size_t fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream)
 {
     if (__mocking_io) {
+    	//boost::lock_guard<boost::mutex> keylock(__mockid_mutex);
         if (stream == NULL) return -1;
         prepare_std();
 
@@ -812,7 +799,6 @@ size_t fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream)
 
         std::string data = mock_get_data(name);
         while (data.size() < MF(stream)->pos) {
-            //data.append(1, 0);
             data.append(1, ' ');
         }
 
@@ -847,9 +833,10 @@ int fseek(FILE *stream, long offset, int whence)
     return orig_fseek(stream, offset, whence);
 }
 
-off_t lseek(int fd, off_t offset, int whence)
+off_t lseek(int fd, off_t offset, int whence) throw()
 {
     if (__mocking_io) {
+    	//boost::lock_guard<boost::mutex> keylock(__mockid_mutex);
         if (fd < 3) return 0;
         if (fd >= (int)mock_ids.size()) return -1;
 
@@ -871,6 +858,7 @@ int feof(FILE *stream) throw ()
 int fileno(FILE *stream) throw ()
 {
     if (__mocking_io) {
+    	//boost::lock_guard<boost::mutex> keylock(__mockid_mutex);
         if (stream == stdout) return 1;
         else if (stream == stderr) return 2;
         else if (stream == stdin) return 0;
@@ -1009,22 +997,22 @@ int openat(int dirfd, const char *pathname, int flags)
 }
 #endif
 
-long fpathconf(int fd, int name)
+long fpathconf(int fd, int name) throw()
 {
     if (__mocking_io) {
         errno = 0;
-        return -1;
+        return 255;
     }
 
     if (!orig_fpathconf) orig_fpathconf = (long (*)(int,int))dlsym(RTLD_NEXT, "fpathconf");
     return orig_fpathconf(fd, name);
 }
 
-long pathconf(char *path, int name)
+long pathconf(char *path, int name) throw()
 {
     if (__mocking_io) {
         errno = 0;
-        return -1;
+        return 255;
     }
 
     if (!orig_pathconf) orig_pathconf = (long (*)(char*,int))dlsym(RTLD_NEXT, "pathconf");
@@ -1034,6 +1022,7 @@ long pathconf(char *path, int name)
 DIR *opendir(const char *name)
 {
     if (__mocking_io) {
+    	//boost::lock_guard<boost::mutex> keylock(__fold_mutex);
         std::string fname = name;
         BOOST_FOREACH(std::string f, mock_folders) {
             if (f == fname) {
@@ -1066,50 +1055,68 @@ struct dirent *readdir(DIR *dirp)
     return orig_readdir(dirp);
 }
 
-int readdir_r(DIR *dirp, struct dirent *entry, struct dirent **result)
+int readdir64_r(DIR *dirp, struct dirent64 *entry, struct dirent64 **result)
 {
     if (__mocking_io) {
         VALIDATE_DIR(dirp);
 
         unsigned int cnt = 0;
 
+    	//boost::lock_guard<boost::mutex> keylock(__data_mutex);
         auto it = mock_files.begin();
         while (it != mock_files.end()) {
             if (boost::starts_with(it->first, MD(dirp)->name)) {
                 if (MD(dirp)->entry == cnt) {
                     ++(MD(dirp)->entry);
 
-                    if (entry != NULL) {
-                        strncpy(entry->d_name, it->first.substr(MD(dirp)->name.length()).c_str(), 255);
-                        entry->d_name[255] = 0;
-                        entry->d_ino = 999;
-                        entry->d_type = DT_REG;
-                        entry->d_reclen = 0;
-                        entry->d_off = 0;
-                    }
+                    unsigned int prefix_len = MD(dirp)->name.length() + 1;
+                    strncpy(entry->d_name, it->first.c_str() + prefix_len, 254);
+                    entry->d_name[254] = 0;
+                    entry->d_ino = 0;
+                    entry->d_type = DT_REG;
+                    entry->d_reclen = 0;
+                    entry->d_off = 0;
 
-                    if (result != NULL) *result = entry;
+                    *result = entry;
                     return 0;
                 }
-                //if ((flags & O_DIRECTORY) > 0) return 999;
                 ++cnt;
             }
             ++it;
         }
+#if 1
+    	//boost::lock_guard<boost::mutex> keylock_fold(__fold_mutex);
+        BOOST_FOREACH(std::string f, mock_folders) {
+            if (boost::starts_with(f, MD(dirp)->name) && f != MD(dirp)->name) {
+                if (MD(dirp)->entry == cnt) {
+                    ++(MD(dirp)->entry);
+                    unsigned int prefix_len = MD(dirp)->name.length() + 1;
+                    strncpy(entry->d_name, f.c_str()+ prefix_len, 254);
+                    entry->d_name[254] = 0;
+                    entry->d_ino = 900 + cnt;
+                    entry->d_type = DT_DIR;
+                    entry->d_reclen = 0;
+                    entry->d_off = 0;
 
-        if (result != NULL) {
-            *result = NULL;
+                    *result = entry;
+                    return 0;
+                }
+                ++cnt;
+            }
         }
+#endif
+
+            *result = NULL;
         if (cnt>0) return 0;
-        return -ENOENT;
+        return ENOENT;
     }
-    if (!orig_readdir_r) orig_readdir_r = (int (*)(DIR*,struct dirent*, struct dirent**))dlsym(RTLD_NEXT, "readdir_r");
+    if (!orig_readdir_r) orig_readdir_r = (int (*)(DIR*,struct dirent64*, struct dirent64**))dlsym(RTLD_NEXT, "readdir64_r");
     return orig_readdir_r(dirp, entry, result);
 }
 
-int readdir64_r(DIR *dirp, struct dirent64 *entry, struct dirent64 **result)
+int readdir_r(DIR *dirp, struct dirent *entry, struct dirent **result)
 {
-    return readdir_r(dirp, (struct dirent*)entry, (struct dirent**)result);
+    return readdir64_r(dirp, (struct dirent64*)entry, (struct dirent64**)result);
 }
 
 struct dirent64 *readdir64(DIR *dirp)

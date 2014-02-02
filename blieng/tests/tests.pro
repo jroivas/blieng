@@ -7,6 +7,8 @@ LIBS += -lcppunit -ldl
 #QMAKE_CXXFLAGS += -std=c++0x -g
 QMAKE_CXXFLAGS += -std=c++0x
 QMAKE_CXXFLAGS += -g
+QMAKE_CXXFLAGS += -O0
+CONFIG += debug
 
 INCLUDEPATH += ../
 
