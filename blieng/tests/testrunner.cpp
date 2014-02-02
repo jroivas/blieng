@@ -16,6 +16,7 @@
 #include "card_test.h"
 #include "configure_test.h"
 #include "town_test.h"
+#include "maps_test.h"
 
 int main(int argc, char **argv)
 {
