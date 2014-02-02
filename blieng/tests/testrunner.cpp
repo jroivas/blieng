@@ -15,6 +15,7 @@
 #include "bliany_test.h"
 #include "card_test.h"
 #include "configure_test.h"
+#include "town_test.h"
 
 int main(int argc, char **argv)
 {

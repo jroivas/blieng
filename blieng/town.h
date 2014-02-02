@@ -31,10 +31,12 @@ public:
 
     blieng::Point getPosition() const { return pos; }
 
+    //FIXME: Should we handle items as unique_ptr/shared_ptr??
     void addItem(Item *item);
     bool removeItem(Item *item);
     std::vector<Item *> getItems();
 
+    //FIXME: Should we handle characters as unique_ptr/shared_ptr??
     void addCharacter(Character *chr);
     bool removeCharacter(Character *chr);
     std::vector<Character *> getCharacters() const;
@@ -45,8 +47,6 @@ public:
     unsigned int getPopulation() const;
     unsigned int getCharacterClassCnt(const std::string &character_class);
     std::vector<blieng::Character *> getCharacterClass(const std::string &character_class);
-
-    void convertToZombies(double rate);
 
 private:
     std::vector<Item *> items;
