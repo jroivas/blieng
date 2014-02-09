@@ -21,6 +21,9 @@ public:
     unsigned int len;
 };
 
+static char * __data_key = nullptr;
+static unsigned int __data_key_len = 0;
+
 Data::Data()
 {
     data_path = findDataPath();
@@ -44,9 +47,15 @@ bool Data::initialize(const std::string &datafilename, const char *key, unsigned
             datafile = std::unique_ptr<blieng::DataFile>(new blieng::DataFile(data_file_path->string()));
         }
     }
+    if (key != NULL) {
+        if (__data_key != nullptr) delete __data_key;
+        __data_key_len = key_len;
+        __data_key = new char[key_len];
+        memmove(__data_key, key, key_len);
+    }
     bool res = false;
     if (datafile.get()) {
-        res = datafile->read(key, key_len);
+        res = datafile->read(__data_key, __data_key_len);
     }
 #ifndef ANDROID
     if (!res && data_path.get()) {

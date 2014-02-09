@@ -203,8 +203,6 @@ bool DataFile::read(const char *key, unsigned int key_len)
 
         auto name = obfuscateSimple(ob_name.get(), namelen);
 
-        //ob_name = nullptr;
-
         uint32_t datalen = 0;
 #ifdef ANDROID
         nb_read = asset_file.read(reinterpret_cast<char*>(&datalen), sizeof(uint32_t));
