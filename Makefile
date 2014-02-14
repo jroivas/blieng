@@ -1,7 +1,7 @@
 topdir ?= $(shell pwd)
 
 PRODUCT = blieng
-REL ?= etp5
+REL ?= etp6
 
 DEBUG ?= release
 TRACK ?= dev
