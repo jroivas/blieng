@@ -120,25 +120,25 @@ void Item::getItemBases()
             BOOST_FOREACH(std::string keyname, item_names) {
 
                 const json_value *val = data->getJsonValue(item_val, keyname);
-                bool ok = false;
+                bool item_is_ok = false;
                 if (keyname == "type") {
                     if (val->isString()) item->type = val->asString();
-                    ok = true;
+                    item_is_ok = true;
                 }
                 else if (keyname == "image") {
                     if (val->isString()) item->image = val->asString();
-                    ok = true;
+                    item_is_ok = true;
                 }
                 else if (keyname == "rarity") {
                     if (val->isNumeric()) {
                         item->rarity = val->asDouble();
-                        ok = true;
+                        item_is_ok = true;
                     }
                 }
                 else if (keyname == "life") {
                     if (val->isNumeric()) {
                         item->life = val->asInt();
-                        ok = true;
+                        item_is_ok = true;
                     }
                 }
                 else if (keyname == "consume") {
@@ -152,7 +152,7 @@ void Item::getItemBases()
                         }
                     }
                     item->consumes = _consumes;
-                    ok = true;
+                    item_is_ok = true;
                 }
                 if (val->type == json_uinteger) item->setValue(keyname, val->asUInt());
                 else if (val->type == json_integer) item->setValue(keyname, val->asInt());
@@ -160,7 +160,7 @@ void Item::getItemBases()
                 else if (val->type == json_string) item->setValue(keyname, val->asString());
                 else if (val->type == json_boolean) item->setValue(keyname, val->asBool());
                 else { //TODO unsupported
-                    if (!ok) std::cout << keyname << "has unsupported type!\n";
+                    if (!item_is_ok) std::cout << keyname << "has unsupported type!\n";
                 }
             }
             item_bases.push_back(std::move(item));
