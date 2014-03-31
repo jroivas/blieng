@@ -231,9 +231,9 @@ std::string BliObject::toString() const
     return res;
 }
 
-std::list<std::string> BliObject::getKeys()
+std::vector<std::string> BliObject::getKeys()
 {
-    std::list<std::string> res;
+    std::vector<std::string> res;
 #ifdef DATA_MUTEX_LOCK
     boost::lock_guard<boost::mutex> keylock(value_mutex);
 #endif
@@ -278,7 +278,8 @@ bool BliObject::changeNumberValue(const std::string &key, int diff)
             if (num > max) return false;
         }
         setValue(key, num);
-    } else {
+    }
+    else {
         return false;
     }
 

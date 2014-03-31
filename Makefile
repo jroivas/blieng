@@ -33,7 +33,7 @@ all: $(BUILDDIR)/$(PRODUCT)/lib$(PRODUCT).a
 prepare:
 	./tools/fetch_build.sh
 
-.PHONY: all prepare dist build-$(TARGET) test
+.PHONY: all prepare dist build-$(TARGET) test doc
 
 build-$(TARGET): prepare
 	@mkdir -p "$(BUILDDIR)/$(PRODUCT)"
@@ -68,6 +68,16 @@ clean:
 
 check:
 	cppcheck --enable=all -I. -I$(PRODUCT) --inconclusive --inline-suppr --check-config --xml-version=2 $(PRODUCT) 2> cppcheck_report_$(PRODUCT).xml
+
+doc: doc/html/index.html
+
+doxygen:
+	doxygen doc/config.doxy
+
+doc/html/index.html: doxygen
+
+doc/latex/refman.pdf: doxygen
+	cd doc/latex && pdflatex -interaction=nonstopmode refman
 
 upload: dist
 	./tools/build/binrep_upload.sh dist/$(OUT).$(DISTEXT) $(PRODUCT) $(BITS) $(TRACK)

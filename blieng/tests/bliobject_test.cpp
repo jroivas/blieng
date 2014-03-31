@@ -92,7 +92,7 @@ void BliObjectTest::getValues()
     CPPUNIT_ASSERT( *obj->getValueType("test_bool1") == typeid(bool) );
     CPPUNIT_ASSERT( *obj->getValueType("test_bool2") == typeid(bool) );
 
-    std::list<std::string> keys = obj->getKeys();
+    std::vector<std::string> keys = obj->getKeys();
 
     CPPUNIT_ASSERT( std::find(keys.begin(), keys.end(), "test_int") != keys.end() );
     CPPUNIT_ASSERT( std::find(keys.begin(), keys.end(), "test_uint") != keys.end() );
