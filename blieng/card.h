@@ -11,6 +11,10 @@ using std::unique_ptr;
 namespace blieng
 {
 
+/**
+ * A general card, support for mainly basic combination operations.
+ * Idea is to inherit this and extend with real functionality in the game.
+ */
 class Card : public BliObject
 {
 public:
@@ -101,6 +105,9 @@ public:
 
 protected:
     auto_vector<blieng::Card> combined;
+    /**
+     * Generates the Unique ID.
+     */
     void genUUID();
 
 private:
