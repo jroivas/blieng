@@ -46,12 +46,14 @@ bool Card::remove(size_t index)
     return false;
 }
 
-void Card::remove(auto_vector<blieng::Card>::iterator &iter)
+bool Card::remove(auto_vector<blieng::Card>::iterator &iter)
 {
     BOOST_ASSERT( iter < combined.end() );
     if (iter < combined.end()) {
         combined.erase(iter);
+        return true;
     }
+    return false;
 }
 
 void Card::genUUID()
