@@ -11,25 +11,62 @@ using blieng::DataFile;
 static unsigned int __key_size = 256/8;
 typedef auto_map<std::string,blieng::DataFile::DataFileObject>::iterator_value datafile_item_t;
 
+/**
+ * Helper class to safely pass pointer.
+ * Pointer data is copied and automatically deleted.
+ */
 class blieng::SafeDataPtr
 {
 public:
+    /**
+     * Initialize with char data.
+     * Reserves memory and copies the data
+     *
+     * \param _data The data
+     * \param _len Length of the data
+     */
     SafeDataPtr(char _data[], unsigned int _len) : len(_len) {
         dataptr = new char[len];
         memmove(dataptr, _data, len);
     }
+    /**
+     * Initialize with unsigned char data.
+     * Reserves memory and copies the data.
+     * Casts the data to signed format.
+     *
+     * \param _data The data
+     * \param _len Length of the data
+     */
     SafeDataPtr(unsigned char _data[], unsigned int _len) : len(_len) {
         dataptr = new char[len];
         memmove(dataptr, reinterpret_cast<char*>(_data), len);
     }
+    /**
+     * Automatically delete the data
+     */
     virtual ~SafeDataPtr() {
         if (dataptr != nullptr) delete [] dataptr;
         dataptr = nullptr;
         len = 0;
     }
 
+    /**
+     * Get pointer to the data
+     *
+     * \returns Pointer to the data
+     */
     const char * getData() const { return dataptr; }
+    /**
+     * Get lenght of the data
+     *
+     * \returns Length of the data
+     */
     unsigned int length() const { return len; }
+    /**
+     * Get lenght of the data
+     *
+     * \returns Length of the data
+     */
     unsigned int size() const { return len; }
 
 private:
@@ -50,6 +87,7 @@ DataFile::DataFile(const std::string &name)
 
 DataFile::~DataFile()
 {
+    //Should we write?
 }
 
 void DataFile::setName(const std::string &name)
@@ -129,7 +167,7 @@ bool DataFile::addData(const std::string &name, const std::string &data)
     return true;
 }
 
-bool DataFile::addData(const std::string &name, char *data, unsigned int len)
+bool DataFile::addData(const std::string &name, const char *data, unsigned int len)
 {
     std::string uname = unifyName(name);
     if (uname == "") return false;
