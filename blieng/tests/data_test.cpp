@@ -98,7 +98,7 @@ void DataTest::readData()
     mock_io_start();
 
     shared_ptr<blieng::Data> obj(new blieng::Data());
-    char *res = nullptr;
+    const char *res = nullptr;
     unsigned int cnt = obj->readData("datas", &res);
 
     CPPUNIT_ASSERT( cnt > 0 );

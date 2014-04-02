@@ -8,17 +8,30 @@
 
 using blieng::Data;
 
+/**
+ * Internally utilized data/file buffer to store data in memory.
+ */
 class blieng::DataBuffer
 {
 public:
+    /**
+     * Constructor is utilized to initialize values.
+     *
+     * \param _name Name of file
+     * \param _data Contents of file, should be freeable
+     * \param _len Length of file
+     */
     DataBuffer(const std::string &_name, char *_data, unsigned int _len) : name(_name), data(_data), len(_len) {}
+    /**
+     * Frees the memory reserved by data
+     */
     ~DataBuffer() {
         delete data;
     }
 
-    std::string name;
-    char *data;
-    unsigned int len;
+    std::string name; //!< Name of the file
+    char *data; //!< Contents of the file
+    unsigned int len; //!< Length of the data/file
 };
 
 static char * __data_key = nullptr;
@@ -350,7 +363,7 @@ std::vector<std::string> Data::readLinesFromFile(const std::string &name) const
     return tmp;
 }
 
-unsigned int Data::readDataFromDataPath(const std::string &name, char **data)
+unsigned int Data::readDataFromDataPath(const std::string &name, const char **data)
 {
 #ifndef ANDROID
     BOOST_FOREACH(blieng::DataBuffer *buf, __buffers)
@@ -403,7 +416,7 @@ unsigned int Data::readDataFromDataPath(const std::string &name, char **data)
     return 0;
 }
 
-unsigned int Data::readData(const std::string &name, char **data)
+unsigned int Data::readData(const std::string &name, const char **data)
 {
 #ifndef ANDROID
     if (data_path.get()) {
