@@ -63,3 +63,31 @@ void EventLogTest::events()
     CPPUNIT_ASSERT( log->toString().find("[cash] 10") != std::string::npos );
     CPPUNIT_ASSERT( log->toString().find("[cash] -3") != std::string::npos );
 }
+
+void EventLogTest::counters()
+{
+    EventLog *obj = EventLog::getInstance();
+    CPPUNIT_ASSERT_EQUAL( (unsigned int)0, obj->getCounter("test1") );
+    CPPUNIT_ASSERT_EQUAL( (unsigned int)0, obj->getCounter("test2") );
+
+    obj->incrementCounter("test1");
+    CPPUNIT_ASSERT_EQUAL( (unsigned int)1, obj->getCounter("test1") );
+    CPPUNIT_ASSERT_EQUAL( (unsigned int)0, obj->getCounter("test2") );
+
+    obj->incrementCounter("test1");
+    CPPUNIT_ASSERT_EQUAL( (unsigned int)2, obj->getCounter("test1") );
+    CPPUNIT_ASSERT_EQUAL( (unsigned int)0, obj->getCounter("test2") );
+
+    obj->incrementCounter("test1");
+    obj->incrementCounter("test2");
+    CPPUNIT_ASSERT_EQUAL( (unsigned int)3, obj->getCounter("test1") );
+    CPPUNIT_ASSERT_EQUAL( (unsigned int)1, obj->getCounter("test2") );
+
+    obj->incrementCounter("test2", 5);
+    CPPUNIT_ASSERT_EQUAL( (unsigned int)3, obj->getCounter("test1") );
+    CPPUNIT_ASSERT_EQUAL( (unsigned int)6, obj->getCounter("test2") );
+
+    obj->incrementCounter("test1", 1024);
+    CPPUNIT_ASSERT_EQUAL( (unsigned int)1027, obj->getCounter("test1") );
+    CPPUNIT_ASSERT_EQUAL( (unsigned int)6, obj->getCounter("test2") );
+}

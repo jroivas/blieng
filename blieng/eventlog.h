@@ -98,7 +98,7 @@ private:
     std::string name;
 };
 
-//FIXME: implement counters and achivements
+//FIXME: implement achivements
 
 /**
  * General event logging
@@ -108,7 +108,7 @@ class EventLog
 public:
     /**
      * Get the event log singleton.
-     * TODO FIXME: Get rid of singleton?
+     *
      * \return Instance of event log
      */
     static EventLog *getInstance();
@@ -154,6 +154,22 @@ public:
      * \returns An \ref ObjectLog instance containing all events mapped to the name
      */
     ObjectLog *get(const std::string &name);
+
+    /**
+     * Increment a named counter.
+     * Adds given number to the named counter. Counter is zero by default.
+     *
+     * \param name Name of the counter
+     * \param cnt Increment count
+     */
+    void incrementCounter(const std::string &name, unsigned int cnt=1);
+    /**
+     * Get current value of the named counter.
+     *
+     * \param name Name of the counter
+     * \returns Current value of the counter.
+     */
+    unsigned int getCounter(const std::string &name) const;
 
 private:
     EventLog();

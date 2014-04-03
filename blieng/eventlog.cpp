@@ -6,6 +6,8 @@ using blieng::ObjectLog;
 using blieng::EventLog;
 using blieng::BliAny;
 
+static std::string __counter_object_name = "__global_counters";
+
 ObjectLog::ObjectLog() : BliObject()
 {
     object = nullptr;
@@ -147,9 +149,36 @@ ObjectLog *EventLog::get(void *object)
     return nullptr;
 }
 
-#if 0
-std::vector<ObjectLog *> EventLog::getAll()
+void EventLog::incrementCounter(const std::string &name, unsigned int cnt)
 {
-    return events;
+    ObjectLog *__counters = nullptr;
+    BOOST_FOREACH(ObjectLog *_log, events) {
+        if (_log->getName() == __counter_object_name) {
+            __counters = _log;
+            break;
+        }
+    }
+
+    if (__counters == nullptr) {
+        __counters = new ObjectLog(__counter_object_name);
+        unique_ptr<ObjectLog> newobject(__counters);
+        events.push_back(std::move(newobject));
+    }
+
+    if (!__counters->isValue(name)) __counters->setValue(name, static_cast<unsigned int>(0));
+    __counters->changeNumberValue(name, cnt);
 }
-#endif
+
+unsigned int EventLog::getCounter(const std::string &name) const
+{
+    BOOST_FOREACH(ObjectLog *_log, events) {
+        if (_log->getName() == __counter_object_name) {
+            if (_log->isValue(name)) {
+                return _log->getUIntValue(name);
+            }
+            return 0;
+        }
+    }
+
+    return 0;
+}
