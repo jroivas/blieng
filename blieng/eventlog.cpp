@@ -48,7 +48,7 @@ void ObjectLog::addEvent(BliAny event)
     events.push_back(data);
 }
 
-std::string ObjectLog::anyToString(BliAny data) const
+std::string ObjectLog::anyToString(BliAny data)
 {
     std::ostringstream res;
     res << data;
