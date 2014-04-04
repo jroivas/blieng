@@ -73,7 +73,7 @@ void Path::append(Path another)
     }
 }
 
-Path Path::combine(Path another)
+Path Path::combine(Path another) const
 {
     Path newpath;
     BOOST_FOREACH(blieng::Point pt, points) {
@@ -134,7 +134,7 @@ void Path::reverse()
     std::reverse(points.begin(), points.end());
 }
 
-Path Path::copy()
+Path Path::copy() const
 {
     Path newpath;
     BOOST_FOREACH(blieng::Point pt, points) {
@@ -144,7 +144,7 @@ Path Path::copy()
     return newpath;
 }
 
-Path Path::reversed()
+Path Path::reversed() const
 {
     Path rev_path = this->copy();
     rev_path.reverse();
