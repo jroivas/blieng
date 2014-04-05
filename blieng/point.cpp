@@ -31,7 +31,7 @@ void Point::update(Point another)
     y = another.y;
 }
 
-Point Point::traverse(Point target, double now, double time)
+Point Point::traverse(Point target, double now, double time) const
 {
     //Travel to another point, in specific time, specify now as current time
     if (now <= 0) return *this;
