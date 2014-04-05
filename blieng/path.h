@@ -9,6 +9,9 @@
 namespace blieng
 {
 
+/**
+ * Path consists one or more waypoints.
+ */
 class Path
 {
 public:
