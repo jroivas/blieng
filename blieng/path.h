@@ -110,7 +110,7 @@ public:
      * Replace a waypoint with another.
      *
      * \param index Index of the waypoint to replace.
-     * \prama new_point New point replacing the old one.
+     * \param new_point New point replacing the old one.
      */
     void updatePointAt(int index, Point new_point);
     /**
@@ -119,7 +119,7 @@ public:
      * will replace it with the new one.
      *
      * \param point The point to be replaced.
-     * \prama new_point New point replacing the old one.
+     * \param new_point New point replacing the old one.
      */
     void updatePoint(Point point, Point new_point);
 

@@ -78,7 +78,7 @@ public:
     void assignObject(Character *another);
 
 protected:
-    auto_vector<blieng::Item> items;
+    auto_vector<blieng::Item> items; //!< Items character owns
 };
 
 }

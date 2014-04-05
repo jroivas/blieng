@@ -78,7 +78,7 @@ public:
     /**
      * Change the background image file.
      *
-     * \ref filename New filename to be set as background image.
+     * \param filename New filename to be set as background image.
      */
     void setBackgroundImage(const std::string &filename);
 

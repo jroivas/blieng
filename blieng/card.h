@@ -104,14 +104,15 @@ public:
     virtual inline auto_vector<blieng::Card>::const_iterator end() const { return combined.end(); }
 
 protected:
-    auto_vector<blieng::Card> combined;
     /**
      * Generates the Unique ID.
      */
     void genUUID();
 
+    auto_vector<blieng::Card> combined; //!< List of combined cards
+
 private:
-    std::string card_uuid;
+    std::string card_uuid; //!< Unique ID of card
 };
 
 }

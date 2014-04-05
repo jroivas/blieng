@@ -150,7 +150,7 @@ public:
      * For example "test###" with number 42 will be "test042".
      *
      * \param replace_string A string template to do the replacing in
-     * \parma num Number to be put in the string
+     * \param num Number to be put in the string
      * \returns New formatted string
      */
     std::string formatString(const std::string &replace_string, unsigned int num) const;

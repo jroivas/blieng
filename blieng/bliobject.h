@@ -215,7 +215,7 @@ public:
     static bool getRandomBoolean();
 
 protected:
-    std::map<std::string, BliAny> values;
+    std::map<std::string, BliAny> values; //!< Contains key value mappings
 
 #ifdef DATA_MUTEX_LOCK
 private:

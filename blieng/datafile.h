@@ -96,11 +96,11 @@ public:
         char *get() const { return dataptr; }
 
     protected:
-        char *dataptr;
-        unsigned int len;
+        char *dataptr; //!< The data itself
+        unsigned int len; //!< Length of the data
         friend class DataFile;
 
-    protected:
+    private:
         /**
          * Helper tool to setup the encryption key.
          *
@@ -111,6 +111,12 @@ public:
          * \return Safe pointer to modified key data
          */
         std::unique_ptr<blieng::SafeDataPtr> setupKey(const char *key, unsigned int len, const char *iv=nullptr, unsigned int iv_len=0);
+
+        /**
+         * Real length of the data.
+         * Obfuscating may change the length of data
+         * written to file. Need to know the length of the real data as well.
+         */
         unsigned int real_len;
     };
 

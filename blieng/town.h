@@ -67,7 +67,7 @@ public:
     /**
      * Sets town Y position.
      *
-     * \param x New Y position
+     * \param y New Y position
      */
     void setPositionY(double y);
     /**
@@ -171,11 +171,11 @@ public:
     std::vector<blieng::Character *> getCharacterClass(const std::string &character_class);
 
 private:
-    std::vector<Item *> items;
-    std::vector<Character *> characters;
-    std::string name;
-    unsigned int size;
-    blieng::Point pos;
+    std::vector<Item *> items; //!< List of items
+    std::vector<Character *> characters; //!< List of characters
+    std::string name; //!< Name of the town
+    unsigned int size; //!< Town size
+    blieng::Point pos; //!< Town position
 };
 
 }
