@@ -337,7 +337,11 @@ bool ItemBase::update(ItemBase *another)
 {
     if (another == nullptr) return false;
     if (another->base != base) return false;
-    if (another->life != life) return false;
+    if (another->type != type) return false;
+    //if (another->life != life) return false; // XXX What, is this really a valid check?
+    if (another->life == 0) return false;
+
+    if (another->base != base) return false;
 
     amount += another->amount;
     another->amount = 0;
