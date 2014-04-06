@@ -34,6 +34,7 @@ namespace blieng {
 
 /**
  * Item base, which contais mandatory parts of the item.
+ * Is not utilized as-is, but Item is inherited from this one.
  */
 class ItemBase : public BliObject
 {
@@ -184,36 +185,120 @@ public:
 };
 
 /**
- * Item object itself, may contain item specific stuff
+ * Item object itself.
+ * May contain item specific values, which are not
+ * meant to be shared in item base.
  */
 class Item : public ItemBase
 {
 public:
+    /**
+     * Intializes item, with necessary configuration and data backend instances.
+     */
     Item(shared_ptr<blieng::Configure> configure, shared_ptr<blieng::Data> data);
+    /**
+     * Generate empty item, without configuration.
+     *
+     * \param name Name of the item
+     */
     Item(const std::string &name);
     virtual ~Item() { }
 
+    /**
+     * Make a copy of this item.
+     *
+     * \returns A new item
+     */
     std::unique_ptr<Item> copy();
 
-    bool consume(std::unique_ptr<Item>);
+    /**
+     * Make this item consume other item.
+     * Consuming increases stock and enables this item
+     * to produce something.
+     *
+     * \param another Other item
+     * \returns True if item is consumed, false otherwise
+     */
+    bool consume(std::unique_ptr<Item> another);
+    /**
+     * Produces other item.
+     * This item needs proper amount of all
+     * of the other required items.
+     * If all prequisities are met, a new item is produced.
+     * Otherwise throws an error.
+     *
+     * \param produce_amount Amount of new items to produce
+     * \returns A new item
+     * \throws char* String to explain the error
+     */
     std::unique_ptr<Item> produce(double produce_amount=1) throw (char *);
+    /**
+     * Tell if this item is usable.
+     * Item might not be usable if it's exhausted,
+     * or it's generation is not completed.
+     *
+     * \returns True is item is usable, false otherwise.
+     */
     bool isUsable() const { return usable; }
+    /**
+     * Force this item to be usable.
+     */
     void setUsable() { usable = true; }
+
+    /**
+     * List all availale item names.
+     *
+     * \returns Vector of strings containing item names
+     */
     std::vector<std::string> listItems() const;
+    /**
+     * Check if item with certain name is available.
+     * Availability means one can create such item,
+     * and it's defined in configuration.
+     *
+     * \param name Name of item to check
+     * \returns True if item is available
+     */
     bool isItem(const std::string &name) const;
+    /**
+     * Removes item from known items.
+     * Permanently removes the item from supported items.
+     *
+     * \param name Name of item to remove
+     * \returns True if removed properly, false otherwise
+     */
     bool removeItem(std::unique_ptr<Item> item);
 
+    /**
+     * Generate JSON presentation of all item bases.
+     *
+     * \returns String containing item bases in JSON format
+     */
     std::string generateBaseJson();
+    /**
+     * Get string presentation of this item.
+     *
+     * \returns String presentation of this item
+     */
     virtual std::string toString() const;
 
 private:
+    /**
+     * Initialize the item, set basic values.
+     */
     void init();
+    /**
+     * Load item bases from configuration file.
+     * Search for itemfile in configuration,
+     * tries to load the file and parse it.
+     * Item file should be JSON.
+     */
     void getItemBases();
 
-    static bool ok;
-    static auto_vector<ItemBase> item_bases;
-    shared_ptr<blieng::Configure> config;
-    shared_ptr<blieng::Data> data;
+    static bool ok; //!< Checks if item bases are already loaded to avoid loading it multiple times
+    static auto_vector<ItemBase> item_bases; //!< List of item base object
+    shared_ptr<blieng::Configure> config; //!< Shared configuration object
+    shared_ptr<blieng::Data> data; //!< Shared data backed object
 };
 
 }
