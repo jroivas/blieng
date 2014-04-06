@@ -267,7 +267,7 @@ typedef struct _json_value
 
       } array;
 
-   } u;
+   } u; //!< Union of different data content, data type definded by \ref type
 
    /**
     * Linked list for next value allocation
