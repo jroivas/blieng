@@ -264,7 +264,7 @@ public:
      * Removes item from known items.
      * Permanently removes the item from supported items.
      *
-     * \param name Name of item to remove
+     * \param item Item to remove
      * \returns True if removed properly, false otherwise
      */
     bool removeItem(std::unique_ptr<Item> item);

@@ -68,7 +68,7 @@ void Wallclock::produceTier2Items()
     // Go thorough the items
     auto it = items.begin();
     while (it != items.end()) {
-        int count = 0x1000;
+        int count = 0x1000; //FIXME Hardcoded magic!
         bool ok = true;
         do  {
             std::unique_ptr<Item> new_item = (*it)->produce();
@@ -89,7 +89,7 @@ void Wallclock::produceTier2Producers()
     // Go thorough the producers
     auto it = producers.begin();
     while (it != producers.end()) {
-        int count = 0x1000;
+        int count = 0x1000; //FIXME Hardcoded magic!
         bool ok = true;
         do  {
             std::unique_ptr<Item> new_item = (*it)->produce();
