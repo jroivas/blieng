@@ -64,15 +64,18 @@ static unsigned char hex_value (json_char c)
    }
 }
 
+/**
+ * Internal state of JSON
+ */
 typedef struct
 {
-   unsigned long used_memory;
+   unsigned long used_memory; //!< Size of memory used
 
-   unsigned int uint_max;
-   unsigned long ulong_max;
+   unsigned int uint_max; //!< Max uint size
+   unsigned long ulong_max; //!< Max ulong size
 
-   json_settings settings;
-   int first_pass;
+   json_settings settings; //!< Special settings for parsing
+   int first_pass; //!< Is this the first pass?
 
 } json_state;
 
@@ -378,7 +381,7 @@ json_value * json_parse_ex (json_settings * settings,
                      if (state.first_pass)
                         (*(json_char **) &top->u.object.values) += string_length + 1;
                      else
-                     {  
+                     {
                         top->u.object.values [top->u.object.length].name
                            = (json_char *) top->_reserved.object_mem;
 
@@ -743,7 +746,7 @@ json_value * json_parse_ex (json_settings * settings,
 
             if (top->parent->type == json_array)
                flags |= flag_seek_value;
-               
+
             if (!state.first_pass)
             {
                json_value * parent = top->parent;
