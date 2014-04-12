@@ -45,6 +45,11 @@ void mock_add_folder(const std::string &name);
 const std::string mock_get_data(const std::string &name);
 std::vector<std::string> mock_list_files();
 
+std::string mock_get_stdout();
+std::string mock_get_stderr();
+void mock_clear_stdout();
+void mock_clear_stderr();
+
 #ifdef __cplusplus
 extern "C" {
 #endif

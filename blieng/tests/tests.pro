@@ -33,6 +33,7 @@ HEADERS += point_test.h \
            card_test.h \
            town_test.h \
            maps_test.h \
+           logging_test.h \
            configure_test.h \
            test_tools.h
 SOURCES += point_test.cpp \
@@ -49,6 +50,7 @@ SOURCES += point_test.cpp \
            card_test.cpp \
            town_test.cpp \
            maps_test.cpp \
+           logging_test.cpp \
            configure_test.cpp \
            testrunner.cpp \
            test_tools.cpp

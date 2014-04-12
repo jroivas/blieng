@@ -17,6 +17,7 @@
 #include "configure_test.h"
 #include "town_test.h"
 #include "maps_test.h"
+#include "logging_test.h"
 
 int main(int argc, char **argv)
 {

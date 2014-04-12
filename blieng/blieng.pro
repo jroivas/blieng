@@ -42,6 +42,7 @@ HEADERS += \
     town.h \
     card.h \
     bliany.h \
+    logging.h \
     auto_map.h \
     auto_vector.h \
     rijndael-alg-fst.h \
@@ -60,6 +61,7 @@ SOURCES += \
     point.cpp \
     town.cpp \
     card.cpp \
+    logging.cpp \
     rijndael-alg-fst.c \
     json.c \
     wallclock.cpp

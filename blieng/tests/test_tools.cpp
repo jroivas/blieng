@@ -27,6 +27,9 @@ static boost::mutex __mockid_mutex;
 */
 
 static int __real__errno = 0;
+static std::string __stdout_file = "__stdout";
+static std::string __stderr_file = "__stderr";
+static std::string __stdin_file = "__stdin";
 
 int *__errno_location() __THROW
 {
@@ -78,11 +81,24 @@ static std::map<std::string, std::string> mock_files;
 static std::vector<MockFile*> mock_ids;
 static std::vector<std::string> mock_folders;
 
+std::string mock_get_stdout()
+{
+    return mock_get_data(__stdout_file);
+}
+
+std::string mock_get_stderr()
+{
+    return mock_get_data(__stderr_file);
+}
+
+void mock_clear_stdout() { mock_set_file(__stdout_file, ""); }
+void mock_clear_stderr() { mock_set_file(__stderr_file, ""); }
+
 void mock_io_start()
 {
-    if (!mock_is_file("__stdin")) mock_set_file("__stdin", "");
-    if (!mock_is_file("__stdout")) mock_set_file("__stdout", "");
-    if (!mock_is_file("__stderr")) mock_set_file("__stderr", "");
+    if (!mock_is_file(__stdin_file)) mock_set_file(__stdin_file, "");
+    if (!mock_is_file(__stdout_file)) mock_set_file(__stdout_file, "");
+    if (!mock_is_file(__stderr_file)) mock_set_file(__stderr_file, "");
     if (!mock_is_file("/dev/urandom")) mock_set_file("/dev/urandom", "");
     __mocking_io = true;
 }
@@ -91,9 +107,9 @@ void mock_io_stop()
 {
     __mocking_io = false;
 
-    std::string a = mock_get_data("__stdout");
+    std::string a = mock_get_data(__stdout_file);
     if (!a.empty()) std::cout << a << std::endl;
-    a = mock_get_data("__stderr");
+    a = mock_get_data(__stderr_file);
     if (!a.empty()) std::cerr << a << std::endl;
 }
 
@@ -195,21 +211,21 @@ void prepare_std()
 {
     if (mock_ids.size() >= 3) return;
 
-    mock_ids.push_back(new MockFile("__stdin", "r"));
-    mock_ids.push_back(new MockFile("__stdout", "w"));
-    mock_ids.push_back(new MockFile("__stderr", "w"));
+    mock_ids.push_back(new MockFile(__stdin_file, "r"));
+    mock_ids.push_back(new MockFile(__stdout_file, "w"));
+    mock_ids.push_back(new MockFile(__stderr_file, "w"));
     mock_ids.push_back(new MockFile("/dev/urandom", "r"));
 
-    if (!mock_is_file("__stdin")) mock_set_file("__stdin", "");
-    if (!mock_is_file("__stdout")) mock_set_file("__stdout", "");
-    if (!mock_is_file("__stderr")) mock_set_file("__stderr", "");
+    if (!mock_is_file(__stdin_file)) mock_set_file(__stdin_file, "");
+    if (!mock_is_file(__stdout_file)) mock_set_file(__stdout_file, "");
+    if (!mock_is_file(__stderr_file)) mock_set_file(__stderr_file, "");
     if (!mock_is_file("/dev/urandom")) mock_set_file("/dev/urandom", "");
 }
 
 int real_open(const char *pathname, int flags, mode_t mode)
 {
     if (__mocking_io) {
-    	//boost::lock_guard<boost::mutex> keylock(__mockid_mutex);
+        //boost::lock_guard<boost::mutex> keylock(__mockid_mutex);
         prepare_std();
 
         std::string amode = "";
@@ -273,7 +289,7 @@ int close(int fd)
     if (__mocking_io) {
         if (fd < 3) return 0;
 
-    	//boost::lock_guard<boost::mutex> keylock(__mockid_mutex);
+        //boost::lock_guard<boost::mutex> keylock(__mockid_mutex);
         if (mock_ids.size() <= (unsigned int)fd) return -1;
 
         mock_ids[fd]->open = false;
@@ -288,7 +304,7 @@ int close(int fd)
 int fstat(int fd, struct stat *buf) throw ()
 {
     if (__mocking_io) {
-    	//boost::lock_guard<boost::mutex> keylock(__mockid_mutex);
+        //boost::lock_guard<boost::mutex> keylock(__mockid_mutex);
         if (fd < 3 || fd >= (int)mock_ids.size()) return 0;
 
         return __xstat(0, mock_ids[fd]->name.c_str(), (struct stat*)buf);
@@ -304,7 +320,7 @@ int __fstat(int fd, struct stat *buf) throw ()
 int fstat64(int fd, struct stat64 *buf) throw ()
 {
     if (__mocking_io) {
-    	//boost::lock_guard<boost::mutex> keylock(__mockid_mutex);
+        //boost::lock_guard<boost::mutex> keylock(__mockid_mutex);
         if (fd < 3 || fd >= (int)mock_ids.size()) return 0;
 
         return __xstat64(0, mock_ids[fd]->name.c_str(), buf);
@@ -316,7 +332,7 @@ int fstat64(int fd, struct stat64 *buf) throw ()
 int poll(struct pollfd *fds, nfds_t nfds, int timeout)
 {
     if (__mocking_io) {
-    	//boost::lock_guard<boost::mutex> keylock(__mockid_mutex);
+        //boost::lock_guard<boost::mutex> keylock(__mockid_mutex);
         if (nfds > 0) {
             unsigned int nn = 0;
             for (size_t a = 0; a < nfds; a++) {
@@ -327,7 +343,7 @@ int poll(struct pollfd *fds, nfds_t nfds, int timeout)
                 }
                 else if (fd < 3) {
                     if (fd == 0 && (fds[a].events & POLLIN)) {
-                        std::string data = mock_get_data("__stdin");
+                        std::string data = mock_get_data(__stdin_file);
 
                         fds[a].revents = 0;
                         if (!data.empty()) {
@@ -371,7 +387,7 @@ int poll(struct pollfd *fds, nfds_t nfds, int timeout)
 int ioctl(int fd, unsigned long int request, ...) throw ()
 {
     if (__mocking_io) {
-    	//boost::lock_guard<boost::mutex> keylock(__mockid_mutex);
+        //boost::lock_guard<boost::mutex> keylock(__mockid_mutex);
         if (fd < 3) return 0;
         else if (fd >= (int)mock_ids.size()) {
             errno = EBADF;
@@ -415,7 +431,7 @@ int __xstat(int x, const char *path, struct stat *buf) throw ()
 int __xstat64(int x, const char *path, struct stat64 *buf) throw ()
 {
     if (__mocking_io) {
-	//boost::lock_guard<boost::mutex> keylock(__mutex);
+        //boost::lock_guard<boost::mutex> keylock(__mutex);
         if (mock_is_folder(path)) {
             if (buf) {
                 buf->st_dev = 1;
@@ -661,7 +677,7 @@ ssize_t write(int fd, const void *buf, size_t count)
 FILE* fopen(const char *path, const char *mode)
 {
     if (__mocking_io) {
-    	//boost::lock_guard<boost::mutex> keylock(__mockid_mutex);
+        //boost::lock_guard<boost::mutex> keylock(__mockid_mutex);
         std::string smode = mode;
         if ((smode == "r" || smode == "r+") && !mock_is_file(path)) {
             errno = ENOENT;
@@ -688,7 +704,7 @@ FILE* fopen64(const char *path, const char *mode)
 size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream)
 {
     if (__mocking_io) {
-    	//boost::lock_guard<boost::mutex> keylock(__mockid_mutex);
+        //boost::lock_guard<boost::mutex> keylock(__mockid_mutex);
         if (stream == NULL) return -1;
         if (stream == stdin) stream = (FILE*)mock_ids[0];
         VALIDATE(stream);
@@ -781,7 +797,7 @@ void clearerr(FILE *stream) throw()
 size_t fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream)
 {
     if (__mocking_io) {
-    	//boost::lock_guard<boost::mutex> keylock(__mockid_mutex);
+        //boost::lock_guard<boost::mutex> keylock(__mockid_mutex);
         if (stream == NULL) return -1;
         prepare_std();
 
@@ -791,11 +807,13 @@ size_t fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream)
 
         std::string name = MF(stream)->name;
         if (!mock_is_file(name) && MF(stream)->readonly()) return 0;
-        if (name == "__stdout" || name == "__stderr") {
+#if 0
+        if (name == __stdout_file || name == __stderr_file) {
             if (!orig_fwrite) orig_fwrite = (size_t(*)(const void *ptr, size_t size, size_t nmemb, FILE *stream))dlsym(RTLD_NEXT, "fwrite");
-            orig_fwrite(ptr, size, nmemb, name=="__stdout"?stdout:stderr);
+            orig_fwrite(ptr, size, nmemb, name==__stdout_file?stdout:stderr);
             return size*nmemb;
         }
+#endif
 
         std::string data = mock_get_data(name);
         while (data.size() < MF(stream)->pos) {
@@ -836,7 +854,7 @@ int fseek(FILE *stream, long offset, int whence)
 off_t lseek(int fd, off_t offset, int whence) throw()
 {
     if (__mocking_io) {
-    	//boost::lock_guard<boost::mutex> keylock(__mockid_mutex);
+        //boost::lock_guard<boost::mutex> keylock(__mockid_mutex);
         if (fd < 3) return 0;
         if (fd >= (int)mock_ids.size()) return -1;
 
@@ -858,16 +876,16 @@ int feof(FILE *stream) throw ()
 int fileno(FILE *stream) throw ()
 {
     if (__mocking_io) {
-    	//boost::lock_guard<boost::mutex> keylock(__mockid_mutex);
+        //boost::lock_guard<boost::mutex> keylock(__mockid_mutex);
         if (stream == stdout) return 1;
         else if (stream == stderr) return 2;
         else if (stream == stdin) return 0;
 
         VALIDATE(stream);
 
-        if (MF(stream)->name == "__stdout") return 1;
-        else if (MF(stream)->name == "__stderr") return 2;
-        else if (MF(stream)->name == "__stdin") return 0;
+        if (MF(stream)->name == __stdout_file) return 1;
+        else if (MF(stream)->name == __stderr_file) return 2;
+        else if (MF(stream)->name == __stdin_file) return 0;
 
         int num = 0;
         std::vector<MockFile*>::iterator it = mock_ids.begin();
@@ -1022,7 +1040,7 @@ long pathconf(char *path, int name) throw()
 DIR *opendir(const char *name)
 {
     if (__mocking_io) {
-    	//boost::lock_guard<boost::mutex> keylock(__fold_mutex);
+        //boost::lock_guard<boost::mutex> keylock(__fold_mutex);
         std::string fname = name;
         BOOST_FOREACH(std::string f, mock_folders) {
             if (f == fname) {
@@ -1062,7 +1080,7 @@ int readdir64_r(DIR *dirp, struct dirent64 *entry, struct dirent64 **result)
 
         unsigned int cnt = 0;
 
-    	//boost::lock_guard<boost::mutex> keylock(__data_mutex);
+        //boost::lock_guard<boost::mutex> keylock(__data_mutex);
         auto it = mock_files.begin();
         while (it != mock_files.end()) {
             if (boost::starts_with(it->first, MD(dirp)->name)) {
@@ -1085,7 +1103,7 @@ int readdir64_r(DIR *dirp, struct dirent64 *entry, struct dirent64 **result)
             ++it;
         }
 #if 1
-    	//boost::lock_guard<boost::mutex> keylock_fold(__fold_mutex);
+        //boost::lock_guard<boost::mutex> keylock_fold(__fold_mutex);
         BOOST_FOREACH(std::string f, mock_folders) {
             if (boost::starts_with(f, MD(dirp)->name) && f != MD(dirp)->name) {
                 if (MD(dirp)->entry == cnt) {
