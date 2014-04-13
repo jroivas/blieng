@@ -59,7 +59,7 @@ bool Data::initialize(const std::string &datafilename, const char *key, unsigned
         }
         if (data_file_path.get()) {
             datafile = std::unique_ptr<blieng::DataFile>(new blieng::DataFile(data_file_path->string()));
-            INFO("Found data file: " + data_file_path->string());
+            LOG_INFO("Found data file: " + data_file_path->string());
         }
     }
     if (key != NULL) {
@@ -70,7 +70,7 @@ bool Data::initialize(const std::string &datafilename, const char *key, unsigned
     }
     bool res = false;
     if (datafile.get()) {
-        DEBUG("Datafile is valid");
+        LOG_DEBUG("Datafile is valid");
         res = datafile->read(__data_key, __data_key_len);
     }
 #ifndef ANDROID
@@ -187,7 +187,7 @@ std::string Data::findFileFromDataFile(const std::string &name) const
 std::string Data::findFile(const std::string &name) const
 {
     if (datafile.get()) {
-        DEBUG("Searching file from datafile");
+        LOG_DEBUG("Searching file from datafile");
         std::string res = findFileFromDataFile(name);
         if (res != "") return res;
     }
@@ -195,7 +195,7 @@ std::string Data::findFile(const std::string &name) const
 #ifndef ANDROID
     if (!data_path.get()) return "";
 #endif
-    DEBUG("Searching file recursive from data path");
+    LOG_DEBUG("Searching file recursive from data path");
     return findFileRecursive(*data_path, name);
 }
 

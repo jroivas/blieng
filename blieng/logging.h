@@ -42,22 +42,22 @@ void __do_log(std::string level, std::string msg);
 
 // Disable logging for release
 #define LOG_LEVEL(LEVEL)
-#define CRITICAL(X)
-#define ERROR(X)
-#define WARNING(X)
-#define INFO(X)
-#define DEBUG(X)
+#define LOG_CRITICAL(X)
+#define LOG_ERROR(X)
+#define LOG_WARNING(X)
+#define LOG_INFO(X)
+#define LOG_DEBUG(X)
 
 #else
 
 // Dynamic log levels
 #define __LOG(LEVEL, X) blieng::__do_log(LEVEL, X)
 #define LOG_LEVEL(LEVEL) blieng::setLogLevel(LEVEL)
-#define CRITICAL(X) __LOG("CRITICAL", X);
-#define ERROR(X) __LOG("ERROR", X);
-#define WARNING(X) __LOG("WARNING", X);
-#define INFO(X) __LOG("INFO", X);
-#define DEBUG(X) __LOG("DEBUG", X);
+#define LOG_CRITICAL(X) __LOG("CRITICAL", X);
+#define LOG_ERROR(X) __LOG("ERROR", X);
+#define LOG_WARNING(X) __LOG("WARNING", X);
+#define LOG_INFO(X) __LOG("INFO", X);
+#define LOG_DEBUG(X) __LOG("DEBUG", X);
 
 #endif
 }
