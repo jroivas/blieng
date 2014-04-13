@@ -223,6 +223,9 @@ private:
 #endif
 };
 
+std::string toString(unsigned int value);
+std::string toString(double value);
+
 }
 
 #endif

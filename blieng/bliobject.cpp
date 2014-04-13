@@ -305,3 +305,13 @@ bool BliObject::getRandomBoolean()
     tmp2 %= 2;
     return (tmp1 == tmp2);
 }
+
+std::string blieng::toString(unsigned int value)
+{
+    return boost::lexical_cast<std::string>(value);
+}
+
+std::string blieng::toString(double value)
+{
+    return boost::lexical_cast<std::string>(value);
+}
