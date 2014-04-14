@@ -80,6 +80,30 @@ public:
     std::string toString() const;
 
     /**
+     * Convert event at iterator to string.
+     *
+     * \param iter Iterator
+     * \returns String representation of event
+     */
+    std::string eventToString(std::vector<std::pair<boost::posix_time::ptime, BliAny> >::const_iterator iter) const;
+
+    /**
+     * Convert timestamp to string
+     *
+     * \param timestamp Boost posix timestamp
+     * \returns Timestamp as string
+     */
+    std::string timeToString(boost::posix_time::ptime timestamp) const;
+
+    /**
+     * Convert name and data to string
+     *
+     * \param anydata Any representable data
+     * \returns String containing object name and data
+     */
+    std::string nameDataToString(BliAny anydata) const;
+
+    /**
      * Will try to convert anything to string.
      * Tries to show it in human readable format.
      *
@@ -170,6 +194,22 @@ public:
      * \returns Current value of the counter.
      */
     unsigned int getCounter(const std::string &name) const;
+
+    /**
+     * Get string presentation of all events recorded.
+     * Goes thorough all ObjectLogs and prints the data.
+     *
+     * \returns String representation of events and counter
+     */
+    std::string toString() const;
+
+    /**
+     * Get string presentation of all events recorded in chronological order.
+     * Goes thorough all ObjectLogs and prints the data in timely based order.
+     *
+     * \returns String representation of events and counter
+     */
+    std::string toChronologicalString() const;
 
 private:
     EventLog();
