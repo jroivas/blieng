@@ -1,28 +1,20 @@
+/*
+ * Copyright 2014 Blistud:io
+ */
+
 #ifndef __BLIENG_DATA_H
 #define __BLIENG_DATA_H
 
 #include <boost/filesystem.hpp>
-#include <vector>
-#include <memory>
+
 #include <map>
-#include "json.h"
-#include "datafile.h"
-#include "auto_vector.h"
-
-#if defined(__cplusplus) && __cplusplus >= 201103L
 #include <memory>
-using namespace std;
-#else
+#include <string>
+#include <vector>
 
-#if defined(__cplusplus) && __cplusplus < 201103L
-#include <tr1/memory>
-using namespace std;
-#else
-#include <boost/smart_ptr/shared_ptr.hpp>
-using namespace boost;
-#endif
-
-#endif
+#include "blieng/json.h"
+#include "blieng/datafile.h"
+#include "blieng/auto_vector.h"
 
 using std::unique_ptr;
 
@@ -65,7 +57,10 @@ public:
      * \param key_len Length of the key
      * \returns True on success, false otherwise
      */
-    bool initialize(const std::string &datafilename, const char *key, unsigned int key_len);
+    bool initialize(
+        const std::string &datafilename,
+        const char *key,
+        unsigned int key_len);
 
     /**
      * Read a file from the backend as a string
@@ -125,7 +120,9 @@ public:
      * \param key Name of the key which value to get
      * \returns JSON value at given key, on error returns given value
      */
-    const json_value *getJsonValue(const json_value *val, const std::string &key) const;
+    const json_value *getJsonValue(
+        const json_value *val,
+        const std::string &key) const;
 
     /**
      * Checks if file exists in backend.
@@ -153,7 +150,9 @@ public:
      * \param num Number to be put in the string
      * \returns New formatted string
      */
-    std::string formatString(const std::string &replace_string, unsigned int num) const;
+    std::string formatString(
+        const std::string &replace_string,
+        unsigned int num) const;
 
     /**
      * Find files recursively by extension.
@@ -165,7 +164,10 @@ public:
      * \param ext Extension to find for, needs the dot. For example ".json"
      * \returns Vector of file names as string found from backend
      */
-    std::vector<std::string> findFileExtRecursive(std::vector<std::string> current_files, const boost::filesystem::path &dir_path, const std::string &ext) const;
+    std::vector<std::string> findFileExtRecursive(
+        std::vector<std::string> current_files,
+        const boost::filesystem::path &dir_path,
+        const std::string &ext) const;
     /**
      * Specific file finding method to find map files.
      * Assuming maps are located at folder data/maps/ with extension ".json"
@@ -189,18 +191,27 @@ public:
      *
      * \param location Path to appended in search path
      */
-    inline void setGameLocation(const std::string &location) { game_location = location; }
+    inline void setGameLocation(const std::string &location) {
+        game_location = location;
+    }
 
 private:
-    unsigned int readDataFromDataPath(const std::string &name, const char **data);
+    unsigned int readDataFromDataPath(
+        const std::string &name,
+        const char **data);
 
-    std::string findFileRecursive(const boost::filesystem::path &dir_path, const std::string &name) const;
+    std::string findFileRecursive(
+        const boost::filesystem::path &dir_path,
+        const std::string &name) const;
     boost::filesystem::path solveFilePath(const std::string &name) const;
 
     std::string findFileFromDataFile(const std::string &name) const;
-    std::vector<std::string> findFileExtFromDataFile(const std::string &path, const std::string &ext) const;
+    std::vector<std::string> findFileExtFromDataFile(
+        const std::string &path,
+        const std::string &ext) const;
 
-    std::unique_ptr<boost::filesystem::path> findDataFile(const std::string &datafilename = "data.dat");
+    std::unique_ptr<boost::filesystem::path> findDataFile(
+        const std::string &datafilename = "data.dat");
     std::unique_ptr<boost::filesystem::path> findDataPath();
     std::unique_ptr<boost::filesystem::path> data_path;
     std::unique_ptr<boost::filesystem::path> data_file_path;
@@ -212,6 +223,6 @@ private:
     std::string game_location;
 };
 
-}
+}  // namespace blieng
 
-#endif
+#endif  // __BLIENG_DATA_H
