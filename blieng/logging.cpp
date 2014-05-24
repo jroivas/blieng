@@ -1,6 +1,16 @@
+/*
+ * Copyright 2014 Blistud:io
+ */
+
+#include "blieng/logging.h"
+
 #include <map>
+#include <string>
 #include <vector>
-#include "logging.h"
+
+#ifdef ANDROID
+#include <QDebug>
+#endif
 
 static std::string __log_level = "ERROR";
 
@@ -10,7 +20,7 @@ static std::map<std::string, int> __log_levels = {
     {"WARNING", 2},
     {"INFO", 3},
     {"DEBUG", 5}
-    };
+};
 
 const std::vector<std::string> blieng::logLevels()
 {
@@ -25,15 +35,21 @@ const std::vector<std::string> blieng::logLevels()
 
 void blieng::__do_log(std::string level, std::string msg)
 {
-    if (__log_levels[level] <= __log_levels[__log_level] ) {
+    if (__log_levels[level] <= __log_levels[__log_level]) {
+#ifdef ANDROID
+        qDebug() << level << ": " << msg;
+#else
         std::cout << level << ": " << msg << std::endl;
+#endif
     }
 }
 
 void blieng::setLogLevel(std::string level)
 {
-    if (__log_levels.find(level) == __log_levels.end()) throw std::string("Invalid log level!");
-     __log_level = level;
+    if (__log_levels.find(level) == __log_levels.end())
+        throw std::string("Invalid log level!");
+
+    __log_level = level;
 }
 
 const std::string blieng::getLogLevel()

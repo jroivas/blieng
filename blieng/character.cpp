@@ -1,4 +1,9 @@
-#include "character.h"
+/*
+ * Copyright 2014 Blistud:io
+ */
+
+#include "blieng/character.h"
+
 #include <boost/foreach.hpp>
 
 using blieng::Character;
@@ -28,7 +33,7 @@ unsigned int Character::addItem(std::unique_ptr<blieng::Item> item)
 
 bool Character::removeItem(unsigned int index)
 {
-    if ( index >= size() ) return false;
+    if (index >= size()) return false;
 
     items.erase(index);
     return true;
@@ -50,7 +55,7 @@ void Character::assignObject(Character *another)
 
     blieng::BliObject::assignObject(static_cast<BliObject*>(another));
 
-    BOOST_FOREACH(blieng::Item *item, another->items) {
+    for (blieng::Item *item : another->items) {
         items.push_back(item->copy());
     }
 }

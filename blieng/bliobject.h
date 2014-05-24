@@ -1,11 +1,18 @@
 #ifndef __BLIENG_BLIOBJECT_H
 #define __BLIENG_BLIOBJECT_H
 
-#include "config.h"
-#include <string>
-#include <map>
+/*
+ * Copyright 2014 Blistud:io
+ */
+
 #include <list>
-#include "bliany.h"
+#include <map>
+#include <string>
+#include <vector>
+
+#include "blieng/bliany.h"
+#include "blieng/config.h"
+
 #ifdef DATA_MUTEX_LOCK
 #include <boost/thread/mutex.hpp>
 #endif
@@ -88,7 +95,9 @@ public:
      * \param default_value Value to be returned if value is not representable in string.
      * \returns Value as string object
      */
-    virtual std::string getStringValue(const std::string &key, const std::string &default_value="") const;
+    virtual std::string getStringValue(
+        const std::string &key,
+        const std::string &default_value = "") const;
     /**
      * Get boolean value of given key.
      * Throws an error if key not found.
@@ -98,7 +107,9 @@ public:
      * \param default_value Value to be returned if value is not representable in boolean.
      * \returns Value as boolean
      */
-    virtual bool getBoolValue(const std::string &key, const bool &default_value=false) const;
+    virtual bool getBoolValue(
+        const std::string &key,
+        const bool &default_value = false) const;
     /**
      * Get integer value of given key.
      * Throws an error if key not found.
@@ -108,7 +119,9 @@ public:
      * \param default_value Value to be returned if value is not representable in integer.
      * \returns Value as integer
      */
-    virtual int getIntValue(const std::string &key, int default_value=0) const;
+    virtual int getIntValue(
+        const std::string &key,
+        int default_value = 0) const;
     /**
      * Get unsigned integer value of given key.
      * Throws an error if key not found.
@@ -118,7 +131,9 @@ public:
      * \param default_value Value to be returned if value is not representable in unsigned integer.
      * \returns Value as unsigned integer
      */
-    virtual unsigned int getUIntValue(const std::string &key, unsigned int default_value=0) const;
+    virtual unsigned int getUIntValue(
+        const std::string &key,
+        unsigned int default_value = 0) const;
     /**
      * Get double value of given key.
      * Throws an error if key not found.
@@ -128,7 +143,9 @@ public:
      * \param default_value Value to be returned if value is not representable in double.
      * \returns Value as double
      */
-    virtual double getDoubleValue(const std::string &key, double default_value=0.0) const;
+    virtual double getDoubleValue(
+        const std::string &key,
+        double default_value = 0.0) const;
     /**
      * Get vector of strings of given key.
      * Throws an error if key not found or
@@ -215,7 +232,7 @@ public:
     static bool getRandomBoolean();
 
 protected:
-    std::map<std::string, BliAny> values; //!< Contains key value mappings
+    std::map<std::string, BliAny> values;  //!< Contains key value mappings
 
 #ifdef DATA_MUTEX_LOCK
 private:
@@ -226,6 +243,6 @@ private:
 std::string toString(unsigned int value);
 std::string toString(double value);
 
-}
+}  // namespace blieng
 
-#endif
+#endif  // __BLIENG_BLIOBJECT_H

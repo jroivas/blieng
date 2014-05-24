@@ -1,10 +1,16 @@
+/*
+ * Copyright 2014 Blistud:io
+ */
+
 #ifndef __BLIENG_CARD_H
 #define __BLIENG_CARD_H
 
-#include "bliobject.h"
-#include <vector>
 #include <memory>
-#include "auto_vector.h"
+#include <string>
+#include <vector>
+
+#include "blieng/bliobject.h"
+#include "blieng/auto_vector.h"
 
 using std::unique_ptr;
 
@@ -48,7 +54,7 @@ public:
      * \param iter Iterator inside the combined stack
      * \returns True if removed, false otherwise
      */
-    virtual bool remove(auto_vector<blieng::Card>::iterator &iter);
+    virtual bool remove(auto_vector<blieng::Card>::iterator iter);
 
     /**
      * Convert the card to string.
@@ -56,7 +62,9 @@ public:
      *
      * \returns Card contens in string
      */
-    virtual inline std::string toString() const { return ""; }
+    virtual inline std::string toString() const {
+        return "";
+    }
     /**
      * Get the unique ID of this card.
      * All cards gets automatically unique ID upon creation,
@@ -69,39 +77,51 @@ public:
      *
      * \returns Unique ID of this card as string
      */
-    virtual inline std::string uuid() const { return card_uuid; }
+    virtual inline std::string uuid() const {
+        return card_uuid;
+    }
 
     /**
      * Get number of combined cards.
      *
      * \returns Number of combined cards
      */
-    virtual inline unsigned int size() const { return combined.size(); }
+    virtual inline unsigned int size() const {
+        return combined.size();
+    }
 
     /**
      * Get modifier start iterator of combined cards.
      *
      * \returns Iterator to beginning of combined cards.
      */
-    virtual inline auto_vector<blieng::Card>::iterator begin() { return combined.begin(); }
+    virtual inline auto_vector<blieng::Card>::iterator begin() {
+        return combined.begin();
+    }
     /**
      * Get modifier end iterator of combined cards.
      *
      * \returns Iterator to end of combined cards.
      */
-    virtual inline auto_vector<blieng::Card>::iterator end() { return combined.end(); }
+    virtual inline auto_vector<blieng::Card>::iterator end() {
+        return combined.end();
+    }
     /**
      * Get start iterator of constant combined cards.
      *
      * \returns Iterator to beginning of combined cards.
      */
-    virtual inline auto_vector<blieng::Card>::const_iterator begin() const { return combined.begin(); }
+    virtual inline auto_vector<blieng::Card>::const_iterator begin() const {
+        return combined.begin();
+    }
     /**
      * Get end iterator of constant combined cards.
      *
      * \returns Iterator to end of combined cards.
      */
-    virtual inline auto_vector<blieng::Card>::const_iterator end() const { return combined.end(); }
+    virtual inline auto_vector<blieng::Card>::const_iterator end() const {
+        return combined.end();
+    }
 
 protected:
     /**
@@ -109,12 +129,12 @@ protected:
      */
     void genUUID();
 
-    auto_vector<blieng::Card> combined; //!< List of combined cards
+    auto_vector<blieng::Card> combined;  //!< List of combined cards
 
 private:
-    std::string card_uuid; //!< Unique ID of card
+    std::string card_uuid;  //!< Unique ID of card
 };
 
-}
+}  // namespace blieng
 
-#endif
+#endif  // __BLIENG_CARD_H

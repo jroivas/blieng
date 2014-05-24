@@ -1,3 +1,7 @@
+/*
+ * Copyright 2014 Blistud:io
+ */
+
 #ifndef __BLIENG_BLIANY_H
 #define __BLIENG_BLIANY_H
 
@@ -33,7 +37,8 @@ public:
      *
      * \param value Value to be assigned, type defined by template
      */
-    template<typename ValueType> BliAny(const ValueType & value) : boost::any(value) {}
+    template<typename ValueType> BliAny(
+        const ValueType & value) : boost::any(value) {}
     /**
      * Constructor, assign value from other object
      *
@@ -72,7 +77,7 @@ public:
         CAST_TO(bool, obj, ostr)
         CAST_TO(std::string, obj, ostr)
         {
-            ostr << "Unknown type";
+            ostr << "<unknown type>";
         }
 
         return ostr;

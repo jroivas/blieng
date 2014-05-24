@@ -1,10 +1,15 @@
+/*
+ * Copyright 2014 Blistud:io
+ */
+
 #ifndef __BLIENG_CHARACTER_H
 #define __BLIENG_CHARACTER_H
 
-#include "bliobject.h"
-#include "item.h"
-#include "auto_vector.h"
 #include <memory>
+
+#include "blieng/bliobject.h"
+#include "blieng/item.h"
+#include "blieng/auto_vector.h"
 
 namespace blieng
 {
@@ -78,9 +83,9 @@ public:
     void assignObject(Character *another);
 
 protected:
-    auto_vector<blieng::Item> items; //!< Items character owns
+    auto_vector<blieng::Item> items;  //!< Items character owns
 };
 
-}
+}  // namespace blieng
 
-#endif
+#endif  // __BLIENG_CHARACTER_H

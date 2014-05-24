@@ -1,6 +1,13 @@
-#ifndef __LOGGING_H
-#define __LOGGING_H
+/*
+ * Copyright 2014 Blistud:io
+ */
+
+#ifndef __BLIENG_LOGGING_H
+#define __BLIENG_LOGGING_H
+
 #include <iostream>
+#include <string>
+#include <vector>
 
 /**
  * Master blieng namespace
@@ -60,6 +67,7 @@ void __do_log(std::string level, std::string msg);
 #define LOG_DEBUG(X) __LOG("DEBUG", X);
 
 #endif
-}
 
-#endif
+}  // namespace blieng
+
+#endif  // __BLIENG_LOGGING_H

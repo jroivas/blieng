@@ -1,29 +1,23 @@
+/*
+ * Copyright 2014 Blistud:io
+ */
+
 #ifndef __BLIENG_CONFIGURE_H
 #define __BLIENG_CONFIGURE_H
 
-#include "config.h"
-#include "bliobject.h"
-#include "data.h"
-#include <iostream>
-#include <vector>
-#include <map>
-#include "json.h"
 #include <boost/thread/mutex.hpp>
-
-#if defined(__cplusplus) && __cplusplus >= 201103L
-#include <memory>
-using namespace std;
-#else
-
-#if defined(__cplusplus) && __cplusplus < 201103L
-#include <tr1/memory>
-using namespace std;
-#else
 #include <boost/smart_ptr/shared_ptr.hpp>
-using namespace boost;
-#endif
 
-#endif
+#include <iostream>
+#include <map>
+#include <memory>
+#include <string>
+#include <vector>
+
+#include "blieng/config.h"
+#include "blieng/bliobject.h"
+#include "blieng/data.h"
+#include "blieng/json.h"
 
 namespace blieng
 {
@@ -47,20 +41,20 @@ public:
      *
      * \param data The data backend instance.
      */
-    Configure(shared_ptr<blieng::Data> data);
+    explicit Configure(boost::shared_ptr<blieng::Data> data);
     virtual ~Configure();
 
     /**
      * Enumeration of configuration key types.
      */
     typedef enum {
-        KeyString, //!< String value
-        KeyDouble, //!< Double value
-        KeyUInt, //!< Unsigned integer value
-        KeyInt, //!< Integer value
-        KeyBool, //!< Boolean value
-        KeyStringList, //!< String list
-        KeyIntList //!< Integer list
+        KeyString,  //!< String value
+        KeyDouble,  //!< Double value
+        KeyUInt,  //!< Unsigned integer value
+        KeyInt,  //!< Integer value
+        KeyBool,  //!< Boolean value
+        KeyStringList,  //!< String list
+        KeyIntList  //!< Integer list
     } key_type_t;
     /**
      * Load configurations from a file.
@@ -116,9 +110,31 @@ private:
     std::map<std::string, key_type_t> opt_keys;
 
     boost::mutex key_mutex;
-    shared_ptr<blieng::Data> data;
+    boost::shared_ptr<blieng::Data> data;
+
+    /**
+     * Parsing string list values
+     *
+     * \param key Name of the key for the list
+     * \param val JSON value containing the list
+     */
+    void parseStringList(std::string key, const json_value* val);
+    /**
+     * Parsing integer list values
+     *
+     * \param key Name of the key for the list
+     * \param val JSON value containing the list
+     */
+    void parseIntList(std::string key, const json_value* val);
+    /**
+     * Parsing boolean value
+     *
+     * \param key Name of the boolean key
+     * \param val JSON value containing the boolean
+     */
+    void parseBool(std::string key, const json_value* val);
 };
 
-}
+}  // namespace blieng
 
-#endif
+#endif  // __BLIENG_CONFIGURE_H

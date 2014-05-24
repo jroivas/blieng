@@ -1,7 +1,9 @@
-#include "bliobject.h"
-#include "data.h"
-#include <iostream>
-#include <sstream>
+/*
+ * Copyright 2014 Blistud:io
+ */
+
+#include "blieng/bliobject.h"
+
 #include <boost/format.hpp>
 #include <boost/foreach.hpp>
 #include <boost/random/uniform_int_distribution.hpp>
@@ -19,25 +21,22 @@
 #include <boost/random/random_device.hpp>
 #endif
 
+#include <iostream>
+#include <map>
+#include <sstream>
+#include <string>
+#include <utility>
+#include <vector>
+
+#include "blieng/data.h"
+#include "blieng/logging.h"
+
 using blieng::BliObject;
 using blieng::BliAny;
 
 typedef std::pair<std::string, BliAny> values_t;
 typedef std::map<std::string, BliAny>::iterator values_iter_t;
 typedef std::map<std::string, BliAny>::const_iterator values_const_iter_t;
-
-#ifdef ANDROID
-#include <QDebug>
-void doDebug(const std::string &s)
-{
-    qDebug() << s.c_str();
-}
-#else
-void doDebug(const std::string &s)
-{
-    std::cerr << s << "\n";
-}
-#endif
 
 BliObject::BliObject()
 {
@@ -79,9 +78,9 @@ int BliObject::getRandomInt(int limit_low, int limit_max)
 #else
     boost::random::random_device gen;
 #endif
+
     boost::random::uniform_int_distribution<> dist(limit_low, limit_max);
-    int res = dist(gen);
-    return res;
+    return dist(gen);
 }
 
 double BliObject::getRandomDouble(double limit_low, double limit_max)
@@ -91,9 +90,9 @@ double BliObject::getRandomDouble(double limit_low, double limit_max)
 #else
     boost::random::random_device gen;
 #endif
+
     boost::random::uniform_real_distribution<> dist(limit_low, limit_max);
-    double res = dist(gen);
-    return res;
+    return dist(gen);
 }
 
 BliAny BliObject::getValue(const std::string &key) const
@@ -101,7 +100,7 @@ BliAny BliObject::getValue(const std::string &key) const
     values_const_iter_t value_iter = values.find(key);
 
     if (value_iter == values.end()) {
-        doDebug("Error, key not found: " + key);
+        LOG_DEBUG("Error, key not found: " + key);
         throw std::string("Error, key not found: " + key);
     }
 
@@ -113,15 +112,18 @@ void BliObject::setValue(const std::string &key, BliAny value)
 #ifdef DATA_MUTEX_LOCK
     boost::lock_guard<boost::mutex> keylock(value_mutex);
 #endif
+
     values[key] = value;
 }
 
 #define getConvertValue(X, Y) \
-Y BliObject::get ## X ## Value(const std::string &key, const Y &default_value) const\
+Y BliObject::get ## X ## Value( \
+    const std::string &key, \
+    const Y &default_value) const\
 {\
     BliAny val = getValue(key);\
     if (val.empty()) {\
-        doDebug("Error, key not found: " + key);\
+        LOG_DEBUG("Error, key not found: " + key);\
         throw "Error, key not found: " + key;\
     }\
     if (val.type() == typeid(Y)) {\
@@ -130,8 +132,7 @@ Y BliObject::get ## X ## Value(const std::string &key, const Y &default_value) c
     try {\
         return boost::any_cast<Y>(val);\
     } catch (boost::bad_any_cast &c) {\
-        doDebug("Error, not a " #X " value at: " + key);\
-        /*throw "Error, not a " #X " value at: " + key;*/\
+        LOG_DEBUG("Error, not a " #X " value at: " + key);\
         return default_value;\
     }\
 }
@@ -141,29 +142,42 @@ Y BliObject::get ## X ## Value(const std::string &key, Y default_value) const\
 {\
     BliAny val = getValue(key);\
     if (val.empty()) {\
-        doDebug("Error, key not found: " + key);\
+        LOG_DEBUG("Error, key not found: " + key);\
         throw "Error, key not found: " + key;\
     }\
     if (val.type() == typeid(Y)) {\
         return boost::any_cast<Y>(val);\
     } else {\
-        if (val.type() == typeid(A)) { return static_cast<Y>(boost::any_cast<A>(val)); }\
-        if (val.type() == typeid(B)) { return static_cast<Y>(boost::any_cast<B>(val)); }\
-        if (val.type() == typeid(C)) { return static_cast<Y>(boost::any_cast<C>(val)); }\
-        if (val.type() == typeid(D)) { return static_cast<Y>(boost::any_cast<D>(val)); }\
-        if (val.type() == typeid(E)) { return static_cast<Y>(boost::any_cast<E>(val)); }\
+        if (val.type() == typeid(A)) {\
+            return static_cast<Y>(boost::any_cast<A>(val));\
+        }\
+        if (val.type() == typeid(B)) {\
+            return static_cast<Y>(boost::any_cast<B>(val));\
+        }\
+        if (val.type() == typeid(C)) {\
+            return static_cast<Y>(boost::any_cast<C>(val));\
+        }\
+        if (val.type() == typeid(D)) {\
+            return static_cast<Y>(boost::any_cast<D>(val));\
+        }\
+        if (val.type() == typeid(E)) {\
+            return static_cast<Y>(boost::any_cast<E>(val));\
+        }\
     }\
     std::ostringstream m;\
     m << val;\
-    doDebug("Error, not a " #X " value at: " + key + ", val: " + m.str());\
-    /*throw "Error, not a " #X " value at: " + key;*/\
+    LOG_DEBUG("Error, not a " #X " value at: " + key + ", val: " + m.str());\
     return default_value;\
 }
 
+// FIXME
 getConvertValue(String, std::string)
-getConvertNumberValue(Int, int, unsigned int, long, unsigned long, double, float)
-getConvertNumberValue(UInt, unsigned int, unsigned long, long, int, double, float)
-getConvertNumberValue(Double, double, float, unsigned long, long, unsigned int, int)
+getConvertNumberValue(
+    Int, int, unsigned int, long, unsigned long, double, float)
+getConvertNumberValue(
+    UInt, unsigned int, unsigned long, long, int, double, float)
+getConvertNumberValue(
+    Double, double, float, unsigned long, long, unsigned int, int)
 getConvertValue(Bool, bool)
 
 std::vector<std::string> BliObject::getListValue(const std::string &key)
@@ -192,7 +206,7 @@ const std::type_info *BliObject::getValueType(const std::string &key) const
 {
     BliAny val = getValue(key);
     if (val.empty()) {
-        doDebug("Error, key not found: " + key);
+        LOG_DEBUG("Error, key not found: " + key);
         throw "Error, key not found: " + key;
     }
     return &val.type();
@@ -200,35 +214,18 @@ const std::type_info *BliObject::getValueType(const std::string &key) const
 
 std::string BliObject::toString() const
 {
-    std::string res = "";
+    std::ostringstream res;
+
     BOOST_FOREACH(values_t item, values) {
         std::string key = item.first;
         BliAny val = item.second;
 
-        res += (boost::format("%20s: ") % key).str();
-
-        if (val.type() == typeid(int)) {
-            res += (boost::format("%d") % boost::any_cast<int>(val)).str();
-        }
-        else if (val.type() == typeid(unsigned int)) {
-            res += (boost::format("%u") % boost::any_cast<unsigned int>(val)).str();
-        }
-        else if (val.type() == typeid(bool)) {
-            res += boost::any_cast<bool>(val) ? "true" : "false";
-        }
-        else if (val.type() == typeid(double)) {
-            res += (boost::format("%f") % boost::any_cast<double>(val)).str();
-        }
-        else if (val.type() == typeid(std::string)) {
-            res += boost::any_cast<std::string>(val);
-        }
-        else {
-            res += "<unknown type>";
-        }
-        res += "\n";
+        res << key + ": ";
+        res << val;
+        res << "\n";
     }
 
-    return res;
+    return res.str();
 }
 
 std::vector<std::string> BliObject::getKeys()
@@ -237,47 +234,38 @@ std::vector<std::string> BliObject::getKeys()
 #ifdef DATA_MUTEX_LOCK
     boost::lock_guard<boost::mutex> keylock(value_mutex);
 #endif
-    BOOST_FOREACH(values_t val, values) {
+
+    for(values_t val : values) {
         res.push_back(val.first);
     }
     return res;
 }
+
+#define CHANGE_NUM_VALUE(KEY, VAL, DIFF, T) do {\
+    T __num = boost::any_cast<T>(VAL);\
+    __num += DIFF;\
+    if (isValue(KEY + "-max")) {\
+        T __max = getIntValue(key + "-max");\
+        if (__num > __max) return false;\
+    }\
+    setValue(KEY, __num);\
+}  while (0);
 
 bool BliObject::changeNumberValue(const std::string &key, int diff)
 {
     if (!isValue(key)) return false;
 
     BliAny val = getValue(key);
+
     if (val.type() == typeid(int)) {
-        int num = boost::any_cast<int>(val);
-        num += diff;
-        if (isValue(key + "-max")) {
-            int max = getIntValue(key + "-max");
-            if (num > max) return false;
-        }
-        setValue(key, num);
+        CHANGE_NUM_VALUE(key, val, diff, int);
     }
     else if (val.type() == typeid(unsigned int)) {
-        unsigned int num = boost::any_cast<unsigned int>(val);
-        if (diff < 0) {
-            num -= static_cast<unsigned int>(-1 * diff);
-        } else {
-            num += static_cast<unsigned int>(diff);
-        }
-        if (isValue(key + "-max")) {
-            unsigned int max = getUIntValue(key + "-max");
-            if (num > max) return false;
-        }
-        setValue(key, num);
+        // FIXME possible int overflow!
+        CHANGE_NUM_VALUE(key, val, diff, unsigned int);
     }
     else if (val.type() == typeid(double)) {
-        double num = boost::any_cast<double>(val);
-        num += static_cast<double>(diff);
-        if (isValue(key + "-max")) {
-            double max = getDoubleValue(key + "-max");
-            if (num > max) return false;
-        }
-        setValue(key, num);
+        CHANGE_NUM_VALUE(key, val, diff, double);
     }
     else {
         return false;
@@ -285,6 +273,7 @@ bool BliObject::changeNumberValue(const std::string &key, int diff)
 
     return true;
 }
+#undef CHANGE_NUM_VALUE
 
 bool BliObject::increase(const std::string &key)
 {

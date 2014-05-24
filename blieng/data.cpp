@@ -1,11 +1,13 @@
-#include "data.h"
-#include "bliany.h"
-#include "logging.h"
+#include "blieng/data.h"
+
 #include <boost/filesystem/fstream.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/foreach.hpp>
 #include <sstream>
 #include <algorithm>
+
+#include "blieng/bliany.h"
+#include "blieng/logging.h"
 
 using blieng::Data;
 
@@ -484,7 +486,7 @@ json_value *Data::readJson(const std::string &name)
 
     json_value *val = json_parse(datas.c_str(), datas.length());
     if (val == nullptr) {
-        doDebug("Parse error while parsing '" + name + "'!");
+        LOG_DEBUG("Parse error while parsing '" + name + "'!");
         throw "JSON parse error";
     }
     return val;
