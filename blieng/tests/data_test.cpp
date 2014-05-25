@@ -16,7 +16,7 @@ void DataTest::object()
 {
     mock_io_start();
 
-    shared_ptr<blieng::Data> obj(new blieng::Data());
+    boost::shared_ptr<blieng::Data> obj(new blieng::Data());
 
     CPPUNIT_ASSERT( obj != NULL );
     CPPUNIT_ASSERT( obj.get() != NULL );
@@ -31,7 +31,7 @@ void DataTest::readString()
 
     mock_io_start();
 
-    shared_ptr<blieng::Data> obj(new blieng::Data());
+    boost::shared_ptr<blieng::Data> obj(new blieng::Data());
     std::string res = obj->readString("string_file");
 
     CPPUNIT_ASSERT( res != "" );
@@ -47,7 +47,7 @@ void DataTest::readLines()
 
     mock_io_start();
 
-    shared_ptr<blieng::Data> obj(new blieng::Data());
+    boost::shared_ptr<blieng::Data> obj(new blieng::Data());
     std::vector<std::string> res = obj->readLinesFromFile("string_file");
 
     CPPUNIT_ASSERT( !res.empty() );
@@ -67,7 +67,7 @@ void DataTest::readLinesEmpty()
 
     mock_io_start();
 
-    shared_ptr<blieng::Data> obj(new blieng::Data());
+    boost::shared_ptr<blieng::Data> obj(new blieng::Data());
     std::vector<std::string> res = obj->readLinesFromFile("string_file");
 
     CPPUNIT_ASSERT( res.empty() );
@@ -79,7 +79,7 @@ void DataTest::readLinesNoFile()
 {
     mock_io_start();
 
-    shared_ptr<blieng::Data> obj(new blieng::Data());
+    boost::shared_ptr<blieng::Data> obj(new blieng::Data());
     std::vector<std::string> res = obj->readLinesFromFile("no_string_file");
 
     CPPUNIT_ASSERT( res.empty() );
@@ -97,7 +97,7 @@ void DataTest::readData()
 
     mock_io_start();
 
-    shared_ptr<blieng::Data> obj(new blieng::Data());
+    boost::shared_ptr<blieng::Data> obj(new blieng::Data());
     const char *res = nullptr;
     unsigned int cnt = obj->readData("datas", &res);
 
@@ -121,7 +121,7 @@ void DataTest::readJson()
 
     mock_io_start();
 
-    shared_ptr<blieng::Data> obj(new blieng::Data());
+    boost::shared_ptr<blieng::Data> obj(new blieng::Data());
 
     json_value *res = obj->readJson("json1");
 
@@ -149,7 +149,7 @@ void DataTest::fileExists()
 {
     mock_io_start();
 
-    shared_ptr<blieng::Data> obj(new blieng::Data());
+    boost::shared_ptr<blieng::Data> obj(new blieng::Data());
 
     CPPUNIT_ASSERT( !obj->fileExists("dummy") );
     CPPUNIT_ASSERT( !obj->fileExists("dummy") );

@@ -29,8 +29,8 @@ void MapsTest::tearDown()
 
 void MapsTest::basic()
 {
-    shared_ptr<blieng::Data> data(new blieng::Data());
-    shared_ptr<blieng::Maps> maps(new blieng::Maps(data, "map42"));
+    boost::shared_ptr<blieng::Data> data(new blieng::Data());
+    boost::shared_ptr<blieng::Maps> maps(new blieng::Maps(data, "map42"));
 
     CPPUNIT_ASSERT_EQUAL( std::string("map42"), maps->getMapName() );
 
@@ -62,8 +62,8 @@ void MapsTest::basic()
 
 void MapsTest::paths()
 {
-    shared_ptr<blieng::Data> data(new blieng::Data());
-    shared_ptr<blieng::Maps> maps(new blieng::Maps(data, "map42"));
+    boost::shared_ptr<blieng::Data> data(new blieng::Data());
+    boost::shared_ptr<blieng::Maps> maps(new blieng::Maps(data, "map42"));
 
     blieng::Point p1(99,77);
     blieng::Point p2(555,787);

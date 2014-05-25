@@ -12,21 +12,7 @@
 #include "configure.h"
 #include "data.h"
 
-#if defined(__cplusplus) && __cplusplus >= 201103L
-#include <memory>
-using namespace std;
-#else
-
-#if defined(__cplusplus) && __cplusplus < 201103L
-#include <tr1/memory>
-using namespace std;
-#else
 #include <boost/smart_ptr/shared_ptr.hpp>
-using namespace boost;
-#endif
-
-#endif
-
 
 using std::unique_ptr;
 
@@ -195,7 +181,9 @@ public:
     /**
      * Intializes item, with necessary configuration and data backend instances.
      */
-    Item(shared_ptr<blieng::Configure> configure, shared_ptr<blieng::Data> data);
+    Item(
+        boost::shared_ptr<blieng::Configure> configure,
+        boost::shared_ptr<blieng::Data> data);
     /**
      * Generate empty item, without configuration.
      *
@@ -295,10 +283,10 @@ private:
      */
     void getItemBases();
 
-    static bool ok; //!< Checks if item bases are already loaded to avoid loading it multiple times
-    static auto_vector<ItemBase> item_bases; //!< List of item base object
-    shared_ptr<blieng::Configure> config; //!< Shared configuration object
-    shared_ptr<blieng::Data> data; //!< Shared data backed object
+    static bool ok;  //!< Checks if item bases are already loaded to avoid loading it multiple times
+    static auto_vector<ItemBase> item_bases;  //!< List of item base object
+    boost::shared_ptr<blieng::Configure> config;  //!< Shared configuration object
+    boost::shared_ptr<blieng::Data> data;  //!< Shared data backed object
 };
 
 }

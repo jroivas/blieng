@@ -193,6 +193,7 @@ public:
      */
     inline void setGameLocation(const std::string &location) {
         game_location = location;
+        updateLocations();
     }
 
 private:
@@ -216,6 +217,7 @@ private:
         const std::string &name,
         const char **data);
 
+    void updateLocations();
     std::string findFileRecursive(
         const boost::filesystem::path &dir_path,
         const std::string &name) const;
@@ -226,11 +228,19 @@ private:
         const std::string &path,
         const std::string &ext) const;
 
+    std::unique_ptr<boost::filesystem::path> findDataFileAndroid();
+    std::unique_ptr<boost::filesystem::path> findDataFileCommon(
+        const std::string &datafilename);
     std::unique_ptr<boost::filesystem::path> findDataFile(
         const std::string &datafilename = "data.dat");
     std::unique_ptr<boost::filesystem::path> findDataPath();
     std::unique_ptr<boost::filesystem::path> data_path;
     std::unique_ptr<boost::filesystem::path> data_file_path;
+
+    std::vector<std::string> readLinesFromFileInDataFolder(
+        const std::string &name) const;
+    std::vector<std::string> readLinesFromFileInDatafile(
+        const std::string &name) const;
 
     std::unique_ptr<blieng::DataFile> datafile;
 
@@ -240,6 +250,8 @@ private:
 
     static char * __data_key;
     static unsigned int __data_key_len;
+
+    std::list<std::string> m_locations;
 };
 
 }  // namespace blieng

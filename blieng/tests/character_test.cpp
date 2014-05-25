@@ -27,8 +27,8 @@ void CharacterTest::alive_kill()
 void CharacterTest::items()
 {
     mock_io_start();
-    shared_ptr<blieng::Data> _data(new blieng::Data());
-    shared_ptr<blieng::Configure> _config(new blieng::Configure(_data));
+    boost::shared_ptr<blieng::Data> _data(new blieng::Data());
+    boost::shared_ptr<blieng::Configure> _config(new blieng::Configure(_data));
 
     unique_ptr<blieng::Item> tmp(new blieng::Item(_config, _data));
     unique_ptr<blieng::Item> tmp2(new blieng::Item(_config, _data));
@@ -66,8 +66,8 @@ void CharacterTest::items()
 void CharacterTest::assign()
 {
     mock_io_start();
-    shared_ptr<blieng::Data> _data(new blieng::Data());
-    shared_ptr<blieng::Configure> _config(new blieng::Configure(_data));
+    boost::shared_ptr<blieng::Data> _data(new blieng::Data());
+    boost::shared_ptr<blieng::Configure> _config(new blieng::Configure(_data));
 
     unique_ptr<blieng::Item> tmp(new blieng::Item(_config, _data));
     unique_ptr<blieng::Item> tmp2(new blieng::Item(_config, _data));

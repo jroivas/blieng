@@ -7,7 +7,7 @@
 
 using blieng::Maps;
 
-Maps::Maps(shared_ptr<blieng::Data> _data, const std::string &mapname) : data(_data)
+Maps::Maps(boost::shared_ptr<blieng::Data> _data, const std::string &mapname) : data(_data)
 {
     if (!loadMap(mapname)) {
         std::cout << "ERROR: Can't find map: " << mapname << "\n";

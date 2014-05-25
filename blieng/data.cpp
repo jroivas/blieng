@@ -48,9 +48,13 @@ public:
 
 char * blieng::Data::__data_key = nullptr;
 unsigned int blieng::Data::__data_key_len = 0;
+static std::string __data_folder_name = "data";
+static std::string __maps_folder_name = "maps";
+static std::string __maps_file_extension = ".json";
 
 Data::Data()
 {
+    updateLocations();
     data_path = findDataPath();
 
     initialize("", nullptr, 0);
@@ -58,6 +62,17 @@ Data::Data()
 
 Data::~Data()
 {
+}
+
+void Data::updateLocations()
+{
+    m_locations.clear();
+    m_locations.push_back("");
+    m_locations.push_back("./");
+    if (!game_location.empty()) m_locations.push_back(game_location);
+    m_locations.push_back("../");
+    m_locations.push_back(".\\");
+    m_locations.push_back("..\\");
 }
 
 void Data::initializeDataFile(const std::string &datafilename)
@@ -112,28 +127,22 @@ bool Data::initialize(const char *key, unsigned int key_len)
     return initialize("", key, key_len);
 }
 
-std::unique_ptr<boost::filesystem::path> Data::findDataFile(
-    const std::string &datafilename)
+std::unique_ptr<boost::filesystem::path> Data::findDataFileAndroid()
 {
-#ifdef ANDROID
     std::unique_ptr<boost::filesystem::path> my_data_path(
         new boost::filesystem::path);
 
     *my_data_path.get() = "assets/data/data.dat";
     return my_data_path;
-#else
-    std::list<std::string> locations;
-    locations.push_back("");
-    locations.push_back("./");
-    if (!game_location.empty()) locations.push_back(game_location);
-    locations.push_back("../");
-    locations.push_back(".\\");
-    locations.push_back("..\\");
+}
 
+std::unique_ptr<boost::filesystem::path> Data::findDataFileCommon(
+    const std::string &datafilename)
+{
     std::unique_ptr<boost::filesystem::path> my_data_path(
         new boost::filesystem::path);
 
-    BOOST_FOREACH(std::string item, locations) {
+    for(std::string item : m_locations) {
         *my_data_path.get() = (item + datafilename).c_str();
         if (boost::filesystem::exists(*my_data_path.get()) &&
             boost::filesystem::is_regular_file(*my_data_path.get())) {
@@ -143,25 +152,26 @@ std::unique_ptr<boost::filesystem::path> Data::findDataFile(
 
     my_data_path.reset();
     return my_data_path;
+}
+
+std::unique_ptr<boost::filesystem::path> Data::findDataFile(
+    const std::string &datafilename)
+{
+#ifdef ANDROID
+    return findDataFileAndroid();
+#else
+    return findDataFileCommon(datafilename);
 #endif
 }
 
 std::unique_ptr<boost::filesystem::path> Data::findDataPath()
 {
-    std::list<std::string> locations;
-    locations.push_back("");
-    locations.push_back("./");
-    if (!game_location.empty()) locations.push_back(game_location);
-    locations.push_back("../");
-    locations.push_back(".\\");
-    locations.push_back("..\\");
-
     std::unique_ptr<boost::filesystem::path> my_data_path(
         new boost::filesystem::path);
 
 #ifndef ANDROID
-    BOOST_FOREACH(std::string item, locations) {
-        *my_data_path.get() = (item + "data").c_str();
+    BOOST_FOREACH(std::string item, m_locations) {
+        *my_data_path.get() = (item + __data_folder_name).c_str();
         if (boost::filesystem::exists(*my_data_path.get()) &&
             boost::filesystem::is_directory(*my_data_path.get())) {
             return my_data_path;
@@ -206,7 +216,7 @@ std::string Data::findFileRecursive(
 
 std::string Data::findFileFromDataFile(const std::string &name) const
 {
-    BOOST_FOREACH(std::string fname, datafile->listFiles()) {
+    for(std::string fname : datafile->listFiles()) {
         if (fname == name) {
             return fname;
         }
@@ -279,8 +289,8 @@ std::vector<std::string> Data::listMaps()
 
     if (datafile.get()) {
         std::vector<std::string> res = findFileExtFromDataFile(
-            "data/maps/",
-            ".json");  // FIXME Hardcoded
+            __data_folder_name + "/" + __maps_folder_name + "/",
+            __maps_file_extension);
         if (!res.empty()) return res;
     }
 
@@ -288,11 +298,11 @@ std::vector<std::string> Data::listMaps()
     if (!boost::filesystem::exists(*data_path)) return mapfiles;
 
     boost::filesystem::path maps_path = *data_path;
-    maps_path /= "maps";  // FIXME Hardcoded
+    maps_path /= __maps_folder_name;
 
     if (!boost::filesystem::exists(maps_path)) return mapfiles;
 
-    return findFileExtRecursive(mapfiles, maps_path, ".json");
+    return findFileExtRecursive(mapfiles, maps_path, __maps_file_extension);
 #else
     return mapfiles;
 #endif
@@ -303,6 +313,7 @@ bool Data::saveMapJSON(const std::string &name, const std::string &json)
 #ifdef ANDROID
     return false;
 #else
+    // TODO Split
     // TODO Do we need data file support here? Probably not..
     if (!data_path.get()) {
         std::cerr
@@ -367,10 +378,10 @@ boost::filesystem::path Data::solveFilePath(const std::string &name) const
 #endif
 }
 
-std::vector<std::string> Data::readLinesFromFile(const std::string &name) const
+std::vector<std::string> Data::readLinesFromFileInDataFolder(
+    const std::string &name) const
 {
     std::vector<std::string> tmp;
-
 #ifndef ANDROID
     if (data_path.get()) {
         boost::filesystem::path first_path = solveFilePath(name);
@@ -385,15 +396,21 @@ std::vector<std::string> Data::readLinesFromFile(const std::string &name) const
                 }
             }
             fd.close();
-            return tmp;
         }
     }
 #endif
 
+    return tmp;
+}
+
+std::vector<std::string> Data::readLinesFromFileInDatafile(
+    const std::string &name) const
+{
+    std::vector<std::string> tmp;
+
     if (datafile.get()) {
-        // FIXME: Hardcoded "data" path
         const blieng::DataFile::DataFileObject *obj =
-            datafile->getObject("data/" + name);
+            datafile->getObject(__data_folder_name + "/" + name);
         if (obj == nullptr) obj = datafile->getObject(name);
         if (obj != nullptr) {
             unsigned int pos = 0;
@@ -410,9 +427,20 @@ std::vector<std::string> Data::readLinesFromFile(const std::string &name) const
             if (line.size() > 0) {
                 tmp.push_back(line);
             }
-            return tmp;
         }
     }
+
+    return tmp;
+}
+
+std::vector<std::string> Data::readLinesFromFile(const std::string &name) const
+{
+    std::vector<std::string> tmp;
+
+    tmp = readLinesFromFileInDataFolder(name);
+    if (tmp.size() != 0) return tmp;
+
+    tmp = readLinesFromFileInDatafile(name);
 
     return tmp;
 }
@@ -421,6 +449,7 @@ unsigned int Data::readDataFromDataPath(
     const std::string &name,
     const char **data)
 {
+    // TODO Split
 #ifndef ANDROID
     BOOST_FOREACH(blieng::DataBuffer *buf, __buffers)
     {
@@ -483,9 +512,8 @@ unsigned int Data::readData(const std::string &name, const char **data)
 #endif
 
     if (datafile.get()) {
-        // FIXME: Hardcoded data path
         const blieng::DataFile::DataFileObject *obj =
-            datafile->getObject("data/" + name);
+            datafile->getObject(__data_folder_name + "/" + name);
         if (obj == nullptr) obj = datafile->getObject(name);
         if (obj != nullptr) {
             if (data != nullptr) *data = obj->get();
@@ -518,9 +546,8 @@ std::string Data::readString(const std::string &name) const
 #endif
 
     if (datafile.get()) {
-        // FIXME
         const blieng::DataFile::DataFileObject *obj =
-            datafile->getObject("data/" + name);
+            datafile->getObject(__data_folder_name + "/" + name);
         if (obj == nullptr) obj = datafile->getObject(name);
         if (obj != nullptr) {
             res.append(obj->get(), obj->length());

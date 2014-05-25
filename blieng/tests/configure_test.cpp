@@ -22,9 +22,9 @@ void ConfigureTest::tearDown()
 
 void ConfigureTest::basic()
 {
-    shared_ptr<blieng::Data> data(new blieng::Data());
+    boost::shared_ptr<blieng::Data> data(new blieng::Data());
 
-    shared_ptr<blieng::Configure> obj(new blieng::Configure(data));
+    boost::shared_ptr<blieng::Configure> obj(new blieng::Configure(data));
 
     obj->addKey("key1", blieng::Configure::KeyString);
     obj->addKey("key2", blieng::Configure::KeyUInt);
@@ -57,8 +57,8 @@ void ConfigureTest::json()
     std::string origdata = "{ \"strkey\": \"strval\", \"intkey\": 42, \"doublekey\": 3.14, \"test\": [1, 2, 4] }";
     mock_set_file("data/data.json", origdata);
 
-    shared_ptr<blieng::Data> data(new blieng::Data());
-    shared_ptr<blieng::Configure> obj(new blieng::Configure(data));
+    boost::shared_ptr<blieng::Data> data(new blieng::Data());
+    boost::shared_ptr<blieng::Configure> obj(new blieng::Configure(data));
 
     obj->addKey("strkey", blieng::Configure::KeyString);
     obj->addKey("intkey", blieng::Configure::KeyUInt);
@@ -89,8 +89,8 @@ void ConfigureTest::optional()
     mock_set_file("data/data.json", origdata);
     mock_set_file("data/data2.json", origdata2);
 
-    shared_ptr<blieng::Data> data(new blieng::Data());
-    shared_ptr<blieng::Configure> obj(new blieng::Configure(data));
+    boost::shared_ptr<blieng::Data> data(new blieng::Data());
+    boost::shared_ptr<blieng::Configure> obj(new blieng::Configure(data));
 
     obj->addKey("strkey", blieng::Configure::KeyString);
     obj->addKey("intkey", blieng::Configure::KeyUInt);

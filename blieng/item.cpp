@@ -14,7 +14,10 @@ auto_vector<ItemBase> Item::item_bases;
 typedef const ItemBase* item_bases_t;
 typedef std::pair<std::string, double> consume_t;
 
-Item::Item(shared_ptr<blieng::Configure> _configure, shared_ptr<blieng::Data> _data) : ItemBase(), config(_configure), data(_data)
+Item::Item(
+    boost::shared_ptr<blieng::Configure> _configure,
+    boost::shared_ptr<blieng::Data> _data) :
+    ItemBase(), config(_configure), data(_data)
 {
     init();
     return;

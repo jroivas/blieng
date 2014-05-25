@@ -26,7 +26,7 @@ public:
      * \param data Shared backend instance
      * \param mapname Name of the map to load
      */
-    Maps(shared_ptr<blieng::Data> data, const std::string &mapname);
+    Maps(boost::shared_ptr<blieng::Data> data, const std::string &mapname);
 
     /**
      * Get the name of current map
@@ -138,7 +138,7 @@ private:
     std::string map_file;
     json_value *map_json;
 
-    shared_ptr<blieng::Data> data;
+    boost::shared_ptr<blieng::Data> data;
 
     std::string map_image_file;
     std::string solved_map_image_file;
