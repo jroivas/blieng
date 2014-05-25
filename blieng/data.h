@@ -7,6 +7,7 @@
 
 #include <boost/filesystem.hpp>
 
+#include <list>
 #include <map>
 #include <memory>
 #include <string>

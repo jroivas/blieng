@@ -1,13 +1,20 @@
-#ifndef __BLIENG_DATA_FILE_H
-#define __BLIENG_DATA_FILE_H
+/*
+ * Copyright 2014 Blistud:io
+ */
+
+#ifndef __BLIENG_DATAFILE_H
+#define __BLIENG_DATAFILE_H
 
 #include <iostream>
-#include "auto_map.h"
-#include <vector>
 #include <memory>
+#include <string>
+#include <vector>
+
 #ifdef ANDROID
 #include <android/asset_manager.h>
 #endif
+
+#include "blieng/auto_map.h"
 
 using std::unique_ptr;
 
@@ -61,7 +68,10 @@ public:
          * \param seed A seed info for the obfuscator
          * \returns A new \ref DataFileObject with obfuscated data
          */
-        std::unique_ptr<DataFileObject> obfuscate(const char *key, unsigned int len, const std::string &seed="");
+        std::unique_ptr<DataFileObject> obfuscate(
+            const char *key,
+            unsigned int len,
+            const std::string &seed="");
         /**
          * Deobfuscates this object.
          * This object will be intact, but will return a new object
@@ -72,7 +82,10 @@ public:
          * \param seed A seed info for the deobfuscator
          * \returns A new \ref DataFileObject with deobfuscated data
          */
-        std::unique_ptr<DataFileObject> deobfuscate(const char *key, unsigned int len, const std::string &seed="");
+        std::unique_ptr<DataFileObject> deobfuscate(
+            const char *key,
+            unsigned int len,
+            const std::string &seed="");
 
         /**
          * Get lenght of data in this object
@@ -96,8 +109,8 @@ public:
         char *get() const { return dataptr; }
 
     protected:
-        char *dataptr; //!< The data itself
-        unsigned int len; //!< Length of the data
+        char *dataptr;  //!< The data itself
+        unsigned int len;  //!< Length of the data
         friend class DataFile;
 
     private:
@@ -110,7 +123,11 @@ public:
          * \param iv_len Initialization vector lenght
          * \return Safe pointer to modified key data
          */
-        std::unique_ptr<blieng::SafeDataPtr> setupKey(const char *key, unsigned int len, const char *iv=nullptr, unsigned int iv_len=0);
+        std::unique_ptr<blieng::SafeDataPtr> setupKey(
+            const char *key,
+            unsigned int len,
+            const char *iv = nullptr,
+            unsigned int iv_len = 0);
 
         /**
          * Real length of the data.
@@ -130,7 +147,7 @@ public:
      *
      * \param name Data file name
      */
-    DataFile(const std::string &name);
+    explicit DataFile(const std::string &name);
     virtual ~DataFile();
 
     /**
@@ -223,7 +240,9 @@ public:
      * \param len Length of the data in bytes to be obfuscated
      * \returns A safe data pointer of the obfuscated data
      */
-    std::unique_ptr<SafeDataPtr> obfuscateSimple(const char *data, unsigned int len);
+    std::unique_ptr<SafeDataPtr> obfuscateSimple(
+        const char *data,
+        unsigned int len);
 
 private:
     std::string _name;
@@ -240,6 +259,6 @@ private:
     bool _ok;
 };
 
-}
+}  // namespace blieng
 
-#endif
+#endif  // __BLIENG_DATAFILE_H

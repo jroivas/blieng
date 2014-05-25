@@ -142,7 +142,7 @@ std::unique_ptr<boost::filesystem::path> Data::findDataFileCommon(
     std::unique_ptr<boost::filesystem::path> my_data_path(
         new boost::filesystem::path);
 
-    for(std::string item : m_locations) {
+    for (std::string item : m_locations) {
         *my_data_path.get() = (item + datafilename).c_str();
         if (boost::filesystem::exists(*my_data_path.get()) &&
             boost::filesystem::is_regular_file(*my_data_path.get())) {
@@ -216,7 +216,7 @@ std::string Data::findFileRecursive(
 
 std::string Data::findFileFromDataFile(const std::string &name) const
 {
-    for(std::string fname : datafile->listFiles()) {
+    for (std::string fname : datafile->listFiles()) {
         if (fname == name) {
             return fname;
         }
