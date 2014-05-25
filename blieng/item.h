@@ -1,18 +1,23 @@
+/*
+ * Copyright 2014 Blistud:io
+ */
+
 #ifndef __BLIENG_ITEM_H
 #define __BLIENG_ITEM_H
+
+#include <boost/random/random_device.hpp>
+#include <boost/format.hpp>
+#include <boost/flyweight.hpp>
+#include <boost/smart_ptr/shared_ptr.hpp>
 
 #include <string>
 #include <vector>
 #include <map>
-#include <boost/random/random_device.hpp>
-#include <boost/format.hpp>
-#include <boost/flyweight.hpp>
-#include "bliobject.h"
-#include "auto_vector.h"
-#include "configure.h"
-#include "data.h"
 
-#include <boost/smart_ptr/shared_ptr.hpp>
+#include "blieng/bliobject.h"
+#include "blieng/auto_vector.h"
+#include "blieng/configure.h"
+#include "blieng/data.h"
 
 using std::unique_ptr;
 
@@ -28,7 +33,15 @@ public:
     /**
      * Just initialize some sane item base.
      */
-    ItemBase() : BliObject(), base(""), type(""), image(""), rarity(1.0), amount(0.0), life(-1), usable(false) { }
+    ItemBase() :
+        BliObject(),
+        base(""),
+        type(""),
+        image(""),
+        rarity(1.0),
+        amount(0.0),
+        life(-1),
+        usable(false) { }
     virtual ~ItemBase() { }
 
     boost::flyweight<std::string> base; //!< Names of different item bases
@@ -36,10 +49,12 @@ public:
     boost::flyweight<std::string> image; //!< Images of the bases
     double rarity; //!< Tells how rare this item is
     double amount; //!< Amount of the item, ie. quantity
-    long int life; //!< Items life, can be eternal (-1) or decreasing, when life ends item is unusable
+    long int life; //!< Items life, can be eternal (-1) or decreasing
     bool usable; //!< Tells if one can use the item
 
-    boost::flyweight<std::map<std::string, double> > consumes; //!< What items this item consumes?
+    boost::flyweight<
+        std::map<std::string, double>
+    > consumes; //!< What items this item consumes?
     std::map<std::string, double> stocks; //!< User stocks of items
 
     /**
@@ -189,7 +204,7 @@ public:
      *
      * \param name Name of the item
      */
-    Item(const std::string &name);
+    explicit Item(const std::string &name);
     virtual ~Item() { }
 
     /**
@@ -219,7 +234,7 @@ public:
      * \returns A new item
      * \throws char* String to explain the error
      */
-    std::unique_ptr<Item> produce(double produce_amount=1) throw (char *);
+    std::unique_ptr<Item> produce(double produce_amount = 1) throw (char *);
     /**
      * Tell if this item is usable.
      * Item might not be usable if it's exhausted,
@@ -289,6 +304,6 @@ private:
     boost::shared_ptr<blieng::Data> data;  //!< Shared data backed object
 };
 
-}
+}  // namespace blieng
 
-#endif
+#endif  // __BLIENG_ITEM_H

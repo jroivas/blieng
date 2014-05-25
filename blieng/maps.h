@@ -1,13 +1,19 @@
+/*
+ * Copyright 2014 Blistud:io
+ */
+
 #ifndef __BLIENG_MAPS_H
 #define __BLIENG_MAPS_H
 
-#include "bliobject.h"
-#include "item.h"
-#include "character.h"
-#include "town.h"
-#include "path.h"
-#include "json.h"
+#include <string>
 #include <vector>
+
+#include "blieng/bliobject.h"
+#include "blieng/item.h"
+#include "blieng/character.h"
+#include "blieng/town.h"
+#include "blieng/path.h"
+#include "blieng/json.h"
 
 namespace blieng
 {
@@ -147,5 +153,6 @@ private:
     std::vector<blieng::Path> rev_paths;
 };
 
-}
-#endif
+}  // namespace blieng
+
+#endif  // __BLIENG_MAPS_H

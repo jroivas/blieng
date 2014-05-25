@@ -1,9 +1,19 @@
-#include "item.h"
+/*
+ * Copyright 2014 Blistud:io
+ */
+
+#include "blieng/item.h"
+
 #include <boost/random/uniform_int_distribution.hpp>
-#include <string>
+
+#include <list>
+#include <map>
 #include <memory>
-#include "json.h"
-#include <boost/foreach.hpp>
+#include <string>
+#include <utility>
+#include <vector>
+
+#include "blieng/json.h"
 
 using blieng::Item;
 using blieng::ItemBase;
@@ -37,8 +47,8 @@ Item::Item(const std::string &name) : ItemBase()
     std::cout << "Creating: " << name << "\n";
     if (!item_bases.empty()) {
         const ItemBase *orig = nullptr;
-        //std::unique_ptr<ItemBase> orig;
-        BOOST_FOREACH(item_bases_t val, item_bases) {
+        // std::unique_ptr<ItemBase> orig;
+        for (item_bases_t val : item_bases) {
             if (val->base == name) {
                 orig = val;
             }
@@ -55,7 +65,7 @@ Item::Item(const std::string &name) : ItemBase()
 std::vector<std::string> Item::listItems() const
 {
     std::vector<std::string> tmp;
-    BOOST_FOREACH(item_bases_t val, item_bases) {
+    for (item_bases_t val : item_bases) {
         tmp.push_back(val->base);
     }
     return tmp;
@@ -63,7 +73,7 @@ std::vector<std::string> Item::listItems() const
 
 bool Item::isItem(const std::string &name) const
 {
-    BOOST_FOREACH(item_bases_t val, item_bases) {
+    for (item_bases_t val : item_bases) {
         if (val->base == name) return true;
     }
     return false;
@@ -95,7 +105,7 @@ bool Item::registerItem(std::unique_ptr<Item> &item)
         }
     }
     item_bases.push_back(item);
-    //item_bases[item->base] = item;
+    // item_bases[item->base] = item;
 
     return true;
 }
@@ -107,21 +117,20 @@ void Item::getItemBases()
     if (!config->isValue("itemfile")) return;
 
     std::string items_file = config->getStringValue("itemfile");
-    json_value *root_val = data->readJson(items_file); //FIXME
+    json_value *root_val = data->readJson(items_file);  // FIXME
     if (!root_val->isObject()) return;
 
     /* Go thorough items */
-    //TODO Refactor
-    BOOST_FOREACH(std::string mi, root_val->getMemberNames()) {
+    // TODO Refactor
+    for (std::string mi : root_val->getMemberNames()) {
         const json_value *item_val = data->getJsonValue(root_val, mi);
-        //ItemBase *item = new ItemBase();
+        // ItemBase *item = new ItemBase();
         std::unique_ptr<ItemBase> item(new ItemBase());
 
         if (item_val->isObject()) {
             item->base = mi;
             std::vector<std::string> item_names = data->getJsonKeys(item_val);
-            BOOST_FOREACH(std::string keyname, item_names) {
-
+            for (std::string keyname : item_names) {
                 const json_value *val = data->getJsonValue(item_val, keyname);
                 bool item_is_ok = false;
                 if (keyname == "type") {
@@ -147,7 +156,7 @@ void Item::getItemBases()
                 else if (keyname == "consume") {
                     std::map<std::string, double> _consumes;
                     if (val->isObject()) {
-                        BOOST_FOREACH(std::string cmi, val->getMemberNames()) {
+                        for (std::string cmi : val->getMemberNames()) {
                             const json_value *cnt_val = data->getJsonValue(val, cmi);
                             if (cnt_val->isNumeric()) {
                                 _consumes[cmi] = cnt_val->asDouble();
@@ -167,7 +176,7 @@ void Item::getItemBases()
                 }
             }
             item_bases.push_back(std::move(item));
-            //item_bases[mi] = item;
+            // item_bases[mi] = item;
         }
     }
     ok = true;
@@ -182,10 +191,10 @@ bool Item::consume(std::unique_ptr<Item> another)
 
     if (cnt > another->amount) return false;
 
-    //std::cout << base << " consumes " << cnt << "  " << another->base << "\n";
+    // std::cout << base << " consumes " << cnt << "  " << another->base << "\n";
     stocks[another->base] += cnt;
     another->amount -= cnt;
-    //std::cout << another->amount << "  " << another->base << "\n";
+    // std::cout << another->amount << "  " << another->base << "\n";
 
     return true;
 }
@@ -193,7 +202,7 @@ bool Item::consume(std::unique_ptr<Item> another)
 std::unique_ptr<Item> Item::produce(double produce_amount) throw (char *)
 {
     bool can_consume = true;
-    BOOST_FOREACH(consume_t val, consumes.get()) {
+    for (consume_t val : consumes.get()) {
         if (stocks[val.first] < val.second) {
             can_consume = false;
         }
@@ -217,7 +226,7 @@ std::unique_ptr<Item> Item::produce(double produce_amount) throw (char *)
         produced->amount = produce_amount;
     }
 
-    BOOST_FOREACH(consume_t val, consumes.get()) {
+    for (consume_t val : consumes.get()) {
         stocks[val.first] -= val.second;
     }
     return produced;
@@ -240,12 +249,14 @@ void ItemBase::assignItem(const ItemBase* parent)
 
 bool ItemBase::equals(ItemBase *another) const
 {
-    return (base == another->base && type == another->type && rarity == another->rarity);
+    return (base == another->base &&
+            type == another->type &&
+            rarity == another->rarity);
 }
 
 bool ItemBase::doesConsume(const std::string &name) const
 {
-    BOOST_FOREACH(consume_t val, consumes.get()) {
+    for (consume_t val : consumes.get()) {
         if (val.first == name) return true;
     }
     return false;
@@ -261,7 +272,7 @@ void ItemBase::updateConsume(const std::string &name, double count)
 void ItemBase::removeConsume(const std::string &name)
 {
     std::map<std::string, double> new_consumes;
-    BOOST_FOREACH(consume_t val, consumes.get()) {
+    for (consume_t val : consumes.get()) {
         if (val.first != name) {
             new_consumes[name] = val.second;
         }
@@ -283,7 +294,7 @@ void ItemBase::setConsume(std::map<std::string, double> new_consumes)
 std::vector<std::string> ItemBase::getConsumes()
 {
     std::vector<std::string> res;
-    BOOST_FOREACH(consume_t val, consumes.get()) {
+    for (consume_t val : consumes.get()) {
         res.push_back(val.first);
     }
     return res;
@@ -314,7 +325,7 @@ bool ItemBase::age(long int _amount)
 
 bool ItemBase::hasStock() const
 {
-    BOOST_FOREACH(consume_t val, stocks) {
+    for (consume_t val : stocks) {
         if (val.second > 0) return true;
     }
     return false;
@@ -322,7 +333,7 @@ bool ItemBase::hasStock() const
 
 double ItemBase::hasStock(const std::string &name) const
 {
-    BOOST_FOREACH(consume_t val, stocks) {
+    for (consume_t val : stocks) {
         if (val.first == name) return val.second;
     }
     return 0;
@@ -330,7 +341,7 @@ double ItemBase::hasStock(const std::string &name) const
 
 double ItemBase::consumeCount(const std::string &name)
 {
-    BOOST_FOREACH(consume_t val, consumes.get()) {
+    for (consume_t val : consumes.get()) {
         if (val.first == name) return val.second;
     }
     return 0;
@@ -341,7 +352,6 @@ bool ItemBase::update(ItemBase *another)
     if (another == nullptr) return false;
     if (another->base != base) return false;
     if (another->type != type) return false;
-    //if (another->life != life) return false; // XXX What, is this really a valid check?
     if (another->life == 0) return false;
 
     if (another->base != base) return false;
@@ -350,7 +360,7 @@ bool ItemBase::update(ItemBase *another)
     another->amount = 0;
     life = another->life;
 
-    BOOST_FOREACH(consume_t val, another->stocks) {
+    for (consume_t val : another->stocks) {
         stocks[val.first] += val.second;
         val.second = 0;
     }
@@ -361,7 +371,8 @@ bool ItemBase::update(ItemBase *another)
 void ItemBase::setupStock()
 {
     stocks.clear();
-    BOOST_FOREACH(consume_t val, consumes.get()) {
+
+    for (consume_t val : consumes.get()) {
         stocks[val.first] = 0;
     }
 }
@@ -383,7 +394,7 @@ std::string ItemBase::itemToString() const
     tmp += "consumes: ";
 
     bool first = true;
-    BOOST_FOREACH(consume_t val, consumes.get()) {
+    for (consume_t val : consumes.get()) {
         if (!first) tmp += ", ";
         first = false;
         tmp += (boost::format("%s (%f units)") % val.first % val.second).str();
@@ -392,7 +403,7 @@ std::string ItemBase::itemToString() const
 
     tmp += "stock   : ";
     first = true;
-    BOOST_FOREACH(consume_t val, stocks) {
+    for (consume_t val : stocks) {
         if (!first) tmp += ", ";
         first = false;
         tmp += (boost::format("%s (%f units)") % val.first % val.second).str();
@@ -410,16 +421,21 @@ std::string Item::toString() const
 std::string ItemBase::generateJson(const std::string &indent) const
 {
     std::list<std::string> res;
-    if (type != "") res.push_back("\"type\": \"" + type.get() + "\"");
-    if (image != "") res.push_back("\"image\": \"" + image.get() + "\"");
-    if (amount != 0) res.push_back((boost::format("\"amount\": %f") % amount).str());
-    if (rarity != 0) res.push_back((boost::format("\"rarity\": %f") % rarity).str());
-    if (life != -1) res.push_back((boost::format("\"life\": %f") % life).str());
+    if (type != "")
+        res.push_back("\"type\": \"" + type.get() + "\"");
+    if (image != "")
+        res.push_back("\"image\": \"" + image.get() + "\"");
+    if (amount != 0)
+        res.push_back((boost::format("\"amount\": %f") % amount).str());
+    if (rarity != 0)
+        res.push_back((boost::format("\"rarity\": %f") % rarity).str());
+    if (life != -1)
+        res.push_back((boost::format("\"life\": %f") % life).str());
 
     std::string tmp = "\"consume\": {";
     bool first = true;
     bool got = false;
-    BOOST_FOREACH(consume_t val, consumes.get()) {
+    for (consume_t val : consumes.get()) {
         if (!first) tmp += ", ";
         first = false;
         tmp += (boost::format("\"%s\": %f") % val.first % val.second).str();
@@ -430,7 +446,7 @@ std::string ItemBase::generateJson(const std::string &indent) const
 
     std::string res_str = indent + "\"" + base.get() + "\": {";
     first = true;
-    BOOST_FOREACH(std::string val, res) {
+    for (std::string val : res) {
         if (!first) res_str += ", ";
         first = false;
         res_str += val;
@@ -443,7 +459,7 @@ std::string Item::generateBaseJson()
 {
     std::string res = "";
     bool first = true;
-    BOOST_FOREACH(item_bases_t val, item_bases) {
+    for (item_bases_t val : item_bases) {
         if (!first) res += ",\n";
         first = false;
         res += val->generateJson("  ");

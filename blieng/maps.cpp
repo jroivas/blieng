@@ -1,13 +1,24 @@
-#include "maps.h"
-#include "data.h"
+/*
+ * Copyright 2014 Blistud:io
+ */
+
+#include "blieng/maps.h"
+
 #include <boost/foreach.hpp>
 #include <boost/filesystem/path.hpp>
+
 #include <cstdio>
 #include <sstream>
+#include <string>
+
+#include "blieng/data.h"
 
 using blieng::Maps;
 
-Maps::Maps(boost::shared_ptr<blieng::Data> _data, const std::string &mapname) : data(_data)
+Maps::Maps(
+    boost::shared_ptr<blieng::Data> _data,
+    const std::string &mapname) :
+    data(_data)
 {
     if (!loadMap(mapname)) {
         std::cout << "ERROR: Can't find map: " << mapname << "\n";
@@ -35,10 +46,11 @@ bool Maps::saveMap(const std::string &name)
 {
     std::string json = "";
 
-    boost::filesystem::path my_image = boost::filesystem::path(solved_map_image_file);
+    boost::filesystem::path my_image = boost::filesystem::path(
+        solved_map_image_file);
     std::string imagefile = my_image.filename().string();
 
-    //FIXME This needs a rewrite
+    // FIXME This needs a rewrite
     json += "{\n";
     json += "    \"image\": \"" + imagefile + "\",\n";
 
@@ -53,7 +65,8 @@ bool Maps::saveMap(const std::string &name)
         tmp << ", \"posy\": " << town->getPositionY();
 
         if (town->isValue("population-index")) {
-            tmp << ", \"population-index\": " << town->getDoubleValue("population-index");
+            tmp << ", \"population-index\": "
+                << town->getDoubleValue("population-index");
         }
         if (town->isValue("zombies")) {
             tmp << ", \"zombies\": " << town->getUIntValue("zombies");
@@ -181,39 +194,39 @@ bool Maps::parseMap()
     if (!map_json->isObject()) return false;
 
     /* Go thorough items */
-    //TODO Refactor
+    // TODO Refactor
     BOOST_FOREACH(std::string mi, map_json->getMemberNames()) {
         const json_value *item_val = data->getJsonValue(map_json, mi);
-        if (mi == "image" and item_val->isString()) {
+        if (mi == "image" && item_val->isString()) {
             map_image_file = item_val->asString();
             std::cout << " = " <<  map_image_file << "\n";
         }
-        else if (mi == "towns" and item_val->isArray()) {
+        else if (mi == "towns" && item_val->isArray()) {
             auto it = item_val->u.array.begin();
             while (it != item_val->u.array.end()) {
                 if ((*it)->isObject()) {
                     Town *town = new Town();
                     BOOST_FOREACH(std::string town_item, (*it)->getMemberNames()) {
                         const json_value *town_val = data->getJsonValue(*it, town_item);
-                        if (town_item == "name" and town_val->isString()) {
+                        if (town_item == "name" && town_val->isString()) {
                                 town->setName(town_val->asString());
                         }
-                        else if (town_item == "size" and town_val->isNumeric()) {
+                        else if (town_item == "size" && town_val->isNumeric()) {
                                 town->setSize(town_val->asUInt());
                         }
-                        else if (town_item == "posx" and town_val->isNumeric()) {
+                        else if (town_item == "posx" && town_val->isNumeric()) {
                                 town->setPositionX(town_val->asDouble());
                         }
-                        else if (town_item == "posy" and town_val->isNumeric()) {
+                        else if (town_item == "posy" && town_val->isNumeric()) {
                                 town->setPositionY(town_val->asDouble());
                         }
-                        else if (town_item == "start" and town_val->isNumeric()) {
+                        else if (town_item == "start" && town_val->isNumeric()) {
                                 if (town_val->asInt()>0) town->setValue("start", true);
                         }
-                        else if (town_item == "zombies" and town_val->isNumeric()) {
+                        else if (town_item == "zombies" && town_val->isNumeric()) {
                                 town->setValue("zombies", town_val->asUInt());
                         }
-                        else if (town_item == "population-index" and town_val->isNumeric()) {
+                        else if (town_item == "population-index" && town_val->isNumeric()) {
                                 town->setValue("population-index", town_val->asDouble());
                         }
                     }
