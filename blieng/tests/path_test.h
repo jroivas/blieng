@@ -12,6 +12,8 @@ class PathTest : public CppUnit::TestFixture
     CPPUNIT_TEST( copy );
     CPPUNIT_TEST( take );
     CPPUNIT_TEST( length );
+    CPPUNIT_TEST( update );
+    CPPUNIT_TEST( combine );
     CPPUNIT_TEST_SUITE_END();
 public:
     void basic();
@@ -20,6 +22,8 @@ public:
     void copy();
     void take();
     void length();
+    void update();
+    void combine();
 };
 
 #endif

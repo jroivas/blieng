@@ -1,7 +1,13 @@
-#include "path.h"
-#include <boost/foreach.hpp>
+/*
+ * Copyright 2014 Blistud:io
+ */
+
+#include "blieng/path.h"
+
 #include <algorithm>
 #include <iostream>
+#include <string>
+#include <vector>
 
 using blieng::Path;
 
@@ -15,8 +21,9 @@ Path::~Path()
 
 std::string Path::toString() {
     std::string res = "";
+
     bool first = true;
-    BOOST_FOREACH(blieng::Point pt, points) {
+    for (blieng::Point pt : points) {
         if (!first) res += ";";
         first = false;
         res += pt.toString();
@@ -32,27 +39,18 @@ void Path::addPoint(Point pt)
 int Path::getPointIndex(Point point)
 {
     int index = 0;
-    BOOST_FOREACH(blieng::Point pt, points) {
+    for (blieng::Point pt : points) {
         if (point == pt) return index;
         ++index;
     }
     return -1;
 }
 
-void Path::updatePointAt(int index, Point new_point)
+void Path::updatePointAt(unsigned int index, Point new_point)
 {
-    std::vector<Point> new_points;
-    int cnt = 0;
-    BOOST_FOREACH(blieng::Point pt, points) {
-        if (cnt == index) {
-            new_points.push_back(new_point);
-        } else {
-            new_points.push_back(pt);
-        }
-        ++cnt;
-    }
+    if (index >= points.size()) return;
 
-    points = new_points;
+    points[index] = new_point;
 }
 
 void Path::updatePoint(Point point, Point new_point)
@@ -68,21 +66,14 @@ void Path::updatePoint(Point point, Point new_point)
 
 void Path::append(Path another)
 {
-    BOOST_FOREACH(blieng::Point pt, another.points) {
-        addPoint(pt);
-    }
+    points.insert(points.end(), another.points.begin(), another.points.end());
 }
 
 Path Path::combine(Path another) const
 {
     Path newpath;
-    BOOST_FOREACH(blieng::Point pt, points) {
-        newpath.addPoint(pt);
-    }
-
-    BOOST_FOREACH(blieng::Point pt, another.points) {
-        newpath.addPoint(pt);
-    }
+    newpath.append(*this);
+    newpath.append(another);
 
     return newpath;
 }
@@ -90,30 +81,30 @@ Path Path::combine(Path another) const
 
 blieng::Point Path::takeFirst()
 {
-    if (!points.empty()) {
-        blieng::Point res = points.front();
-        points.erase(points.begin());
-        return res;
-    }
-    return blieng::Point(false);
+    if (points.empty())
+        return blieng::Point(false);
+
+    blieng::Point res = points.front();
+    points.erase(points.begin());
+    return res;
 }
 
 blieng::Point Path::takeLast()
 {
-    if (!points.empty()) {
-        blieng::Point res = points.back();
-        points.erase(points.end());
-        return res;
-    }
-    return blieng::Point(false);
+    if (points.empty())
+        return blieng::Point(false);
+
+    blieng::Point res = points.back();
+    points.erase(points.end());
+    return res;
 }
 
 blieng::Point Path::getStart()
 {
-    if (!points.empty()) {
-        return points.front();
-    }
-    return blieng::Point(false);
+    if (points.empty())
+        return blieng::Point(false);
+
+    return points.front();
 }
 
 bool Path::isValid()
@@ -123,10 +114,10 @@ bool Path::isValid()
 
 blieng::Point Path::getEnd()
 {
-    if (!points.empty()) {
-        return points.back();
-    }
-    return blieng::Point(false);
+    if (!points.empty())
+        return blieng::Point(false);
+
+    return points.back();
 }
 
 void Path::reverse()
@@ -137,7 +128,7 @@ void Path::reverse()
 Path Path::copy() const
 {
     Path newpath;
-    BOOST_FOREACH(blieng::Point pt, points) {
+    for (blieng::Point pt : points) {
         newpath.addPoint(pt);
     }
 
@@ -156,7 +147,7 @@ double Path::length()
     double len = 0.0;
 
     blieng::Point f(false);
-    BOOST_FOREACH(blieng::Point pt, points) {
+    for (blieng::Point pt : points) {
         if (f.isValid() && pt != f) {
             len += f.length(pt);
         }

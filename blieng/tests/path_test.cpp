@@ -48,6 +48,36 @@ void PathTest::append()
     CPPUNIT_ASSERT(b.size() == 2);
 }
 
+void PathTest::combine()
+{
+    blieng::Path a;
+    blieng::Path b;
+
+    a.addPoint(blieng::Point(1,2));
+
+    CPPUNIT_ASSERT(a.size() == 1);
+
+    b.addPoint(blieng::Point(5,6));
+    b.addPoint(blieng::Point(9,10));
+
+    CPPUNIT_ASSERT(a.size() == 1);
+    CPPUNIT_ASSERT(b.size() == 2);
+
+    blieng::Path c = a.combine(b);
+
+    CPPUNIT_ASSERT(a.size() == 1);
+    CPPUNIT_ASSERT(c.size() == 3);
+
+    CPPUNIT_ASSERT(c.takeFirst().x == 1);
+    CPPUNIT_ASSERT(c.size() == 2);
+    CPPUNIT_ASSERT(c.takeFirst().x == 5);
+    CPPUNIT_ASSERT(c.size() == 1);
+    CPPUNIT_ASSERT(c.takeFirst().x == 9);
+    CPPUNIT_ASSERT(a.size() == 1);
+    CPPUNIT_ASSERT(b.size() == 2);
+    CPPUNIT_ASSERT(c.size() == 0);
+}
+
 void PathTest::reverse()
 {
     blieng::Path a;
@@ -157,4 +187,38 @@ void PathTest::length()
 
     a.addPoint(blieng::Point(5,6));
     CPPUNIT_ASSERT(a.length() == 8);
+}
+
+void PathTest::update()
+{
+    blieng::Path a;
+
+    a.addPoint(blieng::Point(1,2));
+    a.addPoint(blieng::Point(3,4));
+    a.addPoint(blieng::Point(5,6));
+
+    CPPUNIT_ASSERT(a.size() == 3);
+
+    CPPUNIT_ASSERT( a.getPoints()[0].x == 1 );
+    CPPUNIT_ASSERT( a.getPoints()[0].y == 2 );
+
+    CPPUNIT_ASSERT( a.getPoints()[1].x == 3 );
+    CPPUNIT_ASSERT( a.getPoints()[1].y == 4 );
+
+    CPPUNIT_ASSERT( a.getPoints()[2].x == 5 );
+    CPPUNIT_ASSERT( a.getPoints()[2].y == 6 );
+
+    a.updatePointAt(1, blieng::Point(8,0));
+
+    CPPUNIT_ASSERT(a.size() == 3);
+
+    CPPUNIT_ASSERT( a.getPoints()[0].x == 1 );
+    CPPUNIT_ASSERT( a.getPoints()[0].y == 2 );
+
+    CPPUNIT_ASSERT( a.getPoints()[1].x == 8 );
+    CPPUNIT_ASSERT( a.getPoints()[1].y == 0 );
+
+    CPPUNIT_ASSERT( a.getPoints()[2].x == 5 );
+    CPPUNIT_ASSERT( a.getPoints()[2].y == 6 );
+
 }

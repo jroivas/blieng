@@ -1,10 +1,14 @@
+/*
+ * Copyright 2014 Blistud:io
+ */
+
 #ifndef __BLIENG_PATH_H
 #define __BLIENG_PATH_H
 
 #include <string>
 #include <vector>
 
-#include "point.h"
+#include "blieng/point.h"
 
 namespace blieng
 {
@@ -112,7 +116,7 @@ public:
      * \param index Index of the waypoint to replace.
      * \param new_point New point replacing the old one.
      */
-    void updatePointAt(int index, Point new_point);
+    void updatePointAt(unsigned int index, Point new_point);
     /**
      * Replace a waypoint with another.
      * Goes thorough the waypoints and if matching found,
@@ -171,6 +175,6 @@ private:
     std::vector<Point> points;
 };
 
-}
+}  // namespace blieng
 
-#endif
+#endif  // __BLIENG_PATH_H
