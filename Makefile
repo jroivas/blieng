@@ -32,6 +32,7 @@ all: $(BUILDDIR)/$(PRODUCT)/lib$(PRODUCT).a
 
 prepare:
 	./tools/fetch_build.sh
+	ln -s . blieng/blieng || true
 
 .PHONY: all prepare dist build-$(TARGET) test doc
 
