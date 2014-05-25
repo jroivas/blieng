@@ -1,10 +1,17 @@
+/*
+ * Copyright 2014 Blistud:io
+ */
+
 #ifndef __BLIENG_TOWN_H
 #define __BLIENG_TOWN_H
 
-#include "bliobject.h"
-#include "item.h"
-#include "character.h"
-#include "path.h"
+#include <string>
+#include <vector>
+
+#include "blieng/bliobject.h"
+#include "blieng/item.h"
+#include "blieng/character.h"
+#include "blieng/path.h"
 
 /* Represents a Town or Node where resources can gather
  */
@@ -168,16 +175,17 @@ public:
      * \param character_class Name of the character class.
      * \returns Vector of characters in character class.
      */
-    std::vector<blieng::Character *> getCharacterClass(const std::string &character_class);
+    std::vector<blieng::Character *> getCharacterClass(
+        const std::string &character_class);
 
 private:
-    std::vector<Item *> items; //!< List of items
-    std::vector<Character *> characters; //!< List of characters
-    std::string name; //!< Name of the town
-    unsigned int size; //!< Town size
-    blieng::Point pos; //!< Town position
+    std::vector<Item *> items;  //!< List of items
+    std::vector<Character *> characters;  //!< List of characters
+    std::string name;  //!< Name of the town
+    unsigned int size;  //!< Town size
+    blieng::Point pos;  //!< Town position
 };
 
-}
+}  // namespace blieng
 
-#endif
+#endif  // __BLIENG_TOWN_H

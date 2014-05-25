@@ -1,5 +1,11 @@
-#include "town.h"
-#include <boost/foreach.hpp>
+/*
+ * Copyright 2014 Blistud:io
+ */
+
+#include "blieng/town.h"
+
+#include <string>
+#include <vector>
 
 using blieng::Town;
 
@@ -12,7 +18,7 @@ Town::Town() : BliObject(), name(""), size(0)
 void Town::updatePopulation()
 {
     unsigned int pop = 0;
-    BOOST_FOREACH(Character *ch, characters) {
+    for (Character *ch : characters) {
         if (ch->isAlive()) ++pop;
     }
     setValue("population", pop);
@@ -105,7 +111,7 @@ std::string Town::toString() const
     res += "name: " + name + "\n";
     res += (boost::format("size: %u\n") % size).str();
     res += pos.toString() + "\n";
-    //res += (boost::format("pos : %f, %f\n") % pos->y % pos->y).str();
+    // res += (boost::format("pos : %f, %f\n") % pos->y % pos->y).str();
 
     return res;
 }
@@ -113,8 +119,9 @@ std::string Town::toString() const
 unsigned int Town::getCharacterClassCnt(const std::string &character_class)
 {
     unsigned int zombies = 0;
-    BOOST_FOREACH(Character *ch, characters) {
-        if (ch->isValue("class") && ch->getStringValue("class") == character_class) {
+    for (Character *ch : characters) {
+        if (ch->isValue("class") &&
+            ch->getStringValue("class") == character_class) {
             if (ch->isAlive()) {
                 ++zombies;
             }
@@ -123,11 +130,13 @@ unsigned int Town::getCharacterClassCnt(const std::string &character_class)
     return zombies;
 }
 
-std::vector<blieng::Character *> Town::getCharacterClass(const std::string &character_class)
+std::vector<blieng::Character *> Town::getCharacterClass(
+    const std::string &character_class)
 {
     std::vector<Character *> zombies;
-    BOOST_FOREACH(Character *ch, characters) {
-        if (ch->isValue("class") && ch->getStringValue("class") == character_class) {
+    for (Character *ch : characters) {
+        if (ch->isValue("class") &&
+            ch->getStringValue("class") == character_class) {
             zombies.push_back(ch);
         }
     }
