@@ -114,7 +114,7 @@ bool Path::isValid()
 
 blieng::Point Path::getEnd()
 {
-    if (!points.empty())
+    if (points.empty())
         return blieng::Point(false);
 
     return points.back();

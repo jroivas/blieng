@@ -1,6 +1,13 @@
-#include "point.h"
+/*
+ * Copyright 2014 Blistud:io
+ */
+
+#include "blieng/point.h"
+
 #include <boost/format.hpp>
 #include <math.h>
+
+#include <string>
 
 using blieng::Point;
 
@@ -16,13 +23,11 @@ std::string Point::toString() const
 }
 
 bool Point::operator==(const Point &other) const {
-    if (x == other.x && y == other.y) return true;
-    return false;
+    return (x == other.x && y == other.y);
 }
 
 bool Point::operator!=(const Point &other) const {
-    if (x != other.x || y != other.y) return true;
-    return false;
+    return (x != other.x || y != other.y);
 }
 
 void Point::update(Point another)
@@ -33,7 +38,7 @@ void Point::update(Point another)
 
 Point Point::traverse(Point target, double now, double time) const
 {
-    //Travel to another point, in specific time, specify now as current time
+    // Travel to another point, in specific time, specify now as current time
     if (now <= 0) return *this;
     if (now > time) return target;
 
@@ -50,9 +55,9 @@ double Point::length(Point another)
 {
     double dx = x - another.x;
     double dy = y - another.y;
-    if (dx<0) dx *= -1;
-    if (dy<0) dy *= -1;
+    if (dx < 0) dx *= -1;
+    if (dy < 0) dy *= -1;
 
-    //return sqrt(dx*dx + dy*dy);
+    // return sqrt(dx*dx + dy*dy);
     return dx+dy;
 }

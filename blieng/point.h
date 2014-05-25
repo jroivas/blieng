@@ -1,3 +1,7 @@
+/*
+ * Copyright 2014 Blistud:io
+ */
+
 #ifndef __BLIENG_POINT_H
 #define __BLIENG_POINT_H
 
@@ -18,7 +22,7 @@ public:
      *
      * \param is_valid True if generated point is valid, false if not
      */
-    Point(bool is_valid=false) : x(0), y(0), valid(is_valid) { }
+    explicit Point(bool is_valid = false) : x(0), y(0), valid(is_valid) { }
     /**
      * Initialize point with X and Y values.
      * Generated point will be valid.
@@ -26,7 +30,8 @@ public:
      * \param point_x Point X position
      * \param point_y Point Y position
      */
-    Point(double point_x, double point_y) : x(point_x), y(point_y), valid(true) { }
+    Point(double point_x, double point_y) :
+        x(point_x), y(point_y), valid(true) { }
     virtual ~Point();
 
     /**
@@ -108,11 +113,11 @@ public:
      */
     double length(Point another);
 
-    double x; //!< Point X coordinate
-    double y; //!< Point Y coordinate
-    bool valid; //!< Tells if point is valid
+    double x;  //!< Point X coordinate
+    double y;  //!< Point Y coordinate
+    bool valid;  //!< Tells if point is valid
 };
 
-}
+}  // namespace blieng
 
-#endif
+#endif  // __BLIENG_POINT_H
