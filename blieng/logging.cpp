@@ -39,7 +39,7 @@ void blieng::__do_log(std::string level, std::string msg)
 #ifdef ANDROID
         qDebug() << level << ": " << msg;
 #else
-        std::cout << level << ": " << msg << std::endl;
+        std::cerr << level << ": " << msg << std::endl;
 #endif
     }
 }

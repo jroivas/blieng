@@ -1,6 +1,14 @@
-#include "eventlog.h"
-#include <boost/foreach.hpp>
+/*
+ * Copyright 2014 Blistud:io
+ */
+
+#include "blieng/eventlog.h"
+
+#include <algorithm>
 #include <sstream>
+#include <string>
+#include <utility>
+#include <vector>
 
 using blieng::ObjectLog;
 using blieng::EventLog;
@@ -13,11 +21,13 @@ ObjectLog::ObjectLog() : BliObject()
     object = nullptr;
 }
 
-ObjectLog::ObjectLog(void *obj) : BliObject(), object(obj), name("")
+ObjectLog::ObjectLog(void *obj) :
+    BliObject(), object(obj), name("")
 {
 }
 
-ObjectLog::ObjectLog(const std::string &_name) : BliObject(), object(nullptr), name(_name)
+ObjectLog::ObjectLog(const std::string &_name) :
+    BliObject(), object(nullptr), name(_name)
 {
 }
 
@@ -43,7 +53,8 @@ void ObjectLog::assign(void *obj)
 
 void ObjectLog::addEvent(BliAny event)
 {
-    boost::posix_time::ptime now = boost::posix_time::microsec_clock::universal_time();
+    boost::posix_time::ptime now =
+        boost::posix_time::microsec_clock::universal_time();
     std::pair<boost::posix_time::ptime, BliAny> data;
     data.first = now;
     data.second = event;
@@ -75,7 +86,10 @@ std::string ObjectLog::nameDataToString(BliAny anydata) const
     return res;
 }
 
-std::string ObjectLog::eventToString(std::vector<std::pair<boost::posix_time::ptime, BliAny> >::const_iterator iter) const
+std::string ObjectLog::eventToString(
+    std::vector<
+        std::pair<boost::posix_time::ptime, BliAny>
+    >::const_iterator iter) const
 {
     std::string res = timeToString((*iter).first);
     res += " " + nameDataToString((*iter).second);
@@ -113,7 +127,7 @@ EventLog::EventLog()
 
 void EventLog::log(void *object, BliAny event)
 {
-    BOOST_FOREACH(ObjectLog *_log, events) {
+    for (ObjectLog *_log : events) {
         if (_log->getObject() == object) {
             _log->addEvent(event);
             return;
@@ -127,7 +141,7 @@ void EventLog::log(void *object, BliAny event)
 
 void EventLog::log(const std::string &name, BliAny event)
 {
-    BOOST_FOREACH(ObjectLog *_log, events) {
+    for (ObjectLog *_log : events) {
         if (_log->getName() == name) {
             _log->addEvent(event);
             return;
@@ -147,7 +161,7 @@ void EventLog::logString(const std::string &name, const std::string &event)
 
 ObjectLog *EventLog::get(const std::string &name)
 {
-    BOOST_FOREACH(ObjectLog *_log, events) {
+    for (ObjectLog *_log : events) {
         if (_log->getName() == name) {
             return _log;
         }
@@ -158,7 +172,7 @@ ObjectLog *EventLog::get(const std::string &name)
 
 ObjectLog *EventLog::get(void *object)
 {
-    BOOST_FOREACH(ObjectLog *_log, events) {
+    for (ObjectLog *_log : events) {
         if (_log->getObject() == object) {
             return _log;
         }
@@ -170,7 +184,7 @@ ObjectLog *EventLog::get(void *object)
 void EventLog::incrementCounter(const std::string &name, unsigned int cnt)
 {
     ObjectLog *__counters = nullptr;
-    BOOST_FOREACH(ObjectLog *_log, events) {
+    for (ObjectLog *_log : events) {
         if (_log->getName() == __counter_object_name) {
             __counters = _log;
             break;
@@ -183,13 +197,15 @@ void EventLog::incrementCounter(const std::string &name, unsigned int cnt)
         events.push_back(std::move(newobject));
     }
 
-    if (!__counters->isValue(name)) __counters->setValue(name, static_cast<unsigned int>(0));
+    if (!__counters->isValue(name))
+        __counters->setValue(name, static_cast<unsigned int>(0));
+
     __counters->changeNumberValue(name, cnt);
 }
 
 unsigned int EventLog::getCounter(const std::string &name) const
 {
-    BOOST_FOREACH(ObjectLog *_log, events) {
+    for (ObjectLog *_log : events) {
         if (_log->getName() == __counter_object_name) {
             if (_log->isValue(name)) {
                 return _log->getUIntValue(name);
@@ -206,7 +222,7 @@ std::string EventLog::toString() const
     std::string res = "";
     std::string counters = "";
 
-    BOOST_FOREACH(ObjectLog *_log, events) {
+    for (ObjectLog *_log : events) {
         if (_log->getName() == __counter_object_name) {
             counters += _log->toString();
         } else {
@@ -217,8 +233,12 @@ std::string EventLog::toString() const
     return res + counters;
 }
 
-bool compareTime(std::pair<boost::posix_time::ptime, BliAny> i, std::pair<boost::posix_time::ptime, BliAny> j);
-bool compareTime(std::pair<boost::posix_time::ptime, BliAny> i, std::pair<boost::posix_time::ptime, BliAny> j)
+bool compareTime(
+    std::pair<boost::posix_time::ptime, BliAny> i,
+    std::pair<boost::posix_time::ptime, BliAny> j);
+bool compareTime(
+    std::pair<boost::posix_time::ptime, BliAny> i,
+    std::pair<boost::posix_time::ptime, BliAny> j)
 {
     return i.first < j.first;
 }
@@ -229,11 +249,15 @@ std::string EventLog::toChronologicalString() const
     std::string counters = "";
 
     ObjectLog tmplog;
-    BOOST_FOREACH(ObjectLog *_log, events) {
+    for (ObjectLog *_log : events) {
         if (_log->getName() == __counter_object_name) {
             counters += _log->toString();
         } else {
-            //tmplog.events.insert(tmplog.events.end(), _log->events.begin(), _log->events.end());
+            /* tmplog.events.insert(
+                    tmplog.events.end(),
+                    _log->events.begin(),
+                    _log->events.end());
+             */
             auto it = _log->events.cbegin();
             while (it != _log->events.cend()) {
                 std::pair<boost::posix_time::ptime, BliAny> data;

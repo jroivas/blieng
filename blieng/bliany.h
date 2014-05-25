@@ -47,9 +47,14 @@ public:
     BliAny(const any & other) : boost::any(other) {}
     ~BliAny() {}
 
-    #define CAST_TO(X,Y,Z) \
+    #define CAST_TO(X,Y,Z)\
     if (Y.type() == typeid(X)) {\
-        Z << boost::any_cast<X>(Y); \
+        Z << boost::any_cast<X>(Y);\
+    } else
+
+    #define CAST_TO_BOOL(X,Y,Z)\
+    if (Y.type() == typeid(X)) {\
+        Z << (boost::any_cast<X>(Y) ? "true" : "false");\
     } else
 
     /**
@@ -74,7 +79,7 @@ public:
         CAST_TO(char, obj, ostr)
         CAST_TO(const char *, obj, ostr)
         CAST_TO(char, obj, ostr)
-        CAST_TO(bool, obj, ostr)
+        CAST_TO_BOOL(bool, obj, ostr)
         CAST_TO(std::string, obj, ostr)
         {
             ostr << "<unknown type>";
@@ -83,6 +88,8 @@ public:
         return ostr;
     }
     #undef CAST_TO
+    #undef CAST_TO_BOOL
+
     #define AS_VALUE(Y, X)\
     X as ## Y() {\
         if (this->type() == typeid(X)) {\

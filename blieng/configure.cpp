@@ -183,6 +183,7 @@ void Configure::parse()
                 parseStringList(data_key, realval);
             }
             else if (val->second == Configure::KeyIntList) {
+                parseIntList(data_key, realval);
             }
         }
     }

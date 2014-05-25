@@ -64,7 +64,9 @@ void BliObjectTest::getValues()
         CPPUNIT_ASSERT( obj->getStringValue("test_int") == "" );
         std::string outp = buffer.str();
 
-        CPPUNIT_ASSERT(outp.find("Error, not a String value at: test_int") != std::string::npos);
+        CPPUNIT_ASSERT(
+            outp.find("Error, not a String value at: test_int") !=
+            std::string::npos);
     }
 
     {

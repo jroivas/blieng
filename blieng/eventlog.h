@@ -1,12 +1,20 @@
+/*
+ * Copyright 2014 Blistud:io
+ */
+
 #ifndef __BLIENG_EVENTLOG_H
 #define __BLIENG_EVENTLOG_H
 
-#include "bliobject.h"
-#include "auto_vector.h"
-#include <vector>
-#include <memory>
-#include <map>
 #include <boost/date_time/posix_time/posix_time.hpp>
+
+#include <map>
+#include <memory>
+#include <string>
+#include <utility>
+#include <vector>
+
+#include "blieng/bliobject.h"
+#include "blieng/auto_vector.h"
 
 using std::unique_ptr;
 
@@ -29,13 +37,13 @@ public:
      *
      * \param obj Object reference
      */
-    ObjectLog(void *obj);
+    explicit ObjectLog(void *obj);
     /**
      * Logging for specific name
      *
      * \param name Name reference
      */
-    ObjectLog(const std::string &name);
+    explicit ObjectLog(const std::string &name);
     virtual ~ObjectLog() {}
 
     /**
@@ -85,7 +93,10 @@ public:
      * \param iter Iterator
      * \returns String representation of event
      */
-    std::string eventToString(std::vector<std::pair<boost::posix_time::ptime, BliAny> >::const_iterator iter) const;
+    std::string eventToString(
+        std::vector<
+            std::pair<boost::posix_time::ptime, BliAny>
+        >::const_iterator iter) const;
 
     /**
      * Convert timestamp to string
@@ -122,7 +133,7 @@ private:
     std::string name;
 };
 
-//FIXME: implement achivements
+// FIXME: implement achivements
 
 /**
  * General event logging
@@ -186,7 +197,7 @@ public:
      * \param name Name of the counter
      * \param cnt Increment count
      */
-    void incrementCounter(const std::string &name, unsigned int cnt=1);
+    void incrementCounter(const std::string &name, unsigned int cnt = 1);
     /**
      * Get current value of the named counter.
      *
@@ -216,6 +227,6 @@ private:
     auto_vector<ObjectLog> events;
 };
 
-}
+}  // namespace blieng
 
-#endif
+#endif  // __BLIENG_EVENTLOG_H

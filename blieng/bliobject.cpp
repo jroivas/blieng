@@ -5,7 +5,6 @@
 #include "blieng/bliobject.h"
 
 #include <boost/format.hpp>
-#include <boost/foreach.hpp>
 #include <boost/random/uniform_int_distribution.hpp>
 #include <boost/random/uniform_real_distribution.hpp>
 #include <boost/lexical_cast.hpp>
@@ -58,7 +57,7 @@ void BliObject::assignObject(const BliObject *another)
 #ifdef DATA_MUTEX_LOCK
     boost::lock_guard<boost::mutex> keylock(value_mutex);
 #endif
-    BOOST_FOREACH(values_t val, another->values) {
+    for (values_t val : another->values) {
         values[val.first] = val.second;
     }
 }
@@ -100,7 +99,7 @@ BliAny BliObject::getValue(const std::string &key) const
     values_const_iter_t value_iter = values.find(key);
 
     if (value_iter == values.end()) {
-        LOG_DEBUG("Error, key not found: " + key);
+        LOG_ERROR("Error, key not found: " + key);
         throw std::string("Error, key not found: " + key);
     }
 
@@ -123,7 +122,7 @@ Y BliObject::get ## X ## Value( \
 {\
     BliAny val = getValue(key);\
     if (val.empty()) {\
-        LOG_DEBUG("Error, key not found: " + key);\
+        LOG_ERROR("Error, key not found: " + key);\
         throw "Error, key not found: " + key;\
     }\
     if (val.type() == typeid(Y)) {\
@@ -132,7 +131,7 @@ Y BliObject::get ## X ## Value( \
     try {\
         return boost::any_cast<Y>(val);\
     } catch (boost::bad_any_cast &c) {\
-        LOG_DEBUG("Error, not a " #X " value at: " + key);\
+        LOG_ERROR("Error, not a " #X " value at: " + key);\
         return default_value;\
     }\
 }
@@ -142,7 +141,7 @@ Y BliObject::get ## X ## Value(const std::string &key, Y default_value) const\
 {\
     BliAny val = getValue(key);\
     if (val.empty()) {\
-        LOG_DEBUG("Error, key not found: " + key);\
+        LOG_ERROR("Error, key not found: " + key);\
         throw "Error, key not found: " + key;\
     }\
     if (val.type() == typeid(Y)) {\
@@ -166,7 +165,7 @@ Y BliObject::get ## X ## Value(const std::string &key, Y default_value) const\
     }\
     std::ostringstream m;\
     m << val;\
-    LOG_DEBUG("Error, not a " #X " value at: " + key + ", val: " + m.str());\
+    LOG_ERROR("Error, not a " #X " value at: " + key + ", val: " + m.str());\
     return default_value;\
 }
 
@@ -206,7 +205,7 @@ const std::type_info *BliObject::getValueType(const std::string &key) const
 {
     BliAny val = getValue(key);
     if (val.empty()) {
-        LOG_DEBUG("Error, key not found: " + key);
+        LOG_ERROR("Error, key not found: " + key);
         throw "Error, key not found: " + key;
     }
     return &val.type();
@@ -216,7 +215,7 @@ std::string BliObject::toString() const
 {
     std::ostringstream res;
 
-    BOOST_FOREACH(values_t item, values) {
+    for (values_t item : values) {
         std::string key = item.first;
         BliAny val = item.second;
 
@@ -235,7 +234,7 @@ std::vector<std::string> BliObject::getKeys()
     boost::lock_guard<boost::mutex> keylock(value_mutex);
 #endif
 
-    for(values_t val : values) {
+    for (values_t val : values) {
         res.push_back(val.first);
     }
     return res;
