@@ -196,6 +196,22 @@ public:
     }
 
 private:
+    /**
+     * Tries to find and initialize data file.
+     * Will not do anything if data file not found.
+     *
+     * \param datafilename Name of the datafile
+     */
+    void initializeDataFile(const std::string &datafilename);
+    /**
+     * Initializes global data file encryption keys.
+     * To utilize default keys or old key, pass nullptr for key.
+     * If key is given, it will override old global key.
+     *
+     * \param key New data file encryption key, or nullptr
+     * \param key_len Length of the key in bytes
+     */
+    void initializeEncryptionKey(const char *key, unsigned int key_len);
     unsigned int readDataFromDataPath(
         const std::string &name,
         const char **data);
@@ -221,6 +237,9 @@ private:
     auto_vector<DataBuffer> __buffers;
 
     std::string game_location;
+
+    static char * __data_key;
+    static unsigned int __data_key_len;
 };
 
 }  // namespace blieng

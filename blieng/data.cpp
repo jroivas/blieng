@@ -46,9 +46,8 @@ public:
     unsigned int len;  //!< Length of the data/file
 };
 
-// FIXME
-static char * __data_key = nullptr;
-static unsigned int __data_key_len = 0;
+char * blieng::Data::__data_key = nullptr;
+unsigned int blieng::Data::__data_key_len = 0;
 
 Data::Data()
 {
@@ -61,10 +60,7 @@ Data::~Data()
 {
 }
 
-bool Data::initialize(
-    const std::string &datafilename,
-    const char *key,
-    unsigned int key_len)
+void Data::initializeDataFile(const std::string &datafilename)
 {
     if (!datafile.get() || datafilename != "") {
         if (datafilename == "") {
@@ -78,12 +74,26 @@ bool Data::initialize(
             LOG_INFO("Found data file: " + data_file_path->string());
         }
     }
-    if (key != NULL) {
+}
+
+void Data::initializeEncryptionKey(const char *key, unsigned int key_len)
+{
+    if (key != nullptr) {
         if (__data_key != nullptr) delete __data_key;
         __data_key_len = key_len;
         __data_key = new char[key_len];
         memmove(__data_key, key, key_len);
     }
+}
+
+bool Data::initialize(
+    const std::string &datafilename,
+    const char *key,
+    unsigned int key_len)
+{
+    initializeDataFile(datafilename);
+    initializeEncryptionKey(key, key_len);
+
     bool res = false;
     if (datafile.get()) {
         LOG_DEBUG("Datafile is valid");
