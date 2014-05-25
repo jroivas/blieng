@@ -1,5 +1,8 @@
-#include "wallclock.h"
-#include <boost/foreach.hpp>
+/*
+ * Copyright 2014 Blistud:io
+ */
+
+#include "blieng/wallclock.h"
 
 using blieng::Wallclock;
 using blieng::Item;
@@ -27,7 +30,7 @@ bool Wallclock::addProducer(std::unique_ptr<Item> item)
 
 void Wallclock::produceTime(unsigned long int amount)
 {
-    BOOST_FOREACH(Item *item, producers) {
+    for (Item *item : producers) {
         if (time_producer != nullptr) {
             std::unique_ptr<Item> time = time_producer->produce(amount);
             if (!time.get()) {
@@ -46,7 +49,7 @@ void Wallclock::produceTime(unsigned long int amount)
 auto_vector<Item> Wallclock::produceTier1()
 {
     // Generate first items
-    BOOST_FOREACH(Item *item, producers) {
+    for (Item *item : producers) {
         int count = 0x1000;
         bool ok = true;
         do  {
@@ -56,19 +59,18 @@ auto_vector<Item> Wallclock::produceTier1()
             } else {
                 ok = false;
             }
-        } while (ok && (--count)>0);
+        } while (ok && (--count) > 0);
     }
     return items;
 }
 #endif
 
-//auto_vector<Item> Wallclock::produceTier2(auto_vector<Item> items)
 void Wallclock::produceTier2Items()
 {
     // Go thorough the items
     auto it = items.begin();
     while (it != items.end()) {
-        int count = 0x1000; //FIXME Hardcoded magic!
+        int count = 0x1000;  // FIXME Hardcoded magic!
         bool ok = true;
         do  {
             std::unique_ptr<Item> new_item = (*it)->produce();
@@ -79,7 +81,7 @@ void Wallclock::produceTier2Items()
             } else {
                 ok = false;
             }
-        } while (ok && (--count)>0);
+        } while (ok && (--count) > 0);
         ++it;
     }
 }
@@ -89,7 +91,7 @@ void Wallclock::produceTier2Producers()
     // Go thorough the producers
     auto it = producers.begin();
     while (it != producers.end()) {
-        int count = 0x1000; //FIXME Hardcoded magic!
+        int count = 0x1000;  // FIXME Hardcoded magic!
         bool ok = true;
         do  {
             std::unique_ptr<Item> new_item = (*it)->produce();
@@ -100,7 +102,7 @@ void Wallclock::produceTier2Producers()
             } else {
                 ok = false;
             }
-        } while (ok && (--count)>0);
+        } while (ok && (--count) > 0);
         ++it;
     }
 }
@@ -116,7 +118,7 @@ bool Wallclock::consume()
     bool changed = false;
     auto iit = items.begin();
     while (iit != items.end()) {
-        while ((*iit)->amount>0) {
+        while ((*iit)->amount > 0) {
             bool last_ok = false;
             std::unique_ptr<Item> in_need;
             auto it = producers.begin();
@@ -127,7 +129,8 @@ bool Wallclock::consume()
                         in_need = producers.pop(it);
                         it = producers.begin();
                     }
-                    else if (in_need->hasStock((*iit)->base) > (*it)->hasStock((*iit)->base)) {
+                    else if (in_need->hasStock((*iit)->base) >
+                            (*it)->hasStock((*iit)->base)) {
                         in_need = producers.pop(it);
                         it = producers.begin();
                     }
@@ -146,7 +149,7 @@ bool Wallclock::consume()
     }
     iit = items.begin();
     while (iit != items.end()) {
-        while ((*iit)->amount>0) {
+        while ((*iit)->amount > 0) {
             bool last_ok = false;
             std::unique_ptr<Item> in_need;
             auto it = producers.begin();
@@ -156,7 +159,8 @@ bool Wallclock::consume()
                     if (!in_need.get()) {
                         in_need = producers.pop(it);
                         it = producers.begin();
-                    } else if (in_need->hasStock((*iit)->base) > (*it)->hasStock((*iit)->base)) {
+                    } else if (in_need->hasStock((*iit)->base) >
+                              (*it)->hasStock((*iit)->base)) {
                         in_need = producers.pop(it);
                         it = producers.begin();
                     }
@@ -178,9 +182,9 @@ void Wallclock::combineItems()
 {
 #if 0
     auto_vector<Item> new_items;
-    BOOST_FOREACH(Item *item, items) {
+    for (Item *item : items) {
         bool found = false;
-        BOOST_FOREACH(Item *item2, new_items) {
+        for (Item *item2 : new_items) {
             if (item->base == item2->base) {
                 item2->update(item);
                 found = true;
@@ -198,7 +202,7 @@ void Wallclock::cleanItems()
 {
 #if 0
     auto_vector<Item> new_items;
-    BOOST_FOREACH(Item *item, items) {
+    for (Item *item : items) {
         if (item->exhausted()) {
             std::cout << item->base << " exhausted\n";
             // TODO: delete it?
@@ -215,26 +219,26 @@ void Wallclock::produce(unsigned long int amount)
     // First produce time and generate time based products
     produceTime(amount);
 
-    //auto_vector<Item> items;
+    // auto_vector<Item> items;
     produceTier2();
 
     // Produce rest of the products, consume
     unsigned int counter = 0x1000;
     while (true && (--counter > 0)) {
         if (!consume()) break;
-        //items = produceTier2(items);
+        // items = produceTier2(items);
         produceTier2();
     }
 
     Wallclock::combineItems();
     Wallclock::cleanItems();
     std::cout << "Produced: \n";
-    BOOST_FOREACH(Item *item, producers) {
+    for (Item *item : producers) {
             std::cout << item->toString() << "\n";
     }
-    BOOST_FOREACH(Item *item, items) {
+    for (Item *item : items) {
             std::cout << item->toString() << "\n";
     }
 
-    //return items;
+    // return items;
 }

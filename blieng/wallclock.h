@@ -1,9 +1,14 @@
+/*
+ * Copyright 2014 Blistud:io
+ */
+
 #ifndef __BLIENG_WALLCLOCK_H
 #define __BLIENG_WALLCLOCK_H
 
 #include <vector>
-#include "item.h"
-#include "auto_vector.h"
+
+#include "blieng/item.h"
+#include "blieng/auto_vector.h"
 
 using std::unique_ptr;
 
@@ -21,7 +26,7 @@ public:
      *
      * \param time_producer Item which produces time
      */
-    Wallclock(Item *time_producer);
+    explicit Wallclock(Item *time_producer);
     /**
      * Go forward with time units.
      * Time units here are just general units on global scale,
@@ -29,7 +34,7 @@ public:
      *
      * \param amount Number of time units to go forward.
      */
-    void forward(unsigned long int amount=1);
+    void forward(unsigned long int amount = 1);
     /**
      * Add a new producer, which may require time.
      * May require also any other resources.
@@ -41,7 +46,6 @@ public:
     bool addProducer(std::unique_ptr<Item> item);
 
 private:
-    //auto_vector<Item> produceTime(unsigned long int amount);
     /**
      * Produces timely based items.
      * Goes thorough the producers list and feed them with
@@ -50,8 +54,7 @@ private:
      * \param amount Amount of time to proceed
      */
     void produceTime(unsigned long int amount);
-    //auto_vector<Item> produceTier1();
-    //auto_vector<Item> produceTier2(auto_vector<Item> items);
+
     /**
      * Tier 2 produce
      * Meant to produce items and producers in tier 2.
@@ -103,12 +106,12 @@ private:
      */
     bool consume();
 
-    auto_vector<Item> items; //!< List of all items
-    auto_vector<Item> producers; //!< List of producers
-    Item *time_producer; //!< The master time producer
-    unsigned long int wall_time; //!< Current time since generation
+    auto_vector<Item> items;  //!< List of all items
+    auto_vector<Item> producers;  //!< List of producers
+    Item *time_producer;  //!< The master time producer
+    unsigned long int wall_time;  //!< Current time since generation
 };
 
-}
+}  // namespace blieng
 
-#endif
+#endif  // __BLIENG_WALLCLOCK_H
