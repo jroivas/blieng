@@ -11,6 +11,7 @@
 #include <boost/thread/locks.hpp>
 #include <boost/thread/lock_guard.hpp>
 #endif
+#include <boost/assert.hpp>
 
 #include <string>
 #include <utility>
@@ -20,8 +21,8 @@ using blieng::Configure;
 
 typedef std::pair<std::string, Configure::key_type_t> key_values_t;
 
-Configure::Configure(boost::shared_ptr<blieng::Data> _data) :
-    BliObject(), data(_data)
+Configure::Configure(boost::shared_ptr<blieng::BliengState> _state) :
+    BliObject(), m_state(_state)
 {
 }
 
@@ -37,9 +38,9 @@ Configure::~Configure()
 
 bool Configure::load(const std::string &_config_file)
 {
-    std::string fname = data->findFile(_config_file);
+    std::string fname = m_state->m_data->findFile(_config_file);
     if (fname != "") {
-        data_json = data->readJson(fname);
+        data_json = m_state->m_data->readJson(fname);
         parse();
         return true;
     }
@@ -159,7 +160,8 @@ void Configure::parse()
         if (val == keys.end()) val = opt_keys.find(data_key);
 
         if (val != keys.end() || val2 != opt_keys.end()) {
-            const json_value* realval = data->getJsonValue(data_json, data_key);
+            const json_value* realval =
+                m_state->m_data->getJsonValue(data_json, data_key);
             if (val->second == Configure::KeyString) {
                 if (realval->isString())
                     setValue(data_key, realval->asString());

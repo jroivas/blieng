@@ -18,16 +18,11 @@
 using blieng::Item;
 using blieng::ItemBase;
 
-bool Item::ok = false;
-auto_vector<ItemBase> Item::item_bases;
+bool Item::m_ok = false;
+auto_vector<ItemBase> Item::m_item_bases;
 
-typedef const ItemBase* item_bases_t;
-typedef std::pair<std::string, double> consume_t;
-
-Item::Item(
-    boost::shared_ptr<blieng::Configure> _configure,
-    boost::shared_ptr<blieng::Data> _data) :
-    ItemBase(), config(_configure), data(_data)
+Item::Item(boost::shared_ptr<blieng::BliengState> _state) :
+    ItemBase(), m_state(_state)
 {
     init();
     return;
@@ -45,10 +40,10 @@ Item::Item(const std::string &name) : ItemBase()
     init();
     usable = false;
     std::cout << "Creating: " << name << "\n";
-    if (!item_bases.empty()) {
+    if (!m_item_bases.empty()) {
         const ItemBase *orig = nullptr;
         // std::unique_ptr<ItemBase> orig;
-        for (item_bases_t val : item_bases) {
+        for (auto val : m_item_bases) {
             if (val->base == name) {
                 orig = val;
             }
@@ -65,7 +60,7 @@ Item::Item(const std::string &name) : ItemBase()
 std::vector<std::string> Item::listItems() const
 {
     std::vector<std::string> tmp;
-    for (item_bases_t val : item_bases) {
+    for (auto val : m_item_bases) {
         tmp.push_back(val->base);
     }
     return tmp;
@@ -73,7 +68,7 @@ std::vector<std::string> Item::listItems() const
 
 bool Item::isItem(const std::string &name) const
 {
-    for (item_bases_t val : item_bases) {
+    for (auto val : m_item_bases) {
         if (val->base == name) return true;
     }
     return false;
@@ -83,10 +78,10 @@ bool Item::removeItem(std::unique_ptr<Item> item)
 {
     if (!item.get()) return false;
 
-    auto it = item_bases.begin();
-    while (it != item_bases.end()) {
+    auto it = m_item_bases.begin();
+    while (it != m_item_bases.end()) {
         if (item->base == (*it)->base) {
-            item_bases.erase(it);
+            m_item_bases.erase(it);
             return true;
         }
     }
@@ -99,13 +94,13 @@ bool Item::registerItem(std::unique_ptr<Item> &item)
 {
     if (!item.get()) return false;
 
-    BOOST_FOREACH(item_bases_t val, item_bases) {
+    BOOST_FOREACH(auto val, m_item_bases) {
         if (item->base == val->base) {
             return false;
         }
     }
-    item_bases.push_back(item);
-    // item_bases[item->base] = item;
+    m_item_bases.push_back(item);
+    // m_item_bases[item->base] = item;
 
     return true;
 }
@@ -113,25 +108,25 @@ bool Item::registerItem(std::unique_ptr<Item> &item)
 
 void Item::getItemBases()
 {
-    if (ok) return;
-    if (!config->isValue("itemfile")) return;
+    if (m_ok) return;
+    if (!m_state->m_config->isValue("itemfile")) return;
 
-    std::string items_file = config->getStringValue("itemfile");
-    json_value *root_val = data->readJson(items_file);  // FIXME
+    std::string items_file = m_state->m_config->getStringValue("itemfile");
+    json_value *root_val = m_state->m_data->readJson(items_file);  // FIXME
     if (!root_val->isObject()) return;
 
     /* Go thorough items */
     // TODO Refactor
     for (std::string mi : root_val->getMemberNames()) {
-        const json_value *item_val = data->getJsonValue(root_val, mi);
+        const json_value *item_val = m_state->m_data->getJsonValue(root_val, mi);
         // ItemBase *item = new ItemBase();
         std::unique_ptr<ItemBase> item(new ItemBase());
 
         if (item_val->isObject()) {
             item->base = mi;
-            std::vector<std::string> item_names = data->getJsonKeys(item_val);
+            std::vector<std::string> item_names = m_state->m_data->getJsonKeys(item_val);
             for (std::string keyname : item_names) {
-                const json_value *val = data->getJsonValue(item_val, keyname);
+                const json_value *val = m_state->m_data->getJsonValue(item_val, keyname);
                 bool item_is_ok = false;
                 if (keyname == "type") {
                     if (val->isString()) item->type = val->asString();
@@ -157,7 +152,7 @@ void Item::getItemBases()
                     std::map<std::string, double> _consumes;
                     if (val->isObject()) {
                         for (std::string cmi : val->getMemberNames()) {
-                            const json_value *cnt_val = data->getJsonValue(val, cmi);
+                            const json_value *cnt_val = m_state->m_data->getJsonValue(val, cmi);
                             if (cnt_val->isNumeric()) {
                                 _consumes[cmi] = cnt_val->asDouble();
                             }
@@ -175,11 +170,11 @@ void Item::getItemBases()
                     if (!item_is_ok) std::cout << keyname << "has unsupported type!\n";
                 }
             }
-            item_bases.push_back(std::move(item));
-            // item_bases[mi] = item;
+            m_item_bases.push_back(std::move(item));
+            // m_item_bases[mi] = item;
         }
     }
-    ok = true;
+    m_ok = true;
 }
 
 bool Item::consume(std::unique_ptr<Item> another)
@@ -202,7 +197,7 @@ bool Item::consume(std::unique_ptr<Item> another)
 std::unique_ptr<Item> Item::produce(double produce_amount) throw (char *)
 {
     bool can_consume = true;
-    for (consume_t val : consumes.get()) {
+    for (auto val : consumes.get()) {
         if (stocks[val.first] < val.second) {
             can_consume = false;
         }
@@ -226,7 +221,7 @@ std::unique_ptr<Item> Item::produce(double produce_amount) throw (char *)
         produced->amount = produce_amount;
     }
 
-    for (consume_t val : consumes.get()) {
+    for (auto val : consumes.get()) {
         stocks[val.first] -= val.second;
     }
     return produced;
@@ -256,7 +251,7 @@ bool ItemBase::equals(ItemBase *another) const
 
 bool ItemBase::doesConsume(const std::string &name) const
 {
-    for (consume_t val : consumes.get()) {
+    for (auto val : consumes.get()) {
         if (val.first == name) return true;
     }
     return false;
@@ -272,7 +267,7 @@ void ItemBase::updateConsume(const std::string &name, double count)
 void ItemBase::removeConsume(const std::string &name)
 {
     std::map<std::string, double> new_consumes;
-    for (consume_t val : consumes.get()) {
+    for (auto val : consumes.get()) {
         if (val.first != name) {
             new_consumes[name] = val.second;
         }
@@ -294,7 +289,7 @@ void ItemBase::setConsume(std::map<std::string, double> new_consumes)
 std::vector<std::string> ItemBase::getConsumes()
 {
     std::vector<std::string> res;
-    for (consume_t val : consumes.get()) {
+    for (auto val : consumes.get()) {
         res.push_back(val.first);
     }
     return res;
@@ -325,7 +320,7 @@ bool ItemBase::age(long int _amount)
 
 bool ItemBase::hasStock() const
 {
-    for (consume_t val : stocks) {
+    for (auto val : stocks) {
         if (val.second > 0) return true;
     }
     return false;
@@ -333,7 +328,7 @@ bool ItemBase::hasStock() const
 
 double ItemBase::hasStock(const std::string &name) const
 {
-    for (consume_t val : stocks) {
+    for (auto val : stocks) {
         if (val.first == name) return val.second;
     }
     return 0;
@@ -341,7 +336,7 @@ double ItemBase::hasStock(const std::string &name) const
 
 double ItemBase::consumeCount(const std::string &name)
 {
-    for (consume_t val : consumes.get()) {
+    for (auto val : consumes.get()) {
         if (val.first == name) return val.second;
     }
     return 0;
@@ -360,7 +355,7 @@ bool ItemBase::update(ItemBase *another)
     another->amount = 0;
     life = another->life;
 
-    for (consume_t val : another->stocks) {
+    for (auto val : another->stocks) {
         stocks[val.first] += val.second;
         val.second = 0;
     }
@@ -372,7 +367,7 @@ void ItemBase::setupStock()
 {
     stocks.clear();
 
-    for (consume_t val : consumes.get()) {
+    for (auto val : consumes.get()) {
         stocks[val.first] = 0;
     }
 }
@@ -394,7 +389,7 @@ std::string ItemBase::itemToString() const
     tmp += "consumes: ";
 
     bool first = true;
-    for (consume_t val : consumes.get()) {
+    for (auto val : consumes.get()) {
         if (!first) tmp += ", ";
         first = false;
         tmp += (boost::format("%s (%f units)") % val.first % val.second).str();
@@ -403,7 +398,7 @@ std::string ItemBase::itemToString() const
 
     tmp += "stock   : ";
     first = true;
-    for (consume_t val : stocks) {
+    for (auto val : stocks) {
         if (!first) tmp += ", ";
         first = false;
         tmp += (boost::format("%s (%f units)") % val.first % val.second).str();
@@ -435,7 +430,7 @@ std::string ItemBase::generateJson(const std::string &indent) const
     std::string tmp = "\"consume\": {";
     bool first = true;
     bool got = false;
-    for (consume_t val : consumes.get()) {
+    for (auto val : consumes.get()) {
         if (!first) tmp += ", ";
         first = false;
         tmp += (boost::format("\"%s\": %f") % val.first % val.second).str();
@@ -459,7 +454,7 @@ std::string Item::generateBaseJson()
 {
     std::string res = "";
     bool first = true;
-    for (item_bases_t val : item_bases) {
+    for (auto val : m_item_bases) {
         if (!first) res += ",\n";
         first = false;
         res += val->generateJson("  ");
@@ -469,7 +464,7 @@ std::string Item::generateBaseJson()
 
 std::unique_ptr<Item> Item::copy()
 {
-    std::unique_ptr<Item> res(new Item(config, data));
+    std::unique_ptr<Item> res(new Item(m_state));
     res->assignItem(this);
     return res;
 }

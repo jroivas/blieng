@@ -194,4 +194,4 @@ private:
     std::vector<mappings*> _data;
 };
 
-#endif
+#endif  // __AUTO_MAP_H

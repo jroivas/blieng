@@ -1,9 +1,9 @@
-#ifndef __BLIENG_BLIOBJECT_H
-#define __BLIENG_BLIOBJECT_H
-
 /*
  * Copyright 2014 Blistud:io
  */
+
+#ifndef __BLIENG_BLIOBJECT_H
+#define __BLIENG_BLIOBJECT_H
 
 #include <list>
 #include <map>

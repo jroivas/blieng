@@ -16,6 +16,12 @@ unix {
     LIBS += -L../ -lblieng
     LIBS += -L/usr/lib -L/usr/lib -Wl,-Bstatic  -lboost_system -lboost_random -lboost_filesystem -lboost_date_time -Wl,-Bdynamic
     POST_TARGETDEPS += ../libblieng.a
+
+    QMAKE_CXXFLAGS += -Igmock-1.7.0/include
+    QMAKE_CXXFLAGS += -Igmock-1.7.0/gtest/include/
+
+    LIBS += -Lgmock-1.7.0/lib -Lgmock-1.7.0/gtest/lib/.libs/
+    LIBS += -Wl,-Bstatic -lgmock -lgtest -Wl,-Bdynamic
 }
 
 # Input

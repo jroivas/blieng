@@ -14,6 +14,7 @@
 #include <vector>
 #include <map>
 
+#include "blieng/blieng.h"
 #include "blieng/bliobject.h"
 #include "blieng/auto_vector.h"
 #include "blieng/configure.h"
@@ -195,10 +196,10 @@ class Item : public ItemBase
 public:
     /**
      * Intializes item, with necessary configuration and data backend instances.
+     *
+     * \param state Shared state instance
      */
-    Item(
-        boost::shared_ptr<blieng::Configure> configure,
-        boost::shared_ptr<blieng::Data> data);
+    Item(boost::shared_ptr<blieng::BliengState> state);
     /**
      * Generate empty item, without configuration.
      *
@@ -298,10 +299,9 @@ private:
      */
     void getItemBases();
 
-    static bool ok;  //!< Checks if item bases are already loaded to avoid loading it multiple times
-    static auto_vector<ItemBase> item_bases;  //!< List of item base object
-    boost::shared_ptr<blieng::Configure> config;  //!< Shared configuration object
-    boost::shared_ptr<blieng::Data> data;  //!< Shared data backed object
+    static bool m_ok;  //!< Checks if item bases are already loaded to avoid loading it multiple times
+    static auto_vector<ItemBase> m_item_bases;  //!< List of item base object
+    boost::shared_ptr<blieng::BliengState> m_state;  //!< Shared engine state
 };
 
 }  // namespace blieng

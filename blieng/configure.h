@@ -15,12 +15,15 @@
 #include <vector>
 
 #include "blieng/config.h"
+#include "blieng/blieng.h"
 #include "blieng/bliobject.h"
 #include "blieng/data.h"
 #include "blieng/json.h"
 
 namespace blieng
 {
+
+class BliengState;
 
 /**
  * Multipurpose configuration with a data backend.
@@ -39,9 +42,9 @@ public:
     /**
      * Constructor with mandatory data backend.
      *
-     * \param data The data backend instance.
+     * \param state State object containing engine object info
      */
-    explicit Configure(boost::shared_ptr<blieng::Data> data);
+    explicit Configure(boost::shared_ptr<blieng::BliengState> state);
     virtual ~Configure();
 
     /**
@@ -110,7 +113,7 @@ private:
     std::map<std::string, key_type_t> opt_keys;
 
     boost::mutex key_mutex;
-    boost::shared_ptr<blieng::Data> data;
+    boost::shared_ptr<blieng::BliengState> m_state;
 
     /**
      * Parsing string list values

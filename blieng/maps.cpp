@@ -16,9 +16,9 @@
 using blieng::Maps;
 
 Maps::Maps(
-    boost::shared_ptr<blieng::Data> _data,
+    boost::shared_ptr<blieng::BliengState> _state,
     const std::string &mapname) :
-    data(_data)
+    m_state(_state)
 {
     if (!loadMap(mapname)) {
         std::cout << "ERROR: Can't find map: " << mapname << "\n";
@@ -27,16 +27,16 @@ Maps::Maps(
 
 bool Maps::loadMap(const std::string &name)
 {
-    if (data.get() == nullptr) {
+    if (m_state->m_data.get() == nullptr) {
         // Not initialized properly
         // TODO throw error?
         return false;
     }
     map_name = name;
-    map_file = data->findFile(name + ".json");
+    map_file = m_state->m_data->findFile(name + ".json");
     if (map_file != "") {
         std::cout << map_file << "\n";
-        map_json = data->readJson(map_file);
+        map_json = m_state->m_data->readJson(map_file);
         return parseMap();
     }
     return false;
@@ -109,7 +109,7 @@ bool Maps::saveMap(const std::string &name)
 
     printf("%s\n", json.c_str());
 
-    return data->saveMapJSON(name, json);
+    return m_state->m_data->saveMapJSON(name, json);
 }
 
 std::string Maps::getMapName() const
@@ -127,7 +127,7 @@ std::string Maps::getSolvedMapImageFile()
 {
     if (map_image_file == "") return "";
     if (solved_map_image_file == "") {
-        solved_map_image_file = data->findFile(map_image_file);
+        solved_map_image_file = m_state->m_data->findFile(map_image_file);
     }
 
     return solved_map_image_file;
@@ -196,7 +196,7 @@ bool Maps::parseMap()
     /* Go thorough items */
     // TODO Refactor
     BOOST_FOREACH(std::string mi, map_json->getMemberNames()) {
-        const json_value *item_val = data->getJsonValue(map_json, mi);
+        const json_value *item_val = m_state->m_data->getJsonValue(map_json, mi);
         if (mi == "image" && item_val->isString()) {
             map_image_file = item_val->asString();
             std::cout << " = " <<  map_image_file << "\n";
@@ -207,7 +207,7 @@ bool Maps::parseMap()
                 if ((*it)->isObject()) {
                     Town *town = new Town();
                     BOOST_FOREACH(std::string town_item, (*it)->getMemberNames()) {
-                        const json_value *town_val = data->getJsonValue(*it, town_item);
+                        const json_value *town_val = m_state->m_data->getJsonValue(*it, town_item);
                         if (town_item == "name" && town_val->isString()) {
                                 town->setName(town_val->asString());
                         }

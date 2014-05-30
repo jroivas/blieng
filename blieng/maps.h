@@ -8,6 +8,7 @@
 #include <string>
 #include <vector>
 
+#include "blieng/blieng.h"
 #include "blieng/bliobject.h"
 #include "blieng/item.h"
 #include "blieng/character.h"
@@ -29,10 +30,12 @@ public:
      * Initialized the map with data backend and name of the map.
      * Automatically loads the map if possible.
      *
-     * \param data Shared backend instance
+     * \param state Shared state instance
      * \param mapname Name of the map to load
      */
-    Maps(boost::shared_ptr<blieng::Data> data, const std::string &mapname);
+    Maps(
+        boost::shared_ptr<blieng::BliengState> state,
+        const std::string &mapname);
 
     /**
      * Get the name of current map
@@ -46,7 +49,9 @@ public:
      *
      * \returns Background image file name
      */
-    std::string getMapImageFile() const { return map_image_file; }
+    std::string getMapImageFile() const {
+        return map_image_file;
+    }
     /**
      * Get background image file location in data backend.
      * File might be located inside a data file.
@@ -144,7 +149,7 @@ private:
     std::string map_file;
     json_value *map_json;
 
-    boost::shared_ptr<blieng::Data> data;
+    boost::shared_ptr<blieng::BliengState> m_state;
 
     std::string map_image_file;
     std::string solved_map_image_file;

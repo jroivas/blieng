@@ -1,11 +1,69 @@
 #include "data_test.h"
 #include "test_tools.h"
+
+#include <gmock/gmock.h>
 #include <data.h>
 #include <boost/random/random_device.hpp>
+
+#include "blieng/datafile.h"
 
 CPPUNIT_TEST_SUITE_REGISTRATION( DataTest );
 
 using blieng::Data;
+using ::testing::_;
+using ::testing::Return;
+using ::testing::Invoke;
+
+class FakeDataFile : public blieng::DataFile
+{
+public:
+    //const *blieng::DataFile::DataFileObject
+    const DataFileObject *getObject(const std::string &name) {
+        (void)name;
+        return new DataFileObject(
+            _fake_data.c_str(), _fake_data.length());
+    }
+
+    void setFakeData(const std::string &_data) {
+        _fake_data = _data;
+    }
+private:
+    std::string _fake_data;
+};
+
+class DataMock : public blieng::Data
+{
+public:
+    //DataMock();
+
+    MOCK_CONST_METHOD1(findDataFile,
+        std::unique_ptr<boost::filesystem::path>(const std::string));
+    MOCK_CONST_METHOD0(findDataPath,
+        std::unique_ptr<boost::filesystem::path>());
+    MOCK_CONST_METHOD1(readString, std::string(const std::string));
+    MOCK_CONST_METHOD1(readLinesFromFile,
+        std::vector<std::string>(const std::string&));
+
+    void delegate() {
+/*
+        datafile = std::move();
+        ON_CALL(*this, findDataFile(_))
+            .WillByDefault(Invoke(&_fake_data_file, &FakeDataFile::getObject));
+*/
+        /*ON_CALL(*this, findDataFile(_))
+            .WillByDefault(Invoke(&_fake_data_file, &FakeDataFile::getObject));
+        */
+    }
+    void setFakeData(const std::string &_data) {
+        _fake_data_file.setFakeData(_data);
+    }
+#if 0
+    std::unique_ptr<boost::filesystem::path> findDataFile(
+        const std::string &datafilename = "data.dat");
+#endif
+private:
+    FakeDataFile _fake_data_file;
+};
 
 void DataTest::setUp()
 {
@@ -14,19 +72,20 @@ void DataTest::setUp()
 
 void DataTest::object()
 {
-    mock_io_start();
+    //mock_io_start();
 
-    boost::shared_ptr<blieng::Data> obj(new blieng::Data());
+    boost::shared_ptr<DataMock> obj(new DataMock());
 
     CPPUNIT_ASSERT( obj != NULL );
     CPPUNIT_ASSERT( obj.get() != NULL );
 
-    mock_io_stop();
+    //mock_io_stop();
 }
 
 void DataTest::readString()
 {
     std::string origdata = "This file\nContains\nSome random strings\n\nEnd.";
+#if 0
     mock_set_file("data/string_file", origdata);
 
     mock_io_start();
@@ -38,16 +97,38 @@ void DataTest::readString()
     CPPUNIT_ASSERT( res == origdata);
 
     mock_io_stop();
+#else
+    boost::shared_ptr<DataMock> obj(new DataMock());
+
+    EXPECT_CALL(*(obj.get()), readString(_))
+        .WillOnce(Return(origdata));
+
+    std::string res = obj->readString("string_file");
+
+    CPPUNIT_ASSERT( res != "" );
+    CPPUNIT_ASSERT( res == origdata);
+#endif
 }
 
 void DataTest::readLines()
 {
     std::string origdata = "This file\nContains\nSome random strings\n\nEnd.";
+    //std::vector<std::string> origdata_vec = {"This file", "Contains", "Some random strings", "End."};
+#if 0
     mock_set_file("data/string_file", origdata);
 
     mock_io_start();
+#endif
 
-    boost::shared_ptr<blieng::Data> obj(new blieng::Data());
+    boost::shared_ptr<DataMock> obj(new DataMock());
+    obj.get()->delegate();
+    obj.get()->setFakeData(origdata);
+
+#if 0
+    EXPECT_CALL(*(obj.get()), readLinesFromFile(_))
+        .WillOnce(Return(origdata_vec));
+#endif
+
     std::vector<std::string> res = obj->readLinesFromFile("string_file");
 
     CPPUNIT_ASSERT( !res.empty() );
@@ -57,7 +138,9 @@ void DataTest::readLines()
     CPPUNIT_ASSERT( res[2] == "Some random strings");
     CPPUNIT_ASSERT( res[3] == "End.");
 
+#if 0
     mock_io_stop();
+#endif
 }
 
 void DataTest::readLinesEmpty()
