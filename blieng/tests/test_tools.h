@@ -1,6 +1,53 @@
 #ifndef __TEST_TOOLS_H
 #define __TEST_TOOLS_H
 
+#include <gmock/gmock.h>
+#include "blieng/datafile.h"
+#include "blieng/data.h"
+
+class FakeDataFile : public blieng::DataFile
+{
+public:
+    const DataFileObject *getObject(const std::string &name) {
+        auto item = _fake_data.find(name);
+        if (item != _fake_data.end()) {
+            return new DataFileObject(
+                item->second.c_str(),
+                item->second.length());
+        }
+        return blieng::DataFile::getObject(name);
+    }
+
+    void setFakeData(const std::string &_name, const std::string &_data) {
+        _fake_data[_name] = _data;
+        addData(_name, _data);
+    }
+
+private:
+    std::map<std::string, std::string> _fake_data;
+};
+
+class DataMock : public blieng::Data
+{
+public:
+    MOCK_CONST_METHOD1(readString, std::string(const std::string));
+    MOCK_CONST_METHOD1(fileExists, bool(const std::string));
+
+    void setFakeData(const std::string &_name, const std::string &_data) {
+        FakeDataFile *tmp = nullptr;
+        if (m_datafile == nullptr) {
+            tmp = new FakeDataFile();
+        } else {
+            tmp = dynamic_cast<FakeDataFile*>(m_datafile);
+        }
+        tmp->setFakeData(_name, _data);
+
+        m_datafile = tmp;
+    }
+private:
+    FakeDataFile _fake_data_file;
+};
+
 #include <sstream>
 #include <iostream>
 #include <vector>

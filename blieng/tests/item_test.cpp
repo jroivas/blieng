@@ -13,14 +13,12 @@ using blieng::Item;
 void ItemTest::basic()
 {
     mock_io_start();
-
     boost::shared_ptr<blieng::BliengState> _state(new blieng::BliengState());
     _state->setData(new blieng::Data());
     _state->setConfig(new blieng::Configure(_state));
 
     Item *obj = new Item(_state);
 
-    CPPUNIT_ASSERT( obj != NULL );
-
     mock_io_stop();
+    CPPUNIT_ASSERT( obj != NULL );
 }

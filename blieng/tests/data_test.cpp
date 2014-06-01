@@ -1,4 +1,5 @@
 #include "data_test.h"
+#include "test_tools.h"
 
 #include <gmock/gmock.h>
 #include <data.h>
@@ -14,48 +15,6 @@ using blieng::Data;
 using ::testing::_;
 using ::testing::Return;
 using ::testing::Invoke;
-
-class FakeDataFile : public blieng::DataFile
-{
-public:
-    const DataFileObject *getObject(const std::string &name) {
-        auto item = _fake_data.find(name);
-        if (item != _fake_data.end()) {
-            return new DataFileObject(
-                item->second.c_str(),
-                item->second.length());
-        }
-        return new DataFileObject();
-    }
-
-    void setFakeData(const std::string &_name, const std::string &_data) {
-        _fake_data[_name] = _data;
-    }
-
-private:
-    std::map<std::string, std::string> _fake_data;
-};
-
-class DataMock : public blieng::Data
-{
-public:
-    MOCK_CONST_METHOD1(readString, std::string(const std::string));
-    MOCK_CONST_METHOD1(fileExists, bool(const std::string));
-
-    void setFakeData(const std::string &_name, const std::string &_data) {
-        FakeDataFile *tmp = nullptr;
-        if (m_datafile == nullptr) {
-            tmp = new FakeDataFile();
-        } else {
-            tmp = dynamic_cast<FakeDataFile*>(m_datafile);
-        }
-        tmp->setFakeData(_name, _data);
-
-        m_datafile = tmp;
-    }
-private:
-    FakeDataFile _fake_data_file;
-};
 
 void DataTest::setUp()
 {

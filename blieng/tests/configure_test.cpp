@@ -11,13 +11,10 @@ CPPUNIT_TEST_SUITE_REGISTRATION( ConfigureTest );
 
 void ConfigureTest::setUp()
 {
-    mock_add_folder("data");
-    mock_io_start();
 }
 
 void ConfigureTest::tearDown()
 {
-    mock_io_stop();
 }
 
 void ConfigureTest::basic()
@@ -56,10 +53,12 @@ void ConfigureTest::basic()
 void ConfigureTest::json()
 {
     std::string origdata = "{ \"strkey\": \"strval\", \"intkey\": 42, \"doublekey\": 3.14, \"test\": [1, 2, 4] }";
-    mock_set_file("data/data.json", origdata);
+    //mock_set_file("data/data.json", origdata);
 
     boost::shared_ptr<blieng::BliengState> _state(new blieng::BliengState());
-    _state->setData(new blieng::Data());
+    DataMock *mock = new DataMock();
+    mock->setFakeData("data/data.json", origdata);
+    _state->setData(mock);
     blieng::Configure *obj = new blieng::Configure(_state);
     _state->setConfig(obj);
 
@@ -89,11 +88,12 @@ void ConfigureTest::optional()
 {
     std::string origdata = "{ \"strkey\": \"strval\", \"intkey\": 42 }";
     std::string origdata2 = "{ \"strkey\": \"strval\", \"intkey\": 42, \"extra\": 123 }";
-    mock_set_file("data/data.json", origdata);
-    mock_set_file("data/data2.json", origdata2);
 
     boost::shared_ptr<blieng::BliengState> _state(new blieng::BliengState());
-    _state->setData(new blieng::Data());
+    DataMock *mock = new DataMock();
+    mock->setFakeData("data/data.json", origdata);
+    mock->setFakeData("data/data2.json", origdata2);
+    _state->setData(mock);
     blieng::Configure *obj = new blieng::Configure(_state);
     _state->setConfig(obj);
 

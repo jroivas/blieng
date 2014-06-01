@@ -6,8 +6,12 @@ CPPUNIT_TEST_SUITE_REGISTRATION( MapsTest );
 
 void MapsTest::setUp()
 {
-    mock_add_folder("data");
-    mock_set_file("data/map42.json",
+    _state = boost::shared_ptr<blieng::BliengState>(new blieng::BliengState());
+    DataMock *mock = new DataMock();
+    _state->setData(mock);
+    _state->setConfig(new blieng::Configure(_state));
+
+    mock->setFakeData("data/map42.json",
         "{ \"image\": \"random_img.png\"," \
         "\"towns\": [" \
         " { \"name\": \"town1\", \"size\": 10, \"posx\": 100, \"posy\":100, \"population-index\": 1 }," \
@@ -19,20 +23,14 @@ void MapsTest::setUp()
         "]" \
         "}"
         );
-    mock_io_start();
 }
 
 void MapsTest::tearDown()
 {
-    mock_io_stop();
 }
 
 void MapsTest::basic()
 {
-    boost::shared_ptr<blieng::BliengState> _state(new blieng::BliengState());
-    _state->setData(new blieng::Data());
-    _state->setConfig(new blieng::Configure(_state));
-
     boost::shared_ptr<blieng::Maps> maps(new blieng::Maps(_state, "map42"));
 
     CPPUNIT_ASSERT_EQUAL( std::string("map42"), maps->getMapName() );
@@ -65,10 +63,6 @@ void MapsTest::basic()
 
 void MapsTest::paths()
 {
-    boost::shared_ptr<blieng::BliengState> _state(new blieng::BliengState());
-    _state->setData(new blieng::Data());
-    _state->setConfig(new blieng::Configure(_state));
-
     boost::shared_ptr<blieng::Maps> maps(new blieng::Maps(_state, "map42"));
 
     blieng::Point p1(99,77);

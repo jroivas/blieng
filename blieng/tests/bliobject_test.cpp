@@ -13,7 +13,7 @@ using blieng::BliAny;
 
 void BliObjectTest::setUp()
 {
-    mock_add_folder("data");
+    //mock_add_folder("data");
     mock_io_start();
 }
 

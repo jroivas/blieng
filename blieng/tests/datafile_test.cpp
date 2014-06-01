@@ -8,19 +8,15 @@ using blieng::DataFile;
 
 void DataFileTest::tearDown()
 {
-    mock_io_stop();
+    //mock_io_stop();
 }
 
 void DataFileTest::read()
 {
-    mock_io_start();
-
     blieng::DataFile *obj = new blieng::DataFile("dummy.dat");
     //CPPUNIT_ASSERT( obj->read(NULL, 0) == false );
     CPPUNIT_ASSERT( obj->isValid() );
     delete obj;
-
-    mock_io_stop();
 }
 
 void DataFileTest::write()
