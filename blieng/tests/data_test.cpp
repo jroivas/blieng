@@ -1,9 +1,10 @@
 #include "data_test.h"
-#include "test_tools.h"
 
 #include <gmock/gmock.h>
 #include <data.h>
 #include <boost/random/random_device.hpp>
+
+#include <map>
 
 #include "blieng/datafile.h"
 
@@ -18,28 +19,37 @@ class FakeDataFile : public blieng::DataFile
 {
 public:
     const DataFileObject *getObject(const std::string &name) {
-        (void)name;
-        return new DataFileObject(
-            _fake_data.c_str(), _fake_data.length());
+        auto item = _fake_data.find(name);
+        if (item != _fake_data.end()) {
+            return new DataFileObject(
+                item->second.c_str(),
+                item->second.length());
+        }
+        return new DataFileObject();
     }
 
-    void setFakeData(const std::string &_data) {
-        _fake_data = _data;
+    void setFakeData(const std::string &_name, const std::string &_data) {
+        _fake_data[_name] = _data;
     }
+
 private:
-    std::string _fake_data;
+    std::map<std::string, std::string> _fake_data;
 };
 
 class DataMock : public blieng::Data
 {
 public:
     MOCK_CONST_METHOD1(readString, std::string(const std::string));
+    MOCK_CONST_METHOD1(fileExists, bool(const std::string));
 
-    void delegate() {
-    }
-    void setFakeData(const std::string &_data) {
-        FakeDataFile *tmp = new FakeDataFile();
-        tmp->setFakeData(_data);
+    void setFakeData(const std::string &_name, const std::string &_data) {
+        FakeDataFile *tmp = nullptr;
+        if (m_datafile == nullptr) {
+            tmp = new FakeDataFile();
+        } else {
+            tmp = dynamic_cast<FakeDataFile*>(m_datafile);
+        }
+        tmp->setFakeData(_name, _data);
 
         m_datafile = tmp;
     }
@@ -49,48 +59,22 @@ private:
 
 void DataTest::setUp()
 {
-    mock_add_folder("data");
 }
 
 void DataTest::object()
 {
-    //mock_io_start();
-
     boost::shared_ptr<DataMock> obj(new DataMock());
 
     CPPUNIT_ASSERT( obj != NULL );
     CPPUNIT_ASSERT( obj.get() != NULL );
-
-    //mock_io_stop();
 }
 
 void DataTest::readString()
 {
     std::string origdata = "This file\nContains\nSome random strings\n\nEnd.";
-#if 0
-    mock_set_file("data/string_file", origdata);
 
-    mock_io_start();
-
-    boost::shared_ptr<blieng::Data> obj(new blieng::Data());
-    std::string res = obj->readString("string_file");
-
-    CPPUNIT_ASSERT( res != "" );
-    CPPUNIT_ASSERT( res == origdata);
-
-    mock_io_stop();
-#else
     boost::shared_ptr<DataMock> obj(new DataMock());
-    //obj->delegate();
 
-    //std::unique_ptr<boost::filesystem::path>(const std::string));
-    //std::unique_ptr<boost::filesystem::path> daa(new boost::filesystem::path());
-/*
-    EXPECT_CALL(*(obj.get()), findDataPath())
-        .WillOnce(Return(
-    ));
-*/
-        //.WillOnce(Return(daa));
     EXPECT_CALL(*(obj.get()), readString(_))
         .WillOnce(Return(origdata));
 
@@ -98,30 +82,17 @@ void DataTest::readString()
 
     CPPUNIT_ASSERT( res != "" );
     CPPUNIT_ASSERT( res == origdata);
-#endif
 }
 
 void DataTest::readLines()
 {
     std::string origdata = "This file\nContains\nSome random strings\nEnd.";
-    //std::vector<std::string> origdata_vec = {"This file", "Contains", "Some random strings", "End."};
-#if 0
-    mock_set_file("data/string_file", origdata);
-
-    mock_io_start();
-#endif
 
     boost::shared_ptr<DataMock> obj(new DataMock());
-    obj.get()->delegate();
-    obj.get()->setFakeData(origdata);
-
-#if 0
-    EXPECT_CALL(*(obj.get()), readLinesFromFile(_))
-        .WillOnce(Return(origdata_vec));
-#endif
+    obj->setFakeData("data/string_file", origdata);
+    obj->setFakeData("dummy/string_file", "dummy" + origdata);
 
     std::vector<std::string> res = obj->readLinesFromFile("string_file");
-    std::cout << "KOOS" << res.size() << std::endl;
 
     CPPUNIT_ASSERT( !res.empty() );
     CPPUNIT_ASSERT( res.size() == 4 );
@@ -129,37 +100,26 @@ void DataTest::readLines()
     CPPUNIT_ASSERT( res[1] == "Contains");
     CPPUNIT_ASSERT( res[2] == "Some random strings");
     CPPUNIT_ASSERT( res[3] == "End.");
-
-#if 0
-    mock_io_stop();
-#endif
 }
 
 void DataTest::readLinesEmpty()
 {
     std::string origdata = "";
-    mock_set_file("data/string_file", origdata);
 
-    mock_io_start();
+    boost::shared_ptr<DataMock> obj(new DataMock());
+    obj->setFakeData("data/string_file", origdata);
 
-    boost::shared_ptr<blieng::Data> obj(new blieng::Data());
     std::vector<std::string> res = obj->readLinesFromFile("string_file");
 
     CPPUNIT_ASSERT( res.empty() );
-
-    mock_io_stop();
 }
 
 void DataTest::readLinesNoFile()
 {
-    mock_io_start();
-
-    boost::shared_ptr<blieng::Data> obj(new blieng::Data());
+    boost::shared_ptr<DataMock> obj(new DataMock());
     std::vector<std::string> res = obj->readLinesFromFile("no_string_file");
 
     CPPUNIT_ASSERT( res.empty() );
-
-    mock_io_stop();
 }
 
 void DataTest::readData()
@@ -168,11 +128,10 @@ void DataTest::readData()
     origdata.append("Hi", 2);
     origdata.append("\0", 1);
     origdata.append("Zero\42Data.");
-    mock_set_file("data/datas", origdata);
 
-    mock_io_start();
+    boost::shared_ptr<DataMock> obj(new DataMock());
+    obj->setFakeData("data/datas", origdata);
 
-    boost::shared_ptr<blieng::Data> obj(new blieng::Data());
     const char *res = nullptr;
     unsigned int cnt = obj->readData("datas", &res);
 
@@ -186,17 +145,12 @@ void DataTest::readData()
     CPPUNIT_ASSERT( res[3] == 'Z' );
     CPPUNIT_ASSERT( res[7] == '\42' );
     CPPUNIT_ASSERT( res[8] == 'D' );
-
-    mock_io_stop();
 }
 
 void DataTest::readJson()
 {
-    mock_set_file("json1", "{\"aa\": \"b42\", \"second\": 12, \"third\": [1,2,3]}");
-
-    mock_io_start();
-
-    boost::shared_ptr<blieng::Data> obj(new blieng::Data());
+    boost::shared_ptr<DataMock> obj(new DataMock());
+    obj->setFakeData("data/json1", "{\"aa\": \"b42\", \"second\": 12, \"third\": [1,2,3]}");
 
     json_value *res = obj->readJson("json1");
 
@@ -216,24 +170,19 @@ void DataTest::readJson()
 
     CPPUNIT_ASSERT( obj->isJsonKey(res, "second") );
     CPPUNIT_ASSERT( obj->getJsonValue(res, "second")->isNumeric() );
-
-    mock_io_stop();
 }
 
 void DataTest::fileExists()
 {
-    mock_io_start();
-
-    boost::shared_ptr<blieng::Data> obj(new blieng::Data());
+    boost::shared_ptr<DataMock> obj(new DataMock());
 
     CPPUNIT_ASSERT( !obj->fileExists("dummy") );
     CPPUNIT_ASSERT( !obj->fileExists("dummy") );
 
-    mock_set_file("dummy", "dum");
+    obj->setFakeData("data/dummy", "dum");
+
+    EXPECT_CALL(*(obj.get()), fileExists(_))
+        .WillOnce(Return(true));
 
     CPPUNIT_ASSERT( obj->fileExists("dummy") );
-
-    //CPPUNIT_ASSERT( obj->findFile("dummy") == "" );
-
-    mock_io_stop();
 }
