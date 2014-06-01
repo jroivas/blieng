@@ -28,6 +28,7 @@ windows {
 
 # Input
 HEADERS += \
+    blieng.h \
     config.h \
     bliobject.h \
     character.h \
@@ -49,6 +50,7 @@ HEADERS += \
     json.h \
     wallclock.h
 SOURCES += \
+    blieng.cpp \
     bliobject.cpp \
     character.cpp \
     configure.cpp \

@@ -27,7 +27,7 @@ Maps::Maps(
 
 bool Maps::loadMap(const std::string &name)
 {
-    if (m_state->m_data.get() == nullptr) {
+    if (m_state->m_data == nullptr) {
         // Not initialized properly
         // TODO throw error?
         return false;

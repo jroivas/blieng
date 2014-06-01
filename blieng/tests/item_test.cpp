@@ -14,9 +14,11 @@ void ItemTest::basic()
 {
     mock_io_start();
 
-    boost::shared_ptr<blieng::Data> _data(new blieng::Data());
-    boost::shared_ptr<blieng::Configure> _config(new blieng::Configure(_data));
-    Item *obj = new Item(_config, _data);
+    boost::shared_ptr<blieng::BliengState> _state(new blieng::BliengState());
+    _state->setData(new blieng::Data());
+    _state->setConfig(new blieng::Configure(_state));
+
+    Item *obj = new Item(_state);
 
     CPPUNIT_ASSERT( obj != NULL );
 

@@ -25,15 +25,21 @@ public:
     BliengState();
     virtual ~BliengState();
 
-    inline void setData(boost::shared_ptr<blieng::Data> _data) {
+    void initialize();
+
+    inline void setData(blieng::Data* _data) {
         m_data = _data;
     }
-    inline void setConfig(boost::shared_ptr<blieng::Configure> _config) {
+    inline void setConfig(blieng::Configure* _config) {
         m_config = _config;
     }
+    inline void setStyleConfig(blieng::Configure*  _config) {
+        m_styleconfig = _config;
+    }
 
-    boost::shared_ptr<blieng::Data> m_data;
-    boost::shared_ptr<blieng::Configure> m_config;
+    blieng::Data* m_data;
+    blieng::Configure* m_config;
+    blieng::Configure* m_styleconfig;
 };
 
 }

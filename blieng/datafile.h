@@ -201,7 +201,7 @@ public:
      * \param name Name and location of file
      * \returns A new data file object containing file contents or nullptr
      */
-    const DataFileObject *getObject(const std::string &name);
+    virtual const DataFileObject *getObject(const std::string &name);
 
     /**
      * List all files.

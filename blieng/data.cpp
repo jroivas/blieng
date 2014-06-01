@@ -54,6 +54,8 @@ static std::string __maps_file_extension = ".json";
 
 Data::Data()
 {
+    m_datafile = nullptr;
+
     updateLocations();
     data_path = findDataPath();
 
@@ -62,6 +64,9 @@ Data::Data()
 
 Data::~Data()
 {
+    if (m_datafile != nullptr) {
+        delete m_datafile;
+    }
 }
 
 void Data::updateLocations()
@@ -77,16 +82,15 @@ void Data::updateLocations()
 
 void Data::initializeDataFile(const std::string &datafilename)
 {
-    if (!datafile.get() || datafilename != "") {
+    if (m_datafile == nullptr || datafilename != "") {
         if (datafilename == "") {
             data_file_path = findDataFile();
         } else {
             data_file_path = findDataFile(datafilename);
         }
-        if (data_file_path.get()) {
-            datafile = std::unique_ptr<blieng::DataFile>(
-                new blieng::DataFile(data_file_path->string()));
-            LOG_INFO("Found data file: " + data_file_path->string());
+        if (!data_file_path.empty()) {
+            m_datafile = new blieng::DataFile(data_file_path.string());
+            LOG_INFO("Found data file: " + data_file_path.string());
         }
     }
 }
@@ -110,12 +114,12 @@ bool Data::initialize(
     initializeEncryptionKey(key, key_len);
 
     bool res = false;
-    if (datafile.get()) {
+    if (m_datafile != nullptr) {
         LOG_DEBUG("Datafile is valid");
-        res = datafile->read(__data_key, __data_key_len);
+        res = m_datafile->read(__data_key, __data_key_len);
     }
 #ifndef ANDROID
-    if (!res && data_path.get()) {
+    if (!res && !data_path.empty()) {
         res = true;
     }
 #endif
@@ -127,34 +131,31 @@ bool Data::initialize(const char *key, unsigned int key_len)
     return initialize("", key, key_len);
 }
 
-std::unique_ptr<boost::filesystem::path> Data::findDataFileAndroid()
+boost::filesystem::path Data::findDataFileAndroid()
 {
-    std::unique_ptr<boost::filesystem::path> my_data_path(
-        new boost::filesystem::path);
+    boost::filesystem::path my_data_path;
 
-    *my_data_path.get() = "assets/data/data.dat";
+    my_data_path = "assets/data/data.dat";
     return my_data_path;
 }
 
-std::unique_ptr<boost::filesystem::path> Data::findDataFileCommon(
+boost::filesystem::path Data::findDataFileCommon(
     const std::string &datafilename)
 {
-    std::unique_ptr<boost::filesystem::path> my_data_path(
-        new boost::filesystem::path);
-
     for (std::string item : m_locations) {
-        *my_data_path.get() = (item + datafilename).c_str();
-        if (boost::filesystem::exists(*my_data_path.get()) &&
-            boost::filesystem::is_regular_file(*my_data_path.get())) {
+        boost::filesystem::path my_data_path;
+        my_data_path = (item + datafilename).c_str();
+        if (boost::filesystem::exists(my_data_path) &&
+            boost::filesystem::is_regular_file(my_data_path)) {
             return my_data_path;
         }
     }
 
-    my_data_path.reset();
-    return my_data_path;
+    boost::filesystem::path empty_data_path;
+    return empty_data_path;
 }
 
-std::unique_ptr<boost::filesystem::path> Data::findDataFile(
+boost::filesystem::path Data::findDataFile(
     const std::string &datafilename)
 {
 #ifdef ANDROID
@@ -164,22 +165,20 @@ std::unique_ptr<boost::filesystem::path> Data::findDataFile(
 #endif
 }
 
-std::unique_ptr<boost::filesystem::path> Data::findDataPath()
+boost::filesystem::path Data::findDataPath()
 {
-    std::unique_ptr<boost::filesystem::path> my_data_path(
-        new boost::filesystem::path);
-
 #ifndef ANDROID
     BOOST_FOREACH(std::string item, m_locations) {
-        *my_data_path.get() = (item + __data_folder_name).c_str();
-        if (boost::filesystem::exists(*my_data_path.get()) &&
-            boost::filesystem::is_directory(*my_data_path.get())) {
+        boost::filesystem::path my_data_path;
+        my_data_path = (item + __data_folder_name).c_str();
+        if (boost::filesystem::exists(my_data_path) &&
+            boost::filesystem::is_directory(my_data_path)) {
             return my_data_path;
         }
     }
 #endif
-    my_data_path.reset();
-    return my_data_path;
+    boost::filesystem::path empty_data_path;
+    return empty_data_path;
 }
 
 bool Data::fileExists(const std::string &name) const
@@ -216,7 +215,8 @@ std::string Data::findFileRecursive(
 
 std::string Data::findFileFromDataFile(const std::string &name) const
 {
-    for (std::string fname : datafile->listFiles()) {
+    BOOST_ASSERT(m_datafile != nullptr);
+    for (std::string fname : m_datafile->listFiles()) {
         if (fname == name) {
             return fname;
         }
@@ -232,25 +232,26 @@ std::string Data::findFileFromDataFile(const std::string &name) const
 
 std::string Data::findFile(const std::string &name) const
 {
-    if (datafile.get()) {
+    if (m_datafile != nullptr) {
         LOG_DEBUG("Searching file from datafile");
         std::string res = findFileFromDataFile(name);
         if (res != "") return res;
     }
 
 #ifndef ANDROID
-    if (!data_path.get()) return "";
+    if (data_path.empty()) return "";
 #endif
     LOG_DEBUG("Searching file recursive from data path");
-    return findFileRecursive(*data_path, name);
+    return findFileRecursive(data_path, name);
 }
 
 std::vector<std::string> Data::findFileExtFromDataFile(
     const std::string &path,
     const std::string &ext) const
 {
+    BOOST_ASSERT(m_datafile != nullptr);
     std::vector<std::string> res;
-    BOOST_FOREACH(std::string fname, datafile->listFiles()) {
+    BOOST_FOREACH(std::string fname, m_datafile->listFiles()) {
         if (fname.substr(0, path.length()) == path) {
             boost::filesystem::path handle(fname.c_str());
             if (handle.extension() == ext) {
@@ -287,7 +288,7 @@ std::vector<std::string> Data::listMaps()
 {
     std::vector<std::string> mapfiles;
 
-    if (datafile.get()) {
+    if (m_datafile != nullptr) {
         std::vector<std::string> res = findFileExtFromDataFile(
             __data_folder_name + "/" + __maps_folder_name + "/",
             __maps_file_extension);
@@ -295,9 +296,9 @@ std::vector<std::string> Data::listMaps()
     }
 
 #ifndef ANDROID
-    if (!boost::filesystem::exists(*data_path)) return mapfiles;
+    if (!boost::filesystem::exists(data_path)) return mapfiles;
 
-    boost::filesystem::path maps_path = *data_path;
+    boost::filesystem::path maps_path = data_path;
     maps_path /= __maps_folder_name;
 
     if (!boost::filesystem::exists(maps_path)) return mapfiles;
@@ -315,15 +316,15 @@ bool Data::saveMapJSON(const std::string &name, const std::string &json)
 #else
     // TODO Split
     // TODO Do we need data file support here? Probably not..
-    if (!data_path.get()) {
+    if (data_path.empty()) {
         std::cerr
             << "Data path not found, please create it in order to save maps"
             << "\n";
         return false;
     }
-    if (!boost::filesystem::exists(*data_path)) return false;
+    if (!boost::filesystem::exists(data_path)) return false;
 
-    boost::filesystem::path maps_path = *data_path;
+    boost::filesystem::path maps_path = data_path;
     maps_path /= "maps";  // FIXME Hardcoded
 
     if (!boost::filesystem::exists(maps_path)) {
@@ -367,7 +368,7 @@ boost::filesystem::path Data::solveFilePath(const std::string &name) const
     boost::filesystem::path p;
     return p;
 #else
-    boost::filesystem::path first_path = *data_path;
+    boost::filesystem::path first_path = data_path;
     boost::filesystem::path second_path = boost::filesystem::path(name.c_str());
     first_path /= name.c_str();
     if (!boost::filesystem::exists(first_path) &&
@@ -383,7 +384,7 @@ std::vector<std::string> Data::readLinesFromFileInDataFolder(
 {
     std::vector<std::string> tmp;
 #ifndef ANDROID
-    if (data_path.get()) {
+    if (!data_path.empty()) {
         boost::filesystem::path first_path = solveFilePath(name);
         if (boost::filesystem::exists(first_path)) {
             boost::filesystem::ifstream fd(first_path);
@@ -408,10 +409,10 @@ std::vector<std::string> Data::readLinesFromFileInDatafile(
 {
     std::vector<std::string> tmp;
 
-    if (datafile.get()) {
+    if (m_datafile != nullptr) {
         const blieng::DataFile::DataFileObject *obj =
-            datafile->getObject(__data_folder_name + "/" + name);
-        if (obj == nullptr) obj = datafile->getObject(name);
+            m_datafile->getObject(__data_folder_name + "/" + name);
+        if (obj == nullptr) obj = m_datafile->getObject(name);
         if (obj != nullptr) {
             unsigned int pos = 0;
             std::string line;
@@ -487,7 +488,7 @@ unsigned int Data::readDataFromDataPath(
         fd.close();
 
         if (data != nullptr) {
-            unique_ptr<blieng::DataBuffer> tmp_ptr(
+            std::unique_ptr<blieng::DataBuffer> tmp_ptr(
                     new blieng::DataBuffer(name, buffer, totalsize));
             __buffers.push_back(std::move(tmp_ptr));
             *data = __buffers.back()->data;
@@ -505,16 +506,16 @@ unsigned int Data::readDataFromDataPath(
 unsigned int Data::readData(const std::string &name, const char **data)
 {
 #ifndef ANDROID
-    if (data_path.get()) {
+    if (!data_path.empty()) {
         unsigned int res = readDataFromDataPath(name, data);
         if (res > 0) return res;
     }
 #endif
 
-    if (datafile.get()) {
+    if (m_datafile != nullptr) {
         const blieng::DataFile::DataFileObject *obj =
-            datafile->getObject(__data_folder_name + "/" + name);
-        if (obj == nullptr) obj = datafile->getObject(name);
+            m_datafile->getObject(__data_folder_name + "/" + name);
+        if (obj == nullptr) obj = m_datafile->getObject(name);
         if (obj != nullptr) {
             if (data != nullptr) *data = obj->get();
             return obj->length();
@@ -529,7 +530,7 @@ std::string Data::readString(const std::string &name) const
     std::string res = "";
 
 #ifndef ANDROID
-    if (data_path.get()) {
+    if (!data_path.empty()) {
         boost::filesystem::path first_path = solveFilePath(name);
         if (boost::filesystem::exists(first_path)) {
             boost::filesystem::ifstream fd(first_path, std::ifstream::binary);
@@ -545,10 +546,10 @@ std::string Data::readString(const std::string &name) const
     }
 #endif
 
-    if (datafile.get()) {
+    if (m_datafile != nullptr) {
         const blieng::DataFile::DataFileObject *obj =
-            datafile->getObject(__data_folder_name + "/" + name);
-        if (obj == nullptr) obj = datafile->getObject(name);
+            m_datafile->getObject(__data_folder_name + "/" + name);
+        if (obj == nullptr) obj = m_datafile->getObject(name);
         if (obj != nullptr) {
             res.append(obj->get(), obj->length());
             return res;

@@ -17,8 +17,6 @@
 #include "blieng/datafile.h"
 #include "blieng/auto_vector.h"
 
-using std::unique_ptr;
-
 namespace blieng
 {
 
@@ -229,21 +227,19 @@ private:
         const std::string &path,
         const std::string &ext) const;
 
-    std::unique_ptr<boost::filesystem::path> findDataFileAndroid();
-    std::unique_ptr<boost::filesystem::path> findDataFileCommon(
+    boost::filesystem::path findDataFileAndroid();
+    boost::filesystem::path findDataFileCommon(
         const std::string &datafilename);
-    std::unique_ptr<boost::filesystem::path> findDataFile(
+    boost::filesystem::path findDataFile(
         const std::string &datafilename = "data.dat");
-    std::unique_ptr<boost::filesystem::path> findDataPath();
-    std::unique_ptr<boost::filesystem::path> data_path;
-    std::unique_ptr<boost::filesystem::path> data_file_path;
+    boost::filesystem::path findDataPath();
+    boost::filesystem::path data_path;
+    boost::filesystem::path data_file_path;
 
     std::vector<std::string> readLinesFromFileInDataFolder(
         const std::string &name) const;
     std::vector<std::string> readLinesFromFileInDatafile(
         const std::string &name) const;
-
-    std::unique_ptr<blieng::DataFile> datafile;
 
     auto_vector<DataBuffer> __buffers;
 
@@ -253,6 +249,10 @@ private:
     static unsigned int __data_key_len;
 
     std::list<std::string> m_locations;
+
+protected:
+    blieng::DataFile *m_datafile;
+
 };
 
 }  // namespace blieng

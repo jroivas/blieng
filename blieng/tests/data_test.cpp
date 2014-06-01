@@ -17,7 +17,6 @@ using ::testing::Invoke;
 class FakeDataFile : public blieng::DataFile
 {
 public:
-    //const *blieng::DataFile::DataFileObject
     const DataFileObject *getObject(const std::string &name) {
         (void)name;
         return new DataFileObject(
@@ -34,33 +33,16 @@ private:
 class DataMock : public blieng::Data
 {
 public:
-    //DataMock();
-
-    MOCK_CONST_METHOD1(findDataFile,
-        std::unique_ptr<boost::filesystem::path>(const std::string));
-    MOCK_CONST_METHOD0(findDataPath,
-        std::unique_ptr<boost::filesystem::path>());
     MOCK_CONST_METHOD1(readString, std::string(const std::string));
-    MOCK_CONST_METHOD1(readLinesFromFile,
-        std::vector<std::string>(const std::string&));
 
     void delegate() {
-/*
-        datafile = std::move();
-        ON_CALL(*this, findDataFile(_))
-            .WillByDefault(Invoke(&_fake_data_file, &FakeDataFile::getObject));
-*/
-        /*ON_CALL(*this, findDataFile(_))
-            .WillByDefault(Invoke(&_fake_data_file, &FakeDataFile::getObject));
-        */
     }
     void setFakeData(const std::string &_data) {
-        _fake_data_file.setFakeData(_data);
+        FakeDataFile *tmp = new FakeDataFile();
+        tmp->setFakeData(_data);
+
+        m_datafile = tmp;
     }
-#if 0
-    std::unique_ptr<boost::filesystem::path> findDataFile(
-        const std::string &datafilename = "data.dat");
-#endif
 private:
     FakeDataFile _fake_data_file;
 };
@@ -99,7 +81,16 @@ void DataTest::readString()
     mock_io_stop();
 #else
     boost::shared_ptr<DataMock> obj(new DataMock());
+    //obj->delegate();
 
+    //std::unique_ptr<boost::filesystem::path>(const std::string));
+    //std::unique_ptr<boost::filesystem::path> daa(new boost::filesystem::path());
+/*
+    EXPECT_CALL(*(obj.get()), findDataPath())
+        .WillOnce(Return(
+    ));
+*/
+        //.WillOnce(Return(daa));
     EXPECT_CALL(*(obj.get()), readString(_))
         .WillOnce(Return(origdata));
 
@@ -112,7 +103,7 @@ void DataTest::readString()
 
 void DataTest::readLines()
 {
-    std::string origdata = "This file\nContains\nSome random strings\n\nEnd.";
+    std::string origdata = "This file\nContains\nSome random strings\nEnd.";
     //std::vector<std::string> origdata_vec = {"This file", "Contains", "Some random strings", "End."};
 #if 0
     mock_set_file("data/string_file", origdata);
@@ -130,6 +121,7 @@ void DataTest::readLines()
 #endif
 
     std::vector<std::string> res = obj->readLinesFromFile("string_file");
+    std::cout << "KOOS" << res.size() << std::endl;
 
     CPPUNIT_ASSERT( !res.empty() );
     CPPUNIT_ASSERT( res.size() == 4 );

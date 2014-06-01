@@ -2,6 +2,7 @@
 #include "test_tools.h"
 #include <character.h>
 #include <bliobject.h>
+#include <blieng.h>
 #include <item.h>
 #include <memory>
 
@@ -27,11 +28,12 @@ void CharacterTest::alive_kill()
 void CharacterTest::items()
 {
     mock_io_start();
-    boost::shared_ptr<blieng::Data> _data(new blieng::Data());
-    boost::shared_ptr<blieng::Configure> _config(new blieng::Configure(_data));
+    boost::shared_ptr<blieng::BliengState> _state(new blieng::BliengState());
+    _state->setData(new blieng::Data());
+    _state->setConfig(new blieng::Configure(_state));
 
-    unique_ptr<blieng::Item> tmp(new blieng::Item(_config, _data));
-    unique_ptr<blieng::Item> tmp2(new blieng::Item(_config, _data));
+    unique_ptr<blieng::Item> tmp(new blieng::Item(_state));
+    unique_ptr<blieng::Item> tmp2(new blieng::Item(_state));
 
     unique_ptr<Character> obj(new Character());
 
@@ -66,11 +68,12 @@ void CharacterTest::items()
 void CharacterTest::assign()
 {
     mock_io_start();
-    boost::shared_ptr<blieng::Data> _data(new blieng::Data());
-    boost::shared_ptr<blieng::Configure> _config(new blieng::Configure(_data));
+    boost::shared_ptr<blieng::BliengState> _state(new blieng::BliengState());
+    _state->setData(new blieng::Data());
+    _state->setConfig(new blieng::Configure(_state));
 
-    unique_ptr<blieng::Item> tmp(new blieng::Item(_config, _data));
-    unique_ptr<blieng::Item> tmp2(new blieng::Item(_config, _data));
+    unique_ptr<blieng::Item> tmp(new blieng::Item(_state));
+    unique_ptr<blieng::Item> tmp2(new blieng::Item(_state));
 
     tmp->setValue("name", std::string("item1"));
     tmp2->setValue("name", std::string("item2"));
