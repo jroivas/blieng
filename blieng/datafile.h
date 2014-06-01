@@ -16,8 +16,6 @@
 
 #include "blieng/auto_map.h"
 
-using std::unique_ptr;
-
 namespace blieng
 {
 

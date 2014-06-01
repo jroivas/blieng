@@ -134,7 +134,7 @@ void EventLog::log(void *object, BliAny event)
         }
     }
 
-    unique_ptr<ObjectLog> newobject(new ObjectLog(object));
+    std::unique_ptr<ObjectLog> newobject(new ObjectLog(object));
     newobject->addEvent(event);
     events.push_back(std::move(newobject));
 }
@@ -148,7 +148,7 @@ void EventLog::log(const std::string &name, BliAny event)
         }
     }
 
-    unique_ptr<ObjectLog> newobject(new ObjectLog(name));
+    std::unique_ptr<ObjectLog> newobject(new ObjectLog(name));
     newobject->addEvent(event);
     events.push_back(std::move(newobject));
 }
@@ -193,7 +193,7 @@ void EventLog::incrementCounter(const std::string &name, unsigned int cnt)
 
     if (__counters == nullptr) {
         __counters = new ObjectLog(__counter_object_name);
-        unique_ptr<ObjectLog> newobject(__counters);
+        std::unique_ptr<ObjectLog> newobject(__counters);
         events.push_back(std::move(newobject));
     }
 

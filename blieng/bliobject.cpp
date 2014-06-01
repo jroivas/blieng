@@ -33,10 +33,6 @@
 using blieng::BliObject;
 using blieng::BliAny;
 
-typedef std::pair<std::string, BliAny> values_t;
-typedef std::map<std::string, BliAny>::iterator values_iter_t;
-typedef std::map<std::string, BliAny>::const_iterator values_const_iter_t;
-
 BliObject::BliObject()
 {
 }
@@ -45,7 +41,7 @@ BliObject::~BliObject()
 {
     // Enforce deletion
     while (!values.empty()) {
-        values_iter_t data = values.begin();
+        auto data = values.begin();
         values.erase(data);
     }
 }
@@ -57,14 +53,14 @@ void BliObject::assignObject(const BliObject *another)
 #ifdef DATA_MUTEX_LOCK
     boost::lock_guard<boost::mutex> keylock(value_mutex);
 #endif
-    for (values_t val : another->values) {
+    for (auto val : another->values) {
         values[val.first] = val.second;
     }
 }
 
 bool BliObject::isValue(const std::string &key) const
 {
-    values_const_iter_t value_iter = values.find(key);
+    auto value_iter = values.find(key);
 
     if (value_iter == values.end()) return false;
     return true;
@@ -96,7 +92,7 @@ double BliObject::getRandomDouble(double limit_low, double limit_max)
 
 BliAny BliObject::getValue(const std::string &key) const
 {
-    values_const_iter_t value_iter = values.find(key);
+    auto value_iter = values.find(key);
 
     if (value_iter == values.end()) {
         LOG_ERROR("Error, key not found: " + key);
@@ -215,7 +211,7 @@ std::string BliObject::toString() const
 {
     std::ostringstream res;
 
-    for (values_t item : values) {
+    for (auto item : values) {
         std::string key = item.first;
         BliAny val = item.second;
 
@@ -234,7 +230,7 @@ std::vector<std::string> BliObject::getKeys()
     boost::lock_guard<boost::mutex> keylock(value_mutex);
 #endif
 
-    for (values_t val : values) {
+    for (auto val : values) {
         res.push_back(val.first);
     }
     return res;

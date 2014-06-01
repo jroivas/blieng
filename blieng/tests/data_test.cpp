@@ -176,6 +176,8 @@ void DataTest::fileExists()
 {
     boost::shared_ptr<DataMock> obj(new DataMock());
 
+    EXPECT_CALL(*(obj.get()), fileExists(_))
+        .WillRepeatedly(Return(false));
     CPPUNIT_ASSERT( !obj->fileExists("dummy") );
     CPPUNIT_ASSERT( !obj->fileExists("dummy") );
 

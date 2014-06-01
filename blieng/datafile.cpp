@@ -19,9 +19,6 @@
 using blieng::DataFile;
 
 static unsigned int __key_size = 256 / 8;
-typedef auto_map<
-    std::string,
-    blieng::DataFile::DataFileObject>::iterator_value datafile_item_t;
 
 /**
  * Helper class to safely pass pointer.
@@ -144,7 +141,7 @@ std::vector<std::string> blieng::DataFile::listFiles()
 {
     std::vector<std::string> res;
 
-    BOOST_FOREACH(datafile_item_t val, _data) {
+    BOOST_FOREACH(auto val, _data) {
         res.push_back(val->key);
     }
 

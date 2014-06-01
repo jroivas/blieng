@@ -16,8 +16,6 @@
 #include "blieng/bliobject.h"
 #include "blieng/auto_vector.h"
 
-using std::unique_ptr;
-
 namespace blieng
 {
 
@@ -133,7 +131,7 @@ private:
     std::string name;
 };
 
-// FIXME: implement achivements
+// FIXME: implement achievements
 
 /**
  * General event logging
