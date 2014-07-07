@@ -38,7 +38,7 @@ all: $(BUILDDIR)/$(PRODUCT)/lib$(PRODUCT).a
 
 prepare: fetch_mock
 	./tools/fetch_build.sh
-	if [ -d "blieng"] ; then ln -s . blieng/blieng || true ; fi
+	if [ -d "blieng" ] ; then ln -s . blieng/blieng || true ; fi
 
 fetch_mock:
 	wget -q "$(MOCK_LOCATION)/$(MOCK_NAME)-$(MOCK_VERSION).$(MOCK_EXT)"
