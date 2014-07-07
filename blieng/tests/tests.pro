@@ -9,6 +9,7 @@ QMAKE_CXXFLAGS += -std=c++0x
 QMAKE_CXXFLAGS += -g
 QMAKE_CXXFLAGS += -O0
 CONFIG += debug
+MOCK_VERSION = "1.6.0"
 
 INCLUDEPATH += ../
 
@@ -17,10 +18,12 @@ unix {
     LIBS += -L/usr/lib -L/usr/lib -Wl,-Bstatic  -lboost_system -lboost_random -lboost_filesystem -lboost_date_time -Wl,-Bdynamic
     POST_TARGETDEPS += ../libblieng.a
 
-    QMAKE_CXXFLAGS += -Igmock-1.7.0/include
-    QMAKE_CXXFLAGS += -Igmock-1.7.0/gtest/include/
+    QMAKE_CXXFLAGS += -Igmock-$${MOCK_VERSION}/include
+    QMAKE_CXXFLAGS += -Igmock-$${MOCK_VERSION}/gtest/include/
 
-    LIBS += -Lgmock-1.7.0/lib -Lgmock-1.7.0/gtest/lib/.libs/
+    LIBS += -Lgmock-$${MOCK_VERSION}/lib
+    LIBS += -Lgmock-$${MOCK_VERSION}/lib/.libs/
+    LIBS += -Lgmock-$${MOCK_VERSION}/gtest/lib/.libs/
     LIBS += -Wl,-Bstatic -lgmock -lgtest -Wl,-Bdynamic
 }
 

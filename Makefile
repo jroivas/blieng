@@ -25,7 +25,7 @@ UNDISTDIR ?= -C
 UNDISTEXTRA ?= --strip-components=1
 endif
 
-MOCK_VERSION ?= "1.7.0"
+MOCK_VERSION ?= "1.6.0"
 MOCK_LOCATION ?= "http://googlemock.googlecode.com/files/"
 MOCK_NAME ?= "gmock"
 MOCK_EXT ?= "zip"
@@ -38,7 +38,7 @@ all: $(BUILDDIR)/$(PRODUCT)/lib$(PRODUCT).a
 
 prepare: fetch_mock
 	./tools/fetch_build.sh
-	if [ -d "blieng" ] ; then ln -s . blieng/blieng || true ; fi
+	if [ -d "blieng" ] ; then ln -sf . blieng/blieng || true ; fi
 
 fetch_mock:
 	wget -q "$(MOCK_LOCATION)/$(MOCK_NAME)-$(MOCK_VERSION).$(MOCK_EXT)"
