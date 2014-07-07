@@ -25,14 +25,25 @@ UNDISTDIR ?= -C
 UNDISTEXTRA ?= --strip-components=1
 endif
 
+MOCK_VERSION ?= "1.7.0"
+MOCK_LOCATION ?= "http://googlemock.googlecode.com/files/"
+MOCK_NAME ?= "gmock"
+MOCK_EXT ?= "zip"
+MOCK_TARGET ?= "blieng/tests/$(MOCK_NAME)-$(MOCK_VERSION)"
+
 OUT ?= $(PRODUCT)-$(REL)-$(TARGET)
 
 all: $(BUILDDIR)/$(PRODUCT)/lib$(PRODUCT).a
 	@echo Done build for $(TARGET)
 
-prepare:
+prepare: fetch_mock
 	./tools/fetch_build.sh
 	if [ -d "blieng"] ; then ln -s . blieng/blieng || true ; fi
+
+fetch_mock:
+	wget -q "$(MOCK_LOCATION)/$(MOCK_NAME)-$(MOCK_VERSION).$(MOCK_EXT)"
+	cd blieng/tests && unzip -n ../../"$(MOCK_NAME)-$(MOCK_VERSION).$(MOCK_EXT)"
+	cd "$(MOCK_TARGET)" && ./configure && make
 
 .PHONY: all prepare dist build-$(TARGET) test doc
 
@@ -51,6 +62,7 @@ $(BUILDDIR)/$(PRODUCT)/tests:
 	@mkdir -p $(BUILDDIR)/$(PRODUCT)/tests
 
 $(BUILDDIR)/$(PRODUCT)/tests/tests: $(BUILDDIR)/$(PRODUCT)/lib$(PRODUCT).a | $(BUILDDIR)/$(PRODUCT)/tests
+	cd "$(BUILDDIR)/$(PRODUCT)/tests" && ln -sf "$(topdir)/$(MOCK_TARGET)" .
 	cd "$(BUILDDIR)/$(PRODUCT)/tests" && "$(topdir)"/tools/build/qmake.sh $(TARGET) "$(topdir)/$(PRODUCT)/tests"
 	make -C "$(BUILDDIR)/$(PRODUCT)/tests"
 
