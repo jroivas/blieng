@@ -290,6 +290,11 @@ bool BliObject::getRandomBoolean()
     return (tmp1 == tmp2);
 }
 
+std::string blieng::toString(int value)
+{
+    return boost::lexical_cast<std::string>(value);
+}
+
 std::string blieng::toString(unsigned int value)
 {
     return boost::lexical_cast<std::string>(value);
@@ -298,4 +303,19 @@ std::string blieng::toString(unsigned int value)
 std::string blieng::toString(double value)
 {
     return boost::lexical_cast<std::string>(value);
+}
+
+std::string blieng::percentageString(
+    double value,
+    unsigned int digits)
+{
+    int percentage = static_cast<int>(value * 100);
+    std::string val = blieng::toString(percentage);
+    if (digits > 0) {
+        double norm = value * 100 - percentage;
+        std::string rest = blieng::toString(norm);
+        val += rest.substr(1, digits + 1);
+    }
+    val += "%";
+    return val;
 }

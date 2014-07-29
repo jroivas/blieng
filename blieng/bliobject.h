@@ -241,7 +241,12 @@ private:
 };
 
 std::string toString(unsigned int value);
+std::string toString(int value);
 std::string toString(double value);
+
+std::string percentageString(
+    double value,
+    unsigned int digits);
 
 }  // namespace blieng
 
