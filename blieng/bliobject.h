@@ -246,7 +246,7 @@ std::string toString(double value);
 
 std::string percentageString(
     double value,
-    unsigned int digits);
+    unsigned int digits=0);
 
 }  // namespace blieng
 
