@@ -312,7 +312,7 @@ std::string blieng::percentageString(
     int percentage = static_cast<int>(value * 100);
     std::string val = blieng::toString(percentage);
     if (digits > 0) {
-        double norm = value * 100 - percentage;
+        double norm = fabs(value * 100) - fabs(percentage);
         std::string rest = blieng::toString(norm);
         val += rest.substr(1, digits + 1);
     }

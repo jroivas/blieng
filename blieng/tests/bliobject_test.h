@@ -16,11 +16,13 @@ public:
     CPPUNIT_TEST(random);
     CPPUNIT_TEST(incdec);
     CPPUNIT_TEST(bliany);
+    CPPUNIT_TEST(percentageString);
     CPPUNIT_TEST_SUITE_END();
 private:
     void values();
     void getValues();
     void toString();
+    void percentageString();
     void assign();
     void random();
     void incdec();

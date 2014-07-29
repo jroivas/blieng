@@ -125,6 +125,38 @@ void BliObjectTest::toString()
     CPPUNIT_ASSERT( s.find("test9") == std::string::npos );
 }
 
+void BliObjectTest::percentageString()
+{
+    CPPUNIT_ASSERT(blieng::percentageString(0.1) == "10%");
+    CPPUNIT_ASSERT(blieng::percentageString(0.12) == "12%");
+
+    CPPUNIT_ASSERT(blieng::percentageString(0.01) == "1%");
+    CPPUNIT_ASSERT(blieng::percentageString(0.012) == "1%");
+    CPPUNIT_ASSERT(blieng::percentageString(1.0) == "100%");
+    CPPUNIT_ASSERT(blieng::percentageString(1.23) == "123%");
+
+    CPPUNIT_ASSERT(blieng::percentageString(0.12345678) == "12%");
+    CPPUNIT_ASSERT(blieng::percentageString(0.12345678, 1) == "12.3%");
+    CPPUNIT_ASSERT(blieng::percentageString(0.12345678, 2) == "12.34%");
+    CPPUNIT_ASSERT(blieng::percentageString(0.12345678, 3) == "12.345%");
+    CPPUNIT_ASSERT(blieng::percentageString(0.12345678, 4) == "12.3456%");
+
+    CPPUNIT_ASSERT(blieng::percentageString(12345678) == "1234567800%");
+    CPPUNIT_ASSERT(blieng::percentageString(123456.78) == "12345678%");
+    CPPUNIT_ASSERT(blieng::percentageString(123456.78901234567) == "12345678%");
+    CPPUNIT_ASSERT(blieng::percentageString(123456.78901234567, 1) == "12345678.9%");
+    CPPUNIT_ASSERT(blieng::percentageString(123456.78901234567, 2) == "12345678.90%");
+    CPPUNIT_ASSERT(blieng::percentageString(123456.78901234567, 3) == "12345678.901%");
+    CPPUNIT_ASSERT(blieng::percentageString(123456.78901234567, 5) == "12345678.90123%");
+
+    CPPUNIT_ASSERT(blieng::percentageString(-0.1) == "-10%");
+    CPPUNIT_ASSERT(blieng::percentageString(-0.012) == "-1%");
+    CPPUNIT_ASSERT(blieng::percentageString(-0.12345678) == "-12%");
+    CPPUNIT_ASSERT(blieng::percentageString(-0.12345678, 1) == "-12.3%");
+    CPPUNIT_ASSERT(blieng::percentageString(-0.12345678, 2) == "-12.34%");
+    CPPUNIT_ASSERT(blieng::percentageString(-0.12345678, 4) == "-12.3456%");
+}
+
 void BliObjectTest::assign()
 {
     BliObject *obj1 = new BliObject();
