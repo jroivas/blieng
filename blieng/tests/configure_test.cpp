@@ -24,17 +24,17 @@ void ConfigureTest::basic()
     blieng::Configure *obj = new blieng::Configure(_state);
     _state->setConfig(obj);
 
-    obj->addKey("key1", blieng::Configure::KeyString);
-    obj->addKey("key2", blieng::Configure::KeyUInt);
-    obj->addKey("key3", blieng::Configure::KeyDouble);
-    obj->addKey("key4", blieng::Configure::KeyIntList);
+    obj->addKey("basic_key1", blieng::Configure::KeyString);
+    obj->addKey("basic_key2", blieng::Configure::KeyUInt);
+    obj->addKey("basic_key3", blieng::Configure::KeyDouble);
+    obj->addKey("basic_key4", blieng::Configure::KeyIntList);
 
     CPPUNIT_ASSERT( !obj->validate() );
 
-    obj->setValue("key1", std::string("val"));
-    obj->setValue("key2", (unsigned int)42);
-    obj->setValue("key3", (double)3.14159);
-    obj->setValue("key4", 123);
+    obj->setValue("basic_key1", std::string("val"));
+    obj->setValue("basic_key2", (unsigned int)42);
+    obj->setValue("basic_key3", (double)3.14159);
+    obj->setValue("basic_key4", 123);
 
     CPPUNIT_ASSERT( obj->validate() );
     CPPUNIT_ASSERT_THROW( obj->validateValues(), std::string );
@@ -44,7 +44,7 @@ void ConfigureTest::basic()
     int_list.push_back(4);
     int_list.push_back(42);
 
-    obj->setValue("key4", int_list);
+    obj->setValue("basic_key4", int_list);
 
     CPPUNIT_ASSERT( obj->validate() );
     CPPUNIT_ASSERT( obj->validateValues() );

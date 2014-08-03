@@ -193,7 +193,8 @@ std::vector<int> BliObject::getIntValues(const std::string &key)
         return boost::any_cast<std::vector<int> >(val);
     }
     catch (boost::bad_any_cast &c) {
-        throw std::string("Not int list at " + key);
+        std::cerr << std::string("Not int list at " + key + " " + c.what()) << std::endl;
+        throw std::string("Not int list at " + key + " " + c.what());
     }
 }
 

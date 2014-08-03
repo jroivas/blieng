@@ -165,12 +165,18 @@ public:
      */
     long asNumber()
     {
-        if (this->type() == typeid(int)) return boost::any_cast<int>(*this);
-        if (this->type() == typeid(unsigned int)) return static_cast<long>(boost::any_cast<unsigned int>(*this));
-        if (this->type() == typeid(long)) return boost::any_cast<long>(*this);
-        if (this->type() == typeid(unsigned long)) return static_cast<long>(boost::any_cast<unsigned long>(*this));
-        if (this->type() == typeid(float)) return boost::any_cast<float>(*this);
-        if (this->type() == typeid(double)) return boost::any_cast<double>(*this);
+        if (this->type() == typeid(int))
+            return boost::any_cast<int>(*this);
+        if (this->type() == typeid(unsigned int))
+            return static_cast<long>(boost::any_cast<unsigned int>(*this));
+        if (this->type() == typeid(long))
+            return boost::any_cast<long>(*this);
+        if (this->type() == typeid(unsigned long))
+            return static_cast<long>(boost::any_cast<unsigned long>(*this));
+        if (this->type() == typeid(float))
+            return boost::any_cast<float>(*this);
+        if (this->type() == typeid(double))
+            return boost::any_cast<double>(*this);
         throw std::string("Error, invalid value, can't convert to a number");
     }
 };
