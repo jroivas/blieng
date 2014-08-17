@@ -118,8 +118,8 @@ Y BliObject::get ## X ## Value( \
 {\
     BliAny val = getValue(key);\
     if (val.empty()) {\
-        LOG_ERROR("Error, key not found: " + key);\
-        throw "Error, key not found: " + key;\
+        LOG_ERROR("Error, " #X " key not found: " + key);\
+        throw "Error, " #X " key not found: " + key;\
     }\
     if (val.type() == typeid(Y)) {\
         return boost::any_cast<Y>(val);\
@@ -137,8 +137,8 @@ Y BliObject::get ## X ## Value(const std::string &key, Y default_value) const\
 {\
     BliAny val = getValue(key);\
     if (val.empty()) {\
-        LOG_ERROR("Error, key not found: " + key);\
-        throw "Error, key not found: " + key;\
+        LOG_ERROR("Error, " #X " key not found: " + key);\
+        throw "Error, " #X " key not found: " + key;\
     }\
     if (val.type() == typeid(Y)) {\
         return boost::any_cast<Y>(val);\
