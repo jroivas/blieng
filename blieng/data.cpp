@@ -52,6 +52,10 @@ static std::string __data_folder_name = "data";
 static std::string __maps_folder_name = "maps";
 static std::string __maps_file_extension = ".json";
 
+std::map <std::string, blieng::DataFile *> Data::m_datafiles;
+std::mutex Data::m_datafile_mutex;
+
+
 Data::Data()
 {
     m_datafile = nullptr;
@@ -65,7 +69,9 @@ Data::Data()
 Data::~Data()
 {
     if (m_datafile != nullptr) {
-        delete m_datafile;
+        //TODO: Unref!
+        m_datafile = nullptr;
+        //delete m_datafile;
     }
 }
 
@@ -80,6 +86,19 @@ void Data::updateLocations()
     m_locations.push_back("..\\");
 }
 
+blieng::DataFile *Data::findGlobalDataFile(const std::string &datafilename)
+{
+    std::lock_guard<std::mutex> lock(m_datafile_mutex);
+
+    auto res = m_datafiles.find(datafilename);
+    if (res != m_datafiles.end())
+        return res->second;
+
+    auto data = new blieng::DataFile(datafilename);
+    m_datafiles[datafilename] = data;
+    return data;
+}
+
 void Data::initializeDataFile(const std::string &datafilename)
 {
     if (m_datafile == nullptr || datafilename != "") {
@@ -89,7 +108,8 @@ void Data::initializeDataFile(const std::string &datafilename)
             data_file_path = findDataFile(datafilename);
         }
         if (!data_file_path.empty()) {
-            m_datafile = new blieng::DataFile(data_file_path.string());
+            //m_datafile = new blieng::DataFile(data_file_path.string());
+            m_datafile = findGlobalDataFile(data_file_path.string());
             LOG_INFO("Found data file: " + data_file_path.string());
         }
     }

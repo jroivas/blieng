@@ -10,6 +10,7 @@
 #include <list>
 #include <map>
 #include <memory>
+#include <mutex>
 #include <string>
 #include <vector>
 
@@ -253,6 +254,9 @@ private:
 protected:
     blieng::DataFile *m_datafile;
 
+    blieng::DataFile *findGlobalDataFile(const std::string &datafilename);
+    static std::map <std::string, blieng::DataFile *> m_datafiles;
+    static std::mutex m_datafile_mutex;
 };
 
 }  // namespace blieng
