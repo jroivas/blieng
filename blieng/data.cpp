@@ -53,7 +53,7 @@ static std::string __maps_folder_name = "maps";
 static std::string __maps_file_extension = ".json";
 
 std::map <std::string, blieng::DataFile *> Data::m_datafiles;
-std::mutex Data::m_datafile_mutex;
+boost::mutex Data::m_datafile_mutex;
 
 
 Data::Data()
@@ -88,7 +88,7 @@ void Data::updateLocations()
 
 blieng::DataFile *Data::findGlobalDataFile(const std::string &datafilename)
 {
-    std::lock_guard<std::mutex> lock(m_datafile_mutex);
+    boost::lock_guard<boost::mutex> keylock(m_datafile_mutex);
 
     auto res = m_datafiles.find(datafilename);
     if (res != m_datafiles.end())

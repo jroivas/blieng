@@ -6,11 +6,12 @@
 #define __BLIENG_DATA_H
 
 #include <boost/filesystem.hpp>
+#include <boost/thread/mutex.hpp>
+#include <boost/thread/lock_guard.hpp>
 
 #include <list>
 #include <map>
 #include <memory>
-#include <mutex>
 #include <string>
 #include <vector>
 
@@ -256,7 +257,7 @@ protected:
 
     blieng::DataFile *findGlobalDataFile(const std::string &datafilename);
     static std::map <std::string, blieng::DataFile *> m_datafiles;
-    static std::mutex m_datafile_mutex;
+    static boost::mutex m_datafile_mutex;
 };
 
 }  // namespace blieng
