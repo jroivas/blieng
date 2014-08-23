@@ -11,6 +11,7 @@ public:
     CPPUNIT_TEST_SUITE( BliObjectTest );
     CPPUNIT_TEST(values);
     CPPUNIT_TEST(getValues);
+    CPPUNIT_TEST(getValuesLimits);
     CPPUNIT_TEST(toString);
     CPPUNIT_TEST(assign);
     CPPUNIT_TEST(random);
@@ -27,6 +28,7 @@ private:
     void random();
     void incdec();
     void bliany();
+    void getValuesLimits();
 };
 
 #endif

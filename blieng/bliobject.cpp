@@ -26,6 +26,8 @@
 #include <string>
 #include <utility>
 #include <vector>
+#include <limits>
+#include <typeinfo>
 
 #include "blieng/data.h"
 #include "blieng/logging.h"
@@ -132,48 +134,159 @@ Y BliObject::get ## X ## Value( \
     }\
 }
 
-#define getConvertNumberValue(X, Y, A, B, C, D, E) \
-Y BliObject::get ## X ## Value(const std::string &key, Y default_value) const\
-{\
-    BliAny val = getValue(key);\
-    if (val.empty()) {\
-        LOG_ERROR("Error, " #X " key not found: " + key);\
-        throw "Error, " #X " key not found: " + key;\
-    }\
-    if (val.type() == typeid(Y)) {\
-        return boost::any_cast<Y>(val);\
-    } else {\
-        if (val.type() == typeid(A)) {\
-            return static_cast<Y>(boost::any_cast<A>(val));\
-        }\
-        if (val.type() == typeid(B)) {\
-            return static_cast<Y>(boost::any_cast<B>(val));\
-        }\
-        if (val.type() == typeid(C)) {\
-            return static_cast<Y>(boost::any_cast<C>(val));\
-        }\
-        if (val.type() == typeid(D)) {\
-            return static_cast<Y>(boost::any_cast<D>(val));\
-        }\
-        if (val.type() == typeid(E)) {\
-            return static_cast<Y>(boost::any_cast<E>(val));\
-        }\
-    }\
-    std::ostringstream m;\
-    m << val;\
-    LOG_ERROR("Error, not a " #X " value at: " + key + ", val: " + m.str());\
-    return default_value;\
+template<typename A, typename B>
+bool BliObject::fitsLimits(BliAny val, A &res) const
+{
+    if (val.type() != typeid(B))
+        return false;
+
+    int a_digits = std::numeric_limits<A>::digits;
+    int b_digits = std::numeric_limits<B>::digits;
+
+    int a_is_signed = std::numeric_limits<A>::is_signed;
+    int b_is_signed = std::numeric_limits<B>::is_signed;
+
+    // These shouls always fit...
+    uint64_t _max = std::numeric_limits<A>::max();
+    int64_t _min = std::numeric_limits<A>::min();
+
+    B _val = boost::any_cast<B>(val);
+    bool conv = false;
+    if (a_digits >= b_digits
+        && a_is_signed == b_is_signed) {
+        conv = true;
+    }
+    else if (a_is_signed != b_is_signed) {
+        if (b_is_signed && _val >= 0 && a_digits >= b_digits) {
+            conv = true;
+        }
+        else if (a_is_signed && a_digits >= b_digits) {
+            conv = true;
+        }
+        else if (_val >= 0 && _val < _max) {
+            conv = true;
+        }
+    }
+    else {
+        if (_val >= _min && _val < _max) {
+            conv = true;
+        }
+    }
+
+    if (conv) {
+        res = static_cast<A>(boost::any_cast<B>(val));
+        return true;
+    }
+    return false;
 }
 
-// FIXME
-getConvertValue(String, std::string)
-getConvertNumberValue(
-    Int, int, unsigned int, long, unsigned long, double, float)
-getConvertNumberValue(
-    UInt, unsigned int, unsigned long, long, int, double, float)
-getConvertNumberValue(
-    Double, double, float, unsigned long, long, unsigned int, int)
-getConvertValue(Bool, bool)
+template<typename T>
+T BliObject::getValue(const std::string &key) const
+{
+    BliAny val = getValue(key);
+    if (val.empty()) {
+        LOG_ERROR("Error, key not found: " + key);
+        throw "Error, key not found: " + key;
+    }
+
+    if (val.type() == typeid(T))
+        return boost::any_cast<T>(val);
+
+    T res = 0;
+    if (fitsLimits<T, int>(val, res))
+        return res;
+    if (fitsLimits<T, unsigned int>(val, res))
+        return res;
+    if (fitsLimits<T, long>(val, res))
+        return res;
+    if (fitsLimits<T, unsigned long>(val, res))
+        return res;
+    if (fitsLimits<T, long long>(val, res))
+        return res;
+    if (fitsLimits<T, unsigned long long>(val, res))
+        return res;
+    if (fitsLimits<T, char>(val, res))
+        return res;
+    if (fitsLimits<T, unsigned char>(val, res))
+        return res;
+    if (fitsLimits<T, short>(val, res))
+        return res;
+    if (fitsLimits<T, unsigned short>(val, res))
+        return res;
+    if (fitsLimits<T, double>(val, res))
+        return res;
+    if (fitsLimits<T, float>(val, res))
+        return res;
+
+    std::ostringstream msg;
+    msg << "Unsafe conversion of "
+        << key
+        << " from typeid("
+        << val.type().name()
+        << ")"
+        << " to typeid("
+        << typeid(T).name()
+        << ")";
+    LOG_ERROR(msg.str());
+    throw msg.str();
+}
+
+int BliObject::getIntValue(const std::string &key) const
+{
+    return getValue<int>(key);
+}
+
+unsigned int BliObject::getUIntValue(const std::string &key) const
+{
+    return getValue<unsigned int>(key);
+}
+
+double BliObject::getDoubleValue(const std::string &key) const
+{
+    return getValue<double>(key);
+}
+
+std::string BliObject::getStringValue(const std::string &key) const
+{
+    BliAny val = getValue(key);
+    try {
+        return boost::any_cast<std::string>(val);
+    }
+    catch (boost::bad_any_cast &c) {}
+    try {
+        return boost::any_cast<char *>(val);
+    }
+    catch (boost::bad_any_cast &c) {}
+
+    std::ostringstream msg;
+    msg << "Unsafe conversion of "
+        << key
+        << " from typeid("
+        << val.type().name()
+        << ")"
+        << " to string";
+    LOG_ERROR(msg.str());
+    throw msg.str();
+}
+
+bool BliObject::getBoolValue(const std::string &key) const
+{
+    BliAny val = getValue(key);
+    try {
+        return boost::any_cast<bool>(val);
+    }
+    catch (boost::bad_any_cast &c) {}
+
+    std::ostringstream msg;
+    msg << "Unsafe conversion of "
+        << key
+        << " from typeid("
+        << val.type().name()
+        << ")"
+        << " to bool";
+    LOG_ERROR(msg.str());
+    throw msg.str();
+}
 
 std::vector<std::string> BliObject::getListValue(const std::string &key)
 {

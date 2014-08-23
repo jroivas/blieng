@@ -89,63 +89,48 @@ public:
     /**
      * Get string value of given key.
      * Throws an error if key not found.
-     * If value is not presentable as string, returns default value
      *
      * \param key Unique key string
-     * \param default_value Value to be returned if value is not representable in string.
      * \returns Value as string object
      */
     virtual std::string getStringValue(
-        const std::string &key,
-        const std::string &default_value = "") const;
+        const std::string &key) const;
     /**
      * Get boolean value of given key.
      * Throws an error if key not found.
-     * If value is not presentable as boolean, returns default value
      *
      * \param key Unique key string
-     * \param default_value Value to be returned if value is not representable in boolean.
      * \returns Value as boolean
      */
     virtual bool getBoolValue(
-        const std::string &key,
-        const bool &default_value = false) const;
+        const std::string &key) const;
     /**
      * Get integer value of given key.
      * Throws an error if key not found.
-     * If value is not presentable as integer, returns default value
      *
      * \param key Unique key string
-     * \param default_value Value to be returned if value is not representable in integer.
      * \returns Value as integer
      */
     virtual int getIntValue(
-        const std::string &key,
-        int default_value = 0) const;
+        const std::string &key) const;
     /**
      * Get unsigned integer value of given key.
      * Throws an error if key not found.
-     * If value is not presentable as unsigned integer, returns default value
      *
      * \param key Unique key string
-     * \param default_value Value to be returned if value is not representable in unsigned integer.
      * \returns Value as unsigned integer
      */
     virtual unsigned int getUIntValue(
-        const std::string &key,
-        unsigned int default_value = 0) const;
+        const std::string &key) const;
     /**
      * Get double value of given key.
      * Throws an error if key not found.
-     * If value is not presentable as double, returns default value
      *
      * \param key Unique key string
-     * \param default_value Value to be returned if value is not representable in double.
      * \returns Value as double
      */
     virtual double getDoubleValue(
-        const std::string &key,
-        double default_value = 0.0) const;
+        const std::string &key) const;
     /**
      * Get vector of strings of given key.
      * Throws an error if key not found or
@@ -231,8 +216,21 @@ public:
      */
     static bool getRandomBoolean();
 
+    /**
+     * Get value of key, utilize template for output type
+     * Throws error if conversion is not possible
+     *
+     * \param key Unique key string
+     * \returns Value as given type
+     */
+    template<typename T>
+    T getValue(const std::string &key) const;
+
 protected:
     std::map<std::string, BliAny> values;  //!< Contains key value mappings
+
+    template<typename A, typename B>
+    bool fitsLimits(BliAny val, A &res) const;
 
 #ifdef DATA_MUTEX_LOCK
 private:

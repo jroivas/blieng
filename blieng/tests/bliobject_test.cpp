@@ -38,6 +38,34 @@ void BliObjectTest::values()
     CPPUNIT_ASSERT_THROW( boost::any_cast<std::string>(res), boost::bad_any_cast );
 }
 
+void BliObjectTest::getValuesLimits()
+{
+    BliObject *obj = new BliObject();
+    obj->setValue("test_int", (int)42);
+    obj->setValue("test_int_min", (int)-42);
+    obj->setValue("test_uint", (unsigned int)42);
+    obj->setValue("test_double", (double)4.22);
+    obj->setValue("test_char", (char)3);
+    obj->setValue("test_char_min", (char)-1);
+    obj->setValue("test_long", (long)123235);
+    obj->setValue("test_long_long", (long long)1234567890123L);
+
+    CPPUNIT_ASSERT(obj->getIntValue("test_int") == 42);
+    CPPUNIT_ASSERT(obj->getIntValue("test_int_min") == -42);
+
+    CPPUNIT_ASSERT(obj->getIntValue("test_uint") == 42);
+    CPPUNIT_ASSERT(obj->getIntValue("test_double") == 4);
+
+    CPPUNIT_ASSERT(obj->getIntValue("test_char") == 3);
+    CPPUNIT_ASSERT(obj->getIntValue("test_char_min") == -1);
+
+    CPPUNIT_ASSERT(obj->getIntValue("test_long") == 123235);
+
+    CPPUNIT_ASSERT_THROW(
+        obj->getIntValue("test_long_long"),
+        std::string);
+}
+
 void BliObjectTest::getValues()
 {
     BliObject *obj = new BliObject();
@@ -48,8 +76,11 @@ void BliObjectTest::getValues()
     obj->setValue("test_bool1", true);
     obj->setValue("test_bool2", false);
 
-    CPPUNIT_ASSERT( obj->getIntValue("test_int") == -42 );
-    CPPUNIT_ASSERT( obj->getUIntValue("test_int") == (unsigned int)-42 );
+
+    CPPUNIT_ASSERT(obj->getIntValue("test_int") == -42 );
+    CPPUNIT_ASSERT_THROW(
+        obj->getUIntValue("test_int"),
+        std::string);
     CPPUNIT_ASSERT( obj->getUIntValue("test_uint") == 42 );
     CPPUNIT_ASSERT( obj->getIntValue("test_uint") == 42 );
     CPPUNIT_ASSERT( obj->getDoubleValue("test_double") == 4.22 );
@@ -57,26 +88,12 @@ void BliObjectTest::getValues()
     CPPUNIT_ASSERT( obj->getStringValue("test_string") == "test42" );
     CPPUNIT_ASSERT( obj->getBoolValue("test_bool1") );
     CPPUNIT_ASSERT( !obj->getBoolValue("test_bool2") );
-
-    {
-        std::stringstream buffer;
-        boost::scoped_ptr<cerr_redirect> cd(new cerr_redirect(buffer.rdbuf()));
-        CPPUNIT_ASSERT( obj->getStringValue("test_int") == "" );
-        std::string outp = buffer.str();
-
-        CPPUNIT_ASSERT(
-            outp.find("Error, not a String value at: test_int") !=
-            std::string::npos);
-    }
-
-    {
-        std::stringstream buffer;
-        boost::scoped_ptr<cerr_redirect> cd(new cerr_redirect(buffer.rdbuf()));
-        CPPUNIT_ASSERT( obj->getBoolValue("test_int") == false );
-        std::string outp = buffer.str();
-
-        CPPUNIT_ASSERT(outp.find("Error, not a Bool value at: test_int") != std::string::npos);
-    }
+    CPPUNIT_ASSERT_THROW(
+        obj->getBoolValue("test_int"),
+        std::string);
+    CPPUNIT_ASSERT_THROW(
+        obj->getStringValue("test_int"),
+        std::string);
 
     {
         std::stringstream buffer;
@@ -84,8 +101,11 @@ void BliObjectTest::getValues()
         CPPUNIT_ASSERT_THROW( obj->getValue("test_nothing"), std::string);
         std::string outp = buffer.str();
 
-        CPPUNIT_ASSERT(outp.find("Error, key not found: test_nothing") != std::string::npos);
+        CPPUNIT_ASSERT(
+            outp.find("Error, key not found: test_nothing")
+            != std::string::npos);
     }
+
 
     CPPUNIT_ASSERT( *obj->getValueType("test_int") == typeid(int) );
     CPPUNIT_ASSERT( *obj->getValueType("test_uint") == typeid(unsigned int) );
@@ -96,13 +116,27 @@ void BliObjectTest::getValues()
 
     std::vector<std::string> keys = obj->getKeys();
 
-    CPPUNIT_ASSERT( std::find(keys.begin(), keys.end(), "test_int") != keys.end() );
-    CPPUNIT_ASSERT( std::find(keys.begin(), keys.end(), "test_uint") != keys.end() );
-    CPPUNIT_ASSERT( std::find(keys.begin(), keys.end(), "test_double") != keys.end() );
-    CPPUNIT_ASSERT( std::find(keys.begin(), keys.end(), "test_string") != keys.end() );
-    CPPUNIT_ASSERT( std::find(keys.begin(), keys.end(), "test_bool1") != keys.end() );
-    CPPUNIT_ASSERT( std::find(keys.begin(), keys.end(), "test_bool2") != keys.end() );
-    CPPUNIT_ASSERT( std::find(keys.begin(), keys.end(), "test_dummy") == keys.end() );
+    CPPUNIT_ASSERT(
+        std::find(keys.begin(), keys.end(), "test_int")
+        != keys.end());
+    CPPUNIT_ASSERT(
+        std::find(keys.begin(), keys.end(), "test_uint")
+        != keys.end());
+    CPPUNIT_ASSERT(
+        std::find(keys.begin(), keys.end(), "test_double")
+        != keys.end());
+    CPPUNIT_ASSERT(
+        std::find(keys.begin(), keys.end(), "test_string")
+        != keys.end());
+    CPPUNIT_ASSERT(
+        std::find(keys.begin(), keys.end(), "test_bool1")
+        != keys.end());
+    CPPUNIT_ASSERT(
+        std::find(keys.begin(), keys.end(), "test_bool2")
+        != keys.end());
+    CPPUNIT_ASSERT(
+        std::find(keys.begin(), keys.end(), "test_dummy")
+        == keys.end());
 }
 
 void BliObjectTest::toString()
@@ -178,11 +212,12 @@ void BliObjectTest::assign()
     CPPUNIT_ASSERT( obj2->isValue("test1") );
     CPPUNIT_ASSERT( obj2->isValue("test2") );
 
-    CPPUNIT_ASSERT( obj1->getUIntValue("test2") == obj2->getUIntValue("test2") );
+    CPPUNIT_ASSERT( obj1->getIntValue("test1") == obj2->getIntValue("test1") );
+    CPPUNIT_ASSERT( obj1->getIntValue("test2") == obj2->getIntValue("test2") );
 
     obj2->setValue("test2", (int)-4);
 
-    CPPUNIT_ASSERT( obj1->getUIntValue("test2") != obj2->getUIntValue("test2") );
+    CPPUNIT_ASSERT( obj1->getIntValue("test2") != obj2->getIntValue("test2") );
 }
 
 void BliObjectTest::random()
