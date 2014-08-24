@@ -8,6 +8,8 @@ CONFIG += staticlib
 QMAKE_CXXFLAGS += -std=c++0x
 QMAKE_CXXFLAGS += -g
 QMAKE_CXXFLAGS += -Wall -Wextra
+QMAKE_CXXFLAGS += -Wno-error=type-limits
+QMAKE_CXXFLAGS += -Wno-error=sign-compare
 
 unix:!android {
     LIBS += -L/usr/lib -L/usr/lib -Wl,-Bstatic  -lboost_system -lboost_random -lboost_filesystem -lboost_date_time -Wl,-Bdynamic
