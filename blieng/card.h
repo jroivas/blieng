@@ -62,7 +62,8 @@ public:
      *
      * \returns Card contens in string
      */
-    virtual inline std::string toString() const {
+    virtual inline std::string toString() const
+    {
         return "";
     }
     /**
@@ -77,7 +78,8 @@ public:
      *
      * \returns Unique ID of this card as string
      */
-    virtual inline std::string uuid() const {
+    virtual inline std::string uuid() const
+    {
         return card_uuid;
     }
 
@@ -86,7 +88,8 @@ public:
      *
      * \returns Number of combined cards
      */
-    virtual inline unsigned int size() const {
+    virtual inline unsigned int size() const
+    {
         return combined.size();
     }
 
@@ -95,7 +98,8 @@ public:
      *
      * \returns Iterator to beginning of combined cards.
      */
-    virtual inline auto_vector<blieng::Card>::iterator begin() {
+    virtual inline auto_vector<blieng::Card>::iterator begin()
+    {
         return combined.begin();
     }
     /**
@@ -103,7 +107,8 @@ public:
      *
      * \returns Iterator to end of combined cards.
      */
-    virtual inline auto_vector<blieng::Card>::iterator end() {
+    virtual inline auto_vector<blieng::Card>::iterator end()
+    {
         return combined.end();
     }
     /**
@@ -111,7 +116,8 @@ public:
      *
      * \returns Iterator to beginning of combined cards.
      */
-    virtual inline auto_vector<blieng::Card>::const_iterator begin() const {
+    virtual inline auto_vector<blieng::Card>::const_iterator begin() const
+    {
         return combined.begin();
     }
     /**
@@ -119,7 +125,8 @@ public:
      *
      * \returns Iterator to end of combined cards.
      */
-    virtual inline auto_vector<blieng::Card>::const_iterator end() const {
+    virtual inline auto_vector<blieng::Card>::const_iterator end() const
+    {
         return combined.end();
     }
 

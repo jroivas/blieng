@@ -132,14 +132,14 @@ public:
      *
      * \returns the number of waypoints.
      */
-    unsigned int size();
+    unsigned int size() const;
 
     /**
      * Shows the path as a string.
      *
      * \returns String representation of the path.
      */
-    std::string toString();
+    std::string toString() const;
 
     /**
      * Get the length of the path.
@@ -148,13 +148,16 @@ public:
      *
      * \returns The length of the path.
      */
-    double length();
+    double length() const;
     /**
      * Get all the waypoints.
      *
      * \returns Vector of waypoints.
      */
-    std::vector<Point> getPoints() const { return points; }
+    std::vector<Point> getPoints() const
+    {
+        return points;
+    }
 
     /**
      * Check if other path is same as this one.

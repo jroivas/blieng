@@ -19,7 +19,8 @@ Path::~Path()
 {
 }
 
-std::string Path::toString() {
+std::string Path::toString() const
+{
     std::string res = "";
 
     bool first = true;
@@ -142,7 +143,7 @@ Path Path::reversed() const
     return rev_path;
 }
 
-double Path::length()
+double Path::length() const
 {
     double len = 0.0;
 
@@ -178,7 +179,7 @@ bool Path::operator!=(const Path &other) const
     return !(*this == other);
 }
 
-unsigned int Path::size()
+unsigned int Path::size() const
 {
     return points.size();
 }

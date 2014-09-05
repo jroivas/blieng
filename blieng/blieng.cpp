@@ -2,10 +2,10 @@
 
 
 blieng::BliengState::BliengState()
+    : m_data(nullptr),
+    m_config(nullptr),
+    m_styleconfig(nullptr)
 {
-    m_data = nullptr;
-    m_config = nullptr;
-    m_styleconfig = nullptr;
 }
 
 blieng::BliengState::~BliengState()

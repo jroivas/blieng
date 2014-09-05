@@ -22,18 +22,43 @@ class Configure;
 class BliengState
 {
 public:
+    /**
+     * Contruct empty state info
+     */
     BliengState();
-    virtual ~BliengState();
+    ~BliengState();
 
+    /**
+     * Initializes state info with fresh
+     * instances of different state objects
+     */
     void initialize();
 
-    inline void setData(blieng::Data* _data) {
+    /**
+     * Override data object
+     *
+     * \param _data New data object
+     */
+    inline void setData(blieng::Data* _data)
+    {
         m_data = _data;
     }
-    inline void setConfig(blieng::Configure* _config) {
+    /**
+     * Override config object
+     *
+     * \param _config New config object
+     */
+    inline void setConfig(blieng::Configure* _config)
+    {
         m_config = _config;
     }
-    inline void setStyleConfig(blieng::Configure*  _config) {
+    /**
+     * Override style config object
+     *
+     * \param _config New style config object
+     */
+    inline void setStyleConfig(blieng::Configure*  _config)
+    {
         m_styleconfig = _config;
     }
 

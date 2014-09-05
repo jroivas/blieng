@@ -243,11 +243,17 @@ public:
      *
      * \returns True is item is usable, false otherwise.
      */
-    bool isUsable() const { return usable; }
+    bool isUsable() const
+    {
+        return usable;
+    }
     /**
      * Force this item to be usable.
      */
-    void setUsable() { usable = true; }
+    void setUsable()
+    {
+        usable = true;
+    }
 
     /**
      * List all availale item names.

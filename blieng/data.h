@@ -192,7 +192,8 @@ public:
      *
      * \param location Path to appended in search path
      */
-    inline void setGameLocation(const std::string &location) {
+    inline void setGameLocation(const std::string &location)
+    {
         game_location = location;
         updateLocations();
     }

@@ -99,7 +99,7 @@ public:
      * Checks if all keys are set and their values match to the given one.
      * \returns True if required keys are loaded and values matches, false otherwise
      */
-    bool validateValues();
+    bool validateValues() const;
 
 private:
     /**

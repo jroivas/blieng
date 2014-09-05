@@ -67,7 +67,10 @@ public:
      *
      * \returns Vector of Town objects.
      */
-    std::vector<blieng::Town *> getTowns() { return towns; }
+    std::vector<blieng::Town *> getTowns()
+    {
+        return towns;
+    }
     /**
      * Get list of path and roads in the map.
      * Parses path locations and give waypoints.
@@ -75,7 +78,10 @@ public:
      *
      * \returns Vector of path data.
      */
-    std::vector<blieng::Path> getPaths() const { return paths; }
+    std::vector<blieng::Path> getPaths() const
+    {
+        return paths;
+    }
     /**
      * Get paths, with reverse order waypoints.
      * Like \ref getPaths but paths waypoints are in reverse order.
@@ -84,7 +90,10 @@ public:
      *
      * \returns Vector of path data.
      */
-    std::vector<blieng::Path> getRevPaths() const { return rev_paths; }
+    std::vector<blieng::Path> getRevPaths() const
+    {
+        return rev_paths;
+    }
 
     /**
      * Change the background image file.

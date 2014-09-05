@@ -43,7 +43,11 @@ public:
      *
      * \return Name of the town
      */
-    const std::string getName() const { return name; }
+    const std::string getName() const
+    {
+        return name;
+    }
+
     /**
      * Set town size.
      * Size here means physical size in area.
@@ -56,7 +60,10 @@ public:
      *
      * \returns Current size of town
      */
-    unsigned int getSize() const { return size; }
+    unsigned int getSize() const
+    {
+        return size;
+    }
 
     /**
      * Sets town position in coordinates.
@@ -82,19 +89,28 @@ public:
      *
      * \returns Town X poisition
      */
-    inline double getPositionX() const { return pos.x; }
+    inline double getPositionX() const
+    {
+        return pos.x;
+    }
     /**
      * Get town Y position.
      *
      * \returns Town Y poisition
      */
-    inline double getPositionY() const { return pos.y; }
+    inline double getPositionY() const
+    {
+        return pos.y;
+    }
     /**
      * Get town position.
      *
      * \returns Point to the center of the city
      */
-    blieng::Point getPosition() const { return pos; }
+    blieng::Point getPosition() const
+    {
+        return pos;
+    }
 
     /**
      * Add new item to town

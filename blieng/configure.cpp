@@ -76,7 +76,7 @@ bool Configure::validate() const
     return true;
 }
 
-bool Configure::validateValues()
+bool Configure::validateValues() const
 {
     for (key_values_t key : keys) {
         if (!isValue(key.first)) return false;

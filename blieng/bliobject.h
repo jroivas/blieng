@@ -139,7 +139,7 @@ public:
      * \param key Unique key string
      * \returns Value as vector of strings
      */
-    virtual std::vector<std::string> getListValue(const std::string &key);
+    virtual std::vector<std::string> getListValue(const std::string &key) const;
     /**
      * Get vector of integers of given key.
      * Throws an error if key not found or
@@ -148,7 +148,7 @@ public:
      * \param key Unique key string
      * \returns Value as vector of integers
      */
-    virtual std::vector<int> getIntValues(const std::string &key);
+    virtual std::vector<int> getIntValues(const std::string &key) const;
 
     /**
      * Get string presentation of object.

@@ -137,11 +137,11 @@ std::string DataFile::unifyName(const std::string &name) const
     return tmp;
 }
 
-std::vector<std::string> blieng::DataFile::listFiles()
+std::vector<std::string> blieng::DataFile::listFiles() const
 {
     std::vector<std::string> res;
 
-    BOOST_FOREACH(auto val, _data) {
+    for(auto val : _data) {
         res.push_back(val->key);
     }
 
@@ -339,8 +339,8 @@ bool DataFile::write(const char *key, unsigned int key_len)
         std::ios_base::out | std::ios_base::trunc | std::ofstream::binary);
     if (!fd.is_open()) return false;
 
-    auto di = _data.cbegin();
-    while (di != _data.cend()) {
+    auto di = _data.begin();
+    while (di != _data.end()) {
         DataFileObject* tmp = _data[di];
         if (key != nullptr && key_len > 0) {
             std::unique_ptr<DataFileObject> new_tmp = tmp->obfuscate(

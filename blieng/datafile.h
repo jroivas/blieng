@@ -52,7 +52,8 @@ public:
         /**
          * Ensures we do not left anything behind.
          */
-        ~DataFileObject() {
+        ~DataFileObject()
+        {
             if (dataptr != nullptr) delete dataptr;
         }
 
@@ -90,21 +91,30 @@ public:
          *
          * \return Lenght of data
          */
-        inline unsigned int length() const { return len; }
+        inline unsigned int length() const
+        {
+            return len;
+        }
         /**
          * Get pointer to the data.
          * Mainly useful for modifying the contents.
          *
          * \return Pointer to the data inside this object
          */
-        char *get() { return dataptr; }
+        inline char *get()
+        {
+            return dataptr;
+        }
         /**
          * Get constant pointer to the data.
          * Faster and safer way to read the data content.
          *
          * \return Constant pointer to the data inside this object
          */
-        char *get() const { return dataptr; }
+        inline char *get() const
+        {
+            return dataptr;
+        }
 
     protected:
         char *dataptr;  //!< The data itself
@@ -162,7 +172,10 @@ public:
      *
      * \returns True if this object is valid, false otherwise
      */
-    bool isValid() const { return _ok; }
+    bool isValid() const
+    {
+        return _ok;
+    }
 
     /**
      * Set file contents from string.
@@ -207,7 +220,7 @@ public:
      *
      * \returns Vector of strings containing file names
      */
-    std::vector<std::string> listFiles();
+    std::vector<std::string> listFiles() const;
 
     /**
      * Read and cache contents of the archive.

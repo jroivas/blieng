@@ -47,13 +47,15 @@ public:
     BliAny(const any & other) : boost::any(other) {}
     ~BliAny() {}
 
-    #define CAST_TO(X,Y,Z)\
-    if (Y.type() == typeid(X)) {\
+    #define CAST_TO(X, Y, Z)\
+    if (Y.type() == typeid(X))\
+    {\
         Z << boost::any_cast<X>(Y);\
     } else
 
-    #define CAST_TO_BOOL(X,Y,Z)\
-    if (Y.type() == typeid(X)) {\
+    #define CAST_TO_BOOL(X, Y, Z)\
+    if (Y.type() == typeid(X))\
+    {\
         Z << (boost::any_cast<X>(Y) ? "true" : "false");\
     } else
 
@@ -91,11 +93,11 @@ public:
     #undef CAST_TO_BOOL
 
     #define AS_VALUE(Y, X)\
-    X as ## Y() {\
+    X as ## Y()\
+    {\
         if (this->type() == typeid(X)) {\
             return boost::any_cast<X>(*this);\
         }\
-        /*doDebug("Error, invalid value, can't convert to " # Y);*/ \
         throw std::string("Error, invalid value, can't convert to " # Y); \
     }
 

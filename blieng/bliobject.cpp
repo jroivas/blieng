@@ -288,7 +288,7 @@ bool BliObject::getBoolValue(const std::string &key) const
     throw msg.str();
 }
 
-std::vector<std::string> BliObject::getListValue(const std::string &key)
+std::vector<std::string> BliObject::getListValue(const std::string &key) const
 {
     BliAny val = getValue(key);
     try {
@@ -299,15 +299,16 @@ std::vector<std::string> BliObject::getListValue(const std::string &key)
     }
 }
 
-std::vector<int> BliObject::getIntValues(const std::string &key)
+std::vector<int> BliObject::getIntValues(const std::string &key) const
 {
     BliAny val = getValue(key);
     try {
         return boost::any_cast<std::vector<int> >(val);
     }
     catch (boost::bad_any_cast &c) {
-        std::cerr << std::string("Not int list at " + key + " " + c.what()) << std::endl;
-        throw std::string("Not int list at " + key + " " + c.what());
+        std::string errmsg = "Not int list at " + key + " " + c.what();
+        std::cerr << errmsg << std::endl;
+        throw errmsg;
     }
 }
 
@@ -362,7 +363,8 @@ std::vector<std::string> BliObject::getKeys()
 
 bool BliObject::changeNumberValue(const std::string &key, int diff)
 {
-    if (!isValue(key)) return false;
+    if (!isValue(key))
+        return false;
 
     BliAny val = getValue(key);
 
