@@ -37,7 +37,7 @@ void blieng::__do_log(std::string level, std::string msg)
 {
     if (__log_levels[level] <= __log_levels[__log_level]) {
 #ifdef ANDROID
-        qDebug() << level << ": " << msg;
+        qDebug() << level.c_str() << ": " << msg.c_str();
 #else
         std::cerr << level << ": " << msg << std::endl;
 #endif
