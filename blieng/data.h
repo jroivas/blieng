@@ -194,6 +194,7 @@ public:
      */
     inline void setGameLocation(const std::string &location)
     {
+        //FIXME
         game_location = location;
         updateLocations();
     }
@@ -246,7 +247,7 @@ private:
 
     auto_vector<DataBuffer> __buffers;
 
-    std::string game_location;
+    static std::string game_location;
 
     static char * __data_key;
     static unsigned int __data_key_len;

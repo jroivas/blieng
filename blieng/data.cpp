@@ -51,6 +51,7 @@ unsigned int blieng::Data::__data_key_len = 0;
 static std::string __data_folder_name = "data";
 static std::string __maps_folder_name = "maps";
 static std::string __maps_file_extension = ".json";
+std::string Data::game_location = "";
 
 std::map <std::string, blieng::DataFile *> Data::m_datafiles;
 boost::mutex Data::m_datafile_mutex;
