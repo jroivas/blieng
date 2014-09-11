@@ -43,14 +43,17 @@ public:
      * \param key Unique key string
      * \param value Arbitrary value, which is mapped to the specified key
      */
-    void setValue(const std::string &key, BliAny value);
+    void setValue(
+        const std::string &key,
+        BliAny value);
     /**
      * Quick way to check if there's value defined for a key.
      *
      * \param key Unique key string
      * \returns True if value for the key is set, false otherwise
      */
-    virtual bool isValue(const std::string &key) const;
+    virtual bool isValue(
+        const std::string &key) const;
 
     /**
      * Increases the value of given key.
@@ -59,7 +62,8 @@ public:
      * \param key Unique key string
      * \returns True if value is incremented, false otherwise
      */
-    virtual bool increase(const std::string &key);
+    virtual bool increase(
+        const std::string &key);
     /**
      * Decreases the value of given key.
      * This assumes that the value at given key is numerical type.
@@ -67,7 +71,8 @@ public:
      * \param key Unique key string
      * \returns True if value is decreased, false otherwise
      */
-    virtual bool decrease(const std::string &key);
+    virtual bool decrease(
+        const std::string &key);
     /**
      * Changed numerical value of given key by given difference.
      * This assumes that the value at given key is numerical type.
@@ -76,7 +81,8 @@ public:
      * \param diff The difference to change, internally effect is: value += diff
      * \returns True if value is changed, false otherwise
      */
-    bool changeNumberValue(const std::string &key, int diff);
+    bool changeNumberValue(
+        const std::string &key, int diff);
 
     /**
      * Get value of given key.
@@ -85,7 +91,8 @@ public:
      * \param key Unique key string
      * \returns BliAny object of the value.
      */
-    virtual BliAny getValue(const std::string &key) const;
+    virtual BliAny getValue(
+        const std::string &key) const;
     /**
      * Get string value of given key.
      * Throws an error if key not found.
@@ -148,7 +155,8 @@ public:
      * \param key Unique key string
      * \returns Value as vector of strings
      */
-    virtual std::vector<std::string> getListValue(const std::string &key) const;
+    virtual std::vector<std::string> getListValue(
+        const std::string &key) const;
     /**
      * Get vector of integers of given key.
      * Throws an error if key not found or
@@ -157,7 +165,8 @@ public:
      * \param key Unique key string
      * \returns Value as vector of integers
      */
-    virtual std::vector<int> getIntValues(const std::string &key) const;
+    virtual std::vector<int> getIntValues(
+        const std::string &key) const;
 
     /**
      * Get string presentation of object.
@@ -173,7 +182,8 @@ public:
      * \param key Unique key string
      * \returns Standard C++ type info of the value
      */
-    const std::type_info *getValueType(const std::string &key) const;
+    const std::type_info *getValueType(
+        const std::string &key) const;
 
     /**
      * List all known keys.
@@ -186,7 +196,10 @@ public:
      *
      * \returns Number of unique keys.
      */
-    inline unsigned int size() { return values.size(); }
+    inline unsigned int size() const
+    {
+        return m_values.size();
+    }
 
     /**
      * Assigns other BliObject to this one.
@@ -197,7 +210,8 @@ public:
      *
      * \param another Any other BliObject
      */
-    void assignObject(const BliObject *another);
+    void assignObject(
+        const BliObject *another);
 
     /**
      * Get random integer inside the range.
@@ -207,7 +221,9 @@ public:
      * \param limit_max The upper limit of the range
      * \returns Integer between the lower and upper limit
      */
-    static int getRandomInt(int limit_low, int limit_max);
+    static int getRandomInt(
+        int limit_low,
+        int limit_max);
     /**
      * Get random double inside the range.
      * Utilizes uniform distribution in range [min, max)
@@ -216,7 +232,9 @@ public:
      * \param limit_max The upper limit of the range
      * \returns Integer between the lower and upper limit
      */
-    static double getRandomDouble(double limit_low, double limit_max);
+    static double getRandomDouble(
+        double limit_low,
+        double limit_max);
     /**
      * Get a random boolean value.
      * Implementation if this method may change at any point.
@@ -258,14 +276,16 @@ public:
         std::string type="BliObject");
 
 protected:
-    std::map<std::string, BliAny> values;  //!< Contains key value mappings
+    std::map<std::string, BliAny> m_values;  //!< Contains key value mappings
 
     template<typename A, typename B>
-    bool fitsLimits(BliAny val, A &res) const;
+    bool fitsLimits(
+        BliAny val,
+        A &res) const;
 
 #ifdef DATA_MUTEX_LOCK
 private:
-    boost::mutex value_mutex;
+    boost::mutex m_value_mutex;
 #endif
 };
 
@@ -277,6 +297,6 @@ std::string percentageString(
     double value,
     unsigned int digits=0);
 
-}  // namespace blieng
+}
 
 #endif  // __BLIENG_BLIOBJECT_H

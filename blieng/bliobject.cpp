@@ -45,9 +45,9 @@ BliObject::BliObject()
 BliObject::~BliObject()
 {
     // Enforce deletion
-    while (!values.empty()) {
-        auto data = values.begin();
-        values.erase(data);
+    while (!m_values.empty()) {
+        auto data = m_values.begin();
+        m_values.erase(data);
     }
 }
 
@@ -57,18 +57,20 @@ void BliObject::assignObject(const BliObject *another)
         return;
 
 #ifdef DATA_MUTEX_LOCK
-    boost::lock_guard<boost::mutex> keylock(value_mutex);
+    boost::lock_guard<boost::mutex> keylock(m_value_mutex);
 #endif
-    for (auto val : another->values) {
-        values[val.first] = val.second;
+    for (auto val : another->m_values) {
+        m_values[val.first] = val.second;
     }
 }
 
 bool BliObject::isValue(const std::string &key) const
 {
-    auto value_iter = values.find(key);
+    auto value_iter = m_values.find(key);
 
-    if (value_iter == values.end()) return false;
+    if (value_iter == m_values.end())
+        return false;
+
     return true;
 }
 
@@ -98,9 +100,9 @@ double BliObject::getRandomDouble(double limit_low, double limit_max)
 
 BliAny BliObject::getValue(const std::string &key) const
 {
-    auto value_iter = values.find(key);
+    auto value_iter = m_values.find(key);
 
-    if (value_iter == values.end()) {
+    if (value_iter == m_values.end()) {
         LOG_ERROR("Error, key not found: " + key);
         throw std::string("Error, key not found: " + key);
     }
@@ -111,10 +113,10 @@ BliAny BliObject::getValue(const std::string &key) const
 void BliObject::setValue(const std::string &key, BliAny value)
 {
 #ifdef DATA_MUTEX_LOCK
-    boost::lock_guard<boost::mutex> keylock(value_mutex);
+    boost::lock_guard<boost::mutex> keylock(m_value_mutex);
 #endif
 
-    values[key] = value;
+    m_values[key] = value;
 }
 
 #define getConvertValue(X, Y) \
@@ -139,7 +141,9 @@ Y BliObject::get ## X ## Value( \
 }
 
 template<typename A, typename B>
-bool BliObject::fitsLimits(BliAny val, A &res) const
+bool BliObject::fitsLimits(
+    BliAny val,
+    A &res) const
 {
     if (val.type() != typeid(B))
         return false;
@@ -150,7 +154,7 @@ bool BliObject::fitsLimits(BliAny val, A &res) const
     int a_is_signed = std::numeric_limits<A>::is_signed;
     int b_is_signed = std::numeric_limits<B>::is_signed;
 
-    // These shouls always fit...
+    // These should always fit...
     uint64_t _max = std::numeric_limits<A>::max();
     int64_t _min = std::numeric_limits<A>::min();
 
@@ -335,7 +339,7 @@ std::string BliObject::toString() const
 {
     std::ostringstream res;
 
-    for (auto item : values) {
+    for (auto item : m_values) {
         std::string key = item.first;
         BliAny val = item.second;
 
@@ -351,10 +355,10 @@ std::vector<std::string> BliObject::getKeys()
 {
     std::vector<std::string> res;
 #ifdef DATA_MUTEX_LOCK
-    boost::lock_guard<boost::mutex> keylock(value_mutex);
+    boost::lock_guard<boost::mutex> keylock(m_value_mutex);
 #endif
 
-    for (auto val : values) {
+    for (auto val : m_values) {
         res.push_back(val.first);
     }
     return res;
@@ -469,9 +473,9 @@ std::string BliObject::serialize(std::string type) const
     if (type == "")
         type = "BliObject";
     arch << type;
-    serializeObject<unsigned int>(arch, values.size());
+    serializeObject<unsigned int>(arch, m_values.size());
 
-    for (auto val : values) {
+    for (auto val : m_values) {
         arch << val.first;
 
         BliAny any = val.second;
