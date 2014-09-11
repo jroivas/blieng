@@ -327,3 +327,32 @@ void BliObjectTest::bliany()
     CPPUNIT_ASSERT_THROW( tmp1.asDouble(), std::string );
     CPPUNIT_ASSERT_THROW( tmp2.asInt(), std::string );
 }
+
+void BliObjectTest::serialize()
+{
+    BliObject *obj = new BliObject();
+    obj->setValue("test_int", (int)42);
+    obj->setValue("test_int_min", (int)-42);
+    obj->setValue("test_uint", (unsigned int)42);
+    obj->setValue("test_double", (double)4.22);
+    obj->setValue("test_char", (char)3);
+    obj->setValue("test_char_min", (char)-1);
+    obj->setValue("test_long", (long)123235);
+    obj->setValue("test_long_long", (long long)1234567890123L);
+
+    std::string res = obj->serialize();
+
+    //std::cout << "SER: " << res << "\n";
+    CPPUNIT_ASSERT( res != "" );
+
+    BliObject *obj2 = new BliObject();
+    CPPUNIT_ASSERT(obj->isValue("test_int"));
+    CPPUNIT_ASSERT(!obj2->isValue("test_int"));
+
+    obj2->deserialize(res);
+    CPPUNIT_ASSERT(obj2->isValue("test_int"));
+    CPPUNIT_ASSERT_EQUAL(obj2->getIntValue("test_int"), (int)42);
+    CPPUNIT_ASSERT_EQUAL(obj2->getCharValue("test_char"), (char)3);
+    CPPUNIT_ASSERT_EQUAL(obj2->getCharValue("test_char_min"), (char)-1);
+    CPPUNIT_ASSERT_EQUAL(obj2->getDoubleValue("test_double"), (double)4.22);
+}

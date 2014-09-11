@@ -15,7 +15,7 @@ INCLUDEPATH += ../
 
 unix {
     LIBS += -L../ -lblieng
-    LIBS += -L/usr/lib -L/usr/lib -Wl,-Bstatic  -lboost_system -lboost_random -lboost_filesystem -lboost_date_time -Wl,-Bdynamic
+    LIBS += -L/usr/lib -L/usr/lib -Wl,-Bstatic  -lboost_system -lboost_random -lboost_filesystem -lboost_date_time -lboost_serialization -Wl,-Bdynamic
     POST_TARGETDEPS += ../libblieng.a
 
     QMAKE_CXXFLAGS += -Igmock-$${MOCK_VERSION}/include

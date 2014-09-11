@@ -114,6 +114,15 @@ public:
     virtual int getIntValue(
         const std::string &key) const;
     /**
+     * Get char value of given key.
+     * Throws an error if key not found.
+     *
+     * \param key Unique key string
+     * \returns Value as integer
+     */
+    virtual char getCharValue(
+        const std::string &key) const;
+    /**
      * Get unsigned integer value of given key.
      * Throws an error if key not found.
      *
@@ -225,6 +234,28 @@ public:
      */
     template<typename T>
     T getValue(const std::string &key) const;
+
+    /**
+     * Serialize all key-value pairs on this object.
+     * Will return serialized binary data
+     *
+     * \param type Object type for detection, by default BliObject
+     * \returns Serialized object as string
+     */
+    virtual std::string serialize(
+        std::string type="BliObject") const;
+
+    /**
+     * Deserialize a serialized object
+     * Will read data from stream and update current object
+     *
+     * \param data Serialized data
+     * \param type Object type for detection, by default BliObject
+     * \returns True on success, false otherwise
+     */
+    virtual bool deserialize(
+        std::string data,
+        std::string type="BliObject");
 
 protected:
     std::map<std::string, BliAny> values;  //!< Contains key value mappings

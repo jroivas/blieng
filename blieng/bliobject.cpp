@@ -8,6 +8,8 @@
 #include <boost/random/uniform_int_distribution.hpp>
 #include <boost/random/uniform_real_distribution.hpp>
 #include <boost/lexical_cast.hpp>
+#include <boost/archive/binary_oarchive.hpp>
+#include <boost/archive/binary_iarchive.hpp>
 
 #ifdef DATA_MUTEX_LOCK
 #include <boost/thread/locks.hpp>
@@ -23,6 +25,7 @@
 #include <iostream>
 #include <map>
 #include <sstream>
+#include <fstream>
 #include <string>
 #include <utility>
 #include <vector>
@@ -50,7 +53,8 @@ BliObject::~BliObject()
 
 void BliObject::assignObject(const BliObject *another)
 {
-    if (another == nullptr) return;
+    if (another == nullptr)
+        return;
 
 #ifdef DATA_MUTEX_LOCK
     boost::lock_guard<boost::mutex> keylock(value_mutex);
@@ -234,6 +238,11 @@ T BliObject::getValue(const std::string &key) const
 int BliObject::getIntValue(const std::string &key) const
 {
     return getValue<int>(key);
+}
+
+char BliObject::getCharValue(const std::string &key) const
+{
+    return getValue<char>(key);
 }
 
 unsigned int BliObject::getUIntValue(const std::string &key) const
@@ -434,4 +443,121 @@ std::string blieng::percentageString(
     }
     val += "%";
     return val;
+}
+
+
+template<typename T>
+void
+serializeObject(boost::archive::binary_oarchive &arch, T obj)
+{
+    arch << obj;
+}
+
+template<typename T>
+T deserializeObject(boost::archive::binary_iarchive &arch)
+{
+    T obj;
+    arch >> obj;
+    return obj;
+}
+
+std::string BliObject::serialize(std::string type) const
+{
+    std::ostringstream ss;
+
+    boost::archive::binary_oarchive arch(ss);
+    if (type == "")
+        type = "BliObject";
+    arch << type;
+    serializeObject<unsigned int>(arch, values.size());
+
+    for (auto val : values) {
+        arch << val.first;
+
+        BliAny any = val.second;
+        std::string types = any.typeString();
+        arch << types;
+
+        if (types == "int")
+            serializeObject<int>(arch, any.asInt());
+        else if (types == "unsigned int")
+            serializeObject<unsigned int>(arch, any.asUInt());
+        else if (types == "long")
+            serializeObject<long>(arch, any.asLong());
+        else if (types == "unsigned long")
+            serializeObject<unsigned long>(arch, any.asULong());
+        else if (types == "char")
+            serializeObject<char>(arch, any.asChar());
+        else if (types == "unsigned char")
+            serializeObject<unsigned char>(arch, any.asUChar());
+        else if (types == "short")
+            serializeObject<short>(arch, any.asShort());
+        else if (types == "unsigned short")
+            serializeObject<unsigned short>(arch, any.asUShort());
+        else if (types == "long long")
+            serializeObject<long long>(arch, any.asLongLong());
+        else if (types == "unsigned long long")
+            serializeObject<unsigned long long>(arch, any.asULongLong());
+        else if (types == "string")
+            serializeObject<std::string>(arch, any.asString());
+        else if (types == "float")
+            serializeObject<float>(arch, any.asFloat());
+        else if (types == "double")
+            serializeObject<double>(arch, any.asDouble());
+        /*else
+            throw std::string("Invalid value for key '" + types + "'");
+        */
+    }
+
+    return ss.str();
+}
+
+bool BliObject::deserialize(
+    std::string data,
+    std::string type)
+{
+    std::istringstream ss(data);
+
+    boost::archive::binary_iarchive arch(ss);
+    if (type == "")
+        type = "BliObject";
+    std::string data_type = deserializeObject<std::string>(arch);
+    if (data_type != type)
+        return false;
+
+    unsigned int num_values = deserializeObject<unsigned int>(arch);
+    unsigned int index = 0;
+    while (index < num_values) {
+        std::string key_name = deserializeObject<std::string>(arch);
+        std::string types = deserializeObject<std::string>(arch);
+        if (types == "int")
+            setValue(key_name, deserializeObject<int>(arch));
+        else if (types == "unsigned int")
+            setValue(key_name, deserializeObject<unsigned int>(arch));
+        else if (types == "long")
+            setValue(key_name, deserializeObject<long>(arch));
+        else if (types == "unsigned long")
+            setValue(key_name, deserializeObject<unsigned long>(arch));
+        else if (types == "char")
+            setValue(key_name, deserializeObject<char>(arch));
+        else if (types == "unsigned char")
+            setValue(key_name, deserializeObject<unsigned char>(arch));
+        else if (types == "short")
+            setValue(key_name, deserializeObject<short>(arch));
+        else if (types == "unsigned short")
+            setValue(key_name, deserializeObject<unsigned short>(arch));
+        else if (types == "long long")
+            setValue(key_name, deserializeObject<long long>(arch));
+        else if (types == "unsigned long long")
+            setValue(key_name, deserializeObject<unsigned long long>(arch));
+        else if (types == "string")
+            setValue(key_name, deserializeObject<std::string>(arch));
+        else if (types == "float")
+            setValue(key_name, deserializeObject<float>(arch));
+        else if (types == "double")
+            setValue(key_name, deserializeObject<double>(arch));
+        ++index;
+    }
+
+    return true;
 }

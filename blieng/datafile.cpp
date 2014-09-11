@@ -34,7 +34,11 @@ public:
      * \param _data The data
      * \param _len Length of the data
      */
-    SafeDataPtr(char _data[], unsigned int _len) : len(_len) {
+    SafeDataPtr(
+        char _data[],
+        unsigned int _len)
+        : len(_len)
+    {
         dataptr = new char[len];
         memmove(dataptr, _data, len);
     }
@@ -46,15 +50,21 @@ public:
      * \param _data The data
      * \param _len Length of the data
      */
-    SafeDataPtr(unsigned char _data[], unsigned int _len) : len(_len) {
+    SafeDataPtr(
+        unsigned char _data[],
+        unsigned int _len)
+        : len(_len)
+    {
         dataptr = new char[len];
         memmove(dataptr, reinterpret_cast<char*>(_data), len);
     }
     /**
      * Automatically delete the data
      */
-    virtual ~SafeDataPtr() {
-        if (dataptr != nullptr) delete [] dataptr;
+    ~SafeDataPtr()
+    {
+        if (dataptr != nullptr)
+            delete [] dataptr;
         dataptr = nullptr;
         len = 0;
     }
@@ -64,19 +74,28 @@ public:
      *
      * \returns Pointer to the data
      */
-    const char * getData() const { return dataptr; }
+    const char * getData() const
+    {
+        return dataptr;
+    }
     /**
      * Get lenght of the data
      *
      * \returns Length of the data
      */
-    unsigned int length() const { return len; }
+    unsigned int length() const
+    {
+        return len;
+    }
     /**
-     * Get lenght of the data
+     * Get length of the data
      *
      * \returns Length of the data
      */
-    unsigned int size() const { return len; }
+    unsigned int size() const
+    {
+        return len;
+    }
 
 private:
     char *dataptr;

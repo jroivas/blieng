@@ -130,6 +130,48 @@ public:
      */
     AS_VALUE(ULong, unsigned long);
     /**
+     * Get result as char.
+     * Throws error if type does not match.
+     *
+     * \returns Value as char
+     */
+    AS_VALUE(Char, char);
+    /**
+     * Get result as unsigned char.
+     * Throws error if type does not match.
+     *
+     * \returns Value as unsigned char
+     */
+    AS_VALUE(UChar, unsigned char);
+    /**
+     * Get result as short.
+     * Throws error if type does not match.
+     *
+     * \returns Value as short
+     */
+    AS_VALUE(Short, short);
+    /**
+     * Get result as unsigned short.
+     * Throws error if type does not match.
+     *
+     * \returns Value as unsigned short
+     */
+    AS_VALUE(UShort, unsigned short);
+    /**
+     * Get result as long long.
+     * Throws error if type does not match.
+     *
+     * \returns Value as long long
+     */
+    AS_VALUE(LongLong, long long);
+    /**
+     * Get result as unsigned long long.
+     * Throws error if type does not match.
+     *
+     * \returns Value as unsigned long long
+     */
+    AS_VALUE(ULongLong, unsigned long long);
+    /**
      * Get result as double.
      * Throws error if type does not match.
      *
@@ -161,7 +203,7 @@ public:
     #undef AS_VALUE
 
     /**
-     * Get result as numberic value, for now coverted to signed long.
+     * Get result as numeric value, for now converted to signed long.
      *
      * \returns Value as numeric (long)
      */
@@ -180,6 +222,38 @@ public:
         if (this->type() == typeid(double))
             return boost::any_cast<double>(*this);
         throw std::string("Error, invalid value, can't convert to a number");
+    }
+
+    std::string typeString() const
+    {
+        if (this->type() == typeid(int))
+            return "int";
+        if (this->type() == typeid(unsigned int))
+            return "unsigned int";
+        if (this->type() == typeid(long))
+            return "long";
+        if (this->type() == typeid(unsigned long))
+            return "unsigned long";
+        if (this->type() == typeid(short))
+            return "short";
+        if (this->type() == typeid(unsigned short))
+            return "unsigned short";
+        if (this->type() == typeid(long long))
+            return "long long";
+        if (this->type() == typeid(unsigned long long))
+            return "unsigned long long";
+        if (this->type() == typeid(char))
+            return "char";
+        if (this->type() == typeid(unsigned char))
+            return "unsigned char";
+        if (this->type() == typeid(double))
+            return "double";
+        if (this->type() == typeid(float))
+            return "float";
+        if (this->type() == typeid(std::string))
+            return "string";
+
+        return "unknown";
     }
 };
 

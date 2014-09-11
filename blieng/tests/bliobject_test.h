@@ -18,6 +18,7 @@ public:
     CPPUNIT_TEST(incdec);
     CPPUNIT_TEST(bliany);
     CPPUNIT_TEST(percentageString);
+    CPPUNIT_TEST(serialize);
     CPPUNIT_TEST_SUITE_END();
 private:
     void values();
@@ -29,6 +30,7 @@ private:
     void incdec();
     void bliany();
     void getValuesLimits();
+    void serialize();
 };
 
 #endif
