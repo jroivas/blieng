@@ -51,7 +51,8 @@ BliObject::~BliObject()
     }
 }
 
-void BliObject::assignObject(const BliObject *another)
+void BliObject::assignObject(
+    const BliObject *another)
 {
     if (another == nullptr)
         return;
@@ -64,17 +65,16 @@ void BliObject::assignObject(const BliObject *another)
     }
 }
 
-bool BliObject::isValue(const std::string &key) const
+bool BliObject::isValue(
+    const std::string &key) const
 {
     auto value_iter = m_values.find(key);
-
-    if (value_iter == m_values.end())
-        return false;
-
-    return true;
+    return (value_iter != m_values.end());
 }
 
-int BliObject::getRandomInt(int limit_low, int limit_max)
+int BliObject::getRandomInt(
+    int limit_low,
+    int limit_max)
 {
 #ifdef PSEUDO_RANDOM
     boost::random::mt19937 gen;
@@ -86,7 +86,9 @@ int BliObject::getRandomInt(int limit_low, int limit_max)
     return dist(gen);
 }
 
-double BliObject::getRandomDouble(double limit_low, double limit_max)
+double BliObject::getRandomDouble(
+    double limit_low,
+    double limit_max)
 {
 #ifdef PSEUDO_RANDOM
     boost::random::mt19937 gen;
@@ -98,7 +100,8 @@ double BliObject::getRandomDouble(double limit_low, double limit_max)
     return dist(gen);
 }
 
-BliAny BliObject::getValue(const std::string &key) const
+BliAny BliObject::getValue(
+    const std::string &key) const
 {
     auto value_iter = m_values.find(key);
 
@@ -110,34 +113,15 @@ BliAny BliObject::getValue(const std::string &key) const
     return value_iter->second;
 }
 
-void BliObject::setValue(const std::string &key, BliAny value)
+void BliObject::setValue(
+    const std::string &key,
+    BliAny value)
 {
 #ifdef DATA_MUTEX_LOCK
     boost::lock_guard<boost::mutex> keylock(m_value_mutex);
 #endif
 
     m_values[key] = value;
-}
-
-#define getConvertValue(X, Y) \
-Y BliObject::get ## X ## Value( \
-    const std::string &key, \
-    const Y &default_value) const\
-{\
-    BliAny val = getValue(key);\
-    if (val.empty()) {\
-        LOG_ERROR("Error, " #X " key not found: " + key);\
-        throw "Error, " #X " key not found: " + key;\
-    }\
-    if (val.type() == typeid(Y)) {\
-        return boost::any_cast<Y>(val);\
-    }\
-    try {\
-        return boost::any_cast<Y>(val);\
-    } catch (boost::bad_any_cast &c) {\
-        LOG_ERROR("Error, not a " #X " value at: " + key);\
-        return default_value;\
-    }\
 }
 
 template<typename A, typename B>
@@ -239,27 +223,32 @@ T BliObject::getValue(const std::string &key) const
     throw msg.str();
 }
 
-int BliObject::getIntValue(const std::string &key) const
+int BliObject::getIntValue(
+    const std::string &key) const
 {
     return getValue<int>(key);
 }
 
-char BliObject::getCharValue(const std::string &key) const
+char BliObject::getCharValue(
+    const std::string &key) const
 {
     return getValue<char>(key);
 }
 
-unsigned int BliObject::getUIntValue(const std::string &key) const
+unsigned int BliObject::getUIntValue(
+    const std::string &key) const
 {
     return getValue<unsigned int>(key);
 }
 
-double BliObject::getDoubleValue(const std::string &key) const
+double BliObject::getDoubleValue(
+    const std::string &key) const
 {
     return getValue<double>(key);
 }
 
-std::string BliObject::getStringValue(const std::string &key) const
+std::string BliObject::getStringValue(
+    const std::string &key) const
 {
     BliAny val = getValue(key);
     try {
@@ -282,7 +271,8 @@ std::string BliObject::getStringValue(const std::string &key) const
     throw msg.str();
 }
 
-bool BliObject::getBoolValue(const std::string &key) const
+bool BliObject::getBoolValue(
+    const std::string &key) const
 {
     BliAny val = getValue(key);
     try {
@@ -301,7 +291,8 @@ bool BliObject::getBoolValue(const std::string &key) const
     throw msg.str();
 }
 
-std::vector<std::string> BliObject::getListValue(const std::string &key) const
+std::vector<std::string> BliObject::getListValue(
+    const std::string &key) const
 {
     BliAny val = getValue(key);
     try {
@@ -312,7 +303,8 @@ std::vector<std::string> BliObject::getListValue(const std::string &key) const
     }
 }
 
-std::vector<int> BliObject::getIntValues(const std::string &key) const
+std::vector<int> BliObject::getIntValues(
+    const std::string &key) const
 {
     BliAny val = getValue(key);
     try {
@@ -325,7 +317,8 @@ std::vector<int> BliObject::getIntValues(const std::string &key) const
     }
 }
 
-const std::type_info *BliObject::getValueType(const std::string &key) const
+const std::type_info *BliObject::getValueType(
+    const std::string &key) const
 {
     BliAny val = getValue(key);
     if (val.empty()) {
@@ -364,42 +357,75 @@ std::vector<std::string> BliObject::getKeys()
     return res;
 }
 
-#define CHANGE_NUM_VALUE(KEY, VAL, DIFF, T) do {\
-    T __num = boost::any_cast<T>(VAL);\
-    __num += DIFF;\
-    if (isValue(KEY + "-max")) {\
-        T __max = getIntValue(key + "-max");\
-        if (__num > __max) return false;\
-    }\
-    setValue(KEY, __num);\
-}  while (0);
+template<typename T>
+bool BliObject::changeNumValue(
+    std::string key,
+    BliAny val,
+    int diff)
+{
+    T __num = boost::any_cast<T>(val);
+    __num += diff;
+    if (isValue(key + "-max")) {
+        T __max = getIntValue(key + "-max");
+        if (__num > __max)
+            return false;
+    }
+    setValue(key, __num);
+    return true;
+}
 
-bool BliObject::changeNumberValue(const std::string &key, int diff)
+bool BliObject::changeNumberValue(
+    const std::string &key,
+    int diff)
 {
     if (!isValue(key))
         return false;
 
     BliAny val = getValue(key);
 
+    // FIXME possible int overflows on multiple cases!
     if (val.type() == typeid(int)) {
-        CHANGE_NUM_VALUE(key, val, diff, int);
+        return changeNumValue<int>(key, val, diff);
     }
     else if (val.type() == typeid(unsigned int)) {
-        // FIXME possible int overflow!
-        CHANGE_NUM_VALUE(key, val, diff, unsigned int);
+        return changeNumValue<unsigned int>(key, val, diff);
+    }
+    else if (val.type() == typeid(long)) {
+        return changeNumValue<long>(key, val, diff);
+    }
+    else if (val.type() == typeid(unsigned long)) {
+        return changeNumValue<unsigned long>(key, val, diff);
+    }
+    else if (val.type() == typeid(long long)) {
+        return changeNumValue<long long>(key, val, diff);
+    }
+    else if (val.type() == typeid(unsigned long long)) {
+        return changeNumValue<unsigned long long>(key, val, diff);
+    }
+    else if (val.type() == typeid(short)) {
+        return changeNumValue<short>(key, val, diff);
+    }
+    else if (val.type() == typeid(unsigned short)) {
+        return changeNumValue<unsigned short>(key, val, diff);
+    }
+    else if (val.type() == typeid(char)) {
+        return changeNumValue<char>(key, val, diff);
+    }
+    else if (val.type() == typeid(unsigned char)) {
+        return changeNumValue<unsigned char>(key, val, diff);
     }
     else if (val.type() == typeid(double)) {
-        CHANGE_NUM_VALUE(key, val, diff, double);
+        return changeNumValue<double>(key, val, diff);
     }
-    else {
-        return false;
+    else if (val.type() == typeid(float)) {
+        return changeNumValue<float>(key, val, diff);
     }
 
-    return true;
+    return false;
 }
-#undef CHANGE_NUM_VALUE
 
-bool BliObject::increase(const std::string &key)
+bool BliObject::increase(
+    const std::string &key)
 {
     return changeNumberValue(key, 1);
 }
@@ -419,17 +445,20 @@ bool BliObject::getRandomBoolean()
     return (tmp1 == tmp2);
 }
 
-std::string blieng::toString(int value)
+std::string blieng::toString(
+    int value)
 {
     return boost::lexical_cast<std::string>(value);
 }
 
-std::string blieng::toString(unsigned int value)
+std::string blieng::toString(
+    unsigned int value)
 {
     return boost::lexical_cast<std::string>(value);
 }
 
-std::string blieng::toString(double value)
+std::string blieng::toString(
+    double value)
 {
     return boost::lexical_cast<std::string>(value);
 }
@@ -452,20 +481,24 @@ std::string blieng::percentageString(
 
 template<typename T>
 void
-serializeObject(boost::archive::binary_oarchive &arch, T obj)
+serializeObject(
+    boost::archive::binary_oarchive &arch,
+    T obj)
 {
     arch << obj;
 }
 
 template<typename T>
-T deserializeObject(boost::archive::binary_iarchive &arch)
+T deserializeObject(
+    boost::archive::binary_iarchive &arch)
 {
     T obj;
     arch >> obj;
     return obj;
 }
 
-std::string BliObject::serialize(std::string type) const
+std::string BliObject::serialize(
+    std::string type) const
 {
     std::ostringstream ss;
 

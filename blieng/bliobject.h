@@ -282,6 +282,11 @@ protected:
     bool fitsLimits(
         BliAny val,
         A &res) const;
+    template<typename T>
+    bool changeNumValue(
+        std::string key,
+        BliAny val,
+        int diff);
 
 #ifdef DATA_MUTEX_LOCK
 private:
