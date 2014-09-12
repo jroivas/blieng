@@ -54,7 +54,8 @@ public:
          */
         ~DataFileObject()
         {
-            if (dataptr != nullptr) delete dataptr;
+            if (dataptr != nullptr)
+                delete dataptr;
         }
 
         /**
