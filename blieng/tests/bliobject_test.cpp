@@ -373,8 +373,6 @@ void BliObjectTest::compress()
     CPPUNIT_ASSERT(!blieng::isCompressed(original.c_str(), original.size()));
     CPPUNIT_ASSERT(blieng::isCompressed(comp, len));
 
-    std::cout << "comp sz " << len << " " << original.size() << "\n";
-
     char *uncomp = nullptr;
     unsigned int uncomp_len;
     std::tie(
@@ -384,7 +382,7 @@ void BliObjectTest::compress()
     CPPUNIT_ASSERT(uncomp != nullptr);
     CPPUNIT_ASSERT(uncomp_len > 0);
     CPPUNIT_ASSERT(uncomp_len == original.size());
-    CPPUNIT_ASSERT(std::string(uncomp) == original);
+    CPPUNIT_ASSERT(std::string(uncomp, uncomp_len) == original);
 
     CPPUNIT_ASSERT(blieng::isCompressed(comp, len));
     CPPUNIT_ASSERT(!blieng::isCompressed(uncomp, uncomp_len));
