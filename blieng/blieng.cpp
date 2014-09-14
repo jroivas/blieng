@@ -223,7 +223,7 @@ blieng::deobfuscate(
 class Header
 {
 public:
-    Header() : Header(0)
+    Header() : len(0)
     {
     }
     Header(int len_) : len(len_)
@@ -235,6 +235,10 @@ public:
     }
     bool validate() const
     {
+        /*
+         * ID mappings
+         * FLZ1 == fastlz unmodified
+         */
         return (id[0] == 'F'
             && id[1] == 'L'
             && id[2] == 'Z'
