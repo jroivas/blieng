@@ -1,6 +1,7 @@
 #include "bliobject_test.h"
 #include "test_tools.h"
 #include <bliobject.h>
+#include <blieng.h>
 #include <algorithm>
 #include <string>
 #include <boost/scoped_ptr.hpp>
@@ -355,4 +356,39 @@ void BliObjectTest::serialize()
     CPPUNIT_ASSERT_EQUAL(obj2->getCharValue("test_char"), (char)3);
     CPPUNIT_ASSERT_EQUAL(obj2->getCharValue("test_char_min"), (char)-1);
     CPPUNIT_ASSERT_EQUAL(obj2->getDoubleValue("test_double"), (double)4.22);
+}
+
+void BliObjectTest::compress()
+{
+    std::string original = "inadub792b91beaaaaaaaaaaaaaaabbbbbbbbbbbbbbbb";
+    char *comp = nullptr;
+    unsigned int len;
+    std::tie(
+        comp,
+        len) = blieng::compress(original.c_str(), original.size());
+
+    CPPUNIT_ASSERT(comp != nullptr);
+    CPPUNIT_ASSERT(len > 0);
+    CPPUNIT_ASSERT(len < original.size());
+    CPPUNIT_ASSERT(!blieng::isCompressed(original.c_str(), original.size()));
+    CPPUNIT_ASSERT(blieng::isCompressed(comp, len));
+
+    std::cout << "comp sz " << len << " " << original.size() << "\n";
+
+    char *uncomp = nullptr;
+    unsigned int uncomp_len;
+    std::tie(
+        uncomp,
+        uncomp_len) = blieng::decompress(comp, len);
+
+    CPPUNIT_ASSERT(uncomp != nullptr);
+    CPPUNIT_ASSERT(uncomp_len > 0);
+    CPPUNIT_ASSERT(uncomp_len == original.size());
+    CPPUNIT_ASSERT(std::string(uncomp) == original);
+
+    CPPUNIT_ASSERT(blieng::isCompressed(comp, len));
+    CPPUNIT_ASSERT(!blieng::isCompressed(uncomp, uncomp_len));
+
+    delete [] uncomp;
+    delete [] comp;
 }

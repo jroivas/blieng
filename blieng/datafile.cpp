@@ -18,12 +18,15 @@
 using blieng::DataFile;
 
 DataFile::DataFile()
+    : m_ok(false),
+    m_compress(false)
 {
-    _ok = false;
 }
 
 DataFile::DataFile(
     const std::string &name)
+    : m_ok(true),
+    m_compress(false)
 {
     setName(name);
 }
@@ -35,8 +38,8 @@ DataFile::~DataFile()
 
 void DataFile::setName(const std::string &name)
 {
-    _ok = true;
-    _name = name;
+    m_ok = true;
+    m_name = name;
 }
 
 std::string DataFile::unifyName(const std::string &name) const
@@ -44,28 +47,26 @@ std::string DataFile::unifyName(const std::string &name) const
     std::string tmp = "";
 
     bool got_letter = false;
-    auto ni = name.cbegin();
     char back = 0;
-    while (ni != name.cend()) {
-        if (*ni == '\n' ||
-            *ni == '\r' ||
-            *ni == 0 ||
-            *ni == '!' ||
-            *ni == '|') {
+    for (auto letter : name) {
+        if (letter == '\n' ||
+            letter == '\r' ||
+            letter == 0 ||
+            letter == '!' ||
+            letter == '|') {
             // FIXME: Blacklist?
         } else {
-            if (got_letter || (*ni != '/' && *ni != '\\')) {
-                if (*ni == '/' || *ni == '\\')  {
-                    back = *ni;
+            if (got_letter || (letter != '/' && letter != '\\')) {
+                if (letter == '/' || letter == '\\')  {
+                    back = letter;
                 } else {
                     if (back != 0) tmp += back;
                     back = 0;
-                    tmp += *ni;
+                    tmp += letter;
                 }
                 got_letter = true;
             }
         }
-        ++ni;
     }
 
     return tmp;
@@ -75,7 +76,7 @@ std::vector<std::string> blieng::DataFile::listFiles() const
 {
     std::vector<std::string> res;
 
-    for(auto val : _data) {
+    for(auto val : m_data) {
         res.push_back(val->key);
     }
 
@@ -86,10 +87,12 @@ const blieng::DataFile::DataFileObject *DataFile::getObject(
     const std::string &name)
 {
     std::string uname = unifyName(name);
-    if (uname == "") return nullptr;
+    if (uname == "")
+        return nullptr;
 
-    auto di = _data.find(uname);
-    if (di != _data.end()) return _data[di];
+    auto di = m_data.find(uname);
+    if (di != m_data.end())
+        return m_data[di];
 
     return nullptr;
 }
@@ -100,7 +103,9 @@ unsigned int DataFile::getData(
 {
     const DataFileObject *obj = getObject(name);
     if (obj != nullptr) {
-        if (data != nullptr) *data = obj->get();
+        if (data != nullptr) {
+            *data = obj->get();
+        }
         return obj->length();
     }
     return 0;
@@ -111,11 +116,12 @@ bool DataFile::addData(
     const std::string &data)
 {
     std::string uname = unifyName(name);
-    if (uname == "") return false;
+    if (uname == "")
+        return false;
 
     std::unique_ptr<DataFileObject> tmp(
         new DataFileObject(data.c_str(), data.size() + 1));
-    _data[uname] = std::move(tmp);
+    m_data[uname] = std::move(tmp);
 
     return true;
 }
@@ -126,10 +132,11 @@ bool DataFile::addData(
     unsigned int len)
 {
     std::string uname = unifyName(name);
-    if (uname == "") return false;
+    if (uname == "")
+        return false;
 
     std::unique_ptr<DataFileObject> tmp(new DataFileObject(data, len));
-    _data[uname] = std::move(tmp);
+    m_data[uname] = std::move(tmp);
 
     return true;
 }
@@ -156,22 +163,31 @@ std::unique_ptr<blieng::SafeDataPtr> DataFile::obfuscateSimple(
 }
 
 #ifdef ANDROID
+// TODO On Android we need to rely on Qt
+// Might be good to find better way
 #include <QtCore>
 #endif
-bool DataFile::read(const char *key, unsigned int key_len)
+
+bool DataFile::read(
+    const char *key,
+    unsigned int key_len)
 {
-    if (!_ok) return false;
+    if (!m_ok)
+        return false;
     // TODO: Tidy
 
 #ifdef ANDROID
+    // FIXME Config
     QFile asset_file("assets:/data/data.dat");
     if (!asset_file.open(QIODevice::ReadOnly)) {
         return false;
     }
 #else
     boost::filesystem::ifstream fd(
-        _name, std::ios_base::in | std::ofstream::binary);
-    if (!fd.is_open()) return false;
+        m_name,
+        std::ios_base::in | std::ofstream::binary);
+    if (!fd.is_open())
+        return false;
 #endif
 
 #ifdef ANDROID
@@ -185,21 +201,31 @@ bool DataFile::read(const char *key, unsigned int key_len)
         nb_read = asset_file.read(
             reinterpret_cast<char*>(&namelen),
             sizeof(uint32_t));
-        if (nb_read == 0) break;
+        if (nb_read == 0)
+            break;
 #else
-        fd.read(reinterpret_cast<char*>(&namelen), sizeof(uint32_t));
-        if (fd.eof()) break;
+        fd.read(
+            reinterpret_cast<char*>(&namelen),
+            sizeof(uint32_t));
+        if (fd.eof())
+            break;
 #endif
         BOOST_ASSERT(namelen > 0);
         BOOST_ASSERT(namelen < 0x2ff);
 
-        std::unique_ptr<char[]> ob_name(new char[namelen+1]);
+        std::unique_ptr<char[]> ob_name(new char[namelen + 1]);
 #ifdef ANDROID
-        nb_read = asset_file.read(ob_name.get(), static_cast<int>(namelen));
-        if (nb_read == 0) break;
+        nb_read = asset_file.read(
+            ob_name.get(),
+            static_cast<int>(namelen));
+        if (nb_read == 0)
+            break;
 #else
-        fd.read(ob_name.get(), static_cast<int>(namelen));
-        if (fd.eof()) break;
+        fd.read(
+            ob_name.get(),
+            static_cast<int>(namelen));
+        if (fd.eof())
+            break;
 #endif
 
         auto name = obfuscateSimple(ob_name.get(), namelen);
@@ -209,10 +235,14 @@ bool DataFile::read(const char *key, unsigned int key_len)
         nb_read = asset_file.read(
             reinterpret_cast<char*>(&datalen),
             sizeof(uint32_t));
-        if (nb_read == 0) break;
+        if (nb_read == 0)
+            break;
 #else
-        fd.read(reinterpret_cast<char*>(&datalen), sizeof(uint32_t));
-        if (fd.eof()) break;
+        fd.read(
+            reinterpret_cast<char*>(&datalen),
+            sizeof(uint32_t));
+        if (fd.eof())
+            break;
 #endif
 
         uint32_t datareallen = 0;
@@ -220,24 +250,34 @@ bool DataFile::read(const char *key, unsigned int key_len)
         nb_read = asset_file.read(
             reinterpret_cast<char*>(&datareallen),
             sizeof(uint32_t));
-        if (nb_read == 0) break;
+        if (nb_read == 0)
+            break;
 #else
-        fd.read(reinterpret_cast<char*>(&datareallen), sizeof(uint32_t));
-        if (fd.eof()) break;
+        fd.read(
+            reinterpret_cast<char*>(&datareallen),
+            sizeof(uint32_t));
+        if (fd.eof())
+            break;
 #endif
 
         std::unique_ptr<char[]> data(new char[datalen]);
 #ifdef ANDROID
-        nb_read = asset_file.read(data.get(), static_cast<int>(datalen));
-        if (nb_read == 0) break;
+        nb_read = asset_file.read(
+            data.get(),
+            static_cast<int>(datalen));
+        if (nb_read == 0)
+            break;
 #else
-        fd.read(data.get(), static_cast<int>(datalen));
-        if (fd.eof()) break;
+        fd.read(
+            data.get(),
+            static_cast<int>(datalen));
+        if (fd.eof())
+            break;
 #endif
 
         std::unique_ptr<DataFileObject> tmp(
             new DataFileObject(data.get(), datalen));
-        tmp->real_len = datareallen;
+        tmp->m_real_len = datareallen;
 
         std::string sname;
         sname.append(name->getData(), name->length());
@@ -249,7 +289,7 @@ bool DataFile::read(const char *key, unsigned int key_len)
                 tmp = std::move(new_tmp);
             }
         }
-        _data[sname] = std::move(tmp);
+        m_data[sname] = std::move(tmp);
     }
 
 #ifdef ANDROID
@@ -263,27 +303,39 @@ bool DataFile::read(const char *key, unsigned int key_len)
 
 bool DataFile::write(const char *key, unsigned int key_len)
 {
-    if (!_ok) return false;
+    if (!m_ok)
+        return false;
 #ifdef ANDROID
     return false;
 #endif
 
     boost::filesystem::ofstream fd(
-        _name,
+        m_name,
         std::ios_base::out | std::ios_base::trunc | std::ofstream::binary);
-    if (!fd.is_open()) return false;
+    if (!fd.is_open())
+        return false;
 
-    auto di = _data.begin();
-    while (di != _data.end()) {
-        DataFileObject* tmp = _data[di];
+    auto di = m_data.begin();
+    while (di != m_data.end()) {
+        DataFileObject* tmp = m_data[di];
+        if (m_compress) {
+            std::unique_ptr<DataFileObject> new_tmp = tmp->compress();
+            if (new_tmp.get()
+                && new_tmp.get()->isValid()
+                && new_tmp.get()->m_len <= new_tmp.get()->m_real_len) {
+                m_data[di] = std::move(new_tmp);
+                tmp = m_data[di];
+                //std::cout << "Got size: " << tmp->m_len * 100 / tmp->m_real_len << "% " << tmp->m_real_len << "\n";
+            }
+        }
         if (key != nullptr && key_len > 0) {
             std::unique_ptr<DataFileObject> new_tmp = tmp->obfuscate(
                 key,
                 key_len,
                 (*di)->key);
             if (new_tmp.get()) {
-                _data[di] = std::move(new_tmp);
-                tmp = _data[di];
+                m_data[di] = std::move(new_tmp);
+                tmp = m_data[di];
             }
         }
 
@@ -293,10 +345,10 @@ bool DataFile::write(const char *key, unsigned int key_len)
         auto ob_name = obfuscateSimple((*di)->key.c_str(), itmp);
         fd.write(ob_name->getData(), static_cast<int>(ob_name->length()));
 
-        itmp = tmp->len;
+        itmp = tmp->m_len;
         fd.write(reinterpret_cast<char*>(&itmp), sizeof(uint32_t));
 
-        itmp = tmp->real_len;
+        itmp = tmp->m_real_len;
         fd.write(reinterpret_cast<char*>(&itmp), sizeof(uint32_t));
 
         fd.write(tmp->get(), static_cast<int>(tmp->length()));
@@ -312,11 +364,24 @@ bool DataFile::write(const char *key, unsigned int key_len)
 
 blieng::DataFile::DataFileObject::DataFileObject(
     const char *new_data,
-    unsigned int new_len) :
-    len(new_len), real_len(new_len)
+    unsigned int new_len)
+    : m_len(new_len),
+    m_real_len(new_len)
 {
-    dataptr = new char[len];
-    memmove(dataptr, new_data, len);
+    if (blieng::isCompressed(new_data, new_len)) {
+        std::tie(
+            m_dataptr,
+            m_len) = blieng::decompress(
+                new_data,
+                new_len);
+        if (m_dataptr == nullptr) {
+            std::cout << "ERROR: Invalid decompress\n";
+        }
+        m_real_len = m_len;
+    } else {
+        m_dataptr = new char[m_len];
+        memmove(m_dataptr, new_data, m_len);
+    }
 }
 
 std::unique_ptr<blieng::DataFile::DataFileObject>
@@ -332,16 +397,17 @@ blieng::DataFile::DataFileObject::obfuscate(
         tmp,
         res_len,
         res_real_len) = blieng::obfuscate(
-            dataptr,
-            len,
+            m_dataptr,
+            m_len,
             key,
             key_len,
             seed);
     if (tmp == nullptr)
         return std::unique_ptr<DataFileObject>();
 
-    std::unique_ptr<DataFileObject> res(new DataFileObject(tmp, res_len));
-    res->real_len = res_real_len;
+    std::unique_ptr<DataFileObject> res(
+        new DataFileObject(tmp, res_len));
+    res->m_real_len = res_real_len;
     delete []tmp;
 
     return res;
@@ -360,9 +426,9 @@ blieng::DataFile::DataFileObject::deobfuscate(
         tmp,
         res_len,
         res_real_len) = blieng::deobfuscate(
-            dataptr,
-            len,
-            real_len,
+            m_dataptr,
+            m_len,
+            m_real_len,
             key,
             key_len,
             seed);
@@ -370,10 +436,24 @@ blieng::DataFile::DataFileObject::deobfuscate(
         return std::unique_ptr<DataFileObject>();
 
     std::unique_ptr<DataFileObject> res(
-        new DataFileObject(tmp, real_len));
+        new DataFileObject(tmp, m_real_len));
     delete []tmp;
 
-    res->real_len = real_len;
+    res->m_real_len = m_real_len;
 
+    return res;
+}
+
+std::unique_ptr<blieng::DataFile::DataFileObject>
+blieng::DataFile::DataFileObject::compress()
+{
+    std::unique_ptr<DataFileObject> res(
+        new DataFileObject());
+    std::tie(
+        res->m_dataptr,
+        res->m_len) = blieng::compress(
+            m_dataptr,
+            m_len);
+    res->m_real_len = m_real_len;
     return res;
 }

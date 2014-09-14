@@ -49,6 +49,7 @@ HEADERS += \
     auto_map.h \
     auto_vector.h \
     rijndael-alg-fst.h \
+    fastlz.h \
     json.h \
     wallclock.h
 SOURCES += \
@@ -67,5 +68,6 @@ SOURCES += \
     card.cpp \
     logging.cpp \
     rijndael-alg-fst.c \
+    fastlz.c \
     json.c \
     wallclock.cpp

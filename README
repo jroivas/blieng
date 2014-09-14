@@ -3,7 +3,7 @@ Blieng(tm)
 
 Proprietary game engine by Blistud:io
 
-Copyright(c) 2013,2014 Blistud:io
+Copyright(c) 2013, 2014 Blistud:io
 All rights reserved
 
 http://blistud.io
@@ -33,3 +33,11 @@ json.h/json.c
 
   Copyright (C) 2012, 2013 James McLaughlin et al.
   https://github.com/udp/json-parser
+
+fastlz.h/fastlz.c
+   MIT
+
+   Copyright (C) 2007 Ariya Hidayat (ariya@kde.org)
+   Copyright (C) 2006 Ariya Hidayat (ariya@kde.org)
+   Copyright (C) 2005 Ariya Hidayat (ariya@kde.org)
+   http://fastlz.org

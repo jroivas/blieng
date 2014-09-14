@@ -14,6 +14,7 @@ public:
     CPPUNIT_TEST(write_read2);
     CPPUNIT_TEST(write_read_obfuscate);
     CPPUNIT_TEST(write_read_obfuscate2);
+    CPPUNIT_TEST(compress);
     CPPUNIT_TEST_SUITE_END();
 private:
     void read();
@@ -22,6 +23,7 @@ private:
     void write_read2();
     void write_read_obfuscate();
     void write_read_obfuscate2();
+    void compress();
 };
 
 #endif

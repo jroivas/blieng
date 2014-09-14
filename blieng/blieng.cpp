@@ -1,6 +1,8 @@
 #include "blieng/blieng.h"
 #include "blieng/rijndael-alg-fst.h"
 
+#include "fastlz.h"
+
 
 blieng::BliengState::BliengState()
     : m_data(nullptr),
@@ -216,4 +218,115 @@ blieng::deobfuscate(
     return res;
 #endif
     return std::forward_as_tuple(tmp, real_len, real_len);
+}
+
+class Header
+{
+public:
+    Header() : Header(0)
+    {
+    }
+    Header(int len_) : len(len_)
+    {
+        id[0] = 'F';
+        id[1] = 'L';
+        id[2] = 'Z';
+        id[3] = '1';
+    }
+    bool validate() const
+    {
+        return (id[0] == 'F'
+            && id[1] == 'L'
+            && id[2] == 'Z'
+            && id[3] == '1'
+            && len != 0);
+    }
+
+    char id[4];
+    uint32_t len;
+};
+
+std::tuple<
+    char *,
+    unsigned int>
+blieng::compress(
+    const char *dataptr,
+    unsigned int len)
+{
+    if (len < 16) {
+        return std::forward_as_tuple(nullptr, 0);
+    }
+
+    char *res = new char[len * 110 / 100];
+    int level = 2;
+    int size = fastlz_compress_level(
+        level,
+        dataptr,
+        len,
+        res);
+    if (size < 0) {
+        delete[] res;
+        return std::forward_as_tuple(nullptr, 0);
+    }
+
+    unsigned int res_len = size;
+    Header hdr(len);
+
+    unsigned int hdr_size = sizeof(hdr);
+    char *real_res = new char[res_len + hdr_size];
+    memcpy(real_res, &hdr, hdr_size);
+    memcpy(real_res + hdr_size, res, res_len);
+
+    delete[] res;
+    return std::forward_as_tuple(real_res, res_len + hdr_size);
+}
+
+std::tuple<
+    char *,
+    unsigned int>
+blieng::decompress(
+    const char *dataptr,
+    unsigned int len)
+{
+    const Header *hdr = nullptr;
+    unsigned int hdr_size = sizeof(hdr);
+    if (len < hdr_size) {
+        return std::forward_as_tuple(nullptr, 0);
+    }
+    hdr = static_cast<const Header*>(static_cast<const void*>(dataptr));
+    if (hdr == nullptr || !hdr->validate()) {
+        return std::forward_as_tuple(nullptr, 0);
+    }
+
+    char *res = new char[hdr->len];
+
+    int size = fastlz_decompress(
+        dataptr + hdr_size,
+        len,
+        res,
+        hdr->len);
+
+    if (size < 0) {
+        delete[] res;
+        return std::forward_as_tuple(nullptr, 0);
+    }
+
+    return std::forward_as_tuple(res, hdr->len);
+}
+
+bool blieng::isCompressed(
+    const char *dataptr,
+    unsigned int len)
+{
+    const Header *hdr = nullptr;
+    unsigned int hdr_size = sizeof(hdr);
+    if (len < hdr_size) {
+        return false;
+    }
+    hdr = static_cast<const Header*>(static_cast<const void*>(dataptr));
+    if (hdr == nullptr || !hdr->validate()) {
+        return false;
+    }
+
+    return true;
 }

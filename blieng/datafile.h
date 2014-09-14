@@ -40,7 +40,10 @@ public:
         /**
          * Just initializes a empty object.
          */
-        DataFileObject() : dataptr(nullptr), len(0), real_len(0) {}
+        DataFileObject()
+            : m_dataptr(nullptr),
+            m_len(0),
+            m_real_len(0) {}
         /**
          * Initialize with the initial data.
          * Allocates memory and copies the data.
@@ -48,14 +51,26 @@ public:
          * \param new_data The new data for this object
          * \param new_len Lenght of the new data in bytes
          */
-        DataFileObject(const char *new_data, unsigned int new_len);
+        DataFileObject(
+            const char *new_data,
+            unsigned int new_len);
         /**
          * Ensures we do not left anything behind.
          */
         ~DataFileObject()
         {
-            if (dataptr != nullptr)
-                delete dataptr;
+            if (m_dataptr != nullptr)
+                delete m_dataptr;
+        }
+
+        /**
+         * Check if object is valid
+         *
+         * \returns True if valid
+         */
+        inline bool isValid() const
+        {
+            return (m_dataptr != nullptr);
         }
 
         /**
@@ -88,13 +103,20 @@ public:
             const std::string &seed="");
 
         /**
+         * Compress this object
+         *
+         * \returns A new \ref DataFileObject with compressed data
+         */
+        std::unique_ptr<DataFileObject> compress();
+
+        /**
          * Get lenght of data in this object
          *
          * \return Lenght of data
          */
         inline unsigned int length() const
         {
-            return len;
+            return m_len;
         }
         /**
          * Get pointer to the data.
@@ -104,7 +126,7 @@ public:
          */
         inline char *get()
         {
-            return dataptr;
+            return m_dataptr;
         }
         /**
          * Get constant pointer to the data.
@@ -114,12 +136,12 @@ public:
          */
         inline char *get() const
         {
-            return dataptr;
+            return m_dataptr;
         }
 
     protected:
-        char *dataptr;  //!< The data itself
-        unsigned int len;  //!< Length of the data
+        char *m_dataptr;  //!< The data itself
+        unsigned int m_len;  //!< Length of the data
         friend class DataFile;
 
     private:
@@ -143,7 +165,7 @@ public:
          * Obfuscating may change the length of data
          * written to file. Need to know the length of the real data as well.
          */
-        unsigned int real_len;
+        unsigned int m_real_len;
     };
 
     /**
@@ -160,6 +182,14 @@ public:
     virtual ~DataFile();
 
     /**
+     * Enable compression on datafile
+     */
+    inline void enableCompression()
+    {
+        m_compress = true;
+    }
+
+    /**
      * Sets data file name.
      * This should contain full path to the file, and file should be accessible.
      * Does not do any checks at this point.
@@ -173,9 +203,9 @@ public:
      *
      * \returns True if this object is valid, false otherwise
      */
-    bool isValid() const
+    inline bool isValid() const
     {
-        return _ok;
+        return m_ok;
     }
 
     /**
@@ -257,7 +287,7 @@ public:
         unsigned int len);
 
 private:
-    std::string _name;
+    std::string m_name;
     /**
      * Unify a file name.
      * Get rid of invalid characters.
@@ -267,8 +297,9 @@ private:
      */
     std::string unifyName(const std::string &name) const;
 
-    auto_map<std::string, DataFileObject> _data;
-    bool _ok;
+    auto_map<std::string, DataFileObject> m_data;
+    bool m_ok;
+    bool m_compress;
 };
 
 }  // namespace blieng

@@ -166,3 +166,46 @@ void DataFileTest::write_read_obfuscate2()
     delete obj2;
     mock_io_stop();
 }
+
+void DataFileTest::compress()
+{
+    mock_io_start();
+
+    blieng::DataFile *obj = new blieng::DataFile("dummy.dat");
+    CPPUNIT_ASSERT( obj != NULL );
+
+    obj->enableCompression();
+
+    char tmp[4];
+    tmp[0] = 0x12;
+    tmp[1] = 0x99;
+    tmp[2] = 0x77;
+    tmp[3] = 0x42;
+    std::string tmp2("aaaaaaaaabbbbbbbbbbbbbbcccccccccc");
+
+    obj->addData("rand", tmp, 4);
+    obj->addData("aaa", tmp2);
+
+    obj->write("42", 2);
+    delete obj;
+
+    blieng::DataFile *obj2 = new blieng::DataFile("dummy.dat");
+    obj2->read("42", 2);
+
+    const char *data;
+    unsigned int dlen = obj2->getData("rand", &data);
+    CPPUNIT_ASSERT( dlen == 4);
+    CPPUNIT_ASSERT( data[0] == 0x12 );
+    CPPUNIT_ASSERT( data[1] == (char)0x99 );
+    CPPUNIT_ASSERT( data[2] == 0x77 );
+    CPPUNIT_ASSERT( data[3] == 0x42 );
+
+    dlen = obj2->getData("aaa", &data);
+    CPPUNIT_ASSERT( dlen == tmp2.length() + 1);
+    std::string tmp3(data, dlen - 1);
+    CPPUNIT_ASSERT_EQUAL(tmp2, tmp3);
+
+
+    delete obj2;
+    mock_io_stop();
+}

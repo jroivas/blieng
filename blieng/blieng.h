@@ -9,6 +9,7 @@
 
 #include "blieng/data.h"
 #include "blieng/configure.h"
+#include "blieng/bliobject.h"
 
 namespace blieng
 {
@@ -62,9 +63,28 @@ public:
         m_styleconfig = _config;
     }
 
+    /**
+     * Record object into global state info
+     *
+     * \param obj BliObject to add
+     */
+    void recordObject(
+        blieng::BliObject *obj);
+    /**
+     * Remove object from global state info
+     *
+     * \param obj BliObject to remove
+     * \returns True if removed, false otherwise
+     */
+    bool unrecordObject(
+        blieng::BliObject *obj);
+
     blieng::Data* m_data;
     blieng::Configure* m_config;
     blieng::Configure* m_styleconfig;
+
+private:
+    std::vector<blieng::BliObject *> m_objects;
 };
 
 /**
@@ -214,6 +234,51 @@ deobfuscate(
     const char *key,
     unsigned int key_len,
     const std::string &seed);
+
+/**
+ * Compress given data.
+ * Algorithm and binary format may change, but it's guaranteed that
+ * you can always decompress data compressed with this method.
+ * This may return nullptr and zero size, that means data is
+ * not compressable, or there's no point to compress it.
+ *
+ * \param dataptr Data to compress
+ * \param len Data length
+ * \returns Compressed data and length as tuple
+ */
+std::tuple<
+    char *,
+    unsigned int>
+compress(
+    const char *dataptr,
+    unsigned int len);
+
+/**
+ * Uncompress given data.
+ * It's guaranteed that you can always decompress data
+ * compressed with compress method.
+ *
+ * \param dataptr Data to decompress
+ * \param len Compressed data length
+ * \returns Decompressed data and length as tuple
+ */
+std::tuple<
+    char *,
+    unsigned int>
+decompress(
+    const char *dataptr,
+    unsigned int len);
+
+/**
+ * Check if data is compressed.
+ *
+ * \param dataptr Data to check
+ * \param len Data length
+ * \returns True if data is compressed, false otherwiser
+ */
+bool isCompressed(
+    const char *dataptr,
+    unsigned int len);
 
 }
 
