@@ -225,8 +225,12 @@ class Header
 public:
     Header() : len(0)
     {
+        id[0] = 'F';
+        id[1] = 'L';
+        id[2] = 'Z';
+        id[3] = '1';
     }
-    Header(int len_) : len(len_)
+    Header(uint32_t len_) : len(len_)
     {
         id[0] = 'F';
         id[1] = 'L';
@@ -262,24 +266,33 @@ blieng::compress(
     }
 
     char *res = new char[len * 110 / 100];
+    if (res == nullptr) {
+        return std::forward_as_tuple(nullptr, 0);
+    }
     int level = 2;
-    int size = fastlz_compress_level(
+    int res_size = fastlz_compress_level(
         level,
         dataptr,
         len,
         res);
-    if (size < 0) {
+    if (res_size < 0) {
         delete[] res;
         return std::forward_as_tuple(nullptr, 0);
     }
 
-    unsigned int res_len = size;
+    unsigned int res_len = res_size;
     Header hdr(len);
 
-    unsigned int hdr_size = sizeof(hdr);
+    unsigned int hdr_size = sizeof(Header);
     char *real_res = new char[res_len + hdr_size];
-    memcpy(real_res, &hdr, hdr_size);
-    memcpy(real_res + hdr_size, res, res_len);
+    if (real_res == nullptr) {
+        delete[] res;
+        return std::forward_as_tuple(nullptr, 0);
+    }
+    memcpy(real_res, static_cast<void*>(&hdr), hdr_size);
+    char *data_pos = real_res;
+    data_pos += hdr_size;
+    memcpy(data_pos, res, res_len);
 
     delete[] res;
     return std::forward_as_tuple(real_res, res_len + hdr_size);
@@ -292,25 +305,36 @@ blieng::decompress(
     const char *dataptr,
     unsigned int len)
 {
-    const Header *hdr = nullptr;
-    unsigned int hdr_size = sizeof(hdr);
+    unsigned int hdr_size = sizeof(Header);
     if (len < hdr_size) {
         return std::forward_as_tuple(nullptr, 0);
     }
-    hdr = static_cast<const Header*>(static_cast<const void*>(dataptr));
+    const Header *hdr = static_cast<const Header*>(static_cast<const void*>(dataptr));
     if (hdr == nullptr || !hdr->validate()) {
         return std::forward_as_tuple(nullptr, 0);
     }
 
     char *res = new char[hdr->len];
+    if (res == nullptr) {
+        return std::forward_as_tuple(nullptr, 0);
+    }
 
-    int size = fastlz_decompress(
-        dataptr + hdr_size,
-        len,
+    const char *data_pos = dataptr;
+    data_pos += hdr_size;
+
+    int res_size = fastlz_decompress(
+        data_pos,
+        len - hdr_size,
         res,
         hdr->len);
 
-    if (size < 0) {
+    if (res_size < 0) {
+        delete[] res;
+        return std::forward_as_tuple(nullptr, 0);
+    }
+
+    unsigned int res_len = res_size;
+    if (res_len != hdr->len) {
         delete[] res;
         return std::forward_as_tuple(nullptr, 0);
     }
