@@ -139,7 +139,7 @@ bool BliObject::fitsLimits(
     int b_is_signed = std::numeric_limits<B>::is_signed;
 
     // These should always fit...
-    uint64_t _max = std::numeric_limits<A>::max();
+    uint64_t _max = static_cast<uint64_t>(std::numeric_limits<A>::max());
     int64_t _min = std::numeric_limits<A>::min();
 
     B _val = boost::any_cast<B>(val);
@@ -155,7 +155,7 @@ bool BliObject::fitsLimits(
         else if (a_is_signed && a_digits >= b_digits) {
             conv = true;
         }
-        else if (_val >= 0 && _val < _max) {
+        else if (_val >= 0 && static_cast<uint64_t>(_val) < _max) {
             conv = true;
         }
     }

@@ -1,3 +1,6 @@
 
 Utilizes public domain AES implementation from:
 http://www.cs.ucdavis.edu/~rogaway/ocb/ocb-ref/
+
+apt-get install qt5-default
+sudo apt-get install libboost-system-dev libboost-random-dev libboost-filesystem-dev libboost-date-time-dev libboost-serialization-dev
