@@ -127,7 +127,7 @@ public:
         return auto_lvalue((*i)->val);
     }
 
-    auto_lvalue operator [] (const_iterator i)
+    auto_lvalue operator [] (const_iterator i) const
     {
         BOOST_ASSERT( i < _data.end() );
         return auto_lvalue((*i)->val);
@@ -159,6 +159,19 @@ public:
         }
         return it;
     }
+
+    const_iterator find(KeyType i) const
+    {
+        const_iterator it = _data.begin();
+        while (it != _data.end()) {
+            if ((*it)->key == i) {
+                return it;
+            }
+            ++it;
+        }
+        return it;
+    }
+
 
     iterator begin()
     {

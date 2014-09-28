@@ -36,13 +36,15 @@ DataFile::~DataFile()
     // Should we write?
 }
 
-void DataFile::setName(const std::string &name)
+void DataFile::setName(
+    const std::string &name)
 {
     m_ok = true;
     m_name = name;
 }
 
-std::string DataFile::unifyName(const std::string &name) const
+std::string DataFile::unifyName(
+    const std::string &name) const
 {
     std::string tmp = "";
 
@@ -84,7 +86,7 @@ std::vector<std::string> blieng::DataFile::listFiles() const
 }
 
 const blieng::DataFile::DataFileObject *DataFile::getObject(
-    const std::string &name)
+    const std::string &name) const
 {
     std::string uname = unifyName(name);
     if (uname == "")
@@ -99,7 +101,7 @@ const blieng::DataFile::DataFileObject *DataFile::getObject(
 
 unsigned int DataFile::getData(
     const std::string &name,
-    const char **data)
+    const char **data) const
 {
     const DataFileObject *obj = getObject(name);
     if (obj != nullptr) {
@@ -301,6 +303,15 @@ bool DataFile::read(
     return true;
 }
 
+std::string DataFile::writeLocation() const
+{
+#ifdef ANDROID
+    QString dest = QStandardPaths::writableLocation(QStandardPaths::DataLocation);
+#else
+    return "";
+#endif
+}
+
 bool DataFile::write(const char *key, unsigned int key_len)
 {
     if (!m_ok)
@@ -325,7 +336,6 @@ bool DataFile::write(const char *key, unsigned int key_len)
                 && new_tmp.get()->m_len <= new_tmp.get()->m_real_len) {
                 m_data[di] = std::move(new_tmp);
                 tmp = m_data[di];
-                //std::cout << "Got size: " << tmp->m_len * 100 / tmp->m_real_len << "% " << tmp->m_real_len << "\n";
             }
         }
         if (key != nullptr && key_len > 0) {

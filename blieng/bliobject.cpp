@@ -160,7 +160,9 @@ bool BliObject::fitsLimits(
         }
     }
     else {
-        if (_val >= _min && _val < _max) {
+        if (_min >=0
+            && static_cast<uint64_t>(_val) >= static_cast<uint64_t>(_min)
+            && static_cast<uint64_t>(_val) < _max) {
             conv = true;
         }
     }
@@ -227,6 +229,12 @@ int BliObject::getIntValue(
     const std::string &key) const
 {
     return getValue<int>(key);
+}
+
+long long BliObject::getLongLongValue(
+    const std::string &key) const
+{
+    return getValue<long long>(key);
 }
 
 char BliObject::getCharValue(
@@ -470,7 +478,7 @@ std::string blieng::percentageString(
     int percentage = static_cast<int>(value * 100);
     std::string val = blieng::toString(percentage);
     if (digits > 0) {
-        double norm = fabs(value * 100) - fabs(percentage);
+        double norm = std::fabs(value * 100) - std::fabs(percentage);
         std::string rest = blieng::toString(norm);
         val += rest.substr(1, digits + 1);
     }

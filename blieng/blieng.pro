@@ -16,15 +16,21 @@ unix:!android {
     QMAKE_CXXFLAGS += -Werror -pedantic -Wcast-align -Wcast-qual -Wctor-dtor-privacy -Wdisabled-optimization -Wformat=2 -Winit-self -Wmissing-declarations -Wmissing-include-dirs -Wold-style-cast -Woverloaded-virtual -Wredundant-decls -Wshadow -Wsign-promo -Wstrict-overflow=5 -Wswitch-default -Wundef -Werror -Wno-unused
 }
 android {
-        INCLUDEPATH += ../boost/include/boost-1_53/
-        LIBS += ../boost/lib/
-        QT += core
-        CONFIG += rtti
-        CONFIG += exceptions
-        QMAKE_CXXFLAGS += -fexceptions -frtti
+    INCLUDEPATH += ../boost/include/boost-1_53/
+    LIBS += ../boost/lib/
+    QT += core
+    CONFIG += rtti
+    CONFIG += exceptions
+    QMAKE_CXXFLAGS += -fexceptions -frtti
 }
 windows {
-        QMAKE_CXXFLAGS += -fpermissive
+    QMAKE_CXXFLAGS += -fpermissive
+}
+
+CONFIG(debug, debug|release) {
+    #QMAKE_CXXFLAGS += -fsanitize=memory -fPIE -fpie
+    QMAKE_CXXFLAGS += -fsanitize=thread -fPIE
+    LIBS += -fsanitize=thread -pie
 }
 
 

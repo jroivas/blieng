@@ -9,6 +9,8 @@ All rights reserved
 http://blistud.io
 
 
+sudo apt-get install libcppunit-dev
+
 
 3rd party components
 --------------------

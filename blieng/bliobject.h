@@ -121,6 +121,15 @@ public:
     virtual int getIntValue(
         const std::string &key) const;
     /**
+     * Get long long value of given key.
+     * Throws an error if key not found.
+     *
+     * \param key Unique key string
+     * \returns Value as long long
+     */
+    virtual long long getLongLongValue(
+        const std::string &key) const;
+    /**
      * Get char value of given key.
      * Throws an error if key not found.
      *

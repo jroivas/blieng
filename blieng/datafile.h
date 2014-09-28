@@ -178,7 +178,8 @@ public:
      *
      * \param name Data file name
      */
-    explicit DataFile(const std::string &name);
+    explicit DataFile(
+        const std::string &name);
     virtual ~DataFile();
 
     /**
@@ -196,7 +197,8 @@ public:
      *
      * \param name Data file name
      */
-    void setName(const std::string &name);
+    void setName(
+        const std::string &name);
     /**
      * Check validity of this object.
      * In fact in current implementation checks only if name is set.
@@ -216,7 +218,9 @@ public:
      * \param data Contents of the file
      * \returns True if successfully added, false otherwise
      */
-    bool addData(const std::string &name, const std::string &data);
+    bool addData(
+        const std::string &name,
+        const std::string &data);
     /**
      * Set file contents from char array
      * Assigns data for specified file name inside tha archive.
@@ -226,7 +230,10 @@ public:
      * \param len Length of the contents
      * \returns True if successfully added, false otherwise
      */
-    bool addData(const std::string &name, const char *data, unsigned int len);
+    bool addData(
+        const std::string &name,
+        const char *data,
+        unsigned int len);
     /**
      * Get contents of a file.
      * Receive data contents from a file located inside the archive.
@@ -235,7 +242,9 @@ public:
      * \param data Pointer to char array, will be assigned to the contents
      * \returns Number of bytes available in data pointer
      */
-    unsigned int getData(const std::string &name, const char **data);
+    unsigned int getData(
+        const std::string &name,
+        const char **data) const;
     /**
      * Get a file object.
      * For more info see \ref DataFileObject
@@ -243,7 +252,8 @@ public:
      * \param name Name and location of file
      * \returns A new data file object containing file contents or nullptr
      */
-    virtual const DataFileObject *getObject(const std::string &name);
+    virtual const DataFileObject *getObject(
+        const std::string &name) const;
 
     /**
      * List all files.
@@ -261,7 +271,9 @@ public:
      * \param key_len Encryption key length
      * \return True if successfully read, false otherwise
      */
-    bool read(const char *key, unsigned int key_len);
+    bool read(
+        const char *key,
+        unsigned int key_len);
     /**
      * Writes all cached contents to the archive.
      * Writes all of the cached contents to the arhchive
@@ -272,7 +284,9 @@ public:
      * \param key_len Encryption key length
      * \return True if successfully written, false otherwise
      */
-    bool write(const char *key, unsigned int key_len);
+    bool write(
+        const char *key,
+        unsigned int key_len);
     /**
      * Simple obfuscator for file names.
      * Does very simple obfuscation for data, mainly just to prevent
@@ -296,6 +310,11 @@ private:
      * \returns Unified file name
      */
     std::string unifyName(const std::string &name) const;
+
+    /**
+     * Get writable location for save data files.
+     */
+    std::string writeLocation() const;
 
     auto_map<std::string, DataFileObject> m_data;
     bool m_ok;

@@ -18,6 +18,11 @@
 #include "blieng/json.h"
 #include "blieng/datafile.h"
 #include "blieng/auto_vector.h"
+#include "blieng/config.h"
+
+#ifdef DATA_MUTEX_LOCK
+#include <boost/thread/mutex.hpp>
+#endif
 
 namespace blieng
 {
@@ -96,7 +101,7 @@ public:
      * \param name Name of the file to be read
      * \returns Parsed internal json_value, see \ref json.h
      */
-    json_value *readJson(const std::string &name);
+    json_value *readJson(const std::string &name) const;
     /**
      * Get key names under JSON value
      * Gets all the key names, this assumes that given JSON value is array.
@@ -175,7 +180,7 @@ public:
      *
      * \returns Vector of map file name as string
      */
-    std::vector<std::string> listMaps();
+    std::vector<std::string> listMaps() const;
 
     /**
      * Writes down map JSON data to backend.
@@ -231,12 +236,13 @@ private:
         const std::string &path,
         const std::string &ext) const;
 
-    boost::filesystem::path findDataFileAndroid();
+    boost::filesystem::path findDataFileAndroid() const;
     boost::filesystem::path findDataFileCommon(
-        const std::string &datafilename);
+        const std::string &datafilename) const;
     boost::filesystem::path findDataFile(
-        const std::string &datafilename = "data.dat");
-    boost::filesystem::path findDataPath();
+        const std::string &datafilename = "data.dat") const;
+    boost::filesystem::path findDataPath() const;
+
     boost::filesystem::path data_path;
     boost::filesystem::path data_file_path;
 
@@ -260,6 +266,11 @@ protected:
     blieng::DataFile *findGlobalDataFile(const std::string &datafilename);
     static std::map <std::string, blieng::DataFile *> m_datafiles;
     static boost::mutex m_datafile_mutex;
+
+#ifdef DATA_MUTEX_LOCK
+private:
+    boost::mutex m_value_mutex;
+#endif
 };
 
 }  // namespace blieng

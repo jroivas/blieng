@@ -356,6 +356,7 @@ void BliObjectTest::serialize()
     CPPUNIT_ASSERT_EQUAL(obj2->getCharValue("test_char"), (char)3);
     CPPUNIT_ASSERT_EQUAL(obj2->getCharValue("test_char_min"), (char)-1);
     CPPUNIT_ASSERT_EQUAL(obj2->getDoubleValue("test_double"), (double)4.22);
+    CPPUNIT_ASSERT_EQUAL(obj2->getLongLongValue("test_long_long"), (long long)1234567890123L);
 }
 
 void BliObjectTest::compress()

@@ -300,7 +300,12 @@ typedef struct _json_value
          inline const struct _json_value &operator [] (int index) const
          {
             if (type != json_array || index < 0
+#ifdef __cplusplus
+                     || static_cast<unsigned int>(index) >= u.array.length)
+#else
                      || ((unsigned int) index) >= u.array.length)
+#endif
+
             {
                return json_value_none;
             }
@@ -386,7 +391,11 @@ typedef struct _json_value
                   return u.integer;
 
                case json_double:
+#ifdef __cplusplus
+                  return static_cast<json_int_t>(u.dbl);
+#else
                   return (json_int_t) u.dbl;
+#endif
 
                default:
                   return 0;
@@ -404,10 +413,18 @@ typedef struct _json_value
             {
                case json_uinteger:
                case json_integer:
+#ifdef __cplusplus
+                  return static_cast<json_uint_t>(u.integer);
+#else
                   return (json_uint_t)u.integer;
+#endif
 
                case json_double:
+#ifdef __cplusplus
+                  return static_cast<json_uint_t>(u.dbl);
+#else
                   return (json_uint_t) u.dbl;
+#endif
 
                default:
                   return 0;
@@ -448,7 +465,11 @@ typedef struct _json_value
            {
               case json_integer:
               case json_uinteger:
+#ifdef __cplusplus
+                 return static_cast<double>(u.integer);
+#else
                  return (double) u.integer;
+#endif
 
               case json_double:
                  return u.dbl;
