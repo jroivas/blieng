@@ -8,7 +8,7 @@
 class FakeDataFile : public blieng::DataFile
 {
 public:
-    const DataFileObject *getObject(const std::string &name) {
+    const DataFileObject *getObject(const std::string &name) const {
         auto item = _fake_data.find(name);
         if (item != _fake_data.end()) {
             return new DataFileObject(

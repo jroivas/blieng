@@ -165,6 +165,11 @@ bool BliObject::fitsLimits(
             && static_cast<uint64_t>(_val) < _max) {
             conv = true;
         }
+        if (_min <0
+            && static_cast<int64_t>(_val) >= static_cast<int64_t>(_min)
+            && static_cast<int64_t>(_val) < static_cast<int64_t>(_max)) {
+            conv = true;
+        }
     }
 
     if (conv) {

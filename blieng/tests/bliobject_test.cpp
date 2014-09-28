@@ -51,11 +51,13 @@ void BliObjectTest::getValuesLimits()
     obj->setValue("test_long", (long)123235);
     obj->setValue("test_long_long", (long long)1234567890123L);
 
+
     CPPUNIT_ASSERT(obj->getIntValue("test_int") == 42);
     CPPUNIT_ASSERT(obj->getIntValue("test_int_min") == -42);
 
     CPPUNIT_ASSERT(obj->getIntValue("test_uint") == 42);
     CPPUNIT_ASSERT(obj->getIntValue("test_double") == 4);
+    CPPUNIT_ASSERT(obj->getDoubleValue("test_double") == 4.22);
 
     CPPUNIT_ASSERT(obj->getIntValue("test_char") == 3);
     CPPUNIT_ASSERT(obj->getIntValue("test_char_min") == -1);
