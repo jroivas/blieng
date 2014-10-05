@@ -55,5 +55,6 @@ find_package(Boost 1.47
     random
     serialization)
 include_directories(${Boost_INCLUDE_DIR})
+include_directories(..)
 
 add_subdirectory(tests)
