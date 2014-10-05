@@ -12,6 +12,7 @@ CONFIG += debug
 MOCK_VERSION = "1.6.0"
 
 INCLUDEPATH += ../
+QT -= gui
 
 unix {
     LIBS += -L../ -lblieng

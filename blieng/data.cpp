@@ -177,8 +177,9 @@ boost::filesystem::path Data::findDataFileCommon(
     for (std::string item : m_locations) {
         boost::filesystem::path my_data_path;
         my_data_path = (item + datafilename).c_str();
-        if (boost::filesystem::exists(my_data_path) &&
-            boost::filesystem::is_regular_file(my_data_path)) {
+        boost::system::error_code ec;
+        if (boost::filesystem::exists(my_data_path, ec) &&
+                boost::filesystem::is_regular_file(my_data_path, ec)) {
             return my_data_path;
         }
     }
@@ -200,11 +201,12 @@ boost::filesystem::path Data::findDataFile(
 boost::filesystem::path Data::findDataPath() const
 {
 #ifndef ANDROID
-    BOOST_FOREACH(std::string item, m_locations) {
+    for (std::string item : m_locations) {
         boost::filesystem::path my_data_path;
         my_data_path = (item + __data_folder_name).c_str();
-        if (boost::filesystem::exists(my_data_path) &&
-            boost::filesystem::is_directory(my_data_path)) {
+        boost::system::error_code ec;
+        if (boost::filesystem::exists(my_data_path, ec) &&
+            boost::filesystem::is_directory(my_data_path, ec)) {
             return my_data_path;
         }
     }
@@ -218,8 +220,9 @@ bool Data::fileExists(const std::string &name) const
 #ifdef ANDROID
     return false;
 #else
-    return boost::filesystem::exists(name) &&
-           boost::filesystem::is_regular_file(name);
+    boost::system::error_code ec;
+    return boost::filesystem::exists(name, ec) &&
+           boost::filesystem::is_regular_file(name, ec);
 #endif
 }
 
@@ -228,7 +231,8 @@ std::string Data::findFileRecursive(
     const std::string &name) const
 {
 #ifndef ANDROID
-    if (!boost::filesystem::exists(dir_path))
+    boost::system::error_code ec;
+    if (!boost::filesystem::exists(dir_path, ec))
         return "";
 
     boost::filesystem::directory_iterator end_iter;
@@ -304,7 +308,8 @@ std::vector<std::string> Data::findFileExtRecursive(
     const std::string &ext) const
 {
 #ifndef ANDROID
-    if (!boost::filesystem::exists(dir_path))
+    boost::system::error_code ec;
+    if (!boost::filesystem::exists(dir_path, ec))
         return mapfiles;
 
     boost::filesystem::directory_iterator end_iter;
@@ -334,13 +339,14 @@ std::vector<std::string> Data::listMaps() const
     }
 
 #ifndef ANDROID
-    if (!boost::filesystem::exists(data_path))
+    boost::system::error_code ec;
+    if (!boost::filesystem::exists(data_path, ec))
         return mapfiles;
 
     boost::filesystem::path maps_path = data_path;
     maps_path /= __maps_folder_name;
 
-    if (!boost::filesystem::exists(maps_path))
+    if (!boost::filesystem::exists(maps_path, ec))
         return mapfiles;
 
     return findFileExtRecursive(mapfiles, maps_path, __maps_file_extension);
@@ -362,13 +368,14 @@ bool Data::saveMapJSON(const std::string &name, const std::string &json)
             << "\n";
         return false;
     }
-    if (!boost::filesystem::exists(data_path))
+    boost::system::error_code ec;
+    if (!boost::filesystem::exists(data_path, ec))
         return false;
 
     boost::filesystem::path maps_path = data_path;
     maps_path /= "maps";  // FIXME Hardcoded
 
-    if (!boost::filesystem::exists(maps_path)) {
+    if (!boost::filesystem::exists(maps_path, ec)) {
         if (!boost::filesystem::create_directory(maps_path))
             return false;
     }
@@ -388,7 +395,7 @@ bool Data::saveMapJSON(const std::string &name, const std::string &json)
 
     maps_path /= clean_name;
 
-    if (!boost::filesystem::exists(maps_path)) {
+    if (!boost::filesystem::exists(maps_path, ec)) {
         if (!boost::filesystem::create_directory(maps_path))
             return false;
     }
@@ -416,8 +423,9 @@ boost::filesystem::path Data::solveFilePath(const std::string &name) const
     boost::filesystem::path first_path = data_path;
     boost::filesystem::path second_path = boost::filesystem::path(name.c_str());
     first_path /= name.c_str();
-    if (!boost::filesystem::exists(first_path) &&
-        boost::filesystem::exists(second_path)) {
+    boost::system::error_code ec;
+    if (!boost::filesystem::exists(first_path, ec) &&
+        boost::filesystem::exists(second_path, ec)) {
         first_path = second_path;
     }
     return first_path;
@@ -431,7 +439,8 @@ std::vector<std::string> Data::readLinesFromFileInDataFolder(
 #ifndef ANDROID
     if (!data_path.empty()) {
         boost::filesystem::path first_path = solveFilePath(name);
-        if (boost::filesystem::exists(first_path)) {
+        boost::system::error_code ec;
+        if (boost::filesystem::exists(first_path, ec)) {
             boost::filesystem::ifstream fd(first_path);
             while (!fd.eof()) {
                 std::string line;
@@ -515,7 +524,8 @@ unsigned int Data::readDataFromDataPath(
     }
 
     boost::filesystem::path first_path = solveFilePath(name);
-    if (boost::filesystem::exists(first_path)) {
+    boost::system::error_code ec;
+    if (boost::filesystem::exists(first_path, ec)) {
         boost::filesystem::ifstream fd(first_path, std::ifstream::binary);
 
         #define BUFSIZE 1024
@@ -590,7 +600,8 @@ std::string Data::readString(
 #ifndef ANDROID
     if (!data_path.empty()) {
         boost::filesystem::path first_path = solveFilePath(name);
-        if (boost::filesystem::exists(first_path)) {
+        boost::system::error_code ec;
+        if (boost::filesystem::exists(first_path, ec)) {
             boost::filesystem::ifstream fd(first_path, std::ifstream::binary);
             while (!fd.eof()) {
                 char tmp[256];

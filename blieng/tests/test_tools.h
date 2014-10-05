@@ -33,6 +33,11 @@ public:
     MOCK_CONST_METHOD1(readString, std::string(const std::string));
     MOCK_CONST_METHOD1(fileExists, bool(const std::string));
 
+    DataMock() : blieng::Data() {
+    }
+    virtual ~DataMock() {
+    }
+
     void setFakeData(const std::string &_name, const std::string &_data) {
         FakeDataFile *tmp = nullptr;
         if (m_datafile == nullptr) {
