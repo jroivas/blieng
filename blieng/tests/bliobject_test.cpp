@@ -27,16 +27,16 @@ void BliObjectTest::values()
 {
     BliObject *obj = new BliObject();
 
-    CPPUNIT_ASSERT( !obj->isValue("test1") );
+    CPPUNIT_ASSERT(!obj->isValue("test1"));
 
     obj->setValue("test1", (int)42);
-    CPPUNIT_ASSERT( obj->isValue("test1") );
+    CPPUNIT_ASSERT(obj->isValue("test1"));
 
     blieng::BliAny res = obj->getValue("test1");
-    CPPUNIT_ASSERT( !res.empty() );
-    CPPUNIT_ASSERT( boost::any_cast<int>(res) == (int)42 );
+    CPPUNIT_ASSERT(!res.empty());
+    CPPUNIT_ASSERT(boost::any_cast<int>(res) == (int)42);
 
-    CPPUNIT_ASSERT_THROW( boost::any_cast<std::string>(res), boost::bad_any_cast );
+    CPPUNIT_ASSERT_THROW(boost::any_cast<std::string>(res), boost::bad_any_cast);
 }
 
 void BliObjectTest::getValuesLimits()
@@ -392,4 +392,14 @@ void BliObjectTest::compress()
 
     delete [] uncomp;
     delete [] comp;
+}
+
+void BliObjectTest::uuid()
+{
+    blieng::BliObject tmp1;
+
+    for (unsigned int i = 0; i < 100; ++i) {
+        blieng::BliObject tmp2;
+        CPPUNIT_ASSERT( tmp1.uuid() != tmp2.uuid() );
+    }
 }

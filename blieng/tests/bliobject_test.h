@@ -20,6 +20,7 @@ public:
     CPPUNIT_TEST(percentageString);
     CPPUNIT_TEST(serialize);
     CPPUNIT_TEST(compress);
+    CPPUNIT_TEST(uuid);
     CPPUNIT_TEST_SUITE_END();
 private:
     void values();
@@ -33,6 +34,7 @@ private:
     void getValuesLimits();
     void serialize();
     void compress();
+    void uuid();
 };
 
 #endif

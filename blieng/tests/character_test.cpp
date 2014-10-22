@@ -37,30 +37,29 @@ void CharacterTest::items()
 
     unique_ptr<Character> obj(new Character());
 
-    CPPUNIT_ASSERT( obj->size() == 0);
+    CPPUNIT_ASSERT(obj->size() == 0);
 
     obj->addItem(std::move(tmp));
-    CPPUNIT_ASSERT( obj->size() == 1);
+    CPPUNIT_ASSERT(obj->size() == 1);
 
     obj->addItem(std::move(tmp2));
-    CPPUNIT_ASSERT( obj->size() == 2);
+    CPPUNIT_ASSERT(obj->size() == 2);
 
+    CPPUNIT_ASSERT(obj->removeItem(1));
+    CPPUNIT_ASSERT(obj->size() == 1);
 
-    CPPUNIT_ASSERT( obj->removeItem(1) );
-    CPPUNIT_ASSERT( obj->size() == 1);
+    CPPUNIT_ASSERT_THROW(obj->removeItem(1), std::string);
+    CPPUNIT_ASSERT(obj->size() == 1);
 
-    CPPUNIT_ASSERT( !obj->removeItem(1) );
-    CPPUNIT_ASSERT( obj->size() == 1);
+    CPPUNIT_ASSERT(obj->removeItem(0));
+    CPPUNIT_ASSERT(obj->size() == 0);
 
-    CPPUNIT_ASSERT( obj->removeItem(0) );
-    CPPUNIT_ASSERT( obj->size() == 0);
-
-    CPPUNIT_ASSERT( !obj->removeItem(0) );
-    CPPUNIT_ASSERT( obj->size() == 0);
+    CPPUNIT_ASSERT_THROW(obj->removeItem(0), std::string);
+    CPPUNIT_ASSERT(obj->size() == 0);
 
     obj->addItem(std::move(tmp));
     obj->addItem(std::move(tmp2));
-    CPPUNIT_ASSERT( obj->size() == 2);
+    CPPUNIT_ASSERT(obj->size() == 2);
 
     mock_io_stop();
 }
