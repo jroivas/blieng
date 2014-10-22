@@ -44,7 +44,8 @@ public:
      *
      * \param state State object containing engine object info
      */
-    explicit Configure(boost::shared_ptr<blieng::BliengState> state);
+    explicit Configure(
+        boost::shared_ptr<blieng::BliengState> state);
     virtual ~Configure();
 
     /**
@@ -67,7 +68,8 @@ public:
      * \param config_file Name of the configuration file
      * \returns True if file found and read successfully, false otherwise
      */
-    bool load(const std::string &config_file);
+    bool load(
+        const std::string &config_file);
 
     /**
      * Adds mandatory key to be parsed from configuration.
@@ -77,7 +79,9 @@ public:
      * \param key_name The name of the mandatory key
      * \param key_type Type of the mandatory key, see \ref key_type_t
      */
-    void addKey(const std::string &key_name, key_type_t key_type);
+    void addKey(
+        const std::string &key_name,
+        key_type_t key_type);
     /**
      * Adds optional key to be parsed from configuration.
      * Like mandatory key, but \ref validate does not fail if key is not found.
@@ -85,7 +89,9 @@ public:
      * \param key_name The name of the mandatory key
      * \param key_type Type of the mandatory key, see \ref key_type_t
      */
-    void addOptionalKey(const std::string &key_name, key_type_t key_type);
+    void addOptionalKey(
+        const std::string &key_name,
+        key_type_t key_type);
     /**
      * Validates that all required keys are loaded.
      *
@@ -121,21 +127,27 @@ private:
      * \param key Name of the key for the list
      * \param val JSON value containing the list
      */
-    void parseStringList(std::string key, const json_value* val);
+    void parseStringList(
+        std::string key,
+        const json_value* val);
     /**
      * Parsing integer list values
      *
      * \param key Name of the key for the list
      * \param val JSON value containing the list
      */
-    void parseIntList(std::string key, const json_value* val);
+    void parseIntList(
+        std::string key,
+        const json_value* val);
     /**
      * Parsing boolean value
      *
      * \param key Name of the boolean key
      * \param val JSON value containing the boolean
      */
-    void parseBool(std::string key, const json_value* val);
+    void parseBool(
+        std::string key,
+        const json_value* val);
 };
 
 }  // namespace blieng

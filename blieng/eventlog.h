@@ -35,13 +35,15 @@ public:
      *
      * \param obj Object reference
      */
-    explicit ObjectLog(void *obj);
+    explicit ObjectLog(
+        void *obj);
     /**
      * Logging for specific name
      *
      * \param name Name reference
      */
-    explicit ObjectLog(const std::string &name);
+    explicit ObjectLog(
+        const std::string &name);
     virtual ~ObjectLog() {}
 
     /**
@@ -49,14 +51,16 @@ public:
      *
      * \param obj Object reference
      */
-    void assign(void *obj);
+    void assign(
+        void *obj);
     /**
      * Add a event for log.
      * Event can be any type, however only some certain types are natively supported.
      *
      * \param event The event to be recorded
      */
-    void addEvent(BliAny event);
+    void addEvent(
+        BliAny event);
     /**
      * Get the object reference
      *
@@ -74,7 +78,8 @@ public:
      *
      * \param name The name to be assigned
      */
-    void setName(const std::string &name);
+    void setName(
+        const std::string &name);
 
     /**
      * Get string presentation of all events.
@@ -102,7 +107,8 @@ public:
      * \param timestamp Boost posix timestamp
      * \returns Timestamp as string
      */
-    std::string timeToString(boost::posix_time::ptime timestamp) const;
+    std::string timeToString(
+        boost::posix_time::ptime timestamp) const;
 
     /**
      * Convert name and data to string
@@ -110,7 +116,8 @@ public:
      * \param anydata Any representable data
      * \returns String containing object name and data
      */
-    std::string nameDataToString(BliAny anydata) const;
+    std::string nameDataToString(
+        BliAny anydata) const;
 
     /**
      * Will try to convert anything to string.
@@ -119,7 +126,8 @@ public:
      * \param data Any data
      * \returns String presentation of the data.
      */
-    static std::string anyToString(BliAny data);
+    static std::string anyToString(
+        BliAny data);
 
     /**
      * Contains all recorded events.

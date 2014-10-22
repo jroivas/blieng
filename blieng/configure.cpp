@@ -4,7 +4,6 @@
 
 #include "blieng/configure.h"
 
-#include <boost/foreach.hpp>
 #include <boost/algorithm/string.hpp>
 
 #ifdef DATA_MUTEX_LOCK
@@ -21,8 +20,10 @@ using blieng::Configure;
 
 typedef std::pair<std::string, Configure::key_type_t> key_values_t;
 
-Configure::Configure(boost::shared_ptr<blieng::BliengState> _state) :
-    BliObject(), m_state(_state)
+Configure::Configure(
+    boost::shared_ptr<blieng::BliengState> _state)
+    : BliObject(),
+    m_state(_state)
 {
 }
 
@@ -36,7 +37,8 @@ Configure::~Configure()
     opt_keys.erase(opt_keys.begin(), opt_keys.end());
 }
 
-bool Configure::load(const std::string &_config_file)
+bool Configure::load(
+    const std::string &_config_file)
 {
     std::string fname = m_state->m_data->findFile(_config_file);
     if (fname != "") {
@@ -47,7 +49,9 @@ bool Configure::load(const std::string &_config_file)
     return false;
 }
 
-void Configure::addKey(const std::string &val, key_type_t key_type)
+void Configure::addKey(
+    const std::string &val,
+    key_type_t key_type)
 {
 #ifdef DATA_MUTEX_LOCK
     boost::lock_guard<boost::mutex> keylock(key_mutex);
@@ -56,7 +60,9 @@ void Configure::addKey(const std::string &val, key_type_t key_type)
     keys[val] = key_type;
 }
 
-void Configure::addOptionalKey(const std::string &val, key_type_t key_type)
+void Configure::addOptionalKey(
+    const std::string &val,
+    key_type_t key_type)
 {
 #ifdef DATA_MUTEX_LOCK
     boost::lock_guard<boost::mutex> keylock(key_mutex);
@@ -99,7 +105,9 @@ bool Configure::validateValues() const
     return true;
 }
 
-void Configure::parseStringList(std::string key, const json_value* realval)
+void Configure::parseStringList(
+    std::string key,
+    const json_value* realval)
 {
     if (realval->isArray()) {
         std::vector<std::string> list_data;
@@ -114,7 +122,9 @@ void Configure::parseStringList(std::string key, const json_value* realval)
     }
 }
 
-void Configure::parseIntList(std::string key, const json_value* realval)
+void Configure::parseIntList(
+    std::string key,
+    const json_value* realval)
 {
     if (realval->isArray()) {
         std::vector<int> list_data;
@@ -129,7 +139,9 @@ void Configure::parseIntList(std::string key, const json_value* realval)
     }
 }
 
-void Configure::parseBool(std::string key, const json_value* realval)
+void Configure::parseBool(
+    std::string key,
+    const json_value* realval)
 {
     bool res = false;
 
@@ -148,13 +160,15 @@ void Configure::parseBool(std::string key, const json_value* realval)
 
 void Configure::parse()
 {
-    if (!data_json->isObject()) return;
+    if (!data_json->isObject())
+        return;
 
 #ifdef DATA_MUTEX_LOCK
     boost::lock_guard<boost::mutex> keylock(key_mutex);
 #endif
 
-    BOOST_FOREACH(const std::string data_key, data_json->getMemberNames()) {
+    // FIXME This is ugly
+    for(auto data_key : data_json->getMemberNames()) {
         auto val = keys.find(data_key);
         auto val2 = opt_keys.find(data_key);
         if (val == keys.end()) val = opt_keys.find(data_key);
