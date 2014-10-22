@@ -50,7 +50,9 @@ public:
      * \param key_len Length of the key
      * \returns True on success, false otherwise
      */
-    bool initialize(const char *key, unsigned int key_len);
+    bool initialize(
+        const char *key,
+        const unsigned int key_len);
     /**
      * Initialize encrypted backend on a datafile.
      * If data backend is encrypted, initialize it with this method.
@@ -66,7 +68,7 @@ public:
     bool initialize(
         const std::string &datafilename,
         const char *key,
-        unsigned int key_len);
+        const unsigned int key_len);
 
     /**
      * Read a file from the backend as a string
@@ -74,7 +76,8 @@ public:
      * \param name Name of the file to be read
      * \returns Contents of the file as a string, or empty string
      */
-    std::string readString(const std::string &name) const;
+    std::string readString(
+        const std::string &name) const;
     /**
      * Read file from backend as a vector of strings.
      * Strings are split from the new line character.
@@ -84,7 +87,8 @@ public:
      * \param name Name of the file to be read
      * \returns Contents of the file as vector of strings
      */
-    std::vector<std::string> readLinesFromFile(const std::string &name) const;
+    std::vector<std::string> readLinesFromFile(
+        const std::string &name) const;
     /**
      * Read file from backend as a raw data.
      * This method is used for example for binary files.
@@ -93,7 +97,9 @@ public:
      * \param data Pointer to a char array, pointer will point to the read data
      * \returns Number of bytes read, or 0 on error or empty file
      */
-    unsigned int readData(const std::string &name, const char **data);
+    unsigned int readData(
+        const std::string &name,
+        const char **data);
 
     /**
      * Read JSON data from a file in backend.
@@ -101,7 +107,8 @@ public:
      * \param name Name of the file to be read
      * \returns Parsed internal json_value, see \ref json.h
      */
-    json_value *readJson(const std::string &name) const;
+    json_value *readJson(
+        const std::string &name) const;
     /**
      * Get key names under JSON value
      * Gets all the key names, this assumes that given JSON value is array.
@@ -109,7 +116,8 @@ public:
      * \param val Reference to \ref json_value, for example one read with \ref readJson
      * \returns Vector of strings of found key names.
      */
-    std::vector<std::string> getJsonKeys(const json_value *val) const;
+    std::vector<std::string> getJsonKeys(
+        const json_value *val) const;
     /**
      * Check if specific key name is found from JSON value.
      * Assumes that the JSON value in question is array.
@@ -118,7 +126,9 @@ public:
      * \param key Name of the key to check
      * \returns True if key exists, false otherwise
      */
-    bool isJsonKey(json_value *val, const std::string &key) const;
+    bool isJsonKey(
+        json_value *val,
+        const std::string &key) const;
     /**
      * Get another JSON value from current value.
      *
@@ -136,7 +146,8 @@ public:
      * \param name Name of the file to be check
      * \returns True if file is found, false otherwise
      */
-    bool fileExists(const std::string &name) const;
+    bool fileExists(
+        const std::string &name) const;
 
     /**
      * Try to find a file from backend.
@@ -146,7 +157,8 @@ public:
      * \param name Name of the file to be check
      * \returns Full path to the found file or empty string.
      */
-    std::string findFile(const std::string &name) const;
+    std::string findFile(
+        const std::string &name) const;
     /**
      * Format string and replace marks with given number.
      * Will find for # characters and replace them with the given number.
@@ -189,7 +201,9 @@ public:
      * \param json The JSON structure as string, to be written
      * \returns True if successfull
      */
-    bool saveMapJSON(const std::string &name, const std::string &json);
+    bool saveMapJSON(
+        const std::string &name,
+        const std::string &json);
 
     /**
      * Set up game data location.
@@ -197,7 +211,8 @@ public:
      *
      * \param location Path to appended in search path
      */
-    inline void setGameLocation(const std::string &location)
+    inline void setGameLocation(
+        const std::string &location)
     {
         //FIXME
         game_location = location;
@@ -211,7 +226,8 @@ private:
      *
      * \param datafilename Name of the datafile
      */
-    void initializeDataFile(const std::string &datafilename);
+    void initializeDataFile(
+        const std::string &datafilename);
     /**
      * Initializes global data file encryption keys.
      * To utilize default keys or old key, pass nullptr for key.
@@ -220,18 +236,25 @@ private:
      * \param key New data file encryption key, or nullptr
      * \param key_len Length of the key in bytes
      */
-    void initializeEncryptionKey(const char *key, unsigned int key_len);
+    void initializeEncryptionKey(
+        const char *key,
+        const unsigned int key_len);
     unsigned int readDataFromDataPath(
         const std::string &name,
         const char **data);
 
+    bool m_got_data_path;
+    void ensureDataPath();
     void updateLocations();
+
     std::string findFileRecursive(
         const boost::filesystem::path &dir_path,
         const std::string &name) const;
-    boost::filesystem::path solveFilePath(const std::string &name) const;
+    boost::filesystem::path solveFilePath(
+        const std::string &name) const;
 
-    std::string findFileFromDataFile(const std::string &name) const;
+    std::string findFileFromDataFile(
+        const std::string &name) const;
     std::vector<std::string> findFileExtFromDataFile(
         const std::string &path,
         const std::string &ext) const;
@@ -243,8 +266,8 @@ private:
         const std::string &datafilename = "data.dat") const;
     boost::filesystem::path findDataPath() const;
 
-    boost::filesystem::path data_path;
-    boost::filesystem::path data_file_path;
+    boost::filesystem::path m_data_path;
+    boost::filesystem::path m_data_file_path;
 
     std::vector<std::string> readLinesFromFileInDataFolder(
         const std::string &name) const;
@@ -263,7 +286,8 @@ private:
 protected:
     blieng::DataFile *m_datafile;
 
-    blieng::DataFile *findGlobalDataFile(const std::string &datafilename);
+    blieng::DataFile *findGlobalDataFile(
+        const std::string &datafilename);
     static std::map <std::string, blieng::DataFile *> m_datafiles;
     static boost::mutex m_datafile_mutex;
 

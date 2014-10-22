@@ -60,6 +60,7 @@ public:
      * This assumes that the value at given key is numerical type.
      *
      * \param key Unique key string
+     * \throw If key value is not numerical
      * \returns True if value is incremented, false otherwise
      */
     virtual bool increase(
@@ -69,6 +70,7 @@ public:
      * This assumes that the value at given key is numerical type.
      *
      * \param key Unique key string
+     * \throw If key value is not numerical
      * \returns True if value is decreased, false otherwise
      */
     virtual bool decrease(
@@ -79,6 +81,7 @@ public:
      *
      * \param key Unique key string
      * \param diff The difference to change, internally effect is: value += diff
+     * \throw If key value is not numerical
      * \returns True if value is changed, false otherwise
      */
     bool changeNumberValue(
@@ -89,6 +92,7 @@ public:
      * Throws an error if key not found.
      *
      * \param key Unique key string
+     * \throw When key does not exists
      * \returns BliAny object of the value.
      */
     virtual BliAny getValue(

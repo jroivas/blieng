@@ -106,8 +106,9 @@ BliAny BliObject::getValue(
     auto value_iter = m_values.find(key);
 
     if (value_iter == m_values.end()) {
-        LOG_ERROR("Error, key not found: " + key);
-        throw std::string("Error, key not found: " + key);
+        std::string err = "Error, key not found: " + key;
+        LOG_ERROR(err);
+        throw std::string(err);
     }
 
     return value_iter->second;
@@ -184,8 +185,9 @@ T BliObject::getValue(const std::string &key) const
 {
     BliAny val = getValue(key);
     if (val.empty()) {
-        LOG_ERROR("Error, key not found: " + key);
-        throw "Error, key not found: " + key;
+        std::string err = "Error, key not found: " + key;
+        LOG_ERROR(err);
+        throw err;
     }
 
     if (val.type() == typeid(T))
@@ -325,7 +327,7 @@ std::vector<int> BliObject::getIntValues(
     }
     catch (boost::bad_any_cast &c) {
         std::string errmsg = "Not int list at " + key + " " + c.what();
-        std::cerr << errmsg << std::endl;
+        LOG_ERROR(errmsg);
         throw errmsg;
     }
 }
@@ -335,8 +337,9 @@ const std::type_info *BliObject::getValueType(
 {
     BliAny val = getValue(key);
     if (val.empty()) {
-        LOG_ERROR("Error, key not found: " + key);
-        throw "Error, key not found: " + key;
+        std::string err = "Error, key not found: " + key;
+        LOG_ERROR(err);
+        throw err;
     }
     return &val.type();
 }
@@ -434,7 +437,8 @@ bool BliObject::changeNumberValue(
         return changeNumValue<float>(key, val, diff);
     }
 
-    return false;
+    throw std::string("Not any known numerical value at: " + key);
+    //return false;
 }
 
 bool BliObject::increase(

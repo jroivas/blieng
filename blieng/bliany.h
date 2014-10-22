@@ -63,7 +63,8 @@ public:
      * Print value to ostream.
      *
      * This is utilized for string conversions and printing the value.
-     * Casts to proper known value and append to stream or print "Uknown type" if type not castable.
+     * Casts to proper known value and append to stream or print "Uknown type"
+     * if type not castable.
      *
      * \param ostr Stream to write to
      * \param obj BliAny object to write to the stream
@@ -92,13 +93,12 @@ public:
     #undef CAST_TO
     #undef CAST_TO_BOOL
 
-    #define AS_VALUE(Y, X)\
-    X as ## Y()\
-    {\
-        if (this->type() == typeid(X)) {\
-            return boost::any_cast<X>(*this);\
-        }\
-        throw std::string("Error, invalid value, can't convert to " # Y); \
+    template<typename T> T asValue()
+    {
+        if (type() == typeid(T)) {
+            return boost::any_cast<T>(*this);
+        }
+        throw std::string("Error, invalid value, can't convert to given type");
     }
 
     /**
@@ -107,100 +107,153 @@ public:
      *
      * \returns Value as integer
      */
-    AS_VALUE(Int, int);
+    inline int asInt()
+    {
+        return asValue<int>();
+    }
+
     /**
      * Get result as unsigned integer.
      * Throws error if type does not match.
      *
      * \returns Value as unsigned integer
      */
-    AS_VALUE(UInt, unsigned int);
+    inline unsigned int asUInt()
+    {
+        return asValue<unsigned int>();
+    }
+
     /**
      * Get result as long.
      * Throws error if type does not match.
      *
      * \returns Value as long
      */
-    AS_VALUE(Long, long);
+    inline long asLong()
+    {
+        return asValue<long>();
+    }
+
     /**
      * Get result as unsigned long.
      * Throws error if type does not match.
      *
      * \returns Value as unsigned long
      */
-    AS_VALUE(ULong, unsigned long);
+    inline unsigned long asULong()
+    {
+        return asValue<unsigned long>();
+    }
+
     /**
      * Get result as char.
      * Throws error if type does not match.
      *
      * \returns Value as char
      */
-    AS_VALUE(Char, char);
+    inline char asChar()
+    {
+        return asValue<char>();
+    }
+
     /**
      * Get result as unsigned char.
      * Throws error if type does not match.
      *
      * \returns Value as unsigned char
      */
-    AS_VALUE(UChar, unsigned char);
+    inline unsigned char asUChar()
+    {
+        return asValue<unsigned char>();
+    }
+
     /**
      * Get result as short.
      * Throws error if type does not match.
      *
      * \returns Value as short
      */
-    AS_VALUE(Short, short);
+    inline short asShort()
+    {
+        return asValue<short>();
+    }
+
     /**
      * Get result as unsigned short.
      * Throws error if type does not match.
      *
      * \returns Value as unsigned short
      */
-    AS_VALUE(UShort, unsigned short);
+    inline unsigned short asUShort()
+    {
+        return asValue<unsigned short>();
+    }
+
     /**
      * Get result as long long.
      * Throws error if type does not match.
      *
      * \returns Value as long long
      */
-    AS_VALUE(LongLong, long long);
+    inline long long asLongLong()
+    {
+        return asValue<long long>();
+    }
+
     /**
      * Get result as unsigned long long.
      * Throws error if type does not match.
      *
      * \returns Value as unsigned long long
      */
-    AS_VALUE(ULongLong, unsigned long long);
+    inline unsigned long long asULongLong()
+    {
+        return asValue<unsigned long long>();
+    }
+
     /**
      * Get result as double.
      * Throws error if type does not match.
      *
      * \returns Value as double
      */
-    AS_VALUE(Double, double);
+    inline double asDouble()
+    {
+        return asValue<double>();
+    }
+
     /**
      * Get result as float.
      * Throws error if type does not match.
      *
      * \returns Value as float
      */
-    AS_VALUE(Float, float);
+    inline float asFloat()
+    {
+        return asValue<float>();
+    }
+
     /**
      * Get result as boolean.
      * Throws error if type does not match.
      *
      * \returns Value as boolean
      */
-    AS_VALUE(Bool, bool);
+    inline bool asBool()
+    {
+        return asValue<bool>();
+    }
+
     /**
      * Get result as string.
      * Throws error if type does not match.
      *
      * \returns Value as string
      */
-    AS_VALUE(String, std::string);
-
-    #undef AS_VALUE
+    inline std::string asString()
+    {
+        return asValue<std::string>();
+    }
 
     /**
      * Get result as numeric value, for now converted to signed long.

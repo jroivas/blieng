@@ -63,12 +63,9 @@ boost::mutex Data::m_datafile_mutex;
 
 
 Data::Data()
+    : m_got_data_path(false),
+    m_datafile(nullptr)
 {
-    m_datafile = nullptr;
-
-    updateLocations();
-    data_path = findDataPath();
-
     initialize("", nullptr, 0);
 }
 
@@ -81,18 +78,30 @@ Data::~Data()
     }
 }
 
+void Data::ensureDataPath()
+{
+    if (m_got_data_path)
+        return;
+
+    updateLocations();
+    m_data_path = findDataPath();
+    m_got_data_path = true;
+}
+
 void Data::updateLocations()
 {
     m_locations.clear();
     m_locations.push_back("");
     m_locations.push_back("./");
-    if (!game_location.empty()) m_locations.push_back(game_location);
+    if (!game_location.empty())
+        m_locations.push_back(game_location);
     m_locations.push_back("../");
     m_locations.push_back(".\\");
     m_locations.push_back("..\\");
 }
 
-blieng::DataFile *Data::findGlobalDataFile(const std::string &datafilename)
+blieng::DataFile *Data::findGlobalDataFile(
+    const std::string &datafilename)
 {
     boost::lock_guard<boost::mutex> keylock(m_datafile_mutex);
 
@@ -105,32 +114,36 @@ blieng::DataFile *Data::findGlobalDataFile(const std::string &datafilename)
     return data;
 }
 
-void Data::initializeDataFile(const std::string &datafilename)
+void Data::initializeDataFile(
+    const std::string &datafilename)
 {
 #ifdef DATA_MUTEX_LOCK
     boost::lock_guard<boost::mutex> keylock(m_value_mutex);
 #endif
     if (m_datafile == nullptr || datafilename != "") {
         if (datafilename == "") {
-            data_file_path = findDataFile();
+            m_data_file_path = findDataFile();
         } else {
-            data_file_path = findDataFile(datafilename);
+            m_data_file_path = findDataFile(datafilename);
         }
-        if (!data_file_path.empty()) {
-            //m_datafile = new blieng::DataFile(data_file_path.string());
-            m_datafile = findGlobalDataFile(data_file_path.string());
-            LOG_INFO("Found data file: " + data_file_path.string());
+        if (!m_data_file_path.empty()) {
+            m_datafile = findGlobalDataFile(m_data_file_path.string());
+            LOG_INFO("Found data file: " + m_data_file_path.string());
         }
     }
 }
 
-void Data::initializeEncryptionKey(const char *key, unsigned int key_len)
+void Data::initializeEncryptionKey(
+    const char *key,
+    const unsigned int key_len)
 {
 #ifdef DATA_MUTEX_LOCK
     boost::lock_guard<boost::mutex> keylock(m_value_mutex);
 #endif
     if (key != nullptr) {
-        if (__data_key != nullptr) delete __data_key;
+        if (__data_key != nullptr)
+            delete __data_key;
+
         __data_key_len = key_len;
         __data_key = new char[key_len];
         memmove(__data_key, key, key_len);
@@ -140,8 +153,9 @@ void Data::initializeEncryptionKey(const char *key, unsigned int key_len)
 bool Data::initialize(
     const std::string &datafilename,
     const char *key,
-    unsigned int key_len)
+    const unsigned int key_len)
 {
+    ensureDataPath();
     initializeDataFile(datafilename);
     initializeEncryptionKey(key, key_len);
 
@@ -151,14 +165,16 @@ bool Data::initialize(
         res = m_datafile->read(__data_key, __data_key_len);
     }
 #ifndef ANDROID
-    if (!res && !data_path.empty()) {
+    if (!res && !m_data_path.empty()) {
         res = true;
     }
 #endif
     return res;
 }
 
-bool Data::initialize(const char *key, unsigned int key_len)
+bool Data::initialize(
+    const char *key,
+    const unsigned int key_len)
 {
     return initialize("", key, key_len);
 }
@@ -179,7 +195,7 @@ boost::filesystem::path Data::findDataFileCommon(
         my_data_path = (item + datafilename).c_str();
         boost::system::error_code ec;
         if (boost::filesystem::exists(my_data_path, ec) &&
-                boost::filesystem::is_regular_file(my_data_path, ec)) {
+            boost::filesystem::is_regular_file(my_data_path, ec)) {
             return my_data_path;
         }
     }
@@ -278,11 +294,11 @@ std::string Data::findFile(const std::string &name) const
     }
 
 #ifndef ANDROID
-    if (data_path.empty())
+    if (m_data_path.empty())
         return "";
 #endif
     LOG_DEBUG("Searching file recursive from data path");
-    return findFileRecursive(data_path, name);
+    return findFileRecursive(m_data_path, name);
 }
 
 std::vector<std::string> Data::findFileExtFromDataFile(
@@ -340,10 +356,10 @@ std::vector<std::string> Data::listMaps() const
 
 #ifndef ANDROID
     boost::system::error_code ec;
-    if (!boost::filesystem::exists(data_path, ec))
+    if (!boost::filesystem::exists(m_data_path, ec))
         return mapfiles;
 
-    boost::filesystem::path maps_path = data_path;
+    boost::filesystem::path maps_path = m_data_path;
     maps_path /= __maps_folder_name;
 
     if (!boost::filesystem::exists(maps_path, ec))
@@ -362,17 +378,17 @@ bool Data::saveMapJSON(const std::string &name, const std::string &json)
 #else
     // TODO Split
     // TODO Do we need data file support here? Probably not..
-    if (data_path.empty()) {
+    if (m_data_path.empty()) {
         std::cerr
             << "Data path not found, please create it in order to save maps"
             << "\n";
         return false;
     }
     boost::system::error_code ec;
-    if (!boost::filesystem::exists(data_path, ec))
+    if (!boost::filesystem::exists(m_data_path, ec))
         return false;
 
-    boost::filesystem::path maps_path = data_path;
+    boost::filesystem::path maps_path = m_data_path;
     maps_path /= "maps";  // FIXME Hardcoded
 
     if (!boost::filesystem::exists(maps_path, ec)) {
@@ -420,7 +436,7 @@ boost::filesystem::path Data::solveFilePath(const std::string &name) const
     boost::filesystem::path p;
     return p;
 #else
-    boost::filesystem::path first_path = data_path;
+    boost::filesystem::path first_path = m_data_path;
     boost::filesystem::path second_path = boost::filesystem::path(name.c_str());
     first_path /= name.c_str();
     boost::system::error_code ec;
@@ -437,7 +453,7 @@ std::vector<std::string> Data::readLinesFromFileInDataFolder(
 {
     std::vector<std::string> tmp;
 #ifndef ANDROID
-    if (!data_path.empty()) {
+    if (!m_data_path.empty()) {
         boost::filesystem::path first_path = solveFilePath(name);
         boost::system::error_code ec;
         if (boost::filesystem::exists(first_path, ec)) {
@@ -571,7 +587,7 @@ unsigned int Data::readData(
     const char **data)
 {
 #ifndef ANDROID
-    if (!data_path.empty()) {
+    if (!m_data_path.empty()) {
         unsigned int res = readDataFromDataPath(name, data);
         if (res > 0)
             return res;
@@ -598,7 +614,7 @@ std::string Data::readString(
     std::string res = "";
 
 #ifndef ANDROID
-    if (!data_path.empty()) {
+    if (!m_data_path.empty()) {
         boost::filesystem::path first_path = solveFilePath(name);
         boost::system::error_code ec;
         if (boost::filesystem::exists(first_path, ec)) {
@@ -637,7 +653,7 @@ json_value *Data::readJson(
     json_value *val = json_parse(datas.c_str(), datas.length());
     if (val == nullptr) {
         LOG_DEBUG("Parse error while parsing '" + name + "'!");
-        throw "JSON parse error";
+        throw std::string("JSON parse error");
     }
     return val;
 }
@@ -666,7 +682,8 @@ const json_value *Data::getJsonValue(
     if (val->isObject()) {
         if (val->isMember(key)) {
             const json_value *res = val->getMember(key);
-            if (res != nullptr) return res;
+            if (res != nullptr)
+                return res;
         }
     }
     return val;
