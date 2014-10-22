@@ -10,6 +10,9 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/archive/binary_oarchive.hpp>
 #include <boost/archive/binary_iarchive.hpp>
+#include <boost/uuid/uuid.hpp>
+#include <boost/uuid/uuid_io.hpp>
+#include <boost/uuid/uuid_generators.hpp>
 
 #ifdef DATA_MUTEX_LOCK
 #include <boost/thread/locks.hpp>
@@ -40,6 +43,7 @@ using blieng::BliAny;
 
 BliObject::BliObject()
 {
+    genUUID();
 }
 
 BliObject::~BliObject()
@@ -49,6 +53,7 @@ BliObject::~BliObject()
         auto data = m_values.begin();
         m_values.erase(data);
     }
+    m_uuid = "";
 }
 
 void BliObject::assignObject(
@@ -614,4 +619,19 @@ bool BliObject::deserialize(
     }
 
     return true;
+}
+
+void BliObject::genUUID()
+{
+#ifdef PSEUDO_RANDOM
+    boost::uuids::basic_random_generator<boost::mt19937> gen;
+#else
+    boost::random::random_device real_gen;
+    boost::uuids::basic_random_generator<boost::random_device> gen(&real_gen);
+#endif
+    boost::uuids::uuid gen_uuid = gen();
+    std::ostringstream ss;
+
+    ss << gen_uuid;
+    m_uuid = ss.str();
 }

@@ -11,30 +11,28 @@ using blieng::Card;
 
 Card::Card() : BliObject()
 {
-    genUUID();
 }
 
 Card::~Card()
 {
-    while (!combined.empty()) {
-        combined.erase(combined.begin());
+    while (!m_combined.empty()) {
+        m_combined.erase(m_combined.begin());
     }
-    card_uuid = "";
 }
 
 void Card::combine(std::unique_ptr<blieng::Card> card)
 {
-    combined.push_back(std::move(card));
+    m_combined.push_back(std::move(card));
 }
 
 bool Card::remove(size_t index)
 {
     size_t cnt = 0;
 
-    auto it = combined.begin();
-    while (it != combined.end()) {
+    auto it = m_combined.begin();
+    while (it != m_combined.end()) {
         if (cnt == index) {
-            combined.erase(it);
+            m_combined.erase(it);
             return true;
         }
         ++cnt;
@@ -46,26 +44,10 @@ bool Card::remove(size_t index)
 
 bool Card::remove(auto_vector<blieng::Card>::iterator iter)
 {
-    BOOST_ASSERT(iter < combined.end());
-    if (iter < combined.end()) {
-        combined.erase(iter);
+    BOOST_ASSERT(iter < m_combined.end());
+    if (iter < m_combined.end()) {
+        m_combined.erase(iter);
         return true;
     }
     return false;
-}
-
-void Card::genUUID()
-{
-    card_uuid = "";
-    for (unsigned int i = 0; i < 10; i++) {
-        card_uuid += getRandomInt('A', 'Z');
-    }
-    card_uuid += "-";
-    for (unsigned int i = 0; i < 10; i++) {
-        card_uuid += getRandomInt('a', 'z');
-    }
-    card_uuid += "-";
-    for (unsigned int i = 0; i < 10; i++) {
-        card_uuid += getRandomInt('0', '9');
-    }
 }

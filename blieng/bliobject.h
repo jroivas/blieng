@@ -288,6 +288,23 @@ public:
         std::string data,
         std::string type="BliObject");
 
+    /**
+     * Get the unique ID of this object.
+     * All objects gets automatically unique ID upon creation,
+     * that way object can be referred and handled easily.
+     *
+     * One should not do any assumptions about this ID,
+     * and the format of the sting may be changed at any time.
+     * The only thing that's ensured is that object can be identified
+     * with this string.
+     *
+     * \returns Unique ID of this object as string
+     */
+    virtual inline std::string uuid() const
+    {
+        return m_uuid;
+    }
+
 protected:
     std::map<std::string, BliAny> m_values;  //!< Contains key value mappings
 
@@ -300,6 +317,13 @@ protected:
         std::string key,
         BliAny val,
         int diff);
+
+    /**
+     * Generates the Unique ID.
+     */
+    void genUUID();
+
+    std::string m_uuid;  //!< Unique ID
 
 #ifdef DATA_MUTEX_LOCK
 private:
