@@ -20,7 +20,7 @@ set(DISTEXT tar.gz)
 
 
 if (NOT DEFINED BITS)
-    set(BITS 32bit)
+    set(BITS "-")
 endif()
 if (NOT DEFINED TRACK)
     set(TRACK dev)
@@ -39,3 +39,12 @@ add_custom_target(upload
     COMMAND echo "${CMAKE_CURRENT_LIST_DIR}/tools/build/binrep_upload.sh" dist/${OUT}.${DISTEXT} blieng ${BITS} ${TRACK}
     DEPENDS dist
     )
+
+add_custom_command(
+    OUTPUT tools/build
+    COMMAND "${CMAKE_CURRENT_LIST_DIR}/tools/fetch_build.sh"
+    DEPENDS tools/fetch_build.sh)
+
+add_custom_target(
+    fetch_tools_build
+    DEPENDS tools/build)
