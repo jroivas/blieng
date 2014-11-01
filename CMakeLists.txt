@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.7)
+cmake_minimum_required(VERSION 2.8.8)
 
 project(blieng)
 
@@ -17,7 +17,6 @@ add_test(blieng_unittest
 
 set(OUT blieng-alpha4)
 set(DISTEXT tar.gz)
-
 
 if (NOT DEFINED BITS)
     set(BITS "-")
