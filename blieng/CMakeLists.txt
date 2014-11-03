@@ -59,5 +59,6 @@ find_package(Boost 1.47
     serialization)
 include_directories(${Boost_INCLUDE_DIR})
 include_directories(..)
+target_link_libraries(blieng ${Boost_LIBRARIES})
 
 add_subdirectory(tests)
