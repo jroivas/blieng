@@ -11,9 +11,11 @@ find_package(Qt5Core REQUIRED)
 
 add_subdirectory(blieng)
 
-enable_testing()
-add_test(blieng_unittest
-    blieng/tests/blieng_test)
+if (${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+    enable_testing()
+    add_test(blieng_unittest
+        blieng/tests/blieng_test)
+endif()
 
 set(OUT blieng-alpha4)
 set(DISTEXT tar.gz)

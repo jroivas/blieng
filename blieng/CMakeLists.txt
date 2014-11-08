@@ -61,4 +61,6 @@ include_directories(${Boost_INCLUDE_DIR})
 include_directories(..)
 target_link_libraries(blieng ${Boost_LIBRARIES})
 
-add_subdirectory(tests)
+if (${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+    add_subdirectory(tests)
+endif()
