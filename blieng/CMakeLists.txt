@@ -1,4 +1,4 @@
-add_library(blieng
+set(blieng_source_files
     blieng.cpp
     card.cpp
     character.cpp
@@ -38,8 +38,9 @@ add_library(blieng
     configure.h
     fastlz.c
     rijndael-alg-fst.c
-    json.c
-    )
+    json.c)
+
+add_library(blieng STATIC ${blieng_source_files})
 
 add_dependencies(blieng
     fetch_tools_build)
