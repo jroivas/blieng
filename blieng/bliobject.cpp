@@ -528,6 +528,7 @@ std::string BliObject::serialize(
     if (type == "")
         type = "BliObject";
     arch << type;
+
     serializeObject<unsigned int>(arch, m_values.size());
 
     for (auto val : m_values) {
@@ -563,16 +564,25 @@ std::string BliObject::serialize(
             serializeObject<float>(arch, any.asFloat());
         else if (types == "double")
             serializeObject<double>(arch, any.asDouble());
-        /*else
+        else
             throw std::string("Invalid value for key '" + types + "'");
-        */
     }
 
     return ss.str();
 }
 
+std::string BliObject::serializedType(
+    const std::string &data)
+{
+    std::istringstream ss(data);
+
+    boost::archive::binary_iarchive arch(ss);
+
+    return deserializeObject<std::string>(arch);
+}
+
 bool BliObject::deserialize(
-    std::string data,
+    const std::string &data,
     std::string type)
 {
     std::istringstream ss(data);

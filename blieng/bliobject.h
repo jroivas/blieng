@@ -285,8 +285,19 @@ public:
      * \returns True on success, false otherwise
      */
     virtual bool deserialize(
-        std::string data,
+        const std::string &data,
         std::string type="BliObject");
+
+    /**
+     * Query type of object in serialized string.
+     * Will read type from string, which is serialized
+     * with BliObject::serialize method.
+     *
+     * \param data Serialized data
+     * \returns Object type for detection, by default BliObject
+     */
+    static std::string serializedType(
+        const std::string &data);
 
     /**
      * Get the unique ID of this object.

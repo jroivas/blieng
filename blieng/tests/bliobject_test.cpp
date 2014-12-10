@@ -345,7 +345,6 @@ void BliObjectTest::serialize()
 
     std::string res = obj->serialize();
 
-    //std::cout << "SER: " << res << "\n";
     CPPUNIT_ASSERT( res != "" );
 
     BliObject *obj2 = new BliObject();
@@ -359,6 +358,11 @@ void BliObjectTest::serialize()
     CPPUNIT_ASSERT_EQUAL(obj2->getCharValue("test_char_min"), (char)-1);
     CPPUNIT_ASSERT_EQUAL(obj2->getDoubleValue("test_double"), (double)4.22);
     CPPUNIT_ASSERT_EQUAL(obj2->getLongLongValue("test_long_long"), (long long)1234567890123L);
+
+    std::string res2 = obj->serialize("Random");
+    CPPUNIT_ASSERT(obj->serializedType(res) == "BliObject");
+    CPPUNIT_ASSERT(BliObject::serializedType(res) == "BliObject");
+    CPPUNIT_ASSERT(obj->serializedType(res2) == "Random");
 }
 
 void BliObjectTest::compress()
