@@ -35,7 +35,7 @@ void blieng::BliengState::initialize()
 }
 
 // FIXME Hardcoded
-static unsigned int __key_size = 256 / 8;
+static const unsigned int __key_size = 256 / 8;
 
 std::unique_ptr<blieng::SafeDataPtr>
 blieng::setupKey(
@@ -357,4 +357,21 @@ bool blieng::isCompressed(
     }
 
     return true;
+}
+
+#include <QStandardPaths>
+
+std::string permanentStoragePath(
+    const std::string &target)
+{
+    QString folder;
+#ifdef ANDROID
+    folder = QStandardPaths::writableLocation(
+        QStandardPaths::GenericDataLocation);
+#else
+    folder = QStandardPaths::writableLocation(
+        QStandardPaths::HomeLocation);
+#endif
+
+    return folder.toStdString() + "/" + target;
 }
