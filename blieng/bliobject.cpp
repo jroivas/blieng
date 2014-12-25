@@ -9,8 +9,8 @@
 #include <boost/random/uniform_real_distribution.hpp>
 #include <boost/lexical_cast.hpp>
 
-#include <boost/archive/binary_oarchive.hpp>
-#include <boost/archive/binary_iarchive.hpp>
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
 
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/uuid_io.hpp>
@@ -506,7 +506,7 @@ std::string blieng::percentageString(
 template<typename T>
 void
 serializeObject(
-    boost::archive::binary_oarchive &arch,
+    boost::archive::text_oarchive &arch,
     T obj)
 {
     arch << obj;
@@ -514,7 +514,7 @@ serializeObject(
 
 template<typename T>
 T deserializeObject(
-    boost::archive::binary_iarchive &arch)
+    boost::archive::text_iarchive &arch)
 {
     T obj;
     arch >> obj;
@@ -526,7 +526,7 @@ std::string BliObject::serialize(
 {
     std::ostringstream ss;
 
-    boost::archive::binary_oarchive arch(ss);
+    boost::archive::text_oarchive arch(ss);
     if (type == "")
         type = "BliObject";
     arch << type;
@@ -580,7 +580,7 @@ std::string BliObject::serializedType(
 {
     std::istringstream ss(data);
 
-    boost::archive::binary_iarchive arch(ss);
+    boost::archive::text_iarchive arch(ss);
 
     return deserializeObject<std::string>(arch);
 }
@@ -592,14 +592,16 @@ bool BliObject::deserialize(
     std::istringstream ss(data);
     LOG_DEBUG("Deserializing data");
 
-    boost::archive::binary_iarchive arch(ss);
+    boost::archive::text_iarchive arch(ss);
     LOG_DEBUG("Deserializing archive");
-    if (type == "")
+    if (type == "") {
         type = "BliObject";
+    }
     LOG_DEBUG("Deserializing type");
     std::string data_type = deserializeObject<std::string>(arch);
-    if (data_type != type)
+    if (data_type != type) {
         return false;
+    }
 
     LOG_DEBUG("Deserializing item count");
     unsigned int num_values = deserializeObject<unsigned int>(arch);
@@ -638,6 +640,8 @@ bool BliObject::deserialize(
             setValue(key_name, deserializeObject<double>(arch));
         else if (types == "bool")
             setValue(key_name, deserializeObject<bool>(arch));
+        else
+            throw std::string("Invalid value for key '" + key_name + "': " + types);
         ++index;
     }
 
