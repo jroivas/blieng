@@ -567,7 +567,7 @@ std::string BliObject::serialize(
         else if (types == "double")
             serializeObject<double>(arch, any.asDouble());
         else
-            throw std::string("Invalid value for key '" + types + "'");
+            throw std::string("Invalid value for key '" + std::string(val.first) + "': " + types);
     }
 
     return ss.str();
