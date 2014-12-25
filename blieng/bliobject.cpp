@@ -602,7 +602,9 @@ bool BliObject::deserialize(
     unsigned int index = 0;
     while (index < num_values) {
         std::string key_name = deserializeObject<std::string>(arch);
+        LOG_DEBUG("Deserializing " + key_name);
         std::string types = deserializeObject<std::string>(arch);
+        LOG_DEBUG("Type of " + key_name + ": " + types);
         if (types == "int")
             setValue(key_name, deserializeObject<int>(arch));
         else if (types == "unsigned int")
