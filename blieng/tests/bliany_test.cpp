@@ -41,23 +41,54 @@ void BliAnyTest::number()
     blieng::BliAny tmp;
 
     tmp = blieng::BliAny((int)42);
-    CPPUNIT_ASSERT( tmp.asNumber() == 42 );
+    CPPUNIT_ASSERT(tmp.asNumber() == 42);
 
     tmp = blieng::BliAny((unsigned int)42);
-    CPPUNIT_ASSERT( tmp.asNumber() == 42 );
+    CPPUNIT_ASSERT(tmp.asNumber() == 42);
 
     tmp = blieng::BliAny((unsigned long)42);
-    CPPUNIT_ASSERT( tmp.asNumber() == 42 );
+    CPPUNIT_ASSERT(tmp.asNumber() == 42);
 
     tmp = blieng::BliAny((long)42);
-    CPPUNIT_ASSERT( tmp.asNumber() == 42 );
+    CPPUNIT_ASSERT(tmp.asNumber() == 42);
 
     tmp = blieng::BliAny((float)42.1);
-    CPPUNIT_ASSERT( tmp.asNumber() == 42 );
+    CPPUNIT_ASSERT(tmp.asNumber() == 42);
 
     tmp = blieng::BliAny((double)42.2);
-    CPPUNIT_ASSERT( tmp.asNumber() == 42 );
+    CPPUNIT_ASSERT(tmp.asNumber() == 42);
 
     tmp = blieng::BliAny(std::string("Dummy"));
+    CPPUNIT_ASSERT_THROW( tmp.asNumber(), std::string );
+}
+
+void BliAnyTest::types()
+{
+    blieng::BliAny tmp;
+
+    tmp = blieng::BliAny((int)42);
+    CPPUNIT_ASSERT(tmp.typeString() == "int");
+
+    tmp = blieng::BliAny((unsigned int)42);
+    CPPUNIT_ASSERT(tmp.typeString() == "unsigned int");
+
+    tmp = blieng::BliAny((unsigned long)42);
+    CPPUNIT_ASSERT(tmp.typeString() == "unsigned long");
+
+    tmp = blieng::BliAny((long)42);
+    CPPUNIT_ASSERT(tmp.typeString() == "long");
+
+    tmp = blieng::BliAny((float)42.1);
+    CPPUNIT_ASSERT(tmp.typeString() == "float");
+
+    tmp = blieng::BliAny((double)42.2);
+    CPPUNIT_ASSERT(tmp.typeString() == "double");
+
+    tmp = blieng::BliAny((bool)true);
+    CPPUNIT_ASSERT(tmp.typeString() == "bool");
+
+    tmp = blieng::BliAny(std::string("Dummy"));
+    CPPUNIT_ASSERT(tmp.typeString() == "string");
+
     CPPUNIT_ASSERT_THROW( tmp.asNumber(), std::string );
 }

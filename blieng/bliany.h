@@ -305,6 +305,8 @@ public:
             return "float";
         if (this->type() == typeid(std::string))
             return "string";
+        if (this->type() == typeid(bool))
+            return "bool";
 
         return "unknown";
     }

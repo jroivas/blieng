@@ -5,14 +5,16 @@
 
 class BliAnyTest : public CppUnit::TestFixture
 {
-    CPPUNIT_TEST_SUITE( BliAnyTest );
-    CPPUNIT_TEST( basic );
-    CPPUNIT_TEST( number );
+    CPPUNIT_TEST_SUITE(BliAnyTest);
+    CPPUNIT_TEST(basic);
+    CPPUNIT_TEST(number);
+    CPPUNIT_TEST(types);
     CPPUNIT_TEST_SUITE_END();
 
 public:
     void basic();
     void number();
+    void types();
 };
 
 #endif
