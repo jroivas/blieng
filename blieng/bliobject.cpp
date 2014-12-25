@@ -567,7 +567,7 @@ std::string BliObject::serialize(
         else if (types == "double")
             serializeObject<double>(arch, any.asDouble());
         else if (types == "bool")
-            serializeObject<double>(arch, any.asBool());
+            serializeObject<bool>(arch, any.asBool());
         else
             throw std::string("Invalid value for key '" + val.first + "': " + types);
     }
@@ -629,6 +629,8 @@ bool BliObject::deserialize(
             setValue(key_name, deserializeObject<float>(arch));
         else if (types == "double")
             setValue(key_name, deserializeObject<double>(arch));
+        else if (types == "bool")
+            setValue(key_name, deserializeObject<bool>(arch));
         ++index;
     }
 
