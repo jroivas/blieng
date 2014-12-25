@@ -280,8 +280,6 @@ bool isCompressed(
     const char *dataptr,
     unsigned int len);
 
-}
-
 /**
  * Get path to permanent storage for specified target.
  * Target means mostly application/game name.
@@ -291,5 +289,16 @@ bool isCompressed(
  */
 std::string permanentStoragePath(
     const std::string &target);
+
+/**
+ * Ensure the permanent storage path exists.
+ *
+ * \param target Target to get the path for
+ * \returns Full path to permanent writable folder
+ */
+std::string ensurePermanentStoragePath(
+    const std::string &target);
+
+}
 
 #endif  // __BLIENG_BLIENG_H

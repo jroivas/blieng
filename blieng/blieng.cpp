@@ -361,7 +361,7 @@ bool blieng::isCompressed(
 
 #include <QStandardPaths>
 
-std::string permanentStoragePath(
+std::string blieng::permanentStoragePath(
     const std::string &target)
 {
     QString folder;
@@ -374,4 +374,16 @@ std::string permanentStoragePath(
 #endif
 
     return folder.toStdString() + "/" + target;
+}
+
+std::string blieng::ensurePermanentStoragePath(
+    const std::string &target)
+{
+    std::string folder = permanentStoragePath(target);
+    boost::filesystem::create_directories(folder);
+    if (!boost::filesystem::is_directory(folder)) {
+        throw std::string("Can't create folder: ") + folder;
+    }
+
+    return folder;
 }
