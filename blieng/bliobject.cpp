@@ -590,17 +590,22 @@ bool BliObject::deserialize(
     std::string type)
 {
     std::istringstream ss(data);
+    LOG_DEBUG("Deserializing data");
 
     boost::archive::binary_iarchive arch(ss);
+    LOG_DEBUG("Deserializing archive");
     if (type == "")
         type = "BliObject";
+    LOG_DEBUG("Deserializing type");
     std::string data_type = deserializeObject<std::string>(arch);
     if (data_type != type)
         return false;
 
+    LOG_DEBUG("Deserializing item count");
     unsigned int num_values = deserializeObject<unsigned int>(arch);
     unsigned int index = 0;
     while (index < num_values) {
+        LOG_DEBUG("Deserializing name");
         std::string key_name = deserializeObject<std::string>(arch);
         LOG_DEBUG("Deserializing " + key_name);
         std::string types = deserializeObject<std::string>(arch);
