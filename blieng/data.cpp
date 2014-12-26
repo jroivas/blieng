@@ -648,12 +648,33 @@ std::string Data::readString(
 json_value *Data::parseJson(
     const std::string &datas)
 {
-    json_value *val = json_parse(datas.c_str(), datas.length());
+    json_settings settings;
+
+    settings.max_memory = 0;
+    settings.settings = 0;
+    settings.mem_alloc = nullptr;
+    settings.mem_free = nullptr;
+    settings.user_data = nullptr;
+
+    json_char error [json_error_max];
+    json_value *val = json_parse_ex(
+        &settings,
+        datas.c_str(),
+        datas.length(),
+        error);
+
+    //json_value *val = json_parse(datas.c_str(), datas.length());
     if (val == nullptr) {
-        LOG_DEBUG("Parse error while parsing '" + datas + "'!");
+        LOG_DEBUG("Parse error while parsing '" + datas + "': " + error + "!");
         throw std::string("JSON parse error");
     }
     return val;
+}
+
+void Data::freeJson(
+    json_value *val)
+{
+    json_value_free(val);
 }
 
 json_value *Data::readJson(

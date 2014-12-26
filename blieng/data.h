@@ -118,6 +118,15 @@ public:
      */
     static json_value *parseJson(
         const std::string &datas);
+
+    /**
+     * Free JSON value
+     *
+     * \param val Reference to \ref json_value, for example one read with \ref readJson
+     */
+    static void freeJson(
+        json_value *val);
+
     /**
      * Get key names under JSON value
      * Gets all the key names, this assumes that given JSON value is array.
