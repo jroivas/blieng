@@ -116,8 +116,8 @@ public:
      * \param val Reference to \ref json_value, for example one read with \ref readJson
      * \returns Vector of strings of found key names.
      */
-    std::vector<std::string> getJsonKeys(
-        const json_value *val) const;
+    static std::vector<std::string> getJsonKeys(
+        const json_value *val);
     /**
      * Check if specific key name is found from JSON value.
      * Assumes that the JSON value in question is array.
@@ -126,9 +126,9 @@ public:
      * \param key Name of the key to check
      * \returns True if key exists, false otherwise
      */
-    bool isJsonKey(
+    static bool isJsonKey(
         json_value *val,
-        const std::string &key) const;
+        const std::string &key);
     /**
      * Get another JSON value from current value.
      *
@@ -136,9 +136,9 @@ public:
      * \param key Name of the key which value to get
      * \returns JSON value at given key, on error returns given value
      */
-    const json_value *getJsonValue(
+    static const json_value *getJsonValue(
         const json_value *val,
-        const std::string &key) const;
+        const std::string &key);
 
     /**
      * Checks if file exists in backend.

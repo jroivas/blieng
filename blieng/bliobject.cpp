@@ -504,8 +504,7 @@ std::string blieng::percentageString(
 
 
 template<typename T>
-void
-serializeObject(
+void serializeObject(
     boost::archive::text_oarchive &arch,
     T obj)
 {

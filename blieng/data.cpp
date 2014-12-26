@@ -659,7 +659,7 @@ json_value *Data::readJson(
 }
 
 std::vector<std::string> Data::getJsonKeys(
-    const json_value *val) const
+    const json_value *val)
 {
     BOOST_ASSERT(val != nullptr);
     return val->getMemberNames();
@@ -667,7 +667,7 @@ std::vector<std::string> Data::getJsonKeys(
 
 bool Data::isJsonKey(
     json_value *val,
-    const std::string &key) const
+    const std::string &key)
 {
     if (val->isObject()) {
         return val->isMember(key);
@@ -677,7 +677,7 @@ bool Data::isJsonKey(
 
 const json_value *Data::getJsonValue(
     const json_value *val,
-    const std::string &key) const
+    const std::string &key)
 {
     if (val->isObject()) {
         if (val->isMember(key)) {
