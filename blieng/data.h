@@ -109,6 +109,15 @@ public:
      */
     json_value *readJson(
         const std::string &name) const;
+
+    /**
+     * Parse JSON data.
+     *
+     * \param datas Data to be parsed
+     * \returns Parsed internal json_value, see \ref json.h
+     */
+    static json_value *parseJson(
+        const std::string &datas);
     /**
      * Get key names under JSON value
      * Gets all the key names, this assumes that given JSON value is array.

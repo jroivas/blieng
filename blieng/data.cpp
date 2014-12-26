@@ -645,17 +645,23 @@ std::string Data::readString(
     return res;
 }
 
+json_value *Data::parseJson(
+    const std::string &datas)
+{
+    json_value *val = json_parse(datas.c_str(), datas.length());
+    if (val == nullptr) {
+        LOG_DEBUG("Parse error while parsing '" + datas + "'!");
+        throw std::string("JSON parse error");
+    }
+    return val;
+}
+
 json_value *Data::readJson(
     const std::string &name) const
 {
     std::string datas = readString(name);
 
-    json_value *val = json_parse(datas.c_str(), datas.length());
-    if (val == nullptr) {
-        LOG_DEBUG("Parse error while parsing '" + name + "'!");
-        throw std::string("JSON parse error");
-    }
-    return val;
+    return parseJson(datas);
 }
 
 std::vector<std::string> Data::getJsonKeys(
