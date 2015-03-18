@@ -40,8 +40,8 @@ add_custom_target(upload
     COMMAND echo "${CMAKE_CURRENT_LIST_DIR}/tools/build/binrep_upload.sh" dist/${OUT}.${DISTEXT} blieng ${BITS} ${TRACK}
     DEPENDS dist)
 
-add_custom_target(package
-    COMMAND echo Packaging)
+#add_custom_target(package
+#    COMMAND echo Packaging)
 
 add_custom_command(
     OUTPUT tools/build

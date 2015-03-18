@@ -1,0 +1,10 @@
+[mesonwrap]
+directory = gmock-1.6.0
+
+source_url = http://googlemock.googlecode.com/files/gmock-1.6.0.zip
+source_filename = gmock-1.6.0.zip
+source_hash = 341ad07c31c619ba32c88c2265bc23693da1df062f47f146a7ed340f646d82b7
+
+patch_url = http://blistud.io/opensource/meson/gmock-meson-1.6.0.tar.gz
+patch_filename = gmock-meson-1.6.0.tar.gz
+patch_hash = 9f7fad972108b8de550924f19ac79fa87e1bba5108423cb22db9302224b506e7
