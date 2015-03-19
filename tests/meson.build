@@ -19,8 +19,17 @@ bliengtest = executable('blieng_test',
     'testrunner.cpp',
     'test_tools.cpp',
     'town_test.cpp',
-    include_directories : [blieng_inc, gmock.get_variable('gmock_inc'), gmock.get_variable('gtest_inc')],
-    link_with : [gmock.get_variable('gmock_lib'), gmock.get_variable('gtest_lib'), blieng_lib],
+    include_directories : [
+        blieng_inc,
+        toplevel_inc,
+        gmock.get_variable('gmock_inc'),
+        gmock.get_variable('gtest_inc')
+    ],
+    link_with : [
+        gmock.get_variable('gmock_lib'),
+        gmock.get_variable('gtest_lib'),
+        blieng_lib
+    ],
     link_args : [
         '-pthread', '-ldl',
         '-lboost_system',
