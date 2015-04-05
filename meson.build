@@ -8,4 +8,6 @@ toplevel_inc = include_directories('.')
 gmock = subproject('gmock')
 
 subdir('blieng')
-subdir('tests')
+if not meson.is_subproject()
+    subdir('tests')
+endif

@@ -1,4 +1,4 @@
-[mesonwrap]
+[wrap-file]
 directory = gmock-1.6.0
 
 source_url = http://googlemock.googlecode.com/files/gmock-1.6.0.zip

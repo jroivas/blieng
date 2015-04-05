@@ -1,5 +1,15 @@
 cppunit = dependency('cppunit')
 
+boost = dependency('boost',
+    modules: [
+        'system',
+        'filesystem',
+        'serialization',
+        'random',
+        'date_time'
+    ]
+    )
+
 bliengtest = executable('blieng_test',
     'auto_map_test.cpp',
     'auto_vector_test.cpp',
@@ -19,26 +29,21 @@ bliengtest = executable('blieng_test',
     'testrunner.cpp',
     'test_tools.cpp',
     'town_test.cpp',
-    include_directories : [
+    include_directories: [
         blieng_inc,
         toplevel_inc,
         gmock.get_variable('gmock_inc'),
         gmock.get_variable('gtest_inc')
     ],
-    link_with : [
+    link_with: [
         gmock.get_variable('gmock_lib'),
         gmock.get_variable('gtest_lib'),
         blieng_lib
     ],
-    link_args : [
-        '-pthread', '-ldl',
-        '-lboost_system',
-        '-lboost_filesystem',
-        '-lboost_serialization',
-        '-lboost_random',
-        '-lboost_date_time'
+    link_args: [
+        '-pthread', '-ldl'
     ],
-    dependencies : cppunit
+    dependencies: [cppunit, boost]
     )
 
 test('blieng test', bliengtest)
