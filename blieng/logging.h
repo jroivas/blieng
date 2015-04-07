@@ -43,7 +43,7 @@ const std::string getLogLevel();
  * \param level Logging level to put the message
  * \param msg The message to put in log stream
  */
-void __do_log(std::string level, std::string msg);
+void __do_log(std::string level, std::string msg, std::string function="");
 
 #ifdef RELEASE
 
@@ -58,6 +58,7 @@ void __do_log(std::string level, std::string msg);
 #else
 
 // Dynamic log levels
+//#define __LOG(LEVEL, X) blieng::__do_log(LEVEL, X, __PRETTY_FUNCTION__)
 #define __LOG(LEVEL, X) blieng::__do_log(LEVEL, X)
 #define LOG_LEVEL(LEVEL) blieng::setLogLevel(LEVEL)
 #define LOG_CRITICAL(X) __LOG("CRITICAL", X);

@@ -33,13 +33,14 @@ const std::vector<std::string> blieng::logLevels()
     return res;
 }
 
-void blieng::__do_log(std::string level, std::string msg)
+void blieng::__do_log(std::string level, std::string msg, std::string function)
 {
     if (__log_levels[level] <= __log_levels[__log_level]) {
+        if (!function.empty()) function = "\n    @" + function;
 #ifdef ANDROID
-        qDebug() << level.c_str() << ": " << msg.c_str();
+        qDebug() << level.c_str() << ": " << msg.c_str() << function.c_str();
 #else
-        std::cerr << level << ": " << msg << std::endl;
+        std::cerr << level << ": " << msg  << function << std::endl;
 #endif
     }
 }

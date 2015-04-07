@@ -29,6 +29,8 @@ public:
     BliengState();
     ~BliengState();
 
+    BliengState(const BliengState *another);
+
     /**
      * Initializes state info with fresh
      * instances of different state objects

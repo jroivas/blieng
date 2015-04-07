@@ -11,6 +11,14 @@ blieng::BliengState::BliengState()
 {
 }
 
+blieng::BliengState::BliengState(
+    const blieng::BliengState::BliengState *another)
+{
+    m_data = another->m_data;
+    m_config = another->m_config;
+    m_styleconfig = another->m_styleconfig;
+}
+
 blieng::BliengState::~BliengState()
 {
     if (m_config != nullptr) {

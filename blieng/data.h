@@ -51,8 +51,8 @@ public:
      * \returns True on success, false otherwise
      */
     bool initialize(
-        const char *key,
-        const unsigned int key_len);
+        const char *key = nullptr,
+        const unsigned int key_len = 0);
     /**
      * Initialize encrypted backend on a datafile.
      * If data backend is encrypted, initialize it with this method.
@@ -67,8 +67,8 @@ public:
      */
     bool initialize(
         const std::string &datafilename,
-        const char *key,
-        const unsigned int key_len);
+        const char *key = nullptr,
+        const unsigned int key_len = 0);
 
     /**
      * Read a file from the backend as a string
