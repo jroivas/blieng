@@ -9,5 +9,6 @@ gmock = subproject('gmock')
 
 subdir('blieng')
 if not meson.is_subproject()
+    subdir('testtools')
     subdir('tests')
 endif

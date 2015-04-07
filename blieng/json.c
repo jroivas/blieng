@@ -217,7 +217,9 @@ json_value * json_parse_ex (json_settings * settings,
    json_char error [json_error_max];
    unsigned int cur_line;
    const json_char * cur_line_begin, * i, * end;
-   json_value * top, * root, * alloc = 0;
+   json_value *top = 0;
+   json_value *root = 0;
+   json_value * alloc = 0;
    json_state state = { 0 };
    long flags;
    long num_digits = 0, num_e = 0;
@@ -410,15 +412,18 @@ json_value * json_parse_ex (json_settings * settings,
                   continue;
 
                case ']':
+                    if (top == 0) {
+                        goto e_failed;
+                    }
+                    else if (top->type == json_array) {
+                        flags = (flags & ~ (flag_need_comma | flag_seek_value)) | flag_next;
+                    }
+                    else if (!(state.settings.settings & json_relaxed_commas)) {
+                        sprintf (error, "%d:%d: Unexpected ]", cur_line, e_off);
+                        goto e_failed;
+                    }
 
-                  if (top->type == json_array)
-                     flags = (flags & ~ (flag_need_comma | flag_seek_value)) | flag_next;
-                  else if (!(state.settings.settings & json_relaxed_commas))
-                  {  sprintf (error, "%d:%d: Unexpected ]", cur_line, e_off);
-                     goto e_failed;
-                  }
-
-                  break;
+                    break;
 
                default:
 
