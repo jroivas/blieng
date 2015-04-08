@@ -12,7 +12,7 @@ blieng::BliengState::BliengState()
 }
 
 blieng::BliengState::BliengState(
-    const blieng::BliengState::BliengState *another)
+    const blieng::BliengState *another)
 {
     m_data = another->m_data;
     m_config = another->m_config;
