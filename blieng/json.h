@@ -62,8 +62,8 @@
  */
 typedef struct
 {
-   unsigned long max_memory; //!< Maximum memory to use
-   int settings; //!< Settings flags
+   unsigned long max_memory; /*!< Maximum memory to use */
+   int settings; /*!< Settings flags */
 
    /**
     * Custom allocator support (leave null to use malloc/free)
