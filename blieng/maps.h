@@ -50,7 +50,7 @@ public:
      * \returns Background image file name
      */
     std::string getMapImageFile() const {
-        return map_image_file;
+        return m_map_image_file;
     }
     /**
      * Get background image file location in data backend.
@@ -69,7 +69,7 @@ public:
      */
     std::vector<blieng::Town *> getTowns()
     {
-        return towns;
+        return m_towns;
     }
     /**
      * Get list of path and roads in the map.
@@ -80,7 +80,7 @@ public:
      */
     std::vector<blieng::Path> getPaths() const
     {
-        return paths;
+        return m_paths;
     }
     /**
      * Get paths, with reverse order waypoints.
@@ -92,7 +92,7 @@ public:
      */
     std::vector<blieng::Path> getRevPaths() const
     {
-        return rev_paths;
+        return m_rev_paths;
     }
 
     /**
@@ -154,17 +154,17 @@ private:
     bool loadMap(const std::string &name);
     bool parseMap();
 
-    std::string map_name;
-    std::string map_file;
-    json_value *map_json;
+    std::string m_map_name;
+    std::string m_map_file;
+    json_value *m_map_json;
 
     boost::shared_ptr<blieng::BliengState> m_state;
 
-    std::string map_image_file;
-    std::string solved_map_image_file;
-    std::vector<blieng::Town *> towns;
-    std::vector<blieng::Path> paths;
-    std::vector<blieng::Path> rev_paths;
+    std::string m_map_image_file;
+    std::string m_solved_map_image_file;
+    std::vector<blieng::Town *> m_towns;
+    std::vector<blieng::Path> m_paths;
+    std::vector<blieng::Path> m_rev_paths;
 };
 
 }  // namespace blieng

@@ -17,7 +17,8 @@ using blieng::Maps;
 
 Maps::Maps(
     boost::shared_ptr<blieng::BliengState> _state,
-    const std::string &mapname) :
+    const std::string &mapname)
+    : blieng::BliObject(),
     m_state(_state)
 {
     if (!loadMap(mapname)) {
@@ -32,11 +33,11 @@ bool Maps::loadMap(const std::string &name)
         // TODO throw error?
         return false;
     }
-    map_name = name;
-    map_file = m_state->m_data->findFile(name + ".json");
-    if (map_file != "") {
-        std::cout << map_file << "\n";
-        map_json = m_state->m_data->readJson(map_file);
+    m_map_name = name;
+    m_map_file = m_state->m_data->findFile(name + ".json");
+    if (m_map_file != "") {
+        std::cout << m_map_file << "\n";
+        m_map_json = m_state->m_data->readJson(m_map_file);
         return parseMap();
     }
     return false;
@@ -47,7 +48,7 @@ bool Maps::saveMap(const std::string &name)
     std::string json = "";
 
     boost::filesystem::path my_image = boost::filesystem::path(
-        solved_map_image_file);
+        m_solved_map_image_file);
     std::string imagefile = my_image.filename().string();
 
     // FIXME This needs a rewrite
@@ -55,7 +56,7 @@ bool Maps::saveMap(const std::string &name)
     json += "    \"image\": \"" + imagefile + "\",\n";
 
     std::string str_towns = "";
-    BOOST_FOREACH(blieng::Town *town, towns) {
+    BOOST_FOREACH(blieng::Town *town, m_towns) {
         if (str_towns != "") str_towns += ",\n";
         std::ostringstream tmp;
         tmp << "         ";
@@ -80,7 +81,7 @@ bool Maps::saveMap(const std::string &name)
     str_towns += "\n";
 
     std::string str_paths = "";
-    BOOST_FOREACH(blieng::Path path, paths) {
+    BOOST_FOREACH(blieng::Path path, m_paths) {
         if (str_paths != "") str_paths += ",\n";
         std::ostringstream tmp;
         tmp << "         ";
@@ -114,36 +115,36 @@ bool Maps::saveMap(const std::string &name)
 
 std::string Maps::getMapName() const
 {
-    return map_name;
+    return m_map_name;
 }
 
 void Maps::setBackgroundImage(const std::string &filename)
 {
-    map_image_file = filename;
-    solved_map_image_file = filename;
+    m_map_image_file = filename;
+    m_solved_map_image_file = filename;
 }
 
 std::string Maps::getSolvedMapImageFile()
 {
-    if (map_image_file == "") return "";
-    if (solved_map_image_file == "") {
-        solved_map_image_file = m_state->m_data->findFile(map_image_file);
+    if (m_map_image_file == "") return "";
+    if (m_solved_map_image_file == "") {
+        m_solved_map_image_file = m_state->m_data->findFile(m_map_image_file);
     }
 
-    return solved_map_image_file;
+    return m_solved_map_image_file;
 }
 
 void Maps::addTown(blieng::Town *town)
 {
-    towns.push_back(town);
+    m_towns.push_back(town);
 }
 
 bool Maps::removeTown(blieng::Town *town)
 {
-    auto ti = towns.begin();
-    while (ti != towns.end()) {
+    auto ti = m_towns.begin();
+    while (ti != m_towns.end()) {
         if (*ti == town) {
-            towns.erase(ti);
+            m_towns.erase(ti);
             return true;
         }
         ++ti;
@@ -153,18 +154,18 @@ bool Maps::removeTown(blieng::Town *town)
 
 void Maps::addPath(blieng::Path path)
 {
-    paths.push_back(path);
-    rev_paths.push_back(path.reversed());
+    m_paths.push_back(path);
+    m_rev_paths.push_back(path.reversed());
 }
 
 blieng::Path Maps::updatePath(blieng::Path path, blieng::Point point)
 {
-    auto pi = paths.begin();
-    while (pi != paths.end()) {
+    auto pi = m_paths.begin();
+    while (pi != m_paths.end()) {
         if (*pi == path) {
-            paths.erase(pi);
+            m_paths.erase(pi);
             path.addPoint(point);
-            paths.push_back(path);
+            m_paths.push_back(path);
             return path;
         }
         ++pi;
@@ -175,12 +176,12 @@ blieng::Path Maps::updatePath(blieng::Path path, blieng::Point point)
 
 blieng::Path Maps::updatePath(blieng::Path path, int index, blieng::Point point)
 {
-    auto pi = paths.begin();
-    while (pi != paths.end()) {
+    auto pi = m_paths.begin();
+    while (pi != m_paths.end()) {
         if (*pi == path) {
-            paths.erase(pi);
+            m_paths.erase(pi);
             path.updatePointAt(index, point);
-            paths.push_back(path);
+            m_paths.push_back(path);
             return path;
         }
         ++pi;
@@ -191,15 +192,16 @@ blieng::Path Maps::updatePath(blieng::Path path, int index, blieng::Point point)
 
 bool Maps::parseMap()
 {
-    if (!map_json->isObject()) return false;
+    if (!m_map_json->isObject()) return false;
 
     /* Go thorough items */
     // TODO Refactor
-    BOOST_FOREACH(std::string mi, map_json->getMemberNames()) {
-        const json_value *item_val = m_state->m_data->getJsonValue(map_json, mi);
+    BOOST_FOREACH(std::string mi, m_map_json->getMemberNames()) {
+        const json_value *item_val =
+            m_state->m_data->getJsonValue(m_map_json, mi);
         if (mi == "image" && item_val->isString()) {
-            map_image_file = item_val->asString();
-            std::cout << " = " <<  map_image_file << "\n";
+            m_map_image_file = item_val->asString();
+            std::cout << " = " << m_map_image_file << "\n";
         }
         else if (mi == "towns" && item_val->isArray()) {
             auto it = item_val->u.array.begin();
@@ -232,7 +234,7 @@ bool Maps::parseMap()
                     }
                     std::cout << town->toString();
                     if (town->getName() != "") {
-                        towns.push_back(town);
+                        m_towns.push_back(town);
                     } else {
                         delete town;
                     }
