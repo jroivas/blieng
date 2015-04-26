@@ -8,6 +8,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <cmath>
 
 using blieng::Path;
 
@@ -45,6 +46,14 @@ int Path::getPointIndex(Point point)
         ++index;
     }
     return -1;
+}
+
+blieng::Point Path::getPointAt(unsigned int index)
+{
+    if (index >=0 && index < size()) {
+        return points[index];
+    }
+    return Point();
 }
 
 void Path::updatePointAt(unsigned int index, Point new_point)
@@ -182,4 +191,21 @@ bool Path::operator!=(const Path &other) const
 unsigned int Path::size() const
 {
     return points.size();
+}
+
+double Path::getPartAngle(unsigned int index) const
+{
+    int next = index + 1;
+    if (next > size()) {
+        return 0.0;
+    }
+    if (next == size()) {
+        next = 0;
+    }
+
+    Point a = points[index];
+    Point b = points[next];
+
+    double angle_rad = atan2(b.x - a.x, b.y - a.y);
+    return angle_rad * 180 / M_PI;
 }

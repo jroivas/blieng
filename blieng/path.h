@@ -111,6 +111,13 @@ public:
      */
     int getPointIndex(Point pt);
     /**
+     * Get point at index
+     *
+     * \param index Index of point
+     * \returns Point at index, or invalid Point
+     */
+    Point getPointAt(unsigned int index);
+    /**
      * Replace a waypoint with another.
      *
      * \param index Index of the waypoint to replace.
@@ -173,6 +180,15 @@ public:
      * \returns True if paths are not equal.
      */
     bool operator!=(const Path &other) const;
+
+    /**
+     * Get angle of parts (between two elements)
+     * on XY coordinates.
+     *
+     * \param index Index of starting point
+     * \returns Angle of line between two points in XY coordinate
+     */
+    double getPartAngle(unsigned int index) const;
 
 private:
     std::vector<Point> points;
