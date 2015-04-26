@@ -36,6 +36,23 @@ void Point::update(Point another)
     y = another.y;
 }
 
+Point Point::semiPoint(Point target, double pos) const
+{
+    if (pos < 0) return *this;
+    if (pos >= 1.0) return target;
+
+    double nposx = target.x - x;
+    double nposy = target.y - y;
+
+    nposx *= pos;
+    nposy *= pos;
+
+    nposx += x;
+    nposy += y;
+
+    return Point(nposx, nposy);
+}
+
 Point Point::traverse(Point target, double now, double time) const
 {
     // Travel to another point, in specific time, specify now as current time

@@ -103,6 +103,15 @@ public:
      * \returns Point representing linear cordinates at given time of travel
      */
     Point traverse(Point target, double now, double time) const;
+
+    /**
+     * Will give position between point and target
+     *
+     * \param target The target point where to travel from this one
+     * \param pos Position in percentage between these two (0..1)
+     * \returns Point representing linear cordinates at given position
+     */
+    Point semiPoint(Point target, double pos) const;
     /**
      * Will calculate length from point to other.
      * Will form line from A to B and caluculate the length.
