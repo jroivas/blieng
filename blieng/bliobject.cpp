@@ -661,3 +661,9 @@ void BliObject::genUUID()
     ss << gen_uuid;
     m_uuid = ss.str();
 }
+
+BliObject &BliObject::operator=(const BliObject *other)
+{
+    assignObject(other);
+    return *this;
+}

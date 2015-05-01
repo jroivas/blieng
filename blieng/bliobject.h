@@ -227,6 +227,11 @@ public:
         const BliObject *another);
 
     /**
+     * Assign other BliObject to this one.
+     */
+    virtual BliObject &operator=(const BliObject *other);
+
+    /**
      * Get random integer inside the range.
      * Utilizes uniform distribution in range [min, max)
      *
