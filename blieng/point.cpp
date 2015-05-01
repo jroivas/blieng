@@ -22,12 +22,40 @@ std::string Point::toString() const
     return (boost::format("%f,%f") % x % y).str();
 }
 
-bool Point::operator==(const Point &other) const {
+bool Point::operator==(const Point &other) const
+{
     return (x == other.x && y == other.y);
 }
 
-bool Point::operator!=(const Point &other) const {
+bool Point::operator!=(const Point &other) const
+{
     return (x != other.x || y != other.y);
+}
+
+Point Point::operator+(const Point &other)
+{
+    Point res(x + other.x, y + other.y);
+    return res;
+}
+
+Point Point::operator-(const Point &other)
+{
+    Point res(x - other.x, y - other.y);
+    return res;
+}
+
+Point &Point::operator+=(const Point &other)
+{
+    x += other.x;
+    y += other.y;
+    return *this;
+}
+
+Point &Point::operator-=(const Point &other)
+{
+    x -= other.x;
+    y -= other.y;
+    return *this;
 }
 
 void Point::update(Point another)

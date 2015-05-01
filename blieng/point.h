@@ -83,6 +83,38 @@ public:
     bool operator!=(const Point &other) const;
 
     /**
+     * Add another point position to this point
+     *
+     * \param other Point to add
+     * \return New Point
+     */
+    Point operator+(const Point &other);
+
+    /**
+     * Subtract another point position to this point
+     *
+     * \param other Point to subtract
+     * \return New Point
+     */
+    Point operator-(const Point &other);
+
+    /**
+     * Add another point position to this point
+     *
+     * \param other Point to subtract
+     * \return This Point
+     */
+    Point &operator+=(const Point &other);
+
+    /**
+     * Subtract another point position to this point
+     *
+     * \param other Point to subtract
+     * \return This Point
+     */
+    Point &operator-=(const Point &other);
+
+    /**
      * Checks if point is valid.
      *
      * \returns True if point is valid, false othewise
