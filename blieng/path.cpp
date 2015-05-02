@@ -195,6 +195,7 @@ unsigned int Path::size() const
 
 double Path::getPartAngle(unsigned int index) const
 {
+    int prev = index - 1;
     int next = index + 1;
     if (next > size()) {
         return 0.0;
@@ -203,9 +204,45 @@ double Path::getPartAngle(unsigned int index) const
         next = 0;
     }
 
-    Point a = points[index];
-    Point b = points[next];
+    if (prev < 0) {
+        prev = points.size() - 1;
+    }
+    if (prev < 0) {
+        return 0.0;
+    }
+    Point p1 = points[index];
+    Point p2 = points[next];
+    Point p3 = points[prev];
 
-    double angle_rad = atan2(b.x - a.x, b.y - a.y);
+    /*double a1 = (p1.x - p2.x, p1.y - p2.y);
+    double a2 = (p1.x - p3.x, p1.y - p3.y);
+    double adiv =  (abs(a1) * abs(a2));
+    if (adiv == 0) {
+        return 0.0;
+    }
+    double angle_rad = acos(a1 * a2 / adiv);
+    */
+    double a1 = p1.x - p2.x;
+    double a2 = p1.y - p2.y;
+    double b1 = p1.x - p3.x;
+    double b2 = p1.y - p3.y;
+    double c1 = p3.x - p2.x;
+    double c2 = p3.y - p2.y;
+
+    double p0c = sqrt(a1 * a1 + a2 * a2);
+    double p1c = sqrt(b1 * b1 + b2 * b2);
+    double p0p1 = sqrt(c1 * c1 + c2 * c2);
+    double angle_rad = acos(
+        (p1c * p1c + p0c * p0c - p0p1 * p0p1) /
+        (2 * p1c * p0c)
+        );
+/*
+    double angle_rad = (
+        (a1*b1 + a2*b2) /
+        (abs(a1*b1) + abs(a2*b2))
+        );
+*/
+
     return angle_rad * 180 / M_PI;
+    //return (angle_rad1 - angle_rad2) * 180 / M_PI;
 }
