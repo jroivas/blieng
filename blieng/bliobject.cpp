@@ -125,11 +125,18 @@ void BliObject::setValue(
     const std::string &key,
     BliAny value)
 {
+    {
 #ifdef DATA_MUTEX_LOCK
-    boost::lock_guard<boost::mutex> keylock(m_value_mutex);
+        boost::lock_guard<boost::mutex> keylock(m_value_mutex);
 #endif
 
-    m_values[key] = value;
+        m_values[key] = value;
+    }
+    valuesUpdated(key);
+}
+
+void BliObject::valuesUpdated(const std::string &)
+{
 }
 
 template<typename A, typename B>

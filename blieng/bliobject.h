@@ -47,6 +47,14 @@ public:
         const std::string &key,
         BliAny value);
     /**
+     * This method is called whenever any value is changed
+     * with setValue method. Easy to trigger other updates
+     * on object by implementing this method.
+     * By default does nothing.
+     */
+    virtual void valuesUpdated(const std::string &);
+
+    /**
      * Quick way to check if there's value defined for a key.
      *
      * \param key Unique key string
