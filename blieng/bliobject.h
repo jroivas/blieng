@@ -103,7 +103,7 @@ public:
      * \throw When key does not exists
      * \returns BliAny object of the value.
      */
-    virtual BliAny getValue(
+    BliAny getValue(
         const std::string &key) const;
     /**
      * Get string value of given key.
@@ -112,7 +112,7 @@ public:
      * \param key Unique key string
      * \returns Value as string object
      */
-    virtual std::string getStringValue(
+    std::string getStringValue(
         const std::string &key) const;
     /**
      * Get boolean value of given key.
@@ -121,7 +121,7 @@ public:
      * \param key Unique key string
      * \returns Value as boolean
      */
-    virtual bool getBoolValue(
+    bool getBoolValue(
         const std::string &key) const;
     /**
      * Get integer value of given key.
@@ -130,7 +130,7 @@ public:
      * \param key Unique key string
      * \returns Value as integer
      */
-    virtual int getIntValue(
+    int getIntValue(
         const std::string &key) const;
     /**
      * Get long long value of given key.
@@ -139,7 +139,7 @@ public:
      * \param key Unique key string
      * \returns Value as long long
      */
-    virtual long long getLongLongValue(
+    long long getLongLongValue(
         const std::string &key) const;
     /**
      * Get char value of given key.
@@ -148,7 +148,7 @@ public:
      * \param key Unique key string
      * \returns Value as integer
      */
-    virtual char getCharValue(
+    char getCharValue(
         const std::string &key) const;
     /**
      * Get unsigned integer value of given key.
@@ -157,7 +157,7 @@ public:
      * \param key Unique key string
      * \returns Value as unsigned integer
      */
-    virtual unsigned int getUIntValue(
+    unsigned int getUIntValue(
         const std::string &key) const;
     /**
      * Get double value of given key.
@@ -166,7 +166,7 @@ public:
      * \param key Unique key string
      * \returns Value as double
      */
-    virtual double getDoubleValue(
+    double getDoubleValue(
         const std::string &key) const;
     /**
      * Get vector of strings of given key.
