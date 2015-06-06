@@ -8,7 +8,7 @@ toplevel_inc = include_directories('.')
 gmock = subproject('gmock')
 
 subdir('blieng')
-if not meson.is_subproject()
+if not meson.is_subproject() and not meson.is_cross_build()
     subdir('testtools')
     subdir('tests')
 endif
