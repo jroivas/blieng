@@ -7,6 +7,7 @@
 
 #include <list>
 #include <map>
+#include <unordered_map>
 #include <string>
 #include <vector>
 
@@ -330,7 +331,7 @@ public:
     }
 
 protected:
-    std::map<std::string, BliAny> m_values;  //!< Contains key value mappings
+    std::unordered_map<std::string, BliAny> m_values;  //!< Contains key value mappings
 
     template<typename A, typename B>
     bool fitsLimits(
