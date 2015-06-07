@@ -72,16 +72,8 @@ namespace anyimpl
         {
             *dest = new T(*reinterpret_cast<T const*>(src));
         }
-#if 1
         virtual void clone(void* const* src, void** dest) {
            *dest = new T(**reinterpret_cast<T* const*>(src)); }
-#else
-        virtual void clone(void* const* src, void** dest)
-        {
-           *dest = new T(**reinterpret_cast<T* const*>(src));
-            //*dest = new remove_const<T>::type(**reinterpret_cast<T* const*>(src));
-        }
-#endif
         virtual void move(void* const* src, void** dest) {
           (*reinterpret_cast<T**>(dest))->~T();
           **reinterpret_cast<T**>(dest) = **reinterpret_cast<T* const*>(src); }
@@ -142,14 +134,15 @@ private:
     // fields
     anyimpl::base_any_policy* policy;
     void* object;
-    const std::type_info *_type_info;
+    const std::type_info *type_info;
 
 public:
     /// Initializing constructor.
     template <typename T>
     any(const T& x)
         : policy(anyimpl::get_policy<unsigned int>()),
-          object(NULL)
+          object(nullptr),
+          type_info(nullptr)
     {
         assign(x);
     }
@@ -157,20 +150,25 @@ public:
     /// Empty constructor.
     any()
         : policy(anyimpl::get_policy<unsigned int>()),
-          object(NULL)
+          object(nullptr),
+          type_info(nullptr)
     {
     }
 
     /// Special initializing constructor for string literals.
     any(const char* x)
-        : policy(anyimpl::get_policy<anyimpl::empty_any>()), object(NULL)
+        : policy(anyimpl::get_policy<anyimpl::empty_any>()),
+          object(nullptr),
+          type_info(nullptr)
     {
         assign(x);
     }
 
     /// Copy constructor.
     any(const any& x)
-        : policy(anyimpl::get_policy<anyimpl::empty_any>()), object(NULL)
+        : policy(anyimpl::get_policy<anyimpl::empty_any>()),
+          object(nullptr),
+          type_info(nullptr)
     {
         assign(x);
     }
@@ -182,7 +180,10 @@ public:
 
     const std::type_info &type() const
     {
-        return *_type_info;
+        if (type_info == nullptr) {
+            return typeid(nullptr);
+        }
+        return *type_info;
     }
 
     /// Assignment function from another any.
@@ -190,7 +191,7 @@ public:
         reset();
         policy = x.policy;
         policy->clone(&x.object, &object);
-        _type_info = x._type_info;
+        type_info = x.type_info;
         return *this;
     }
 
@@ -200,7 +201,7 @@ public:
         reset();
         policy = anyimpl::get_policy<T>();
         policy->copy_from_value(&x, &object);
-        _type_info = &typeid(x);
+        type_info = &typeid(x);
         return *this;
     }
 

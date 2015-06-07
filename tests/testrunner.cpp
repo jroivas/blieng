@@ -2,7 +2,6 @@
  */
 
 #include <cppunit/XmlOutputter.h>
-#include <cppunit/TextOutputter.h>
 #include <cppunit/extensions/TestFactoryRegistry.h>
 #include <cppunit/ui/text/TestRunner.h>
 
@@ -25,14 +24,13 @@ int main(int argc, char **argv)
     (void)argc;
     (void)argv;
 
-    CppUnit::Test *suite = CppUnit::TestFactoryRegistry::getRegistry().makeTest();
+    CppUnit::Test *suite = CppUnit::TestFactoryRegistry::getRegistry()
+        .makeTest();
 
     CppUnit::TextUi::TestRunner runner;
     runner.addTest( suite );
 
-    runner.setOutputter( new CppUnit::XmlOutputter( &runner.result(), std::cerr ) );
-    //runner.setOutputter( new CppUnit::TextOutputter(&runner.result(), std::cerr));
-    bool wasSucessful = runner.run();
+    runner.setOutputter(new CppUnit::XmlOutputter(&runner.result(), std::cerr));
 
-    return wasSucessful ? 0 : 1;
+    return runner.run() ? 0 : 1;
 }

@@ -158,10 +158,11 @@ bool BliObject::fitsLimits(
     uint64_t _max = static_cast<uint64_t>(std::numeric_limits<A>::max());
     int64_t _min = std::numeric_limits<A>::min();
 
+    B _val =
 #ifdef USE_BOOST_ANY
-    B _val = boost::any_cast<B>(val);
+        boost::any_cast<B>(val);
 #else
-    B _val = val.cast<B>();
+        val.cast<B>();
 #endif
     bool conv = false;
     if (a_digits >= b_digits
@@ -193,11 +194,13 @@ bool BliObject::fitsLimits(
     }
 
     if (conv) {
+        res = static_cast<A>(
 #ifdef USE_BOOST_ANY
-        res = static_cast<A>(boost::any_cast<B>(val));
+            boost::any_cast<B>(val)
 #else
-        res = static_cast<A>(val.cast<B>());
+            val.cast<B>()
 #endif
+            );
         return true;
     }
     return false;
@@ -318,11 +321,7 @@ std::string BliObject::getStringValue(
     msg << "Unsafe conversion of "
         << key
         << " from typeid("
-#ifdef USE_BOOST_ANY
         << val.type().name()
-#else
-        << "<unsupported>"
-#endif
         << ")"
         << " to string";
     LOG_ERROR(msg.str());
@@ -349,11 +348,7 @@ bool BliObject::getBoolValue(
     msg << "Unsafe conversion of "
         << key
         << " from typeid("
-#ifdef USE_BOOST_ANY
         << val.type().name()
-#else
-        << "<unsupported>"
-#endif
         << ")"
         << " to bool";
     LOG_ERROR(msg.str());
@@ -413,11 +408,7 @@ const std::type_info *BliObject::getValueType(
         LOG_ERROR(err);
         throw err;
     }
-#ifdef USE_BOOST_ANY
     return &val.type();
-#else
-    return &val.type();
-#endif
 }
 
 std::string BliObject::toString() const
@@ -455,10 +446,11 @@ bool BliObject::changeNumValue(
     BliAny val,
     int diff)
 {
+    T __num =
 #ifdef USE_BOOST_ANY
-    T __num = boost::any_cast<T>(val);
+        boost::any_cast<T>(val);
 #else
-    T __num = val.cast<T>();
+        val.cast<T>();
 #endif
     __num += diff;
     if (isValue(key + "-max")) {

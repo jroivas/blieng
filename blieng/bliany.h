@@ -29,43 +29,53 @@ namespace blieng
  * Inheriting boost::any class to allow easy conversion to stream with <<
  * Also provides easy access to converted values
  */
+class BliAny : public
 #ifdef USE_BOOST_ANY
-class BliAny : public boost::any
+    boost::any
 #else
-class BliAny : public cdiggins::any
+    cdiggins::any
 #endif
 {
 public:
     /**
      * Dymmy constructor only calls boost constructor
      */
+    BliAny()
 #ifdef USE_BOOST_ANY
-    BliAny() : boost::any() {}
+        : boost::any()
 #else
-    BliAny() : cdiggins::any() {}
+        : cdiggins::any()
 #endif
+    {
+    }
     /**
      * Constructor with template
      *
      * \param value Value to be assigned, type defined by template
      */
+    template<typename ValueType> BliAny(
+        const ValueType & value)
 #ifdef USE_BOOST_ANY
-    template<typename ValueType> BliAny(
-        const ValueType & value) : boost::any(value) {}
+        : boost::any(value)
 #else
-    template<typename ValueType> BliAny(
-        const ValueType & value) : cdiggins::any(value) {}
+        : cdiggins::any(value)
 #endif
+    {
+    }
     /**
      * Constructor, assign value from other object
      *
      * \param other Some boost::any instance
      */
+    BliAny(const any & other)
 #ifdef USE_BOOST_ANY
-    BliAny(const any & other) : boost::any(other) {}
+        : boost::any(other)
 #else
-    BliAny(const any & other) : cdiggins::any(other) {}
+        : cdiggins::any(other)
 #endif
+    {
+    }
+
     ~BliAny() {}
 
 #ifdef USE_BOOST_ANY
@@ -132,15 +142,13 @@ public:
 
     template<typename T> T asValue()
     {
+        if (type() == typeid(T)) {
 #ifdef USE_BOOST_ANY
-        if (type() == typeid(T)) {
             return boost::any_cast<T>(*this);
-        }
 #else
-        if (type() == typeid(T)) {
             return this->cast<T>();
-        }
 #endif
+        }
         throw std::string("Error, invalid value, can't convert to given type");
     }
 
