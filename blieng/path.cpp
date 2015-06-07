@@ -199,8 +199,13 @@ unsigned int Path::size() const
 
 double Path::getPartAngle(unsigned int index) const
 {
-    int prev = index - 1;
-    int next = index + 1;
+    unsigned int prev = 0;
+    if (index > 0) {
+        prev = index - 1;
+    } else {
+        prev = points.size() - 1;
+    }
+    unsigned int next = index + 1;
     if (next > size()) {
         return 0.0;
     }
@@ -209,23 +214,12 @@ double Path::getPartAngle(unsigned int index) const
     }
 
     if (prev < 0) {
-        prev = points.size() - 1;
-    }
-    if (prev < 0) {
         return 0.0;
     }
     Point p1 = points[index];
     Point p2 = points[next];
     Point p3 = points[prev];
 
-    /*double a1 = (p1.x - p2.x, p1.y - p2.y);
-    double a2 = (p1.x - p3.x, p1.y - p3.y);
-    double adiv =  (abs(a1) * abs(a2));
-    if (adiv == 0) {
-        return 0.0;
-    }
-    double angle_rad = acos(a1 * a2 / adiv);
-    */
     double a1 = p1.x - p2.x;
     double a2 = p1.y - p2.y;
     double b1 = p1.x - p3.x;
@@ -240,13 +234,6 @@ double Path::getPartAngle(unsigned int index) const
         (p1c * p1c + p0c * p0c - p0p1 * p0p1) /
         (2 * p1c * p0c)
         );
-/*
-    double angle_rad = (
-        (a1*b1 + a2*b2) /
-        (abs(a1*b1) + abs(a2*b2))
-        );
-*/
 
     return angle_rad * 180 / M_PI;
-    //return (angle_rad1 - angle_rad2) * 180 / M_PI;
 }

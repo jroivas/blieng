@@ -144,8 +144,9 @@ bool BliObject::fitsLimits(
     BliAny val,
     A &res) const
 {
-    if (val.type() != typeid(B))
+    if (val.type() != typeid(B)) {
         return false;
+    }
 
     int a_digits = std::numeric_limits<A>::digits;
     int b_digits = std::numeric_limits<B>::digits;
@@ -157,7 +158,11 @@ bool BliObject::fitsLimits(
     uint64_t _max = static_cast<uint64_t>(std::numeric_limits<A>::max());
     int64_t _min = std::numeric_limits<A>::min();
 
+#ifdef USE_BOOST_ANY
     B _val = boost::any_cast<B>(val);
+#else
+    B _val = val.cast<B>();
+#endif
     bool conv = false;
     if (a_digits >= b_digits
         && a_is_signed == b_is_signed) {
@@ -188,7 +193,11 @@ bool BliObject::fitsLimits(
     }
 
     if (conv) {
+#ifdef USE_BOOST_ANY
         res = static_cast<A>(boost::any_cast<B>(val));
+#else
+        res = static_cast<A>(val.cast<B>());
+#endif
         return true;
     }
     return false;
@@ -204,8 +213,13 @@ T BliObject::getValue(const std::string &key) const
         throw err;
     }
 
-    if (val.type() == typeid(T))
+    if (val.type() == typeid(T)) {
+#ifdef USE_BOOST_ANY
         return boost::any_cast<T>(val);
+#else
+        return val.cast<T>();
+#endif
+    }
 
     T res = 0;
     if (fitsLimits<T, int>(val, res))
@@ -280,6 +294,7 @@ std::string BliObject::getStringValue(
     const std::string &key) const
 {
     BliAny val = getValue(key);
+#ifdef USE_BOOST_ANY
     try {
         return boost::any_cast<std::string>(val);
     }
@@ -288,12 +303,26 @@ std::string BliObject::getStringValue(
         return boost::any_cast<char *>(val);
     }
     catch (boost::bad_any_cast &c) {}
+#else
+    try {
+        return val.cast<std::string>();
+    }
+    catch (cdiggins::anyimpl::bad_any_cast &c) {}
+    try {
+        return val.cast<char*>();
+    }
+    catch (cdiggins::anyimpl::bad_any_cast &c) {}
+#endif
 
     std::ostringstream msg;
     msg << "Unsafe conversion of "
         << key
         << " from typeid("
+#ifdef USE_BOOST_ANY
         << val.type().name()
+#else
+        << "<unsupported>"
+#endif
         << ")"
         << " to string";
     LOG_ERROR(msg.str());
@@ -304,16 +333,27 @@ bool BliObject::getBoolValue(
     const std::string &key) const
 {
     BliAny val = getValue(key);
+#ifdef USE_BOOST_ANY
     try {
         return boost::any_cast<bool>(val);
     }
     catch (boost::bad_any_cast &c) {}
+#else
+    try {
+        return val.cast<bool>();
+    }
+    catch (cdiggins::anyimpl::bad_any_cast &c) {}
+#endif
 
     std::ostringstream msg;
     msg << "Unsafe conversion of "
         << key
         << " from typeid("
+#ifdef USE_BOOST_ANY
         << val.type().name()
+#else
+        << "<unsupported>"
+#endif
         << ")"
         << " to bool";
     LOG_ERROR(msg.str());
@@ -324,18 +364,28 @@ std::vector<std::string> BliObject::getListValue(
     const std::string &key) const
 {
     BliAny val = getValue(key);
+#ifdef USE_BOOST_ANY
     try {
         return boost::any_cast<std::vector<std::string> >(val);
     }
     catch (boost::bad_any_cast &c) {
         throw std::string("Not string list at " + key);
     }
+#else
+    try {
+        return val.cast<std::vector<std::string>>();
+    }
+    catch (cdiggins::anyimpl::bad_any_cast &c) {
+        throw std::string("Not string list at " + key);
+    }
+#endif
 }
 
 std::vector<int> BliObject::getIntValues(
     const std::string &key) const
 {
     BliAny val = getValue(key);
+#ifdef USE_BOOST_ANY
     try {
         return boost::any_cast<std::vector<int> >(val);
     }
@@ -344,6 +394,14 @@ std::vector<int> BliObject::getIntValues(
         LOG_ERROR(errmsg);
         throw errmsg;
     }
+#else
+    try {
+        return val.cast<std::vector<int>>();
+    }
+    catch (cdiggins::anyimpl::bad_any_cast &c) {
+        throw std::string("Not string list at " + key);
+    }
+#endif
 }
 
 const std::type_info *BliObject::getValueType(
@@ -355,7 +413,11 @@ const std::type_info *BliObject::getValueType(
         LOG_ERROR(err);
         throw err;
     }
+#ifdef USE_BOOST_ANY
     return &val.type();
+#else
+    return &val.type();
+#endif
 }
 
 std::string BliObject::toString() const
@@ -393,7 +455,11 @@ bool BliObject::changeNumValue(
     BliAny val,
     int diff)
 {
+#ifdef USE_BOOST_ANY
     T __num = boost::any_cast<T>(val);
+#else
+    T __num = val.cast<T>();
+#endif
     __num += diff;
     if (isValue(key + "-max")) {
         T __max = getIntValue(key + "-max");

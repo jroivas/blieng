@@ -6,7 +6,11 @@
 #define __BLIENG_BLIANY_H
 
 #include <ostream>
+#ifdef USE_BOOST_ANY
 #include <boost/any.hpp>
+#else
+#include "cdiggins.h"
+#endif
 
 /**
  * Print a string to debug stream.
@@ -25,28 +29,46 @@ namespace blieng
  * Inheriting boost::any class to allow easy conversion to stream with <<
  * Also provides easy access to converted values
  */
+#ifdef USE_BOOST_ANY
 class BliAny : public boost::any
+#else
+class BliAny : public cdiggins::any
+#endif
 {
 public:
     /**
      * Dymmy constructor only calls boost constructor
      */
+#ifdef USE_BOOST_ANY
     BliAny() : boost::any() {}
+#else
+    BliAny() : cdiggins::any() {}
+#endif
     /**
      * Constructor with template
      *
      * \param value Value to be assigned, type defined by template
      */
+#ifdef USE_BOOST_ANY
     template<typename ValueType> BliAny(
         const ValueType & value) : boost::any(value) {}
+#else
+    template<typename ValueType> BliAny(
+        const ValueType & value) : cdiggins::any(value) {}
+#endif
     /**
      * Constructor, assign value from other object
      *
      * \param other Some boost::any instance
      */
+#ifdef USE_BOOST_ANY
     BliAny(const any & other) : boost::any(other) {}
+#else
+    BliAny(const any & other) : cdiggins::any(other) {}
+#endif
     ~BliAny() {}
 
+#ifdef USE_BOOST_ANY
     #define CAST_TO(X, Y, Z)\
     if (Y.type() == typeid(X))\
     {\
@@ -58,6 +80,21 @@ public:
     {\
         Z << (boost::any_cast<X>(Y) ? "true" : "false");\
     } else
+#else
+    #define CAST_TO(X, Y, Z)\
+    if (Y.type() == typeid(X))\
+    {\
+        BliAny tmp = Y;\
+        Z << tmp.cast<X>();\
+    } else
+
+    #define CAST_TO_BOOL(X, Y, Z)\
+    if (Y.type() == typeid(X))\
+    {\
+        BliAny tmp = Y;\
+        Z << (tmp.cast<bool>() ? "true" : "false");\
+    } else
+#endif
 
     /**
      * Print value to ostream.
@@ -95,9 +132,15 @@ public:
 
     template<typename T> T asValue()
     {
+#ifdef USE_BOOST_ANY
         if (type() == typeid(T)) {
             return boost::any_cast<T>(*this);
         }
+#else
+        if (type() == typeid(T)) {
+            return this->cast<T>();
+        }
+#endif
         throw std::string("Error, invalid value, can't convert to given type");
     }
 
@@ -262,6 +305,7 @@ public:
      */
     long asNumber()
     {
+#ifdef USE_BOOST_ANY
         if (this->type() == typeid(int))
             return boost::any_cast<int>(*this);
         if (this->type() == typeid(unsigned int))
@@ -274,6 +318,20 @@ public:
             return boost::any_cast<float>(*this);
         if (this->type() == typeid(double))
             return boost::any_cast<double>(*this);
+#else
+        if (this->type() == typeid(int))
+            return this->cast<int>();
+        if (this->type() == typeid(unsigned int))
+            return static_cast<long>(this->cast<unsigned int>());
+        if (this->type() == typeid(long))
+            return this->cast<long>();
+        if (this->type() == typeid(unsigned long))
+            return static_cast<long>(this->cast<unsigned long>());
+        if (this->type() == typeid(float))
+            return this->cast<float>();
+        if (this->type() == typeid(double))
+            return this->cast<double>();
+#endif
         throw std::string("Error, invalid value, can't convert to a number");
     }
 

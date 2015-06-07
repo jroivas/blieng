@@ -2,6 +2,7 @@
  */
 
 #include <cppunit/XmlOutputter.h>
+#include <cppunit/TextOutputter.h>
 #include <cppunit/extensions/TestFactoryRegistry.h>
 #include <cppunit/ui/text/TestRunner.h>
 
@@ -30,6 +31,7 @@ int main(int argc, char **argv)
     runner.addTest( suite );
 
     runner.setOutputter( new CppUnit::XmlOutputter( &runner.result(), std::cerr ) );
+    //runner.setOutputter( new CppUnit::TextOutputter(&runner.result(), std::cerr));
     bool wasSucessful = runner.run();
 
     return wasSucessful ? 0 : 1;
