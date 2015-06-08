@@ -17,6 +17,11 @@
 #ifdef DATA_MUTEX_LOCK
 #include <boost/thread/mutex.hpp>
 #endif
+#ifdef PSEUDO_RANDOM
+#include <boost/random/mersenne_twister.hpp>
+#else
+#include <boost/random/random_device.hpp>
+#endif
 
 namespace blieng
 {
@@ -353,6 +358,12 @@ protected:
 #ifdef DATA_MUTEX_LOCK
 private:
     boost::mutex m_value_mutex;
+#endif
+
+#ifdef PSEUDO_RANDOM
+    static boost::random::mt19937 m_rand_gen;
+#else
+    static boost::random::random_device m_rand_gen;
 #endif
 };
 

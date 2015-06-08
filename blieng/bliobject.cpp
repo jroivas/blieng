@@ -43,6 +43,12 @@
 using blieng::BliObject;
 using blieng::BliAny;
 
+#ifdef PSEUDO_RANDOM
+boost::random::mt19937 BliObject::m_rand_gen;
+#else
+boost::random::random_device BliObject::m_rand_gen;
+#endif
+
 BliObject::BliObject()
 {
     genUUID();
@@ -83,28 +89,16 @@ int BliObject::getRandomInt(
     int limit_low,
     int limit_max)
 {
-#ifdef PSEUDO_RANDOM
-    boost::random::mt19937 gen;
-#else
-    boost::random::random_device gen;
-#endif
-
     boost::random::uniform_int_distribution<> dist(limit_low, limit_max);
-    return dist(gen);
+    return dist(m_rand_gen);
 }
 
 double BliObject::getRandomDouble(
     double limit_low,
     double limit_max)
 {
-#ifdef PSEUDO_RANDOM
-    boost::random::mt19937 gen;
-#else
-    boost::random::random_device gen;
-#endif
-
     boost::random::uniform_real_distribution<> dist(limit_low, limit_max);
-    return dist(gen);
+    return dist(m_rand_gen);
 }
 
 BliAny BliObject::getValue(
@@ -717,8 +711,7 @@ void BliObject::genUUID()
 #ifdef PSEUDO_RANDOM
     boost::uuids::basic_random_generator<boost::mt19937> gen;
 #else
-    boost::random::random_device real_gen;
-    boost::uuids::basic_random_generator<boost::random_device> gen(&real_gen);
+    boost::uuids::basic_random_generator<boost::random_device> gen(&m_rand_gen);
 #endif
     boost::uuids::uuid gen_uuid = gen();
     std::ostringstream ss;
