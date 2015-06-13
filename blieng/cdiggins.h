@@ -110,16 +110,16 @@ namespace anyimpl
     #define SMALL_POLICY(TYPE) template<> struct \
        choose_policy<TYPE> { typedef small_any_policy<TYPE> type; };
 
-    SMALL_POLICY(signed char);
-    SMALL_POLICY(unsigned char);
-    SMALL_POLICY(signed short);
-    SMALL_POLICY(unsigned short);
-    SMALL_POLICY(signed int);
-    SMALL_POLICY(unsigned int);
-    SMALL_POLICY(signed long);
-    SMALL_POLICY(unsigned long);
-    SMALL_POLICY(float);
-    SMALL_POLICY(bool);
+    SMALL_POLICY(signed char)
+    SMALL_POLICY(unsigned char)
+    SMALL_POLICY(signed short)
+    SMALL_POLICY(unsigned short)
+    SMALL_POLICY(signed int)
+    SMALL_POLICY(unsigned int)
+    SMALL_POLICY(signed long)
+    SMALL_POLICY(unsigned long)
+    SMALL_POLICY(float)
+    SMALL_POLICY(bool)
 
     #undef SMALL_POLICY
 
@@ -129,7 +129,7 @@ namespace anyimpl
     {
         static typename choose_policy<T>::type policy;
         return &policy;
-    };
+    }
 }
 
 struct any
