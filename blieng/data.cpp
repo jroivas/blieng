@@ -94,7 +94,7 @@ void Data::updateLocations()
     m_locations.push_back("");
     m_locations.push_back("./");
     if (!game_location.empty())
-        m_locations.push_back(game_location);
+        m_locations.push_back(game_location + "/");
     m_locations.push_back("../");
     m_locations.push_back(".\\");
     m_locations.push_back("..\\");
