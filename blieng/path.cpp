@@ -171,6 +171,21 @@ double Path::length() const
     return len;
 }
 
+double Path::lengthGeo() const
+{
+    double len = 0.0;
+
+    blieng::Point f(false);
+    for (blieng::Point pt : points) {
+        if (f.isValid() && pt != f) {
+            len += f.lengthGeo(pt);
+        }
+        f = pt;
+    }
+
+    return len;
+}
+
 bool Path::operator==(const Path &other) const
 {
     size_t psize = points.size();

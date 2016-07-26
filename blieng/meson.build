@@ -18,6 +18,7 @@ blieng_lib = static_library('blieng',
     'rijndael-alg-fst.c',
     'json.c',
     dependencies : qtcore,
+    cpp_args : ['-fPIC', '-std=c++11'],
     include_directories : [
         blieng_inc,
         toplevel_inc

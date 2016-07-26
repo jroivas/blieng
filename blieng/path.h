@@ -156,6 +156,17 @@ public:
      * \returns The length of the path.
      */
     double length() const;
+
+    /**
+     * Get the length of the path in meters.
+     * Length is combined length from start to end.
+     * Will calculate length in points.
+     * Assuming points define latitude / longitude pairs.
+     *
+     * \returns The length of the path.
+     */
+    double lengthGeo() const;
+
     /**
      * Get all the waypoints.
      *

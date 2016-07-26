@@ -154,6 +154,16 @@ public:
      */
     double length(Point another);
 
+    /**
+     * Will calculate length from point to other.
+     * Will form line from A to B and caluculate the length.
+     * Points should contain latitude, longitude pairs.
+     * Returns length in meters.
+     *
+     * \param another Point to use as other end.
+     */
+    double lengthGeo(Point another);
+
     double x;  //!< Point X coordinate
     double y;  //!< Point Y coordinate
     bool valid;  //!< Tells if point is valid
