@@ -116,7 +116,7 @@ double Point::lengthGeo(Point another)
     double dlon = (y - another.y) * PI / 180.0;
 
     double a = sin(dlat / 2) * sin(dlat / 2) +
-        cos(another.x * PI / 180.0) * cos(x * PI / 180.0) +
+        cos(another.x * PI / 180.0) * cos(x * PI / 180.0) *
         sin(dlon / 2) * sin(dlon / 2);
     double c = 2 * atan2(sqrt(a), sqrt(1 - a));
     double d = R * c;
