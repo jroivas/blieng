@@ -201,6 +201,16 @@ public:
      */
     double getPartAngle(unsigned int index) const;
 
+    /**
+     * Area of polygon
+     */
+    double area() const;
+
+    /**
+     * Area of polygon in meters
+     */
+    double areaGeo() const;
+
 private:
     std::vector<Point> points;
 };

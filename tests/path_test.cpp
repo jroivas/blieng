@@ -222,3 +222,52 @@ void PathTest::update()
     CPPUNIT_ASSERT( a.getPoints()[2].y == 6 );
 
 }
+
+void PathTest::area()
+{
+    blieng::Path a;
+
+    a.addPoint(blieng::Point(1,2));
+    a.addPoint(blieng::Point(3,4));
+    a.addPoint(blieng::Point(5,6));
+    a.addPoint(blieng::Point(8,4));
+    a.addPoint(blieng::Point(8,2));
+    a.addPoint(blieng::Point(1,2));
+
+    CPPUNIT_ASSERT(a.area() == 17);
+
+    a = blieng::Path();
+
+    a.addPoint(blieng::Point(1,2));
+    a.addPoint(blieng::Point(2,6));
+    a.addPoint(blieng::Point(5,6));
+    a.addPoint(blieng::Point(8,4));
+    a.addPoint(blieng::Point(5,1));
+    a.addPoint(blieng::Point(1,2));
+
+    CPPUNIT_ASSERT(a.area() == 23.5);
+}
+
+void PathTest::areaGeo()
+{
+    blieng::Path a;
+
+    a.addPoint(blieng::Point(1,2));
+    a.addPoint(blieng::Point(3,4));
+    a.addPoint(blieng::Point(5,6));
+    a.addPoint(blieng::Point(8,4));
+    a.addPoint(blieng::Point(8,2));
+    a.addPoint(blieng::Point(1,2));
+
+    CPPUNIT_ASSERT(int(a.areaGeo() / 1000.0 / 1000.0) == 210664);
+
+    a = blieng::Path();
+
+    a.addPoint(blieng::Point(60.0, 60.0));
+    a.addPoint(blieng::Point(60.1, 60.0));
+    a.addPoint(blieng::Point(60.1, 60.1));
+    a.addPoint(blieng::Point(60.0, 60.1));
+    a.addPoint(blieng::Point(60.0, 60.0));
+
+    CPPUNIT_ASSERT(int(a.areaGeo() / 1000.0) == 123920);
+}

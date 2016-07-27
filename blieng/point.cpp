@@ -3,6 +3,7 @@
  */
 
 #include "blieng/point.h"
+#include "blieng.h"
 
 #include <boost/format.hpp>
 #include <math.h>
@@ -109,26 +110,21 @@ double Point::length(Point another)
 
 double Point::lengthGeo(Point another)
 {
-    static const double PI = 3.14159;
-    static const double R = 6378.137;
-
-    double dlat = (x - another.x) * PI / 180.0;
-    double dlon = (y - another.y) * PI / 180.0;
+    double dlat = (x - another.x) * blieng::PI / 180.0;
+    double dlon = (y - another.y) * blieng::PI / 180.0;
 
     double a = sin(dlat / 2) * sin(dlat / 2) +
-        cos(another.x * PI / 180.0) * cos(x * PI / 180.0) *
+        cos(another.x * blieng::PI / 180.0) * cos(x * blieng::PI / 180.0) *
         sin(dlon / 2) * sin(dlon / 2);
     double c = 2 * atan2(sqrt(a), sqrt(1 - a));
-    double d = R * c;
+    double d = blieng::RADIUS * c;
 
     // Meters
-    return d * 1000;
+    return d;
+}
 
-    /*
-    if (dx < 0) dx *= -1;
-    if (dy < 0) dy *= -1;
-
-    // return sqrt(dx*dx + dy*dy);
-    return dx+dy;
-    */
+Point Point::geoToMeters()
+{
+    return Point(x * (blieng::PI * blieng::RADIUS / 180),
+        y * (blieng::PI * blieng::RADIUS / 180));
 }

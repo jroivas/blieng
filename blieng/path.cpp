@@ -186,6 +186,30 @@ double Path::lengthGeo() const
     return len;
 }
 
+double Path::area() const
+{
+    double res = 0;
+    blieng::Point f(false);
+    for (blieng::Point pt : points) {
+        if (f.isValid() && pt != f) {
+            res += f.x * pt.y - f.y * pt.x;
+            //res += (pt.x - f.x) * (pt.y + f.y);
+        }
+        f = pt;
+    }
+
+    return fabs(res) / 2.0;
+}
+
+double Path::areaGeo() const
+{
+    Path tmp;
+    for (auto pt : points) {
+        tmp.addPoint(pt.geoToMeters());
+    }
+    return tmp.area();
+}
+
 bool Path::operator==(const Path &other) const
 {
     size_t psize = points.size();

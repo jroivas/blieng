@@ -164,6 +164,11 @@ public:
      */
     double lengthGeo(Point another);
 
+    /**
+     * Convert longitude, latitude pair to meters.
+     */
+    Point geoToMeters();
+
     double x;  //!< Point X coordinate
     double y;  //!< Point Y coordinate
     bool valid;  //!< Tells if point is valid

@@ -14,6 +14,10 @@
 namespace blieng
 {
 
+static const double PI = 3.14159;
+static const double RADIUS = 6378137;
+
+
 class Configure;
 
 /**
