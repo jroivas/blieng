@@ -246,6 +246,32 @@ void PathTest::area()
     a.addPoint(blieng::Point(1,2));
 
     CPPUNIT_ASSERT(a.area() == 23.5);
+
+
+    // Box
+    a = blieng::Path();
+
+    a.addPoint(blieng::Point(1,1));
+    a.addPoint(blieng::Point(1,5));
+    a.addPoint(blieng::Point(5,5));
+    a.addPoint(blieng::Point(5,1));
+    a.addPoint(blieng::Point(1,1));
+
+    CPPUNIT_ASSERT(a.area() == 16);
+
+    // Self intersecting "box"
+
+    a = blieng::Path();
+
+    a.addPoint(blieng::Point(1,1));
+    a.addPoint(blieng::Point(5,5));
+    a.addPoint(blieng::Point(5,1));
+    a.addPoint(blieng::Point(1,5));
+    a.addPoint(blieng::Point(1,1));
+
+    std::cout << "AAA " << a.area() <<"\n";
+    CPPUNIT_ASSERT(a.area() != 0);
+    CPPUNIT_ASSERT(a.area() == 8);
 }
 
 void PathTest::areaGeo()

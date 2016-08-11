@@ -128,3 +128,8 @@ Point Point::geoToMeters()
     return Point(x * (blieng::PI * blieng::RADIUS / 180),
         y * (blieng::PI * blieng::RADIUS / 180));
 }
+
+blieng::Complex Point::toComplex() const
+{
+    return Complex(x, y);
+}

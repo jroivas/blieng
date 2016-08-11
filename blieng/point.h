@@ -7,6 +7,7 @@
 
 #include <string>
 #include <iostream>
+#include "complex.h"
 
 namespace blieng
 {
@@ -168,6 +169,8 @@ public:
      * Convert longitude, latitude pair to meters.
      */
     Point geoToMeters();
+
+    Complex toComplex() const;
 
     double x;  //!< Point X coordinate
     double y;  //!< Point Y coordinate

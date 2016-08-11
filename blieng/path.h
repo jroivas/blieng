@@ -213,6 +213,7 @@ public:
 
 private:
     std::vector<Point> points;
+    double simpleArea() const;
 };
 
 }  // namespace blieng

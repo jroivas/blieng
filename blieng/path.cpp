@@ -186,19 +186,25 @@ double Path::lengthGeo() const
     return len;
 }
 
-double Path::area() const
+double Path::simpleArea() const
 {
     double res = 0;
     blieng::Point f(false);
     for (blieng::Point pt : points) {
         if (f.isValid() && pt != f) {
             res += f.x * pt.y - f.y * pt.x;
-            //res += (pt.x - f.x) * (pt.y + f.y);
         }
         f = pt;
     }
 
     return fabs(res) / 2.0;
+}
+
+double Path::area() const
+{
+    //Path tmp = reversed();
+    //std::cout << simpleArea() << " " << tmp.simpleArea() << " = " << simpleArea() + tmp.simpleArea()<< "\n";
+    return simpleArea();
 }
 
 double Path::areaGeo() const
