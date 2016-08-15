@@ -14,21 +14,54 @@ public:
     Complex(double, double);
     virtual ~Complex() {}
 
-    Complex plus(Complex);
-    Complex plus(double);
+    Complex plus(Complex) const;
+    Complex plus(double) const;
 
-    Complex minus(Complex);
-    Complex minus(double);
+    Complex minus(Complex) const;
+    Complex minus(double) const;
 
-    Complex mul(Complex);
-    Complex mul(double);
+    Complex mul(Complex) const;
+    Complex mul(double) const;
 
-    Complex div(double);
+    Complex div(double) const;
 
-    Complex conjugate();
+    Complex conjugate() const;
 
     double real() const { return m_real; }
     double imag() const { return m_imag; }
+
+    bool operator==(Complex other) const
+    {
+        return m_real == other.m_real && m_imag == other.m_imag;
+    }
+    bool operator!=(Complex other) const
+    {
+        return m_real != other.m_real || m_imag != other.m_imag;
+    }
+    Complex operator=(Complex other) const
+    {
+        return Complex(m_real, m_imag);
+    }
+
+    Complex operator+(Complex other) const
+    {
+        return plus(other);
+    }
+    Complex operator-(Complex other) const
+    {
+        return minus(other);
+    }
+    Complex operator*(Complex other) const
+    {
+        return mul(other);
+    }
+    /*
+    Complex operator/(Complex other) const
+    {
+        return div(other);
+    }
+    */
+
 
 private:
     double m_real;

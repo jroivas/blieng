@@ -29,6 +29,7 @@ bliengtest = executable('blieng_test',
     'testrunner.cpp',
     'test_tools.cpp',
     'town_test.cpp',
+    'complex_test.cpp',
     include_directories: [
         blieng_inc,
         toplevel_inc,

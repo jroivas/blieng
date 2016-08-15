@@ -12,49 +12,49 @@ Complex::Complex(double real, double imag)
 {
 }
 
-Complex Complex::mul(Complex other)
+Complex Complex::mul(Complex other) const
 {
     Complex tmp(m_real - m_imag * other.m_imag, m_real * other.m_imag + m_imag * other.m_real);
     return tmp;
 }
 
-Complex Complex::mul(double v)
+Complex Complex::mul(double v) const
 {
     Complex tmp(m_real * v, m_imag * v);
     return tmp;
 }
 
-Complex Complex::div(double v)
+Complex Complex::div(double v) const
 {
     Complex tmp(m_real / v, m_imag / v);
     return tmp;
 }
 
-Complex Complex::plus(Complex other)
+Complex Complex::plus(Complex other) const
 {
     Complex tmp(m_real + other.m_real, m_imag + other.m_imag);
     return tmp;
 }
 
-Complex Complex::plus(double v)
+Complex Complex::plus(double v) const
 {
     Complex tmp(m_real + v, m_imag + v);
     return tmp;
 }
 
-Complex Complex::minus(Complex other)
+Complex Complex::minus(Complex other) const
 {
     Complex tmp(m_real - other.m_real, m_imag - other.m_imag);
     return tmp;
 }
 
-Complex Complex::minus(double v)
+Complex Complex::minus(double v) const
 {
     Complex tmp(m_real - v, m_imag - v);
     return tmp;
 }
 
-Complex Complex::conjugate()
+Complex Complex::conjugate() const
 {
     Complex tmp(m_real, -m_imag);
     return tmp;
