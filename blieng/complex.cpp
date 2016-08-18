@@ -14,7 +14,7 @@ Complex::Complex(double real, double imag)
 
 Complex Complex::mul(Complex other) const
 {
-    Complex tmp(m_real - m_imag * other.m_imag, m_real * other.m_imag + m_imag * other.m_real);
+    Complex tmp(m_real * other.m_real - m_imag * other.m_imag, m_real * other.m_imag + m_imag * other.m_real);
     return tmp;
 }
 
@@ -58,4 +58,9 @@ Complex Complex::conjugate() const
 {
     Complex tmp(m_real, -m_imag);
     return tmp;
+}
+
+std::string Complex::to_string() const
+{
+    return std::to_string(m_real) + "+" + std::to_string(m_imag) + "i";
 }

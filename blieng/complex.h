@@ -5,6 +5,8 @@
 #ifndef __BLIENG_COMPLEX_H
 #define __BLIENG_COMPLEX_H
 
+#include <string>
+
 namespace blieng
 {
 
@@ -47,11 +49,23 @@ public:
     {
         return plus(other);
     }
+    Complex operator+(double other) const
+    {
+        return plus(other);
+    }
     Complex operator-(Complex other) const
     {
         return minus(other);
     }
+    Complex operator-(double other) const
+    {
+        return minus(other);
+    }
     Complex operator*(Complex other) const
+    {
+        return mul(other);
+    }
+    Complex operator*(double other) const
     {
         return mul(other);
     }
@@ -61,6 +75,8 @@ public:
         return div(other);
     }
     */
+
+    std::string to_string() const;
 
 
 private:

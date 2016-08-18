@@ -10,12 +10,14 @@ class ComplexTest : public CppUnit::TestFixture
     CPPUNIT_TEST( plus );
     CPPUNIT_TEST( minus );
     CPPUNIT_TEST( mul );
+    CPPUNIT_TEST( conjugate );
     CPPUNIT_TEST_SUITE_END();
 public:
     void basic();
     void plus();
     void minus();
     void mul();
+    void conjugate();
 };
 
 #endif
