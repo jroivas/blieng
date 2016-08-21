@@ -6,8 +6,14 @@
 
 using blieng::Complex;
 
+Complex::Complex()
+    : m_ok(false)
+{
+}
+
 Complex::Complex(double real, double imag)
-    : m_real(real),
+    : m_ok(true),
+    m_real(real),
     m_imag(imag)
 {
 }
@@ -38,7 +44,7 @@ Complex Complex::plus(Complex other) const
 
 Complex Complex::plus(double v) const
 {
-    Complex tmp(m_real + v, m_imag + v);
+    Complex tmp(m_real + v, m_imag);
     return tmp;
 }
 
@@ -50,7 +56,7 @@ Complex Complex::minus(Complex other) const
 
 Complex Complex::minus(double v) const
 {
-    Complex tmp(m_real - v, m_imag - v);
+    Complex tmp(m_real - v, m_imag);
     return tmp;
 }
 
@@ -62,5 +68,6 @@ Complex Complex::conjugate() const
 
 std::string Complex::to_string() const
 {
-    return std::to_string(m_real) + "+" + std::to_string(m_imag) + "i";
+    if (!m_ok) return "()";
+    return "(" + std::to_string(m_real) + "+" + std::to_string(m_imag) + "i)";
 }

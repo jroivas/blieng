@@ -13,6 +13,7 @@ namespace blieng
 class Complex
 {
 public:
+    Complex();
     Complex(double, double);
     virtual ~Complex() {}
 
@@ -39,6 +40,13 @@ public:
     bool operator!=(Complex other) const
     {
         return m_real != other.m_real || m_imag != other.m_imag;
+    }
+    Complex& operator=(Complex other)
+    {
+        m_ok = other.m_ok;
+        m_real = other.m_real;
+        m_imag = other.m_imag;
+        return *this;
     }
     Complex operator=(Complex other) const
     {
@@ -75,11 +83,16 @@ public:
         return div(other);
     }
     */
+    Complex operator/(double other) const
+    {
+        return div(other);
+    }
 
     std::string to_string() const;
 
 
 private:
+    bool m_ok;
     double m_real;
     double m_imag;
 };

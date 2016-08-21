@@ -234,7 +234,7 @@ void PathTest::area()
     a.addPoint(blieng::Point(8,2));
     a.addPoint(blieng::Point(1,2));
 
-    CPPUNIT_ASSERT(a.area() == 17);
+    CPPUNIT_ASSERT(a.area() == 9);
 
     a = blieng::Path();
 
@@ -269,7 +269,6 @@ void PathTest::area()
     a.addPoint(blieng::Point(1,5));
     a.addPoint(blieng::Point(1,1));
 
-    std::cout << "AAA " << a.area() <<"\n";
     CPPUNIT_ASSERT(a.area() != 0);
     CPPUNIT_ASSERT(a.area() == 8);
 }
