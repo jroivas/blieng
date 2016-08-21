@@ -250,7 +250,7 @@ double complexArea(std::vector<blieng::Complex> inp)
         blieng::Complex a = ab.first;
         blieng::Complex b = ab.second;
         for (auto e : P) {
-            for (auto i : cmplxI<blieng::Complex>(e, a, b-a)) {
+            for (auto i : cmplxI<blieng::Complex>(e, a, b - a)) {
                 i_real.push_back(i.real());
             }
         }
@@ -269,7 +269,7 @@ double complexArea(std::vector<blieng::Complex> inp)
         for (auto e : P) {
             for (auto i : cmplxI<double>(e, l)) {
                 for (auto j : cmplxI<double>(e, r)) {
-                    ij_imag.push_back( ((i + j).conjugate()).imag() );
+                    ij_imag.push_back(((i + j).conjugate()).imag());
                 }
             }
         }
@@ -280,7 +280,7 @@ double complexArea(std::vector<blieng::Complex> inp)
             if (tock) {
                 double b = i.first;
                 double t = i.second;
-                ar += (t-b) * (r - l) /2;
+                ar += (t - b) * (r - l) / 2;
             }
             tock ^= true;
         }
