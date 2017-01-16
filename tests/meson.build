@@ -41,6 +41,7 @@ bliengtest = executable('blieng_test',
         gmock.get_variable('gtest_lib'),
         blieng_lib
     ],
+    cpp_args : ['-fPIC', '-std=c++11'],
     link_args: [
         '-pthread', '-ldl'
     ],

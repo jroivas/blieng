@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Blistud:io
+ * Copyright 2014-2017 Jouni Roivas
  */
 
 #include "blieng/character.h"
@@ -22,9 +22,9 @@ bool Character::kill()
 
 bool Character::isAlive() const
 {
-    if (!isValue("dead"))
+    if (!isValue("dead")) {
         throw std::string("Object does not have value 'dead'");
-        //return true;
+    }
 
     return !getBoolValue("dead");
 }

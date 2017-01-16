@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Blistud:io
+ * Copyright 2014-2017 Jouni Roivas
  */
 
 #ifndef __BLIENG_COMPLEX_H

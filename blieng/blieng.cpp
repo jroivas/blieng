@@ -367,21 +367,32 @@ bool blieng::isCompressed(
     return true;
 }
 
+#ifdef ANDROID
 #include <QStandardPaths>
+#endif
 
 std::string blieng::permanentStoragePath(
     const std::string &target)
 {
-    QString folder;
 #ifdef ANDROID
-    folder = QStandardPaths::writableLocation(
+    QString folder = QStandardPaths::writableLocation(
         QStandardPaths::GenericDataLocation);
-#else
+    return folder.toStdString() + "/" + target;
+    /* Portable Qt way for Win/Linux:
     folder = QStandardPaths::writableLocation(
         QStandardPaths::HomeLocation);
+    */
+#else
+    std::string res;
+    #ifdef _WIN32
+    res = getenv("HOMEDRIVE");
+    res += getenv("HOMEPATH");
+    #else
+    res = getenv("HOME");
+    #endif
+    return res;
 #endif
 
-    return folder.toStdString() + "/" + target;
 }
 
 std::string blieng::ensurePermanentStoragePath(

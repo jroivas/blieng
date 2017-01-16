@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Blistud:io
+ * Copyright 2014-2017 Jouni Roivas
  */
 
 #include "blieng/path.h"

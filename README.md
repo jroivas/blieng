@@ -1,19 +1,37 @@
-Blieng(tm)
-==========
+# Blieng(tm)
 
-Proprietary game engine by Blistud:io
+Game engine/backend library.
 
-Copyright(c) 2013, 2014 Blistud:io
-All rights reserved
-
-http://blistud.io
+Copyright(c) 2013-2017 Jouni Roivas <jroivas@iki.fi>
 
 
-sudo apt-get install libcppunit-dev
+## Dependencies
+
+ - libcppunit
+ - googlemock
+ - googletest
 
 
-3rd party components
---------------------
+## Building
+
+You need [meson](http://mesonbuild.com/) and [ninja](https://ninja-build.org/).
+
+    mkdir build
+    cd build
+    meson.py ..
+    ninja
+
+You may also use build.sh script on top level:
+
+    ./build.sh "$PWD"
+
+
+## License
+
+MIT, see LICENSE
+
+
+## 3rd party components
 
 auto_vector.h
   Any use, commercial or noncommercial of this code

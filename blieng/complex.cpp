@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Blistud:io
+ * Copyright 2014 Jouni Roivas
  */
 
 #include "complex.h"

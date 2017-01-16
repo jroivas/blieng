@@ -21,6 +21,7 @@ blieng_json = executable('blieng_json',
         gmock.get_variable('gtest_lib'),
         blieng_lib
     ],
+    cpp_args : ['-fPIC', '-std=c++11'],
     link_args: [
         '-pthread', '-ldl'
     ],
@@ -40,6 +41,7 @@ blieng_data = executable('blieng_data',
         gmock.get_variable('gtest_lib'),
         blieng_lib
     ],
+    cpp_args : ['-fPIC', '-std=c++11'],
     link_args: [
         '-pthread', '-ldl'
     ],
