@@ -69,9 +69,6 @@ bool Maps::saveMap(const std::string &name)
             tmp << ", \"population-index\": "
                 << town->getDoubleValue("population-index");
         }
-        if (town->isValue("zombies")) {
-            tmp << ", \"zombies\": " << town->getUIntValue("zombies");
-        }
         if (town->isValue("start") && town->getBoolValue("start")) {
             tmp << ", \"start\": 1";
         }
@@ -224,9 +221,6 @@ bool Maps::parseMap()
                         }
                         else if (town_item == "start" && town_val->isNumeric()) {
                                 if (town_val->asInt()>0) town->setValue("start", true);
-                        }
-                        else if (town_item == "zombies" && town_val->isNumeric()) {
-                                town->setValue("zombies", town_val->asUInt());
                         }
                         else if (town_item == "population-index" && town_val->isNumeric()) {
                                 town->setValue("population-index", town_val->asDouble());

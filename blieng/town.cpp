@@ -118,27 +118,27 @@ std::string Town::toString() const
 
 unsigned int Town::getCharacterClassCnt(const std::string &character_class)
 {
-    unsigned int zombies = 0;
+    unsigned int character_class_cnt = 0;
     for (Character *ch : characters) {
         if (ch->isValue("class") &&
             ch->getStringValue("class") == character_class) {
             if (ch->isAlive()) {
-                ++zombies;
+                ++character_class_cnt;
             }
         }
     }
-    return zombies;
+    return character_class_cnt;
 }
 
 std::vector<blieng::Character *> Town::getCharacterClass(
     const std::string &character_class)
 {
-    std::vector<Character *> zombies;
+    std::vector<Character *> character_class_cnt;
     for (Character *ch : characters) {
         if (ch->isValue("class") &&
             ch->getStringValue("class") == character_class) {
-            zombies.push_back(ch);
+            character_class_cnt.push_back(ch);
         }
     }
-    return zombies;
+    return character_class_cnt;
 }
