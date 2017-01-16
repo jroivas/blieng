@@ -1,3 +1,7 @@
+/*
+ * Copyright 2014-2017 Jouni Roivas
+ */
+
 #include "blieng/blieng.h"
 #include "blieng/rijndael-alg-fst.h"
 
