@@ -1,4 +1,4 @@
-# Blieng(tm)
+# Blieng
 
 Game engine/backend library for C++
 
@@ -57,38 +57,40 @@ You may also use build.sh script on top level:
 
 Copyright(c) 2013-2017 Jouni Roivas <jroivas@iki.fi>
 
-MIT, see LICENSE
+MIT, see [LICENSE](LICENSE)
 
 
 ## 3rd party components
 
-auto_vector.h
-  Any use, commercial or noncommercial of this code
-  is hereby granted, under the condition
-  that this copyright notice be not removed.
+All third party components are verified to have compatible license.
 
-  Reliable Software (c) 2003, http://www.relisoft.com
-  http://relisoft.com/resource/source/autovector.zip
+Some components are modified when included into this engine.
+These modifications inherit original license.
 
-Optimised ANSI C code for the Rijndael cipher
-  Public Domain / BSD alike
+### auto_vector.h
+  - Any use, commercial or noncommercial of this code
+    is hereby granted, under the condition
+    that this copyright notice be not removed.
+  - Reliable Software (c) 2003, http://www.relisoft.com
+  - http://relisoft.com/resource/source/autovector.zip
 
-  Vincent Rijmen <vincent.rijmen@esat.kuleuven.ac.be>
-  Antoon Bosselaers <antoon.bosselaers@esat.kuleuven.ac.be>
-  Paulo Barreto <paulo.barreto@terra.com.br>
+### Optimised ANSI C code for the Rijndael cipher
+  - Public Domain / BSD alike
+  - Original authors:
+    * Vincent Rijmen <vincent.rijmen@esat.kuleuven.ac.be>
+    * Antoon Bosselaers <antoon.bosselaers@esat.kuleuven.ac.be>
+    * Paulo Barreto <paulo.barreto@terra.com.br>
+  - http://www.cs.ucdavis.edu/~rogaway/ocb/ocb-ref/
 
-  http://www.cs.ucdavis.edu/~rogaway/ocb/ocb-ref/
+### json.h/json.c
+  - BSD alike
+  - Copyright (C) 2012, 2013 James McLaughlin et al.
+  - https://github.com/udp/json-parser
 
-json.h/json.c
-  BSD alike
-
-  Copyright (C) 2012, 2013 James McLaughlin et al.
-  https://github.com/udp/json-parser
-
-fastlz.h/fastlz.c
-   MIT
-
-   Copyright (C) 2007 Ariya Hidayat (ariya@kde.org)
-   Copyright (C) 2006 Ariya Hidayat (ariya@kde.org)
-   Copyright (C) 2005 Ariya Hidayat (ariya@kde.org)
-   http://fastlz.org
+### fastlz.h/fastlz.c
+  - MIT
+  - Original copyrights:
+    * Copyright (C) 2007 Ariya Hidayat (ariya@kde.org)
+    * Copyright (C) 2006 Ariya Hidayat (ariya@kde.org)
+    * Copyright (C) 2005 Ariya Hidayat (ariya@kde.org)
+  - http://fastlz.org
