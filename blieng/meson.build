@@ -18,7 +18,8 @@ blieng_lib = static_library('blieng',
     'fastlz.c',
     'rijndael-alg-fst.c',
     'json.c',
-    cpp_args : ['-fPIC', '-std=c++11'],
+    cpp_args : ['-std=c++11'],
+    pic : true,
     include_directories : [
         blieng_inc,
         toplevel_inc

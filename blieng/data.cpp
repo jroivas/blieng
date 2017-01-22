@@ -642,7 +642,7 @@ std::string Data::readString(
     }
 
 
-    return res;
+    throw std::string("Can't open file: " + name);
 }
 
 json_value *Data::parseJson(
@@ -665,8 +665,8 @@ json_value *Data::parseJson(
 
     //json_value *val = json_parse(datas.c_str(), datas.length());
     if (val == nullptr) {
-        LOG_DEBUG("Parse error while parsing '" + datas + "': " + error + "!");
-        throw std::string("JSON parse error");
+        LOG_DEBUG("JSON Parse error '" + datas + "': " + error + "!");
+        throw std::string("JSON Parse error: '" + datas + "': " + error + "!");
     }
     return val;
 }

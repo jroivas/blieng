@@ -654,9 +654,10 @@ json_value * json_parse_ex (json_settings * settings,
                   {
                      flags |= flag_num_e_got_sign;
 
-                     if (b == '-')
+                     if (b == '-') {
                         top->type = json_integer;
                         flags |= flag_num_e_negative;
+                     }
 
                      continue;
                   }

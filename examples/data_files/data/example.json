@@ -1,0 +1,14 @@
+{
+    "Hello": "world",
+    "someList": [1, 2, 5, 10000],
+    "stringList": ["a", "b"],
+    "obj": {
+        "name": "something",
+        "value": 42
+    },
+    "listObj": [
+        { "a": "1"},
+        { "b": "2"},
+        { "c": "3"}
+    ]
+}
