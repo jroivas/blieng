@@ -125,8 +125,10 @@ double Point::lengthGeo(Point another)
 
 Point Point::geoToMeters()
 {
-    return Point(x * (blieng::PI * blieng::RADIUS / 180),
-        y * (blieng::PI * blieng::RADIUS / 180));
+    double latF = 2 * blieng::RADIUS * blieng::PI / 360.0;
+    double lngF = latF * cos(x * blieng::PI / 180.0);
+
+    return Point(x * latF, y * lngF);
 }
 
 blieng::Complex Point::toComplex() const

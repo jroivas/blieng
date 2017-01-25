@@ -22,7 +22,7 @@ Maps::Maps(
     m_state(_state)
 {
     if (!loadMap(mapname)) {
-        std::cout << "ERROR: Can't find map: " << mapname << "\n";
+        std::cerr << "ERROR: Can't find map: " << mapname << "\n";
     }
 }
 
@@ -36,7 +36,7 @@ bool Maps::loadMap(const std::string &name)
     m_map_name = name;
     m_map_file = m_state->m_data->findFile(name + ".json");
     if (m_map_file != "") {
-        std::cout << m_map_file << "\n";
+        //std::cout << m_map_file << "\n";
         m_map_json = m_state->m_data->readJson(m_map_file);
         return parseMap();
     }
@@ -198,7 +198,7 @@ bool Maps::parseMap()
             m_state->m_data->getJsonValue(m_map_json, mi);
         if (mi == "image" && item_val->isString()) {
             m_map_image_file = item_val->asString();
-            std::cout << " = " << m_map_image_file << "\n";
+            //std::cout << " = " << m_map_image_file << "\n";
         }
         else if (mi == "towns" && item_val->isArray()) {
             auto it = item_val->u.array.begin();
@@ -225,8 +225,11 @@ bool Maps::parseMap()
                         else if (town_item == "population-index" && town_val->isNumeric()) {
                                 town->setValue("population-index", town_val->asDouble());
                         }
+                        else if (town_item == "population" && town_val->isNumeric()) {
+                                town->setValue("population", town_val->asUInt());
+                        }
                     }
-                    std::cout << town->toString();
+                    //std::cout << town->toString();
                     if (town->getName() != "") {
                         m_towns.push_back(town);
                     } else {

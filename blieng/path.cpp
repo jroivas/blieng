@@ -228,7 +228,7 @@ template<typename T> std::vector<blieng::Complex> cmplxI(std::pair<blieng::Compl
 
 template<typename T> std::vector<std::pair<T,T>> expandTypes(std::vector<T> inp)
 {
-    std::vector<std::pair<T,T>>  res;
+    std::vector<std::pair<T,T>> res;
     for (unsigned int i = 0; i < inp.size(); ++i) {
         T a = inp[i];
         T b;
@@ -291,6 +291,9 @@ double complexArea(std::vector<blieng::Complex> inp)
 
 double Path::area() const
 {
+    if (points.size() < 3) {
+        return 0;
+    }
     std::vector<blieng::Complex> tmp;
     for (auto pt : points) {
         tmp.push_back(pt.toComplex());

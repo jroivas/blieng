@@ -203,6 +203,8 @@ public:
 
     /**
      * Area of polygon
+     * Path needs at least 3 points for this to work.
+     * If path contains less than 3 points, zero is returned.
      */
     double area() const;
 

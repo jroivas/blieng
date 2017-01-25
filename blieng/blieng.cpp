@@ -36,11 +36,11 @@ blieng::BliengState::~BliengState()
     }
 }
 
-void blieng::BliengState::initialize()
+void blieng::BliengState::initialize(boost::shared_ptr<blieng::BliengState> _state)
 {
     m_data = new blieng::Data();
 
-    boost::shared_ptr<blieng::BliengState> _state(this);
+    //boost::shared_ptr<blieng::BliengState> _state(this);
 
     m_config = new blieng::Configure(_state);
     m_styleconfig = new blieng::Configure(_state);

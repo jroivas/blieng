@@ -39,7 +39,7 @@ public:
      * Initializes state info with fresh
      * instances of different state objects
      */
-    void initialize();
+    void initialize(boost::shared_ptr<blieng::BliengState> _state);
 
     /**
      * Override data object
