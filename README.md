@@ -52,6 +52,12 @@ You may also use build.sh script on top level:
 
     ./build.sh "$PWD"
 
+## Examples
+
+You can build and run examples by:
+
+    ./run_examples.sh
+
 
 ## License
 
