@@ -40,9 +40,11 @@ full blown game engine for C++ based games.
 
 ### Install dependencies on Ubuntu/Debian
 
- - `sudo apt-get install meson ninja-build`
- - `sudo apt-get install libboost-dev libboost-system-dev libboost-filesystem-dev libboost-random-dev libboost-serialization-dev libboost-date-time-dev`
- - `sudo apt-get install libcppunit-dev`
+```
+sudo apt-get install meson ninja-build
+sudo apt-get install libboost-dev libboost-system-dev libboost-filesystem-dev libboost-random-dev libboost-serialization-dev libboost-date-time-dev
+sudo apt-get install libcppunit-dev
+```
 
 ## Building
 
