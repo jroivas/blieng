@@ -257,7 +257,7 @@ int real_open(const char *pathname, int flags, mode_t mode)
     return orig_open(pathname, flags, mode);
 }
 
-int open64(const char *pathname, int flags, ...)
+int my_open64(const char *pathname, int flags, ...)
 {
     return real_open(pathname, flags, 0644);
 }
@@ -267,19 +267,17 @@ int open(const char *pathname, int flags, ...)
     return real_open(pathname, flags, 0644);
 }
 
-/*
 int open64(const char *pathname, int flags)
 {
     return real_open(pathname, flags, 0644);
 }
-*/
 
 int creat(const char *pathname, mode_t mode)
 {
     return real_open(pathname, O_CREAT|O_WRONLY|O_TRUNC, mode);
 }
 
-int creat64(const char *pathname, mode_t mode)
+int my_creat64(const char *pathname, mode_t mode)
 {
     return real_open(pathname, O_CREAT|O_WRONLY|O_TRUNC, mode);
 }
@@ -317,7 +315,7 @@ int __fstat(int fd, struct stat *buf) throw ()
     return fstat(fd, buf);
 }
 
-int fstat64(int fd, struct stat64 *buf) throw ()
+int my_fstat64(int fd, struct stat64 *buf) throw ()
 {
     if (__mocking_io) {
         //boost::lock_guard<boost::mutex> keylock(__mockid_mutex);
@@ -418,22 +416,22 @@ int stat(const char *path, struct stat *buf) throw ()
     return __xstat(0, path, buf);
 }
 
-int stat64(const char *path, struct stat64 *buf) throw ()
+int my_stat64(const char *path, struct stat64 *buf) throw ()
 {
     return __xstat64(0, path, buf);
 }
 
-int __xstat(int x, const char *path, struct stat *buf) throw ()
+int my__xstat(int x, const char *path, struct stat *buf) throw ()
 {
    return __xstat64(x, path, (struct stat64 *)buf);
 }
 
-int __xstat64(int x, const char *path, struct stat64 *buf) throw ()
+int my__xstat64(int x, const char *path, struct stat64 *buf) throw ()
 {
     if (__mocking_io) {
         //boost::lock_guard<boost::mutex> keylock(__mutex);
         if (mock_is_folder(path)) {
-            if (buf) {
+            if (buf != nullptr) {
                 buf->st_dev = 1;
                 buf->st_ino = 800 + strlen(path);
                 buf->st_mode = S_IFDIR | S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH;
@@ -448,7 +446,7 @@ int __xstat64(int x, const char *path, struct stat64 *buf) throw ()
             return 0;
         }
         else if (mock_is_file(path)) {
-            if (buf) {
+            if (buf != nullptr) {
                 buf->st_dev = 1;
                 buf->st_ino = 1000 + strlen(path);
                 buf->st_mode = S_IFREG | S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
@@ -626,7 +624,7 @@ int fstatvfs64(int fd, struct statvfs64 *buf) throw ()
 }
 #endif
 
-int __lxstat64(int x, const char *path, struct stat64 *buf) throw ()
+int my__lxstat64(int x, const char *path, struct stat64 *buf) throw ()
 {
     return __xstat64(x, path, buf);
 }
@@ -695,7 +693,7 @@ FILE* fopen(const char *path, const char *mode)
     return orig_fopen(path, mode);
 }
 
-FILE* fopen64(const char *path, const char *mode)
+FILE* my_fopen64(const char *path, const char *mode)
 {
     return fopen(path, mode);
 }
@@ -1054,26 +1052,7 @@ DIR *opendir(const char *name)
     return orig_opendir(name);
 }
 
-struct dirent *readdir(DIR *dirp)
-{
-    if (__mocking_io) {
-        struct dirent res;
-        struct dirent *res2 = NULL;
-        int val = readdir_r(dirp, &res, &res2);
-        if (val == 0) return res2;
-        else {
-            errno = ENOENT;
-            return NULL;
-        }
-
-        errno = 0;
-        return NULL;
-    }
-    if (!orig_readdir) orig_readdir = (struct dirent* (*)(DIR*))dlsym(RTLD_NEXT, "readdir");
-    return orig_readdir(dirp);
-}
-
-int readdir64_r(DIR *dirp, struct dirent64 *entry, struct dirent64 **result)
+int my_readdir64_r(DIR *dirp, struct dirent64 *entry, struct dirent64 **result)
 {
     if (__mocking_io) {
         VALIDATE_DIR(dirp);
@@ -1137,7 +1116,26 @@ int readdir_r(DIR *dirp, struct dirent *entry, struct dirent **result)
     return readdir64_r(dirp, (struct dirent64*)entry, (struct dirent64**)result);
 }
 
-struct dirent64 *readdir64(DIR *dirp)
+struct dirent *readdir(DIR *dirp)
+{
+    if (__mocking_io) {
+        struct dirent res;
+        struct dirent *res2 = NULL;
+        int val = readdir_r(dirp, &res, &res2);
+        if (val == 0) return res2;
+        else {
+            errno = ENOENT;
+            return NULL;
+        }
+
+        errno = 0;
+        return NULL;
+    }
+    if (!orig_readdir) orig_readdir = (struct dirent* (*)(DIR*))dlsym(RTLD_NEXT, "readdir");
+    return orig_readdir(dirp);
+}
+
+struct dirent64 *my_readdir64(DIR *dirp)
 {
     return (struct dirent64*)readdir(dirp);
 }

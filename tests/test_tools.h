@@ -53,6 +53,7 @@ private:
     FakeDataFile _fake_data_file;
 };
 
+/*
 #include <sstream>
 #include <iostream>
 #include <vector>
@@ -69,6 +70,9 @@ private:
 #include <string.h>
 #include <memory.h>
 #include <stddef.h>
+*/
+#include <dirent.h>
+#include <poll.h>
 
 class cout_redirect
 {
@@ -101,6 +105,8 @@ std::string mock_get_stdout();
 std::string mock_get_stderr();
 void mock_clear_stdout();
 void mock_clear_stderr();
+
+/*
 
 #ifdef __cplusplus
 extern "C" {
@@ -165,5 +171,6 @@ off_t lseek(int fd, off_t offset, int whence) throw();
 #ifdef __cplusplus
 }
 #endif
+*/
 
 #endif
