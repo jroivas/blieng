@@ -38,6 +38,11 @@ full blown game engine for C++ based games.
  - googlemock
  - googletest
 
+### Install dependencies on Ubuntu/Debian
+
+ - `sudo apt-get install meson ninja-build`
+ - `sudo apt-get install libboost-dev`
+ - `sudo apt-get install libcppunit-dev`
 
 ## Building
 
