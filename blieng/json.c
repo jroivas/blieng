@@ -650,7 +650,7 @@ json_value * json_parse_ex (json_settings * settings,
 
                if (b == '+' || b == '-')
                {
-                  if ( (flags & flag_num_e) && !(flags & flag_num_e_got_sign))
+                  if ((flags & flag_num_e) && !(flags & flag_num_e_got_sign))
                   {
                      flags |= flag_num_e_got_sign;
 

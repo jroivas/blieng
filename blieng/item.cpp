@@ -194,7 +194,7 @@ bool Item::consume(std::unique_ptr<Item> another)
     return true;
 }
 
-std::unique_ptr<Item> Item::produce(double produce_amount) throw (char *)
+std::unique_ptr<Item> Item::produce(double produce_amount)
 {
     bool can_consume = true;
     for (auto val : consumes.get()) {

@@ -235,7 +235,7 @@ public:
      * \returns A new item
      * \throws char* String to explain the error
      */
-    std::unique_ptr<Item> produce(double produce_amount = 1) throw (char *);
+    std::unique_ptr<Item> produce(double produce_amount = 1);
     /**
      * Tell if this item is usable.
      * Item might not be usable if it's exhausted,
