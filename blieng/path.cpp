@@ -211,7 +211,7 @@ template<typename T> std::vector<blieng::Complex> cmplxI(std::pair<blieng::Compl
 
     double e = (d * b.conjugate()).imag();
     double e2 = e * e;
-    if (! (e * (0 <= e2 && e2 <= e*e))) {
+    if (! (e && (0 <= e2 && e2 <= e*e))) {
         return res;
     }
 
@@ -220,7 +220,7 @@ template<typename T> std::vector<blieng::Complex> cmplxI(std::pair<blieng::Compl
     blieng::Complex t4 = t3 * t2;
 
     double v = e * (b * c.conjugate()).imag();
-    if (e * (0 <= v && v <= e2)) {
+    if (e && (0 <= v && v <= e2)) {
         res.push_back(t4 + a);
     }
     return res;

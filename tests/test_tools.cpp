@@ -796,7 +796,7 @@ size_t fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream)
 {
     if (__mocking_io) {
         //boost::lock_guard<boost::mutex> keylock(__mockid_mutex);
-        if (stream == NULL) return -1;
+        //if (stream == nullptr) return -1;
         prepare_std();
 
         if (stream == stdout) stream = (FILE*)mock_ids[1];
@@ -1111,9 +1111,9 @@ int my_readdir64_r(DIR *dirp, struct dirent64 *entry, struct dirent64 **result)
     return orig_readdir_r(dirp, entry, result);
 }
 
-int readdir_r(DIR *dirp, struct dirent *entry, struct dirent **result)
+int my_readdir_r(DIR *dirp, struct dirent *entry, struct dirent **result)
 {
-    return readdir64_r(dirp, (struct dirent64*)entry, (struct dirent64**)result);
+    return my_readdir64_r(dirp, (struct dirent64*)entry, (struct dirent64**)result);
 }
 
 struct dirent *readdir(DIR *dirp)
@@ -1121,7 +1121,7 @@ struct dirent *readdir(DIR *dirp)
     if (__mocking_io) {
         struct dirent res;
         struct dirent *res2 = NULL;
-        int val = readdir_r(dirp, &res, &res2);
+        int val = my_readdir_r(dirp, &res, &res2);
         if (val == 0) return res2;
         else {
             errno = ENOENT;
