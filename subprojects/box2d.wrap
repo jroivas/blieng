@@ -1,0 +1,10 @@
+[wrap-file]
+directory = Box2D-f655c603ba9d83f07fc566d38d2654ba35739102
+
+source_url = https://github.com/erincatto/Box2D/archive/f655c603ba9d83f07fc566d38d2654ba35739102.zip
+source_filename = Box2D.zip
+source_hash = ffbbe67490f1f4e37f9ed35d589e2dd9f26f34064acc411f029a0caf67f81027
+
+patch_url = https://raw.githubusercontent.com/jroivas/blieng/master/subprojects/packagecache/box2d-meson.tar.gz
+patch_filename = box2d-meson.tar.gz
+patch_hash = 9e67f63ee4ebd11e810e299a8742b07c9fa8e3a1a5e740b885fa6f354dc0d804

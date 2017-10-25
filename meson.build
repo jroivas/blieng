@@ -4,6 +4,7 @@ blieng_inc = include_directories('blieng')
 toplevel_inc = include_directories('.')
 
 gmock = subproject('gmock')
+box2d = subproject('box2d')
 
 subdir('blieng')
 subdir('examples')
