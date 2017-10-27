@@ -19,6 +19,7 @@ blieng_lib = static_library('blieng',
     'rijndael-alg-fst.c',
     'json.c',
     'blidynamicbody.cpp',
+    'bliworld.cpp',
     cpp_args : ['-std=c++11'],
     pic : true,
     include_directories : [
