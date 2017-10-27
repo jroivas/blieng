@@ -18,10 +18,15 @@ blieng_lib = static_library('blieng',
     'fastlz.c',
     'rijndael-alg-fst.c',
     'json.c',
+    'blidynamicbody.cpp',
     cpp_args : ['-std=c++11'],
     pic : true,
     include_directories : [
+        box2d.get_variable('toplevel_inc'),
         blieng_inc,
         toplevel_inc
-        ]
-    )
+    ],
+    link_with: [
+        box2d.get_variable('box2d_lib')
+    ]
+)
