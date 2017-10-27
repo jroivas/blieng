@@ -15,9 +15,12 @@ public:
 
     //void setMass(float mass);
     void setPosition(float x, float y);
-    void setCircle(float x, float y, float radius);
+    void setCircle(float posx, float posy, float radius);
     void setBox(float width, float height);
     void setFixture(float density, float friction);
+
+    float posX();
+    float posY();
 
 private:
     BliWorld *world;

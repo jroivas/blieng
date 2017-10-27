@@ -30,13 +30,16 @@ bliengtest = executable('blieng_test',
     'test_tools.cpp',
     'town_test.cpp',
     'complex_test.cpp',
+    'bliphysics_test.cpp',
     include_directories: [
+        box2d.get_variable('toplevel_inc'),
         blieng_inc,
         toplevel_inc,
         gmock.get_variable('gmock_inc'),
         gmock.get_variable('gtest_inc')
     ],
     link_with: [
+        box2d.get_variable('box2d_lib'),
         gmock.get_variable('gmock_lib'),
         gmock.get_variable('gtest_lib'),
         blieng_lib

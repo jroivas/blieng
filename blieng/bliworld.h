@@ -16,6 +16,9 @@ public:
 
     friend class BliBody;
 
+    float getGravityX();
+    float getGravityY();
+
 protected:
     b2World world;
 };

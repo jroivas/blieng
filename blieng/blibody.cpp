@@ -23,6 +23,16 @@ void BliBody::setPosition(float x, float y)
     body->SetTransform(pos, 0);
 }
 
+float BliBody::posX()
+{
+    return body->GetPosition().x;
+}
+
+float BliBody::posY()
+{
+    return body->GetPosition().y;
+}
+
 void BliBody::setCircle(float x, float y, float radius)
 {
     b2CircleShape *circle = new b2CircleShape;
