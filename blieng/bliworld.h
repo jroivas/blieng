@@ -6,7 +6,7 @@
 namespace blieng
 {
 
-class BliDynamicBody;
+class BliBody;
 
 class BliWorld : public BliObject
 {
@@ -14,7 +14,7 @@ public:
     BliWorld(float gravity1, float gravity2);
     virtual ~BliWorld();
 
-    friend class BliDynamicBody;
+    friend class BliBody;
 
 protected:
     b2World world;
