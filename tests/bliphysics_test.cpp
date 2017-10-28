@@ -53,3 +53,21 @@ void BliPhysicsTest::staticbody()
     CPPUNIT_ASSERT_EQUAL(1.0f, body.posX());
     CPPUNIT_ASSERT_EQUAL(2.0f, body.posY());
 }
+
+void BliPhysicsTest::simulation()
+{
+
+    BliWorld *world = new BliWorld(0.0f, -9.81f);
+
+    BliStaticBody ground(world, 0, 0);
+    ground.setBox(50.0f, 10.0f);
+    ground.setFixture(0.0, 0.0);
+
+    BliDynamicBody ball(world, 1.0f, 3.0f);
+    ball.setCircle(0, 0, 0.5f);
+    ball.setFixture(1.0f, 0.3f);
+
+    for (int i = 0; i < 60; i++) {
+        world->step();
+    }
+}

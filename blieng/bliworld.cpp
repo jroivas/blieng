@@ -2,8 +2,9 @@
 
 using blieng::BliWorld;
 
-BliWorld::BliWorld(float gravity1, float gravity2)
-    : world(b2World(b2Vec2(gravity1, gravity2)))
+BliWorld::BliWorld(float gravityX, float gravityY)
+    : world(b2World(b2Vec2(gravityX, gravityY))),
+      timeStep(1.0f / 60.0f)
 {
 }
 
@@ -19,4 +20,16 @@ float BliWorld::getGravityX()
 float BliWorld::getGravityY()
 {
     return world.GetGravity().y;
+}
+
+void BliWorld::setFrequency(float hertz)
+{
+    // Default 60Hz anyway
+    if (hertz == 0) timeStep = 1.0f / 60.0f;
+    else timeStep = 1.0f / hertz;
+}
+
+void BliWorld::step(int velocityIterations, int positionIterations)
+{
+    world.Step(timeStep, velocityIterations, positionIterations);
 }

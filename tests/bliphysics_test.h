@@ -16,4 +16,6 @@ private:
     void world();
     void dynamicbody();
     void staticbody();
+
+    void simulation();
 };
