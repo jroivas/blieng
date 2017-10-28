@@ -26,6 +26,17 @@ void BliPhysicsTest::world()
 
     CPPUNIT_ASSERT_EQUAL(0.2f, world.getGravityX());
     CPPUNIT_ASSERT_EQUAL(-10.0f, world.getGravityY());
+
+    CPPUNIT_ASSERT_EQUAL(1.0f, world.pixelsToMeters(100));
+    CPPUNIT_ASSERT_EQUAL(0.5f, world.pixelsToMeters(50));
+    CPPUNIT_ASSERT_EQUAL(0.25f, world.pixelsToMeters(25));
+    CPPUNIT_ASSERT_EQUAL(500.0f, world.metersToPixels(5));
+
+    world.setPixelConversion(50.0f);
+    CPPUNIT_ASSERT_EQUAL(2.0f, world.pixelsToMeters(100));
+    CPPUNIT_ASSERT_EQUAL(1.0f, world.pixelsToMeters(50));
+    CPPUNIT_ASSERT_EQUAL(0.5f, world.pixelsToMeters(25));
+    CPPUNIT_ASSERT_EQUAL(250.0f, world.metersToPixels(5));
 }
 
 void BliPhysicsTest::dynamicbody()
@@ -70,11 +81,32 @@ void BliPhysicsTest::simulation()
     float x = ball.posX();
     float y = ball.posY();
 
-    for (int i = 0; i < 60; i++) {
-        world->step();
-        std::cout << " X: " << ball.posX() << " Y: " << ball.posY() << " angle: " << ball.angle() << "\n";
-    }
+    for (int i = 0; i < 60; i++)  world->step();
 
     CPPUNIT_ASSERT(x == ball.posX());
     CPPUNIT_ASSERT(y != ball.posY());
+}
+
+void BliPhysicsTest::simulation2()
+{
+
+    BliWorld *world = new BliWorld(0.0f, -10.0f);
+
+    BliStaticBody ground(world, 0, -10.0f);
+    ground.setBox(50.0f, 10.0f);
+    ground.setFixture(0.0, 0.0);
+    ground.setAngle(-0.42f);
+
+    BliDynamicBody ball(world, 0.0f, 4.0f);
+    ball.setCircle(0, 0, 1.0f);
+    ball.setFixture(1.0f, 0.3f);
+
+    float x = ball.posX();
+    float y = ball.posY();
+
+    for (int i = 0; i < 200; i++) world->step();
+
+    CPPUNIT_ASSERT(ball.posX() > x);
+    CPPUNIT_ASSERT(ball.posY() < y);
+    CPPUNIT_ASSERT(ball.posY() < 0);
 }

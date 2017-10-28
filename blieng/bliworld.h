@@ -35,9 +35,15 @@ public:
      */
     void step(int velocityIterations = 6, int positionIterations = 2);
 
+    void setPixelConversion(float pixelsPerMeter);
+    float pixelsToMeters(float pixels);
+    float metersToPixels(float meters);
+
 protected:
     b2World world;
     float timeStep;
+    float pixelsPerMeter;
+    float metersPerPixel;
 };
 
 }

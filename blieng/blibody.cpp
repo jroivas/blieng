@@ -23,6 +23,11 @@ void BliBody::setPosition(float x, float y)
     body->SetTransform(pos, 0);
 }
 
+void BliBody::setAngle(float angle)
+{
+    body->SetTransform(body->GetPosition(), angle);
+}
+
 float BliBody::posX()
 {
     return body->GetPosition().x;

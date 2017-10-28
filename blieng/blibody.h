@@ -18,6 +18,7 @@ public:
     void setCircle(float posx, float posy, float radius);
     void setBox(float width, float height);
     void setFixture(float density, float friction);
+    void setAngle(float angle);
 
     float posX();
     float posY();
