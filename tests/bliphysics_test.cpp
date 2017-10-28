@@ -57,17 +57,24 @@ void BliPhysicsTest::staticbody()
 void BliPhysicsTest::simulation()
 {
 
-    BliWorld *world = new BliWorld(0.0f, -9.81f);
+    BliWorld *world = new BliWorld(0.0f, -10.0f);
 
-    BliStaticBody ground(world, 0, 0);
+    BliStaticBody ground(world, 0, -10.0f);
     ground.setBox(50.0f, 10.0f);
     ground.setFixture(0.0, 0.0);
 
-    BliDynamicBody ball(world, 1.0f, 3.0f);
-    ball.setCircle(0, 0, 0.5f);
+    BliDynamicBody ball(world, 0.0f, 4.0f);
+    ball.setCircle(0, 0, 1.0f);
     ball.setFixture(1.0f, 0.3f);
+
+    float x = ball.posX();
+    float y = ball.posY();
 
     for (int i = 0; i < 60; i++) {
         world->step();
+        std::cout << " X: " << ball.posX() << " Y: " << ball.posY() << " angle: " << ball.angle() << "\n";
     }
+
+    CPPUNIT_ASSERT(x == ball.posX());
+    CPPUNIT_ASSERT(y != ball.posY());
 }

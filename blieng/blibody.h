@@ -21,6 +21,7 @@ public:
 
     float posX();
     float posY();
+    float angle();
 
 private:
     BliWorld *world;

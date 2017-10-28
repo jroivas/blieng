@@ -33,6 +33,11 @@ float BliBody::posY()
     return body->GetPosition().y;
 }
 
+float BliBody::angle()
+{
+    return body->GetAngle();
+}
+
 void BliBody::setCircle(float x, float y, float radius)
 {
     b2CircleShape *circle = new b2CircleShape;
@@ -50,6 +55,7 @@ void BliBody::setBox(float w, float h)
 
 void BliBody::setFixture(float density, float friction)
 {
+    if (shape == nullptr) throw "No shape for body!";
     b2FixtureDef fixtureDef;
     fixtureDef.shape = shape;
     fixtureDef.density = density;

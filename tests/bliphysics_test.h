@@ -11,11 +11,11 @@ public:
     CPPUNIT_TEST(world);
     CPPUNIT_TEST(dynamicbody);
     CPPUNIT_TEST(staticbody);
+    CPPUNIT_TEST(simulation);
     CPPUNIT_TEST_SUITE_END();
 private:
     void world();
     void dynamicbody();
     void staticbody();
-
     void simulation();
 };
