@@ -7,7 +7,6 @@ BliBody::BliBody(b2BodyType bodyType, BliWorld *w, float x, float y) :
     world(w),
     shape(nullptr)
 {
-    //bodydef.type = b2_dynamicBody;
     bodydef.type = bodyType;
     bodydef.position.Set(x, y);
     body = world->world.CreateBody(&bodydef);
@@ -16,6 +15,7 @@ BliBody::BliBody(b2BodyType bodyType, BliWorld *w, float x, float y) :
 BliBody::~BliBody()
 {
     removeFromWorld();
+    //TODO: delete body;
 }
 
 void BliBody::removeFromWorld()
