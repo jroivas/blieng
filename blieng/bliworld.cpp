@@ -68,7 +68,7 @@ float BliWorld::screenToY(float pixels)
 
 float BliWorld::XToScreen(float pixels)
 {
-    return (left - pixels) * width / (right - left);
+    return (left + pixels) * width / (right - left);
 }
 
 float BliWorld::YToScreen(float pixels)
