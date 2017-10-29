@@ -8,10 +8,26 @@ BliWorld::BliWorld(float gravityX, float gravityY)
 {
     // FIXME defaults
     setPixelConversion(100);
+    setOrtho(-10, 10, -10, 10);
+    setViewport(640, 480);
 }
 
 BliWorld::~BliWorld()
 {
+}
+
+void BliWorld::setOrtho(float l, float r, float b, float t)
+{
+    left = l;
+    right = r;
+    bottom = b;
+    top = t;
+}
+
+void BliWorld::setViewport(float w, float h)
+{
+    width = w;
+    height = h;
 }
 
 float BliWorld::getGravityX()
@@ -38,6 +54,26 @@ float BliWorld::pixelsToMeters(float pixels)
 float BliWorld::metersToPixels(float meters)
 {
     return pixelsPerMeter * meters;
+}
+
+float BliWorld::screenToX(float pixels)
+{
+    return left + pixels / width * (right - left);
+}
+
+float BliWorld::screenToY(float pixels)
+{
+    return top - pixels / height * (top - bottom);
+}
+
+float BliWorld::XToScreen(float pixels)
+{
+    return (left - pixels) * width / (right - left);
+}
+
+float BliWorld::YToScreen(float pixels)
+{
+    return (top - pixels) * height / (top - bottom);
 }
 
 void BliWorld::setFrequency(float hertz)
