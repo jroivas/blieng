@@ -15,6 +15,7 @@ BliBody::BliBody(b2BodyType bodyType, BliWorld *w, float x, float y) :
 
 BliBody::~BliBody()
 {
+    delete body;
 }
 
 void BliBody::setPosition(float x, float y)
