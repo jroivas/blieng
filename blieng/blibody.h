@@ -20,11 +20,13 @@ public:
     void setFixture(float density, float friction);
     void setAngle(float angle);
 
+    void removeFromWorld();
+
     float posX();
     float posY();
     float angle();
 
-private:
+protected:
     BliWorld *world;
     b2Shape *shape;
     b2BodyDef bodydef;
