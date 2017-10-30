@@ -124,7 +124,26 @@ void BliPhysicsTest::ortho()
     CPPUNIT_ASSERT_EQUAL(0.0f, world.XToScreen(-10));
     CPPUNIT_ASSERT_EQUAL(640.0f, world.XToScreen(10));
     CPPUNIT_ASSERT_EQUAL(320.0f, world.XToScreen(0));
-    CPPUNIT_ASSERT_EQUAL(0.0f, world.YToScreen(-10));
-    CPPUNIT_ASSERT_EQUAL(480.0f, world.YToScreen(10));
+    CPPUNIT_ASSERT_EQUAL(480.0f, world.YToScreen(-10));
     CPPUNIT_ASSERT_EQUAL(240.0f, world.YToScreen(0));
+    CPPUNIT_ASSERT_EQUAL(0.0f, world.YToScreen(10));
+
+    world.setOrtho(0, 10, 0, 10);
+    world.setViewport(640, 480);
+
+
+    CPPUNIT_ASSERT_EQUAL(0.0f, world.screenToX(0));
+    CPPUNIT_ASSERT_EQUAL(10.0f, world.screenToX(640));
+    CPPUNIT_ASSERT_EQUAL(10.0f, world.screenToY(0));
+    CPPUNIT_ASSERT_EQUAL(0.0f, world.screenToY(480));
+
+    CPPUNIT_ASSERT_EQUAL(-640.0f, world.XToScreen(-10));
+    CPPUNIT_ASSERT_EQUAL(640.0f, world.XToScreen(10));
+    CPPUNIT_ASSERT_EQUAL(320.0f, world.XToScreen(5));
+    CPPUNIT_ASSERT_EQUAL(0.0f, world.XToScreen(0));
+
+    CPPUNIT_ASSERT_EQUAL(960.0f, world.YToScreen(-10));
+    CPPUNIT_ASSERT_EQUAL(480.0f, world.YToScreen(0));
+    CPPUNIT_ASSERT_EQUAL(240.0f, world.YToScreen(5));
+    CPPUNIT_ASSERT_EQUAL(0.0f, world.YToScreen(10));
 }
