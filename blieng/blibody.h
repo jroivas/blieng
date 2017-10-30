@@ -26,6 +26,9 @@ public:
     float posY();
     float angle();
 
+    void applyForce(float forceX, float forceY);
+    void applyImpulse(float forceX, float forceY);
+
 protected:
     BliWorld *world;
     b2Shape *shape;

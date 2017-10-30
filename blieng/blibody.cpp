@@ -49,6 +49,16 @@ float BliBody::angle()
     return body->GetAngle();
 }
 
+void BliBody::applyForce(float forceX, float forceY)
+{
+    body->ApplyForce(b2Vec2(forceX, forceY), body->GetWorldCenter(), true);
+}
+
+void BliBody::applyImpulse(float forceX, float forceY)
+{
+    body->ApplyLinearImpulse(b2Vec2(forceX, forceY), body->GetWorldCenter(), true);
+}
+
 void BliBody::setCircle(float x, float y, float radius)
 {
     b2CircleShape *circle = new b2CircleShape;
