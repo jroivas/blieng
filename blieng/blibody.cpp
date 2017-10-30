@@ -84,6 +84,16 @@ void BliBody::setFixture(float density, float friction)
     body->CreateFixture(&fixtureDef);
 }
 
+void BliBody::setActive()
+{
+    body->SetActive(true);
+}
+
+void BliBody::setPassive()
+{
+    body->SetActive(false);
+}
+
 /*
 void BliBody::setMass(float mass)
 {

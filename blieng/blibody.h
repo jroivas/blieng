@@ -29,6 +29,9 @@ public:
     void applyForce(float forceX, float forceY);
     void applyImpulse(float forceX, float forceY);
 
+    void setActive();
+    void setPassive();
+
 protected:
     BliWorld *world;
     b2Shape *shape;
