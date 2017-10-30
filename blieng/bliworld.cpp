@@ -68,12 +68,12 @@ float BliWorld::screenToY(float pixels)
 
 float BliWorld::XToScreen(float pixels)
 {
-    return (left + pixels) * width / (right - left);
+    return (pixels - left) * width / (right - left);
 }
 
 float BliWorld::YToScreen(float pixels)
 {
-    return (top - pixels) * height / (top - bottom);
+    return (pixels + top) * height / (top - bottom);
 }
 
 void BliWorld::setFrequency(float hertz)

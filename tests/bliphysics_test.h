@@ -13,6 +13,7 @@ public:
     CPPUNIT_TEST(staticbody);
     CPPUNIT_TEST(simulation);
     CPPUNIT_TEST(simulation2);
+    CPPUNIT_TEST(ortho);
     CPPUNIT_TEST_SUITE_END();
 private:
     void world();
@@ -20,4 +21,5 @@ private:
     void staticbody();
     void simulation();
     void simulation2();
+    void ortho();
 };
