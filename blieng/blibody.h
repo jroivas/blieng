@@ -17,7 +17,7 @@ public:
     void setPosition(float x, float y);
     void setCircle(float posx, float posy, float radius);
     void setBox(float width, float height);
-    void setFixture(float density, float friction);
+    void setFixture(float density, float friction, float restitution=0.0);
     void setAngle(float angle);
 
     void removeFromWorld();

@@ -74,13 +74,14 @@ void BliBody::setBox(float w, float h)
     shape = box;
 }
 
-void BliBody::setFixture(float density, float friction)
+void BliBody::setFixture(float density, float friction, float restitution)
 {
     if (shape == nullptr) throw "No shape for body!";
     b2FixtureDef fixtureDef;
     fixtureDef.shape = shape;
     fixtureDef.density = density;
     fixtureDef.friction = friction;
+    fixtureDef.restitution = restitution;
     body->CreateFixture(&fixtureDef);
 }
 
