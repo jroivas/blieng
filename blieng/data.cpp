@@ -619,7 +619,7 @@ std::string Data::readString(
         boost::system::error_code ec;
         if (boost::filesystem::exists(first_path, ec)) {
             boost::filesystem::ifstream fd(first_path, std::ifstream::binary);
-            while (!fd.eof()) {
+            while (fd.good() && !fd.eof()) {
                 char tmp[256];
                 fd.read(tmp, 255);
                 unsigned int cnt = static_cast<unsigned int>(fd.gcount());
