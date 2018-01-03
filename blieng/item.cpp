@@ -17,6 +17,7 @@
 
 using blieng::Item;
 using blieng::ItemBase;
+using blieng::BliengJson;
 
 bool Item::m_ok = false;
 auto_vector<ItemBase> Item::m_item_bases;
@@ -112,60 +113,87 @@ void Item::getItemBases()
     if (!m_state->m_config->isValue("itemfile")) return;
 
     std::string items_file = m_state->m_config->getStringValue("itemfile");
-    json_value *root_val = m_state->m_data->readJson(items_file);  // FIXME
-    if (!root_val->isObject()) return;
+    auto root_val = m_state->m_data->readJson(items_file);  // FIXME
+    if (!root_val.is_object()) return;
 
     /* Go thorough items */
     // TODO Refactor
-    for (std::string mi : root_val->getMemberNames()) {
-        const json_value *item_val = m_state->m_data->getJsonValue(root_val, mi);
-        // ItemBase *item = new ItemBase();
+    for (std::string mi : JsonKeys(root_val)) {
+        BliengJson item_val = root_val[mi];
         std::unique_ptr<ItemBase> item(new ItemBase());
 
-        if (item_val->isObject()) {
+        if (item_val.is_object()) {
             item->base = mi;
-            std::vector<std::string> item_names = m_state->m_data->getJsonKeys(item_val);
+            std::vector<std::string> item_names = JsonKeys(item_val);
             for (std::string keyname : item_names) {
-                const json_value *val = m_state->m_data->getJsonValue(item_val, keyname);
+                BliengJson val = item_val[keyname];
                 bool item_is_ok = false;
                 if (keyname == "type") {
-                    if (val->isString()) item->type = val->asString();
-                    item_is_ok = true;
+                    if (val.is_string()) {
+                        std::string v = val;
+                        item->type = v;
+                        item_is_ok = true;
+                    }
                 }
                 else if (keyname == "image") {
-                    if (val->isString()) item->image = val->asString();
-                    item_is_ok = true;
+                    if (val.is_string()) {
+                        std::string v = val;
+                        item->image = v;
+                        item_is_ok = true;
+                    }
                 }
                 else if (keyname == "rarity") {
-                    if (val->isNumeric()) {
-                        item->rarity = val->asDouble();
+                    if (val.is_number()) {
+                        item->rarity = val;
                         item_is_ok = true;
                     }
                 }
                 else if (keyname == "life") {
-                    if (val->isNumeric()) {
-                        item->life = val->asInt();
+                    if (val.is_number()) {
+                        item->life = val;
                         item_is_ok = true;
                     }
                 }
                 else if (keyname == "consume") {
                     std::map<std::string, double> _consumes;
-                    if (val->isObject()) {
-                        for (std::string cmi : val->getMemberNames()) {
-                            const json_value *cnt_val = m_state->m_data->getJsonValue(val, cmi);
-                            if (cnt_val->isNumeric()) {
-                                _consumes[cmi] = cnt_val->asDouble();
+                    if (val.is_object()) {
+                        for (std::string cmi : JsonKeys(val)) {
+                            const BliengJson cnt_val = val[cmi];
+                            if (cnt_val.is_number()) {
+                                _consumes[cmi] = cnt_val;
                             }
                         }
                     }
                     item->consumes = _consumes;
                     item_is_ok = true;
                 }
+                /*
                 if (val->type == json_uinteger) item->setValue(keyname, val->asUInt());
                 else if (val->type == json_integer) item->setValue(keyname, val->asInt());
                 else if (val->type == json_double) item->setValue(keyname, val->asDouble());
                 else if (val->type == json_string) item->setValue(keyname, val->asString());
                 else if (val->type == json_boolean) item->setValue(keyname, val->asBool());
+                */
+                if (val.is_number_unsigned()) {
+                    unsigned int v = val;
+                    item->setValue(keyname, v);
+                }
+                else if (val.is_number_integer()) {
+                    int v = val;
+                    item->setValue(keyname, v);
+                }
+                else if (val.is_number()) {
+                    double v = val;
+                    item->setValue(keyname, v);
+                }
+                else if (val.is_string()) {
+                    std::string v = val;
+                    item->setValue(keyname, v);
+                }
+                else if (val.is_boolean()) {
+                    bool v = val;
+                    item->setValue(keyname, v);
+                }
                 else { //TODO unsupported
                     if (!item_is_ok) std::cout << keyname << "has unsupported type!\n";
                 }

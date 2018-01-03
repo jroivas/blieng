@@ -16,6 +16,7 @@
 
 #include "blieng/bliany.h"
 #include "blieng/logging.h"
+#include "blieng/json.h"
 
 #ifdef DATA_MUTEX_LOCK
 #include <boost/thread/locks.hpp>
@@ -23,6 +24,7 @@
 #endif
 
 using blieng::Data;
+using blieng::BliengJson;
 
 /**
  * Internally utilized data/file buffer to store data in memory.
@@ -645,9 +647,11 @@ std::string Data::readString(
     throw std::string("Can't open file: " + name);
 }
 
-json_value *Data::parseJson(
+BliengJson Data::parseJson(
     const std::string &datas)
 {
+    return BliengJson::parse(datas);
+#if 0
     json_settings settings;
 
     settings.max_memory = 0;
@@ -669,51 +673,40 @@ json_value *Data::parseJson(
         throw std::string("JSON Parse error: '" + datas + "': " + error + "!");
     }
     return val;
+#endif
 }
 
-void Data::freeJson(
-    json_value *val)
+
+void Data::freeJson(BliengJson &)
 {
-    json_value_free(val);
 }
 
-json_value *Data::readJson(
-    const std::string &name) const
+BliengJson Data::readJson(const std::string &name) const
 {
     std::string datas = readString(name);
 
     return parseJson(datas);
 }
 
-std::vector<std::string> Data::getJsonKeys(
-    const json_value *val)
+std::vector<std::string> Data::getJsonKeys(const BliengJson &val)
 {
-    BOOST_ASSERT(val != nullptr);
-    return val->getMemberNames();
+    return blieng::JsonKeys(val);
 }
 
 bool Data::isJsonKey(
-    json_value *val,
+    const BliengJson &val,
     const std::string &key)
 {
-    if (val->isObject()) {
-        return val->isMember(key);
-    }
-    return false;
+    if (!val.is_object()) return false;
+    return val[key] != nullptr;
 }
 
-const json_value *Data::getJsonValue(
-    const json_value *val,
+const BliengJson Data::getJsonValue(
+    const BliengJson &val,
     const std::string &key)
 {
-    if (val->isObject()) {
-        if (val->isMember(key)) {
-            const json_value *res = val->getMember(key);
-            if (res != nullptr)
-                return res;
-        }
-    }
-    return val;
+    if (!val.is_object()) return val;
+    return val[key];
 }
 
 std::string Data::formatString(

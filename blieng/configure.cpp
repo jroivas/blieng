@@ -105,50 +105,43 @@ bool Configure::validateValues() const
     return true;
 }
 
-void Configure::parseStringList(
-    std::string key,
-    const json_value* realval)
+void Configure::parseStringList(std::string key, const BliengJson realval)
 {
-    if (realval->isArray()) {
+    if (realval.is_array()) {
         std::vector<std::string> list_data;
 
-        auto it = realval->u.array.begin();
-        while (it != realval->u.array.end()) {
-            list_data.push_back((*it)->asString());
-            ++it;
+        for (std::string v : realval) {
+            list_data.push_back(v);
         }
 
         setValue(key, list_data);
     }
 }
 
-void Configure::parseIntList(
-    std::string key,
-    const json_value* realval)
+void Configure::parseIntList(std::string key, const BliengJson realval)
 {
-    if (realval->isArray()) {
+    if (realval.is_array()) {
         std::vector<int> list_data;
 
-        auto it = realval->u.array.begin();
-        while (it != realval->u.array.end()) {
-            list_data.push_back((*it)->asInt());
-            ++it;
+        for (int v : realval) {
+            list_data.push_back(v);
         }
 
         setValue(key, list_data);
     }
 }
 
-void Configure::parseBool(
-    std::string key,
-    const json_value* realval)
+void Configure::parseBool(std::string key, const BliengJson realval)
 {
     bool res = false;
 
-    if (realval->isNumeric()) {
-        if (realval->asInt() == 1) res = true;
-    } else if (realval->isString()) {
-        std::string sval = realval->asString();
+    if (realval.is_boolean()) {
+        res = realval;
+    } else if (realval.is_number()) {
+        int v = realval;
+        res = (v == 1);
+    } else if (realval.is_string()) {
+        std::string sval = realval;
         boost::algorithm::to_lower(sval);
         if (sval == "yes" || sval == "on" ||
             sval == "true" || sval == "y") {
@@ -160,40 +153,50 @@ void Configure::parseBool(
 
 void Configure::parse()
 {
-    if (!data_json->isObject())
-        return;
+    if (!data_json.is_object()) return;
 
 #ifdef DATA_MUTEX_LOCK
     boost::lock_guard<boost::mutex> keylock(key_mutex);
 #endif
 
     // FIXME This is ugly
-    for(auto data_key : data_json->getMemberNames()) {
+    for (auto data_key : JsonKeys(data_json)) {
         auto val = keys.find(data_key);
         auto val2 = opt_keys.find(data_key);
         if (val == keys.end()) val = opt_keys.find(data_key);
 
         if (val != keys.end() || val2 != opt_keys.end()) {
-            const json_value* realval =
-                m_state->m_data->getJsonValue(data_json, data_key);
-            if (val->second == Configure::KeyString) {
-                if (realval->isString())
-                    setValue(data_key, realval->asString());
+            const BliengJson realval = data_json[data_key];
+            if (realval == nullptr) {}
+            else if (val->second == Configure::KeyString) {
+                if (realval.is_string()) {
+                    std::string v = realval;
+                    setValue(data_key, v);
+                }
             }
             else if (val->second == Configure::KeyDouble) {
-                if (realval->isNumeric())
-                    setValue(data_key, realval->asDouble());
+                if (realval.is_number_float()) {
+                    double v = realval;
+                    setValue(data_key, v);
+                }
             }
             else if (val->second == Configure::KeyUInt) {
-                if (realval->isNumeric())
-                    setValue(data_key, realval->asUInt());
+                if (realval.is_number()) {
+                    unsigned int v = realval;
+                    setValue(data_key, v);
+                }
             }
             else if (val->second == Configure::KeyInt) {
-                if (realval->isNumeric())
-                    setValue(data_key, realval->asInt());
+                if (realval.is_number()) {
+                    int v = realval;
+                    setValue(data_key, v);
+                }
             }
             else if (val->second == Configure::KeyBool) {
-                parseBool(data_key, realval);
+                if (realval.is_boolean()) {
+                    bool v = realval;
+                    setValue(data_key, v);
+                }
             }
             else if (val->second == Configure::KeyStringList) {
                 parseStringList(data_key, realval);

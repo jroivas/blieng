@@ -14,6 +14,7 @@
 #include "blieng/data.h"
 
 using blieng::Maps;
+using blieng::BliengJson;
 
 Maps::Maps(
     boost::shared_ptr<blieng::BliengState> _state,
@@ -189,47 +190,48 @@ blieng::Path Maps::updatePath(blieng::Path path, int index, blieng::Point point)
 
 bool Maps::parseMap()
 {
-    if (!m_map_json->isObject()) return false;
+    if (!m_map_json.is_object()) return false;
 
     /* Go thorough items */
     // TODO Refactor
-    BOOST_FOREACH(std::string mi, m_map_json->getMemberNames()) {
-        const json_value *item_val =
-            m_state->m_data->getJsonValue(m_map_json, mi);
-        if (mi == "image" && item_val->isString()) {
-            m_map_image_file = item_val->asString();
+    BOOST_FOREACH(std::string mi, blieng::JsonKeys(m_map_json)) {
+        const BliengJson item_val = m_map_json[mi];
+        if (mi == "image" && item_val.is_string()) {
+            m_map_image_file = item_val;
             //std::cout << " = " << m_map_image_file << "\n";
         }
-        else if (mi == "towns" && item_val->isArray()) {
-            auto it = item_val->u.array.begin();
-            while (it != item_val->u.array.end()) {
-                if ((*it)->isObject()) {
+        else if (mi == "towns" && item_val.is_array()) {
+            auto it = item_val.cbegin();
+            while (it != item_val.cend()) {
+                if (it->is_object()) {
                     Town *town = new Town();
-                    BOOST_FOREACH(std::string town_item, (*it)->getMemberNames()) {
-                        const json_value *town_val = m_state->m_data->getJsonValue(*it, town_item);
-                        if (town_item == "name" && town_val->isString()) {
-                                town->setName(town_val->asString());
+                    BOOST_FOREACH(std::string town_item, blieng::JsonKeys(*it)) {
+                        const BliengJson town_val = (*it)[town_item];
+                        if (town_item == "name" && town_val.is_string()) {
+                            town->setName(town_val);
                         }
-                        else if (town_item == "size" && town_val->isNumeric()) {
-                                town->setSize(town_val->asUInt());
+                        else if (town_item == "size" && town_val.is_number()) {
+                            town->setSize(town_val);
                         }
-                        else if (town_item == "posx" && town_val->isNumeric()) {
-                                town->setPositionX(town_val->asDouble());
+                        else if (town_item == "posx" && town_val.is_number()) {
+                            town->setPositionX(town_val);
                         }
-                        else if (town_item == "posy" && town_val->isNumeric()) {
-                                town->setPositionY(town_val->asDouble());
+                        else if (town_item == "posy" && town_val.is_number()) {
+                            town->setPositionY(town_val);
                         }
-                        else if (town_item == "start" && town_val->isNumeric()) {
-                                if (town_val->asInt()>0) town->setValue("start", true);
+                        else if (town_item == "start" && town_val.is_number()) {
+                            int v = town_val;
+                            if (v > 0) town->setValue("start", true);
                         }
-                        else if (town_item == "population-index" && town_val->isNumeric()) {
-                                town->setValue("population-index", town_val->asDouble());
+                        else if (town_item == "population-index" && town_val.is_number()) {
+                            double v = town_val;
+                            town->setValue("population-index", v);
                         }
-                        else if (town_item == "population" && town_val->isNumeric()) {
-                                town->setValue("population", town_val->asUInt());
+                        else if (town_item == "population" && town_val.is_number()) {
+                            unsigned int v = town_val;
+                            town->setValue("population", v);
                         }
                     }
-                    //std::cout << town->toString();
                     if (town->getName() != "") {
                         m_towns.push_back(town);
                     } else {
@@ -239,9 +241,27 @@ bool Maps::parseMap()
                 ++it;
             }
         }
-        else if (mi == "paths" and item_val->isArray()) {
-            auto it = item_val->u.array.begin();
-            while (it != item_val->u.array.end()) {
+        else if (mi == "paths" and item_val.is_array()) {
+            for (BliengJson item : item_val) {
+                if (!item.is_array()) continue;
+
+                blieng::Path path;
+                bool ok = false;
+                for (BliengJson coordinate : item) {
+                    if (!coordinate.is_array()) continue;
+                    if (coordinate.size() < 2) continue;
+                    if (!coordinate[0].is_number() || !coordinate[0].is_number()) continue;
+                    double pt1 = coordinate[0];
+                    double pt2 = coordinate[1];
+                    blieng::Point pt(pt1, pt2);
+                    path.addPoint(pt);
+                    ok = true;
+                }
+                if (ok) addPath(path);
+            }
+            /*
+            auto it = item_val.cbegin();
+            while (it != item_val.cend()) {
                 if ((*it)->isArray()) {
                     blieng::Path path;
                     bool ok = false;
@@ -267,6 +287,7 @@ bool Maps::parseMap()
                 }
                 ++it;
             }
+        */
         }
     }
     return true;

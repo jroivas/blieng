@@ -114,7 +114,7 @@ private:
     void parse();
 
     std::string config_file;
-    json_value *data_json;
+    BliengJson data_json;
     std::map<std::string, key_type_t> keys;
     std::map<std::string, key_type_t> opt_keys;
 
@@ -129,7 +129,7 @@ private:
      */
     void parseStringList(
         std::string key,
-        const json_value* val);
+        const BliengJson val);
     /**
      * Parsing integer list values
      *
@@ -138,7 +138,7 @@ private:
      */
     void parseIntList(
         std::string key,
-        const json_value* val);
+        const BliengJson val);
     /**
      * Parsing boolean value
      *
@@ -147,7 +147,7 @@ private:
      */
     void parseBool(
         std::string key,
-        const json_value* val);
+        const BliengJson val);
 };
 
 }  // namespace blieng

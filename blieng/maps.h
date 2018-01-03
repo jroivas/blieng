@@ -156,7 +156,7 @@ private:
 
     std::string m_map_name;
     std::string m_map_file;
-    json_value *m_map_json;
+    BliengJson m_map_json;
 
     boost::shared_ptr<blieng::BliengState> m_state;
 

@@ -3,6 +3,8 @@
 #include <blieng/datafile.h>
 #include <blieng/json.h>
 
+using blieng::BliengJson;
+
 std::string genIndent(long indent)
 {
     std::string res;
@@ -12,47 +14,39 @@ std::string genIndent(long indent)
     return res;
 }
 
-void walkJsonObject(blieng::Data &data, const json_value* json_data, long indent);
+void walkJsonObject(blieng::Data &data, const BliengJson json_data, long indent);
 
-void walkJsonArray(blieng::Data &data, const json_value* json_data, long indent=0)
+void walkJsonArray(blieng::Data &data, const BliengJson json_data, long indent=0)
 {
-    if (!json_data->isArray()) {
+    if (!json_data.is_array()) {
         throw std::string("JSON data is not array");
     }
     ++indent;
 
-    auto arrIter = json_data->u.array.begin();
+    auto arrIter = json_data.cbegin();
     bool first = true;
     std::cout << genIndent(indent);
-    while (arrIter != json_data->u.array.end()) {
+    while (arrIter != json_data.cend()) {
         if (!first) {
             std::cout << ", ";
         } else {
             first = false;
         }
-        switch((*arrIter)->type) {
-            case json_type::json_object:
+        switch(arrIter->type()) {
+            case BliengJson::value_t::object:
                 std::cout << "\n";
                 walkJsonObject(data, *arrIter, indent + 1);
                 break;
-            case json_type::json_array:
+            case BliengJson::value_t::array:
                 std::cout << "\n";
                 walkJsonArray(data, *arrIter, indent + 1);
                 break;
-            case json_type::json_integer:
-                std::cout << (*arrIter)->asInt();
-                break;
-            case json_type::json_uinteger:
-                std::cout << (*arrIter)->asUInt();
-                break;
-            case json_type::json_double:
-                std::cout << (*arrIter)->asDouble();
-                break;
-            case json_type::json_string:
-                std::cout << (*arrIter)->asString();
-                break;
-            case json_type::json_boolean:
-                std::cout << (*arrIter)->asBool();
+            case BliengJson::value_t::number_integer:
+            case BliengJson::value_t::number_unsigned:
+            case BliengJson::value_t::number_float:
+            case BliengJson::value_t::string:
+            case BliengJson::value_t::boolean:
+                std::cout << arrIter.value();
                 break;
             default:
                 std::cout << "Uknknown";
@@ -63,39 +57,31 @@ void walkJsonArray(blieng::Data &data, const json_value* json_data, long indent=
     std::cout << "\n";
 }
 
-void walkJsonObject(blieng::Data &data, const json_value* json_data, long indent=0)
+void walkJsonObject(blieng::Data &data, const BliengJson json_data, long indent=0)
 {
-    if (!json_data->isObject()) {
+    if (!json_data.is_object() || json_data.is_array()) {
         throw std::string("JSON data is not object");
     }
 
-    auto json_keys = data.getJsonKeys(json_data);
+    auto json_keys = blieng::JsonKeys(json_data);
     ++indent;
 
     for (auto key : json_keys) {
         std::cout << genIndent(indent) << "Key: " << key << "\n";
-        auto json_val = data.getJsonValue(json_data, key);
-        switch((json_val)->type) {
-            case json_type::json_object:
+        auto json_val = json_data[key];
+        switch(json_val.type()) {
+            case BliengJson::value_t::object:
                 walkJsonObject(data, json_val, indent + 1);
                 break;
-            case json_type::json_array:
+            case BliengJson::value_t::array:
                 walkJsonArray(data, json_val, indent + 1);
                 break;
-            case json_type::json_integer:
-                std::cout << genIndent(indent + 1) << (json_val)->asInt() << "\n";
-                break;
-            case json_type::json_uinteger:
-                std::cout << genIndent(indent + 1) << (json_val)->asUInt() << "\n";
-                break;
-            case json_type::json_double:
-                std::cout << genIndent(indent + 1) << (json_val)->asDouble() << "\n";
-                break;
-            case json_type::json_string:
-                std::cout << genIndent(indent + 1) << (json_val)->asString() << "\n";
-                break;
-            case json_type::json_boolean:
-                std::cout << genIndent(indent + 1) << (json_val)->asBool() << "\n";
+            case BliengJson::value_t::number_integer:
+            case BliengJson::value_t::number_unsigned:
+            case BliengJson::value_t::number_float:
+            case BliengJson::value_t::string:
+            case BliengJson::value_t::boolean:
+                std::cout << genIndent(indent + 1) << json_val << "\n";
                 break;
             default:
                 std::cout << genIndent(indent + 1) << "Uknknown\n";

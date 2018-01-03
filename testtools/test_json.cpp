@@ -2,8 +2,12 @@
 #include <blieng/json.h>
 #include <iostream>
 
-void print_json_val(const json_value *val, int indent=0)
+using blieng::BliengJson;
+
+void print_json_val(const BliengJson val, int indent=0)
 {
+    std::cout << val.dump(2) << "\n";
+    /*
     if (val == NULL) return;
 
     if (val->type == json_object) {
@@ -16,6 +20,7 @@ void print_json_val(const json_value *val, int indent=0)
             print_json_val(new_val, indent + 2);
         }
     }
+   */
 }
 
 int main(int argc, char **argv)
@@ -26,7 +31,7 @@ int main(int argc, char **argv)
     }
 
     blieng::Data data;
-    const json_value *val = nullptr;
+    BliengJson val;
     try {
         val = data.readJson(argv[1]);
     }

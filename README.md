@@ -95,10 +95,10 @@ These modifications inherit original license.
     * Paulo Barreto <paulo.barreto@terra.com.br>
   - http://www.cs.ucdavis.edu/~rogaway/ocb/ocb-ref/
 
-### json.h/json.c
-  - BSD alike
-  - Copyright (C) 2012, 2013 James McLaughlin et al.
-  - https://github.com/udp/json-parser
+### json.hpp
+  - MIT
+  - Copyright (c) 2013-2017 Niels Lohmann
+  - https://github.com/nlohmann/json
 
 ### fastlz.h/fastlz.c
   - MIT

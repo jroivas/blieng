@@ -15,6 +15,7 @@
 #include <string>
 #include <vector>
 
+#include "blieng/json.hpp"
 #include "blieng/json.h"
 #include "blieng/datafile.h"
 #include "blieng/auto_vector.h"
@@ -105,27 +106,25 @@ public:
      * Read JSON data from a file in backend.
      *
      * \param name Name of the file to be read
-     * \returns Parsed internal json_value, see \ref json.h
+     * \returns Parsed JSON in internal format, see \ref json.h
      */
-    json_value *readJson(
-        const std::string &name) const;
+    BliengJson readJson(const std::string &name) const;
 
     /**
      * Parse JSON data.
      *
      * \param datas Data to be parsed
-     * \returns Parsed internal json_value, see \ref json.h
+     * \returns Parsed JSON in internal format, see \ref json.h
      */
-    static json_value *parseJson(
-        const std::string &datas);
+    static BliengJson parseJson(const std::string &datas);
 
     /**
      * Free JSON value
+     * DEPRECATED
      *
-     * \param val Reference to \ref json_value, for example one read with \ref readJson
+     * \param val Reference to \ref internal JSON value
      */
-    static void freeJson(
-        json_value *val);
+    static void freeJson(BliengJson &);
 
     /**
      * Get key names under JSON value
@@ -134,8 +133,7 @@ public:
      * \param val Reference to \ref json_value, for example one read with \ref readJson
      * \returns Vector of strings of found key names.
      */
-    static std::vector<std::string> getJsonKeys(
-        const json_value *val);
+    static std::vector<std::string> getJsonKeys(const BliengJson &val);
     /**
      * Check if specific key name is found from JSON value.
      * Assumes that the JSON value in question is array.
@@ -145,7 +143,7 @@ public:
      * \returns True if key exists, false otherwise
      */
     static bool isJsonKey(
-        json_value *val,
+        const BliengJson &val,
         const std::string &key);
     /**
      * Get another JSON value from current value.
@@ -154,8 +152,8 @@ public:
      * \param key Name of the key which value to get
      * \returns JSON value at given key, on error returns given value
      */
-    static const json_value *getJsonValue(
-        const json_value *val,
+    static const BliengJson getJsonValue(
+        const BliengJson &val,
         const std::string &key);
 
     /**

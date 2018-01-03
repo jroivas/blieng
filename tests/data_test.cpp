@@ -111,24 +111,21 @@ void DataTest::readJson()
     boost::shared_ptr<DataMock> obj(new DataMock());
     obj->setFakeData("data/json1", "{\"aa\": \"b42\", \"second\": 12, \"third\": [1,2,3]}");
 
-    json_value *res = obj->readJson("json1");
+    blieng::BliengJson res = obj->readJson("json1");
 
-    CPPUNIT_ASSERT( res != nullptr );
+    CPPUNIT_ASSERT( res.is_object() );
 
-    CPPUNIT_ASSERT( res->isObject() );
-    //CPPUNIT_ASSERT( !res->empty() );
+    CPPUNIT_ASSERT( res["aa"] != nullptr );
+    CPPUNIT_ASSERT( res["aa"].is_string() );
 
-    CPPUNIT_ASSERT( res->isMember("aa") );
-    CPPUNIT_ASSERT( (*res)["aa"].isString() );
+    CPPUNIT_ASSERT( res["second"] != nullptr );
+    CPPUNIT_ASSERT( res["second"].is_number() );
 
-    CPPUNIT_ASSERT( res->isMember("second") );
-    CPPUNIT_ASSERT( (*res)["second"].isNumeric() );
-
-    CPPUNIT_ASSERT( res->isMember("third") );
-    CPPUNIT_ASSERT( (*res)["third"].isArray() );
+    CPPUNIT_ASSERT( res["third"] != nullptr );
+    CPPUNIT_ASSERT( res["third"].is_array() );
 
     CPPUNIT_ASSERT( obj->isJsonKey(res, "second") );
-    CPPUNIT_ASSERT( obj->getJsonValue(res, "second")->isNumeric() );
+    CPPUNIT_ASSERT( obj->getJsonValue(res, "second").is_number() );
 }
 
 void DataTest::fileExists()
