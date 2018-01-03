@@ -651,29 +651,6 @@ BliengJson Data::parseJson(
     const std::string &datas)
 {
     return BliengJson::parse(datas);
-#if 0
-    json_settings settings;
-
-    settings.max_memory = 0;
-    settings.settings = 0;
-    settings.mem_alloc = nullptr;
-    settings.mem_free = nullptr;
-    settings.user_data = nullptr;
-
-    json_char error [json_error_max];
-    json_value *val = json_parse_ex(
-        &settings,
-        datas.c_str(),
-        datas.length(),
-        error);
-
-    //json_value *val = json_parse(datas.c_str(), datas.length());
-    if (val == nullptr) {
-        LOG_DEBUG("JSON Parse error '" + datas + "': " + error + "!");
-        throw std::string("JSON Parse error: '" + datas + "': " + error + "!");
-    }
-    return val;
-#endif
 }
 
 
