@@ -1,6 +1,16 @@
 #ifndef __AUTO_MAP_H
 #define __AUTO_MAP_H
 
+// This file is partly got ideas and code from auto_vector.h
+// Thus retaining copyright from there:
+//------------------------------------
+// Reliable Software (c) 2003
+// www.relisoft.com
+// Any use, commercial or noncommercial of this code
+// is hereby granted, under the condition
+// that this copyright notice be not removed.
+//------------------------------------
+
 #include <memory>
 #include <vector>
 #include <iostream>
@@ -16,7 +26,6 @@ public:
     class auto_lvalue
     {
     public:
-
         auto_lvalue (T * & p) : _p (p) {}
         operator T * () const { return _p; }
         T * operator-> () const { return _p; }
@@ -35,7 +44,6 @@ public:
     {
         friend class auto_map;
     public:
-        //mappings(KeyType k, std::unique_ptr<T> v) : key(k), val(v) { }
         mappings(KeyType k, T* v) : key(k), val(v) { }
         ~mappings() {
             if (val != nullptr) {
@@ -44,16 +52,10 @@ public:
         }
 
         KeyType key;
-/*
-        const T* getValue() {
-            return val;
-        }
-*/
         std::unique_ptr<T> getValue() {
             std::unique_ptr<T> res(val);
             val = nullptr;
             return res;
-            //return std::unique_ptr<T>(val);
         }
 
     protected:
@@ -76,21 +78,6 @@ public:
         return *this;
     }
 
-#if 0
-    T const operator [] (KeyType i) const
-    {
-        iterator it = _data.begin();
-        while (it != _data.end()) {
-            if ((*it)->key == i) {
-                return *((*it).val->get());
-            }
-            ++it;
-        }
-        throw "Key not found";
-    }
-
-#else
-
     T const * operator [] (KeyType i) const
     {
         iterator it = _data.begin();
@@ -98,15 +85,10 @@ public:
             if ((*it)->key == i) {
                 return (*it).val;
             }
-            /*if ((*it)->first == i) {
-                return (*it)->second->get();
-            }
-            */
             ++it;
         }
         throw "Key not found";
     }
-#endif
 
     auto_lvalue operator [] (KeyType i)
     {
@@ -207,4 +189,4 @@ private:
     std::vector<mappings*> _data;
 };
 
-#endif  // __AUTO_MAP_H
+#endif
