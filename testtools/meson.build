@@ -48,5 +48,6 @@ blieng_data = executable('blieng_data',
     dependencies: [boost]
     )
 
-test('test data', blieng_data)
-test('test json', blieng_json)
+# Disabled tests for now since these need parameters
+#test('test data', blieng_data)
+#test('test json', blieng_json)
