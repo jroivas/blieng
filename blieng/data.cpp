@@ -670,7 +670,12 @@ std::string Data::readString(
 BliengJson Data::parseJson(
     const std::string &datas)
 {
-    return BliengJson::parse(datas);
+    try {
+        return BliengJson::parse(datas);
+    }
+    catch (nlohmann::detail::parse_error e) {
+        throw std::string("JSON parsing error");
+    }
 }
 
 
