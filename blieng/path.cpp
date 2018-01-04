@@ -3,16 +3,13 @@
  */
 
 #include "blieng/path.h"
+#include "blieng/blieng.h"
 
 #include <algorithm>
 #include <iostream>
 #include <string>
 #include <vector>
 #include <cmath>
-
-#ifndef M_PI
-#define M_PI 3.14159
-#endif
 
 using blieng::Path;
 
@@ -374,5 +371,5 @@ double Path::getPartAngle(unsigned int index) const
         (2 * p1c * p0c)
         );
 
-    return angle_rad * 180 / M_PI;
+    return angle_rad * 180 / blieng::PI;
 }
