@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Jouni Roivas
+ * Copyright 2014-2018 Jouni Roivas
  */
 
 #include "blieng/logging.h"
@@ -12,48 +12,31 @@
 #include <QDebug>
 #endif
 
-static std::string __log_level = "ERROR";
+static blieng::LogLevel __log_level = blieng::log::Error;
 
-static std::map<std::string, int> __log_levels = {
-    {"CRITICAL", 0},
-    {"ERROR", 1},
-    {"WARNING", 2},
-    {"INFO", 3},
-    {"DEBUG", 5}
-};
-
-const std::vector<std::string> blieng::logLevels()
+void blieng::__do_log(const blieng::LogLevel &level, std::string msg, std::string function)
 {
-    std::vector<std::string> res;
-    auto iter = __log_levels.begin();
-    while (iter != __log_levels.end()) {
-        res.push_back(iter->first);
-        ++iter;
-    }
-    return res;
-}
+    if (level.priority() > __log_level.priority()) return;
 
-void blieng::__do_log(std::string level, std::string msg, std::string function)
-{
-    if (__log_levels[level] <= __log_levels[__log_level]) {
-        if (!function.empty()) function = "\n    @" + function;
+    if (!function.empty()) function = "\n    @" + function;
 #ifdef ANDROID
-        qDebug() << level.c_str() << ": " << msg.c_str() << function.c_str();
+    qDebug() << level.name().c_str() << ": " << msg.c_str() << function.c_str();
 #else
-        std::cerr << level << ": " << msg  << function << std::endl;
+    std::cerr << level.name() << ": " << msg  << function << std::endl;
 #endif
-    }
 }
 
-void blieng::setLogLevel(std::string level)
+void blieng::setLogLevel(const blieng::LogLevel &level)
 {
-    if (__log_levels.find(level) == __log_levels.end())
-        throw std::string("Invalid log level!");
-
     __log_level = level;
 }
 
-const std::string blieng::getLogLevel()
+const blieng::LogLevel blieng::getLogLevel()
 {
-     return __log_level;
+    return __log_level;
+}
+
+const std::string blieng::getLogLevelName()
+{
+    return __log_level.name();
 }

@@ -9,7 +9,7 @@
 #ifdef USE_BOOST_ANY
 #include <boost/any.hpp>
 #else
-#include "cdiggins.h"
+#include "3rdparty/cdiggins.h"
 #endif
 
 /**
