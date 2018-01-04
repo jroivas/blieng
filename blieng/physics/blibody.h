@@ -1,7 +1,7 @@
 #pragma once
 
 #include "blieng/bliobject.h"
-#include "blieng/bliworld.h"
+#include "blieng/physics/bliworld.h"
 #include "Box2D/Box2D.h"
 
 namespace blieng
@@ -9,8 +9,11 @@ namespace blieng
 
 class BliBody : public BliObject
 {
-public:
+protected:
+    // This class should only be inherited, not to use as-is
     BliBody(b2BodyType bodyType, BliWorld *world, float x=0.0f, float y=0.0f);
+
+public:
     virtual ~BliBody();
 
     //void setMass(float mass);

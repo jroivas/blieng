@@ -1,6 +1,6 @@
 #pragma once
 
-#include "blieng/blibody.h"
+#include "blieng/physics/blibody.h"
 
 namespace blieng
 {

@@ -2,9 +2,9 @@
 #include "test_tools.h"
 
 #include <bliobject.h>
-#include <bliworld.h>
-#include <blidynamicbody.h>
-#include <blistaticbody.h>
+#include <physics/bliworld.h>
+#include <physics/blidynamicbody.h>
+#include <physics/blistaticbody.h>
 
 CPPUNIT_TEST_SUITE_REGISTRATION( BliPhysicsTest );
 
