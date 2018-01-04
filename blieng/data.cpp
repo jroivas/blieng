@@ -229,6 +229,7 @@ boost::filesystem::path Data::findDataPath() const
         }
     }
 #endif
+    LOG_ERROR("Couldn't find data path!");
     boost::filesystem::path empty_data_path;
     return empty_data_path;
 }
