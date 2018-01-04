@@ -140,12 +140,7 @@ bool BliObject::fitsLimits(BliAny val, A &res) const
     uint64_t _max = static_cast<uint64_t>(std::numeric_limits<A>::max());
     int64_t _min = std::numeric_limits<A>::min();
 
-    B _val =
-#ifdef USE_BOOST_ANY
-        boost::any_cast<B>(val);
-#else
-        val.cast<B>();
-#endif
+    B _val = val.cast<B>();
     bool conv = false;
     if (a_digits >= b_digits
         && a_is_signed == b_is_signed) {
@@ -176,13 +171,7 @@ bool BliObject::fitsLimits(BliAny val, A &res) const
     }
 
     if (conv) {
-        res = static_cast<A>(
-#ifdef USE_BOOST_ANY
-            boost::any_cast<B>(val)
-#else
-            val.cast<B>()
-#endif
-            );
+        res = static_cast<A>(val.cast<B>());
         return true;
     }
     return false;
@@ -198,13 +187,7 @@ T BliObject::getValue(const std::string &key) const
         throw err;
     }
 
-    if (val.type() == typeid(T)) {
-#ifdef USE_BOOST_ANY
-        return boost::any_cast<T>(val);
-#else
-        return val.cast<T>();
-#endif
-    }
+    if (val.type() == typeid(T)) return val.cast<T>();
 
     T res = 0;
     if (fitsLimits<T, int>(val, res))
@@ -273,16 +256,6 @@ double BliObject::getDoubleValue(const std::string &key) const
 std::string BliObject::getStringValue(const std::string &key) const
 {
     BliAny val = getValue(key);
-#ifdef USE_BOOST_ANY
-    try {
-        return boost::any_cast<std::string>(val);
-    }
-    catch (boost::bad_any_cast &c) {}
-    try {
-        return boost::any_cast<char *>(val);
-    }
-    catch (boost::bad_any_cast &c) {}
-#else
     try {
         return val.cast<std::string>();
     }
@@ -291,7 +264,6 @@ std::string BliObject::getStringValue(const std::string &key) const
         return val.cast<char*>();
     }
     catch (cdiggins::anyimpl::bad_any_cast &c) {}
-#endif
 
     std::ostringstream msg;
     msg << "Unsafe conversion of "
@@ -307,17 +279,10 @@ std::string BliObject::getStringValue(const std::string &key) const
 bool BliObject::getBoolValue(const std::string &key) const
 {
     BliAny val = getValue(key);
-#ifdef USE_BOOST_ANY
-    try {
-        return boost::any_cast<bool>(val);
-    }
-    catch (boost::bad_any_cast &c) {}
-#else
     try {
         return val.cast<bool>();
     }
     catch (cdiggins::anyimpl::bad_any_cast &c) {}
-#endif
 
     std::ostringstream msg;
     msg << "Unsafe conversion of "
@@ -333,43 +298,23 @@ bool BliObject::getBoolValue(const std::string &key) const
 std::vector<std::string> BliObject::getListValue(const std::string &key) const
 {
     BliAny val = getValue(key);
-#ifdef USE_BOOST_ANY
-    try {
-        return boost::any_cast<std::vector<std::string> >(val);
-    }
-    catch (boost::bad_any_cast &c) {
-        throw std::string("Not string list at " + key);
-    }
-#else
     try {
         return val.cast<std::vector<std::string>>();
     }
     catch (cdiggins::anyimpl::bad_any_cast &c) {
         throw std::string("Not string list at " + key);
     }
-#endif
 }
 
 std::vector<int> BliObject::getIntValues(const std::string &key) const
 {
     BliAny val = getValue(key);
-#ifdef USE_BOOST_ANY
-    try {
-        return boost::any_cast<std::vector<int> >(val);
-    }
-    catch (boost::bad_any_cast &c) {
-        std::string errmsg = "Not int list at " + key + " " + c.what();
-        LOG_ERROR(errmsg);
-        throw errmsg;
-    }
-#else
     try {
         return val.cast<std::vector<int>>();
     }
     catch (cdiggins::anyimpl::bad_any_cast &c) {
-        throw std::string("Not string list at " + key);
+        throw std::string("Not int list at " + key);
     }
-#endif
 }
 
 const std::type_info *BliObject::getValueType(const std::string &key) const
@@ -415,12 +360,7 @@ std::vector<std::string> BliObject::getKeys()
 template<typename T>
 bool BliObject::changeNumValue(std::string key, BliAny val, int diff)
 {
-    T __num =
-#ifdef USE_BOOST_ANY
-        boost::any_cast<T>(val);
-#else
-        val.cast<T>();
-#endif
+    T __num = val.cast<T>();
     __num += diff;
     if (isValue(key + "-max")) {
         T __max = getIntValue(key + "-max");

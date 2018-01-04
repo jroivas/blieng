@@ -14,7 +14,6 @@ using blieng::BliAny;
 
 void BliObjectTest::setUp()
 {
-    //mock_add_folder("data");
     mock_io_start();
 }
 
@@ -34,17 +33,9 @@ void BliObjectTest::values()
 
     blieng::BliAny res = obj->getValue("test1");
     CPPUNIT_ASSERT(!res.empty());
-#ifdef USE_BOOST_ANY
-    CPPUNIT_ASSERT(boost::any_cast<int>(res) == (int)42);
-#else
     CPPUNIT_ASSERT(res.cast<int>() == (int)42);
-#endif
 
-#ifdef USE_BOOST_ANY
-    CPPUNIT_ASSERT_THROW(boost::any_cast<std::string>(res), boost::bad_any_cast);
-#else
     CPPUNIT_ASSERT_THROW(res.cast<std::string>(), cdiggins::anyimpl::bad_any_cast);
-#endif
 }
 
 void BliObjectTest::getValuesLimits()

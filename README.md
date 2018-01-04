@@ -112,3 +112,10 @@ These modifications inherit original license.
     * Copyright (C) 2006 Ariya Hidayat (ariya@kde.org)
     * Copyright (C) 2005 Ariya Hidayat (ariya@kde.org)
   - http://fastlz.org
+
+## cdiggins::any
+  - Boost license
+    * (C) Copyright Christopher Diggins 2005-2011
+    * (C) Copyright Pablo Aguilar 2005
+    * (C) Copyright Kevlin Henney 2001
+  - https://www.codeproject.com/Articles/11250/High-Performance-Dynamic-Typing-in-C-using-a-Repla
