@@ -1,5 +1,5 @@
 #include "auto_map_test.h"
-#include "auto_map.h"
+#include "3rdparty/auto_map.h"
 #include <memory>
 
 using std::unique_ptr;

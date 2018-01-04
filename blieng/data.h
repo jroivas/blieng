@@ -17,7 +17,7 @@
 
 #include "blieng/json.h"
 #include "blieng/datafile.h"
-#include "blieng/auto_vector.h"
+#include "blieng/3rdparty/auto_vector.h"
 #include "blieng/config.h"
 
 #ifdef DATA_MUTEX_LOCK

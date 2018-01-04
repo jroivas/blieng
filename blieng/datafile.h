@@ -14,7 +14,7 @@
 #include <android/asset_manager.h>
 #endif
 
-#include "blieng/auto_map.h"
+#include "blieng/3rdparty/auto_map.h"
 
 namespace blieng
 {

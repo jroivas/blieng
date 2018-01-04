@@ -8,7 +8,7 @@
 #include <vector>
 
 #include "blieng/item.h"
-#include "blieng/auto_vector.h"
+#include "blieng/3rdparty/auto_vector.h"
 
 using std::unique_ptr;
 

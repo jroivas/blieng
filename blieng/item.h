@@ -16,9 +16,9 @@
 
 #include "blieng/blieng.h"
 #include "blieng/bliobject.h"
-#include "blieng/auto_vector.h"
 #include "blieng/configure.h"
 #include "blieng/data.h"
+#include "blieng/3rdparty/auto_vector.h"
 
 using std::unique_ptr;
 

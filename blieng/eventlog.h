@@ -14,7 +14,7 @@
 #include <vector>
 
 #include "blieng/bliobject.h"
-#include "blieng/auto_vector.h"
+#include "blieng/3rdparty/auto_vector.h"
 
 namespace blieng
 {

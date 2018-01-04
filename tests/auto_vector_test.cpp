@@ -1,5 +1,5 @@
 #include "auto_vector_test.h"
-#include "auto_vector.h"
+#include "3rdparty/auto_vector.h"
 #include <memory>
 
 using std::unique_ptr;
