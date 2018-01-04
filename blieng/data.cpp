@@ -216,6 +216,23 @@ boost::filesystem::path Data::findDataFile(
 #endif
 }
 
+boost::filesystem::path Data::findDataPathBase() const
+{
+#ifndef ANDROID
+    for (std::string item : m_locations) {
+        boost::filesystem::path my_data_path;
+        my_data_path = item.c_str();
+        boost::system::error_code ec;
+        if (boost::filesystem::exists(my_data_path, ec) &&
+            boost::filesystem::is_directory(my_data_path, ec)) {
+            return my_data_path;
+        }
+    }
+#endif
+    boost::filesystem::path empty_data_path;
+    return empty_data_path;
+}
+
 boost::filesystem::path Data::findDataPath() const
 {
 #ifndef ANDROID
@@ -228,6 +245,8 @@ boost::filesystem::path Data::findDataPath() const
             return my_data_path;
         }
     }
+    // Fallback to current path
+    return findDataPathBase();
 #endif
     LOG_ERROR("Couldn't find data path!");
     boost::filesystem::path empty_data_path;

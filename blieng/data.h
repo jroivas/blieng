@@ -279,6 +279,7 @@ private:
         const std::string &datafilename) const;
     boost::filesystem::path findDataFile(
         const std::string &datafilename = "data.dat") const;
+    boost::filesystem::path findDataPathBase() const;
     boost::filesystem::path findDataPath() const;
 
     boost::filesystem::path m_data_path;

@@ -7,20 +7,6 @@ using blieng::BliengJson;
 void print_json_val(const BliengJson val, int indent=0)
 {
     std::cout << val.dump(2) << "\n";
-    /*
-    if (val == NULL) return;
-
-    if (val->type == json_object) {
-        for (auto key : blieng::Data::getJsonKeys(val)) {
-            const json_value *new_val = blieng::Data::getJsonValue(val, key);
-            for (int a = 0; a < indent; ++a) {
-                std::cout << " ";
-            }
-            std::cout << "key:" << key << "\n";
-            print_json_val(new_val, indent + 2);
-        }
-    }
-   */
 }
 
 int main(int argc, char **argv)
