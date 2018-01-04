@@ -94,6 +94,11 @@ double BliObject::getRandomDouble(double limit_low, double limit_max)
     return dist(m_rand_gen);
 }
 
+bool BliObject::getRandomBoolean()
+{
+    return getRandomInt(0, 420000) % 2;
+}
+
 BliAny BliObject::getValue(const std::string &key) const
 {
     auto value_iter = m_values.find(key);
@@ -427,16 +432,6 @@ bool BliObject::increase(const std::string &key)
 bool BliObject::decrease(const std::string &key)
 {
     return changeNumberValue(key, -1);
-}
-
-bool BliObject::getRandomBoolean()
-{
-    int tmp1 = getRandomInt(0, 420000);
-    int tmp2 = getRandomInt(12345, 999999);
-
-    tmp1 %= 2;
-    tmp2 %= 2;
-    return (tmp1 == tmp2);
 }
 
 std::string blieng::toString(int value)
