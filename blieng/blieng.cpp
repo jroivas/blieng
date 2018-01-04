@@ -3,9 +3,8 @@
  */
 
 #include "blieng/blieng.h"
-#include "blieng/rijndael-alg-fst.h"
-
-#include "fastlz.h"
+#include "blieng/3rdparty/rijndael-alg-fst.h"
+#include "blieng/3rdparty/fastlz.h"
 
 
 blieng::BliengState::BliengState()

@@ -15,7 +15,6 @@
 #include <string>
 #include <vector>
 
-#include "blieng/json.hpp"
 #include "blieng/json.h"
 #include "blieng/datafile.h"
 #include "blieng/auto_vector.h"
