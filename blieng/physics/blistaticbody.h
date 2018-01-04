@@ -5,6 +5,9 @@
 namespace blieng
 {
 
+/**
+ * Static body for physics simulations
+ */
 class BliStaticBody : public BliBody
 {
 public:
