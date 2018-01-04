@@ -44,7 +44,8 @@ using blieng::BliObject;
 using blieng::BliAny;
 
 #ifdef PSEUDO_RANDOM
-boost::random::mt19937 BliObject::m_rand_gen;
+static std::time_t now = std::time(0);
+boost::random::mt19937 BliObject::m_rand_gen{static_cast<std::uint32_t>(now)};
 #else
 boost::random::random_device BliObject::m_rand_gen;
 #endif

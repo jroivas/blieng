@@ -260,6 +260,14 @@ void BliObjectTest::random()
     // In fact this can fail, but probably will not...
     CPPUNIT_ASSERT( min <= 2 );
     CPPUNIT_ASSERT( max >= 98 );
+
+    bool b1 = BliObject::getRandomBoolean();
+    bool b2 = BliObject::getRandomBoolean();
+    cnt = 10;
+    while (b1 == b2 && cnt > 0) {
+        b2 = BliObject::getRandomBoolean();
+        cnt--;
+    }
 }
 
 void BliObjectTest::incdec()
