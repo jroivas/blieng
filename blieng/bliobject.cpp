@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Jouni Roivas
+ * Copyright 2014-2018 Jouni Roivas
  */
 
 #include "blieng/bliobject.h"
@@ -51,7 +51,7 @@ boost::random::random_device BliObject::m_rand_gen;
 
 BliObject::BliObject()
 {
-    genUUID();
+    m_uuid = genUUID();
 }
 
 BliObject::~BliObject()
@@ -64,11 +64,9 @@ BliObject::~BliObject()
     m_uuid = "";
 }
 
-void BliObject::assignObject(
-    const BliObject *another)
+void BliObject::assignObject(const BliObject *another)
 {
-    if (another == nullptr)
-        return;
+    if (another == nullptr) return;
 
 #ifdef DATA_MUTEX_LOCK
     boost::lock_guard<boost::mutex> keylock(m_value_mutex);
@@ -78,31 +76,25 @@ void BliObject::assignObject(
     }
 }
 
-bool BliObject::isValue(
-    const std::string &key) const
+bool BliObject::isValue(const std::string &key) const
 {
     auto value_iter = m_values.find(key);
     return (value_iter != m_values.end());
 }
 
-int BliObject::getRandomInt(
-    int limit_low,
-    int limit_max)
+int BliObject::getRandomInt(int limit_low, int limit_max)
 {
     boost::random::uniform_int_distribution<> dist(limit_low, limit_max);
     return dist(m_rand_gen);
 }
 
-double BliObject::getRandomDouble(
-    double limit_low,
-    double limit_max)
+double BliObject::getRandomDouble(double limit_low, double limit_max)
 {
     boost::random::uniform_real_distribution<> dist(limit_low, limit_max);
     return dist(m_rand_gen);
 }
 
-BliAny BliObject::getValue(
-    const std::string &key) const
+BliAny BliObject::getValue(const std::string &key) const
 {
     auto value_iter = m_values.find(key);
 
@@ -115,9 +107,7 @@ BliAny BliObject::getValue(
     return value_iter->second;
 }
 
-void BliObject::setValue(
-    const std::string &key,
-    BliAny value)
+void BliObject::setValue(const std::string &key, BliAny value)
 {
     {
 #ifdef DATA_MUTEX_LOCK
@@ -134,9 +124,7 @@ void BliObject::valuesUpdated(const std::string &)
 }
 
 template<typename A, typename B>
-bool BliObject::fitsLimits(
-    BliAny val,
-    A &res) const
+bool BliObject::fitsLimits(BliAny val, A &res) const
 {
     if (val.type() != typeid(B)) {
         return false;
@@ -257,38 +245,32 @@ T BliObject::getValue(const std::string &key) const
     throw msg.str();
 }
 
-int BliObject::getIntValue(
-    const std::string &key) const
+int BliObject::getIntValue(const std::string &key) const
 {
     return getValue<int>(key);
 }
 
-long long BliObject::getLongLongValue(
-    const std::string &key) const
+long long BliObject::getLongLongValue(const std::string &key) const
 {
     return getValue<long long>(key);
 }
 
-char BliObject::getCharValue(
-    const std::string &key) const
+char BliObject::getCharValue(const std::string &key) const
 {
     return getValue<char>(key);
 }
 
-unsigned int BliObject::getUIntValue(
-    const std::string &key) const
+unsigned int BliObject::getUIntValue(const std::string &key) const
 {
     return getValue<unsigned int>(key);
 }
 
-double BliObject::getDoubleValue(
-    const std::string &key) const
+double BliObject::getDoubleValue(const std::string &key) const
 {
     return getValue<double>(key);
 }
 
-std::string BliObject::getStringValue(
-    const std::string &key) const
+std::string BliObject::getStringValue(const std::string &key) const
 {
     BliAny val = getValue(key);
 #ifdef USE_BOOST_ANY
@@ -322,8 +304,7 @@ std::string BliObject::getStringValue(
     throw msg.str();
 }
 
-bool BliObject::getBoolValue(
-    const std::string &key) const
+bool BliObject::getBoolValue(const std::string &key) const
 {
     BliAny val = getValue(key);
 #ifdef USE_BOOST_ANY
@@ -349,8 +330,7 @@ bool BliObject::getBoolValue(
     throw msg.str();
 }
 
-std::vector<std::string> BliObject::getListValue(
-    const std::string &key) const
+std::vector<std::string> BliObject::getListValue(const std::string &key) const
 {
     BliAny val = getValue(key);
 #ifdef USE_BOOST_ANY
@@ -370,8 +350,7 @@ std::vector<std::string> BliObject::getListValue(
 #endif
 }
 
-std::vector<int> BliObject::getIntValues(
-    const std::string &key) const
+std::vector<int> BliObject::getIntValues(const std::string &key) const
 {
     BliAny val = getValue(key);
 #ifdef USE_BOOST_ANY
@@ -393,8 +372,7 @@ std::vector<int> BliObject::getIntValues(
 #endif
 }
 
-const std::type_info *BliObject::getValueType(
-    const std::string &key) const
+const std::type_info *BliObject::getValueType(const std::string &key) const
 {
     BliAny val = getValue(key);
     if (val.empty()) {
@@ -435,10 +413,7 @@ std::vector<std::string> BliObject::getKeys()
 }
 
 template<typename T>
-bool BliObject::changeNumValue(
-    std::string key,
-    BliAny val,
-    int diff)
+bool BliObject::changeNumValue(std::string key, BliAny val, int diff)
 {
     T __num =
 #ifdef USE_BOOST_ANY
@@ -456,9 +431,7 @@ bool BliObject::changeNumValue(
     return true;
 }
 
-bool BliObject::changeNumberValue(
-    const std::string &key,
-    int diff)
+bool BliObject::changeNumberValue(const std::string &key, int diff)
 {
     if (!isValue(key))
         return false;
@@ -504,11 +477,9 @@ bool BliObject::changeNumberValue(
     }
 
     throw std::string("Not any known numerical value at: " + key);
-    //return false;
 }
 
-bool BliObject::increase(
-    const std::string &key)
+bool BliObject::increase(const std::string &key)
 {
     return changeNumberValue(key, 1);
 }
@@ -528,27 +499,22 @@ bool BliObject::getRandomBoolean()
     return (tmp1 == tmp2);
 }
 
-std::string blieng::toString(
-    int value)
+std::string blieng::toString(int value)
 {
     return boost::lexical_cast<std::string>(value);
 }
 
-std::string blieng::toString(
-    unsigned int value)
+std::string blieng::toString(unsigned int value)
 {
     return boost::lexical_cast<std::string>(value);
 }
 
-std::string blieng::toString(
-    double value)
+std::string blieng::toString(double value)
 {
     return boost::lexical_cast<std::string>(value);
 }
 
-std::string blieng::percentageString(
-    double value,
-    unsigned int digits)
+std::string blieng::percentageString(double value, unsigned int digits)
 {
     int percentage = static_cast<int>(value * 100);
     std::string val = blieng::toString(percentage);
@@ -563,30 +529,25 @@ std::string blieng::percentageString(
 
 
 template<typename T>
-void serializeObject(
-    boost::archive::text_oarchive &arch,
-    T obj)
+void serializeObject(boost::archive::text_oarchive &arch, T obj)
 {
     arch << obj;
 }
 
 template<typename T>
-T deserializeObject(
-    boost::archive::text_iarchive &arch)
+T deserializeObject(boost::archive::text_iarchive &arch)
 {
     T obj;
     arch >> obj;
     return obj;
 }
 
-std::string BliObject::serialize(
-    std::string type) const
+std::string BliObject::serialize(std::string type) const
 {
     std::ostringstream ss;
 
     boost::archive::text_oarchive arch(ss);
-    if (type == "")
-        type = "BliObject";
+    if (type == "") type = "BliObject";
     arch << type;
 
     serializeObject<unsigned int>(arch, m_values.size());
@@ -633,19 +594,15 @@ std::string BliObject::serialize(
     return ss.str();
 }
 
-std::string BliObject::serializedType(
-    const std::string &data)
+std::string BliObject::serializedType(const std::string &data)
 {
     std::istringstream ss(data);
-
     boost::archive::text_iarchive arch(ss);
 
     return deserializeObject<std::string>(arch);
 }
 
-bool BliObject::deserialize(
-    const std::string &data,
-    std::string type)
+bool BliObject::deserialize(const std::string &data, std::string type)
 {
     std::istringstream ss(data);
     LOG_DEBUG("Deserializing data");
@@ -706,7 +663,7 @@ bool BliObject::deserialize(
     return true;
 }
 
-void BliObject::genUUID()
+std::string BliObject::genUUID() const
 {
 #ifdef PSEUDO_RANDOM
     boost::uuids::basic_random_generator<boost::mt19937> gen;
@@ -717,7 +674,7 @@ void BliObject::genUUID()
     std::ostringstream ss;
 
     ss << gen_uuid;
-    m_uuid = ss.str();
+    return ss.str();
 }
 
 BliObject &BliObject::operator=(const BliObject *other)

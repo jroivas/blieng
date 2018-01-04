@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Jouni Roivas
+ * Copyright 2014-2018 Jouni Roivas
  */
 
 #ifndef __BLIENG_BLIOBJECT_H
@@ -49,9 +49,8 @@ public:
      * \param key Unique key string
      * \param value Arbitrary value, which is mapped to the specified key
      */
-    void setValue(
-        const std::string &key,
-        BliAny value);
+    void setValue(const std::string &key, BliAny value);
+
     /**
      * This method is called whenever any value is changed
      * with setValue method. Easy to trigger other updates
@@ -66,8 +65,7 @@ public:
      * \param key Unique key string
      * \returns True if value for the key is set, false otherwise
      */
-    virtual bool isValue(
-        const std::string &key) const;
+    virtual bool isValue(const std::string &key) const;
 
     /**
      * Increases the value of given key.
@@ -77,8 +75,8 @@ public:
      * \throw If key value is not numerical
      * \returns True if value is incremented, false otherwise
      */
-    virtual bool increase(
-        const std::string &key);
+    virtual bool increase(const std::string &key);
+
     /**
      * Decreases the value of given key.
      * This assumes that the value at given key is numerical type.
@@ -87,8 +85,9 @@ public:
      * \throw If key value is not numerical
      * \returns True if value is decreased, false otherwise
      */
-    virtual bool decrease(
-        const std::string &key);
+
+    virtual bool decrease(const std::string &key);
+
     /**
      * Changed numerical value of given key by given difference.
      * This assumes that the value at given key is numerical type.
@@ -98,8 +97,7 @@ public:
      * \throw If key value is not numerical
      * \returns True if value is changed, false otherwise
      */
-    bool changeNumberValue(
-        const std::string &key, int diff);
+    bool changeNumberValue(const std::string &key, int diff);
 
     /**
      * Get value of given key.
@@ -109,8 +107,8 @@ public:
      * \throw When key does not exists
      * \returns BliAny object of the value.
      */
-    BliAny getValue(
-        const std::string &key) const;
+    BliAny getValue(const std::string &key) const;
+
     /**
      * Get string value of given key.
      * Throws an error if key not found.
@@ -118,8 +116,8 @@ public:
      * \param key Unique key string
      * \returns Value as string object
      */
-    std::string getStringValue(
-        const std::string &key) const;
+    std::string getStringValue(const std::string &key) const;
+
     /**
      * Get boolean value of given key.
      * Throws an error if key not found.
@@ -127,8 +125,8 @@ public:
      * \param key Unique key string
      * \returns Value as boolean
      */
-    bool getBoolValue(
-        const std::string &key) const;
+    bool getBoolValue(const std::string &key) const;
+
     /**
      * Get integer value of given key.
      * Throws an error if key not found.
@@ -136,8 +134,8 @@ public:
      * \param key Unique key string
      * \returns Value as integer
      */
-    int getIntValue(
-        const std::string &key) const;
+    int getIntValue(const std::string &key) const;
+
     /**
      * Get long long value of given key.
      * Throws an error if key not found.
@@ -145,8 +143,8 @@ public:
      * \param key Unique key string
      * \returns Value as long long
      */
-    long long getLongLongValue(
-        const std::string &key) const;
+    long long getLongLongValue(const std::string &key) const;
+
     /**
      * Get char value of given key.
      * Throws an error if key not found.
@@ -154,8 +152,8 @@ public:
      * \param key Unique key string
      * \returns Value as integer
      */
-    char getCharValue(
-        const std::string &key) const;
+    char getCharValue(const std::string &key) const;
+
     /**
      * Get unsigned integer value of given key.
      * Throws an error if key not found.
@@ -163,8 +161,8 @@ public:
      * \param key Unique key string
      * \returns Value as unsigned integer
      */
-    unsigned int getUIntValue(
-        const std::string &key) const;
+    unsigned int getUIntValue(const std::string &key) const;
+
     /**
      * Get double value of given key.
      * Throws an error if key not found.
@@ -172,8 +170,8 @@ public:
      * \param key Unique key string
      * \returns Value as double
      */
-    double getDoubleValue(
-        const std::string &key) const;
+    double getDoubleValue(const std::string &key) const;
+
     /**
      * Get vector of strings of given key.
      * Throws an error if key not found or
@@ -182,8 +180,8 @@ public:
      * \param key Unique key string
      * \returns Value as vector of strings
      */
-    virtual std::vector<std::string> getListValue(
-        const std::string &key) const;
+    virtual std::vector<std::string> getListValue(const std::string &key) const;
+
     /**
      * Get vector of integers of given key.
      * Throws an error if key not found or
@@ -192,8 +190,7 @@ public:
      * \param key Unique key string
      * \returns Value as vector of integers
      */
-    virtual std::vector<int> getIntValues(
-        const std::string &key) const;
+    virtual std::vector<int> getIntValues(const std::string &key) const;
 
     /**
      * Get string presentation of object.
@@ -203,14 +200,14 @@ public:
      * \returns String presentation of object
      */
     virtual std::string toString() const;
+
     /**
      * Get type info of the value at given unique key.
      *
      * \param key Unique key string
      * \returns Standard C++ type info of the value
      */
-    const std::type_info *getValueType(
-        const std::string &key) const;
+    const std::type_info *getValueType(const std::string &key) const;
 
     /**
      * List all known keys.
@@ -218,6 +215,7 @@ public:
      * \returns std::vector of all known key names.
      */
     virtual std::vector<std::string> getKeys();
+
     /**
      * Get number of unique keys defined.
      *
@@ -237,8 +235,7 @@ public:
      *
      * \param another Any other BliObject
      */
-    void assignObject(
-        const BliObject *another);
+    void assignObject(const BliObject *another);
 
     /**
      * Assign other BliObject to this one.
@@ -253,9 +250,8 @@ public:
      * \param limit_max The upper limit of the range
      * \returns Integer between the lower and upper limit
      */
-    static int getRandomInt(
-        int limit_low,
-        int limit_max);
+    static int getRandomInt(int limit_low, int limit_max);
+
     /**
      * Get random double inside the range.
      * Utilizes uniform distribution in range [min, max)
@@ -264,9 +260,8 @@ public:
      * \param limit_max The upper limit of the range
      * \returns Integer between the lower and upper limit
      */
-    static double getRandomDouble(
-        double limit_low,
-        double limit_max);
+    static double getRandomDouble(double limit_low, double limit_max);
+
     /**
      * Get a random boolean value.
      * Implementation if this method may change at any point.
@@ -292,8 +287,7 @@ public:
      * \param type Object type for detection, by default BliObject
      * \returns Serialized object as string
      */
-    virtual std::string serialize(
-        std::string type="BliObject") const;
+    virtual std::string serialize(std::string type="BliObject") const;
 
     /**
      * Deserialize a serialized object
@@ -303,9 +297,7 @@ public:
      * \param type Object type for detection, by default BliObject
      * \returns True on success, false otherwise
      */
-    virtual bool deserialize(
-        const std::string &data,
-        std::string type="BliObject");
+    virtual bool deserialize(const std::string &data, std::string type="BliObject");
 
     /**
      * Query type of object in serialized string.
@@ -315,8 +307,7 @@ public:
      * \param data Serialized data
      * \returns Object type for detection, by default BliObject
      */
-    static std::string serializedType(
-        const std::string &data);
+    static std::string serializedType(const std::string &data);
 
     /**
      * Get the unique ID of this object.
@@ -335,28 +326,24 @@ public:
         return m_uuid;
     }
 
+    /**
+     * Generates the Unique ID.
+     */
+    std::string genUUID() const;
+
 protected:
     std::unordered_map<std::string, BliAny> m_values;  //!< Contains key value mappings
 
     template<typename A, typename B>
-    bool fitsLimits(
-        BliAny val,
-        A &res) const;
-    template<typename T>
-    bool changeNumValue(
-        std::string key,
-        BliAny val,
-        int diff);
+    bool fitsLimits(BliAny val, A &res) const;
 
-    /**
-     * Generates the Unique ID.
-     */
-    void genUUID();
+    template<typename T>
+    bool changeNumValue(std::string key, BliAny val, int diff);
 
     std::string m_uuid;  //!< Unique ID
 
-#ifdef DATA_MUTEX_LOCK
 private:
+#ifdef DATA_MUTEX_LOCK
     boost::mutex m_value_mutex;
 #endif
 
@@ -371,9 +358,7 @@ std::string toString(unsigned int value);
 std::string toString(int value);
 std::string toString(double value);
 
-std::string percentageString(
-    double value,
-    unsigned int digits=0);
+std::string percentageString(double value, unsigned int digits=0);
 
 }
 
