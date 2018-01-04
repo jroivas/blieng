@@ -1,3 +1,7 @@
+/*
+ * Copyright 2014-2018 Jouni Roivas
+ */
+
 #pragma once
 
 #include "blieng/physics/blibody.h"

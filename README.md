@@ -65,10 +65,15 @@ You can build and run examples by:
 
     ./run_examples.sh
 
+## Documentation
+
+Documenatation is generated with [Doxygen](http://doxygen.org):
+
+    doxygen doc/config.doxy
 
 ## License
 
-Copyright(c) 2013-2017 Jouni Roivas <jroivas@iki.fi>
+Copyright(c) 2013-2018 Jouni Roivas <jroivas@iki.fi>
 
 MIT, see [LICENSE](LICENSE)
 
