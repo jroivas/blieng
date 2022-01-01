@@ -79,7 +79,7 @@ public:
         CAST_TO(long, obj, ostr)
         CAST_TO(unsigned long, obj, ostr)
         CAST_TO(int64_t, obj, ostr)
-        CAST_TO(int64_t, obj, ostr)
+        CAST_TO(uint64_t, obj, ostr)
         CAST_TO(float, obj, ostr)
         CAST_TO(double, obj, ostr)
         CAST_TO(char, obj, ostr)
@@ -271,6 +271,10 @@ public:
             return this->cast<long>();
         if (this->type() == typeid(unsigned long))
             return static_cast<long>(this->cast<unsigned long>());
+        if (this->type() == typeid(int64_t))
+            return static_cast<long>(this->cast<int64_t>());
+        if (this->type() == typeid(uint64_t))
+            return static_cast<long>(this->cast<uint64_t>());
         if (this->type() == typeid(float))
             return this->cast<float>();
         if (this->type() == typeid(double))
