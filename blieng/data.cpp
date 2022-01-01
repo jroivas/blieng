@@ -667,8 +667,7 @@ std::string Data::readString(
     throw std::string("Can't open file: " + name);
 }
 
-BliengJson Data::parseJson(
-    const std::string &datas)
+BliengJson Data::parseJson(const std::string &datas)
 {
     try {
         return BliengJson::parse(datas);

@@ -305,7 +305,11 @@ int fstat(int fd, struct stat *buf) throw ()
         //boost::lock_guard<boost::mutex> keylock(__mockid_mutex);
         if (fd < 3 || fd >= (int)mock_ids.size()) return 0;
 
+#if 0
         return __xstat(0, mock_ids[fd]->name.c_str(), (struct stat*)buf);
+#else
+        return -1;
+#endif
     }
     if (!orig_fstat) orig_fstat = *(int (*)(int, struct stat *))dlsym(RTLD_NEXT, "fstat");
     return orig_fstat(fd, buf);
@@ -321,7 +325,11 @@ int my_fstat64(int fd, struct stat64 *buf) throw ()
         //boost::lock_guard<boost::mutex> keylock(__mockid_mutex);
         if (fd < 3 || fd >= (int)mock_ids.size()) return 0;
 
+#if 0
         return __xstat64(0, mock_ids[fd]->name.c_str(), buf);
+#else
+        return -1;
+#endif
     }
     if (!orig_fstat64) orig_fstat64 = *(int (*)(int, struct stat64 *))dlsym(RTLD_NEXT, "fstat64");
     return orig_fstat64(fd, buf);
@@ -411,6 +419,7 @@ int ioctl(int fd, unsigned long int request, ...) throw ()
     return orig_ioctl(fd, request);
 }
 
+#if 0
 int stat(const char *path, struct stat *buf) throw ()
 {
     return __xstat(0, path, buf);
@@ -425,6 +434,7 @@ int my__xstat(int x, const char *path, struct stat *buf) throw ()
 {
    return __xstat64(x, path, (struct stat64 *)buf);
 }
+#endif
 
 int my__xstat64(int x, const char *path, struct stat64 *buf) throw ()
 {
@@ -624,6 +634,7 @@ int fstatvfs64(int fd, struct statvfs64 *buf) throw ()
 }
 #endif
 
+#if 0
 int my__lxstat64(int x, const char *path, struct stat64 *buf) throw ()
 {
     return __xstat64(x, path, buf);
@@ -633,6 +644,7 @@ int __lxstat(int x, const char *path, struct stat *buf) throw ()
 {
     return __xstat(x, path, buf);
 }
+#endif
 
 
 int lstat(const char *path, struct stat *buf) throw ()
